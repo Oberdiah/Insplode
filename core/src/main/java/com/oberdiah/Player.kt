@@ -37,7 +37,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                     ferocity = body.velocity.len.d * 0.5,
                     number = max(body.velocity.len.i * 2, 2)
                 )
-                if (body.velocity.len > 10) {
+                if (body.velocity.len > 20) {
                     addScreenShake(body.velocity.len.d * 0.03)
                     boom(body.p, body.velocity.len.d * 0.05, hurtsThePlayer = false)
                 }
