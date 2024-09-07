@@ -37,10 +37,14 @@ open class Point {
         get() = toWorldSpace(this)
 
     val cpy: Point
-        get() {return Point(this)}
+        get() {
+            return Point(this)
+        }
 
     val v2: Vector2
-        get() {return Vector2(x.f, y.f) }
+        get() {
+            return Vector2(x.f, y.f)
+        }
 
     var angle: Double
         get() {
@@ -61,7 +65,7 @@ open class Point {
             if (le < 0.01) {
                 x = le
                 y = 0.0
-               return
+                return
             }
             val scale = value.d / le
             x *= scale
@@ -84,7 +88,7 @@ open class Point {
         this.y = y.d
     }
 
-    constructor(): this(0, 0)
+    constructor() : this(0, 0)
 
     fun angleTo(p: Point): Double {
         return atan2(p.x - x, p.y - y)
@@ -121,6 +125,7 @@ open class Point {
     operator fun times(p: Point): Point {
         return Point(x * p.x, y * p.y)
     }
+
     open operator fun times(i: Number): Point {
         return Point(x * i, y * i)
     }
@@ -128,6 +133,7 @@ open class Point {
     open operator fun plus(p: Point): Point {
         return Point(x + p.x, y + p.y)
     }
+
     operator fun plus(i: Number): Point {
         return Point(x + i, y + i)
     }
@@ -135,13 +141,19 @@ open class Point {
     operator fun minus(p: Point): Point {
         return Point(x - p.x, y - p.y)
     }
+
     operator fun minus(i: Number): Point {
         return Point(x - i, y - i)
+    }
+
+    operator fun unaryMinus(): Point {
+        return Point(-x, -y)
     }
 
     open operator fun div(p: Point): Point {
         return Point(x / p.x, y / p.y)
     }
+
     open operator fun div(i: Number): Point {
         return Point(x / i, y / i)
     }
@@ -211,7 +223,7 @@ open class Point {
 
 typealias Velocity = Point
 
-class Size(w: Number, h: Number): Point(w, h) {
+class Size(w: Number, h: Number) : Point(w, h) {
     constructor() : this(0, 0)
 
     override operator fun plus(p: Point): Size {
@@ -232,11 +244,15 @@ class Size(w: Number, h: Number): Point(w, h) {
 
     var w: Number
         get() = x
-        set(value) {x = value.d}
+        set(value) {
+            x = value.d
+        }
 
     var h: Number
         get() = y
-        set(value) {y = value.d}
+        set(value) {
+            y = value.d
+        }
 }
 
 class Rect(var p: Point, var s: Size) {
@@ -253,12 +269,12 @@ class Rect(var p: Point, var s: Size) {
     }
 
     fun touches(rect: Rect): Boolean {
-        return  p.x < rect.p.x + rect.s.w &&
+        return p.x < rect.p.x + rect.s.w &&
                 p.y < rect.p.y + rect.s.h &&
                 p.x + s.w > rect.p.x &&
                 p.y + s.h > rect.p.y
 
     }
 
-    constructor(): this(Point(), Size())
+    constructor() : this(Point(), Size())
 }

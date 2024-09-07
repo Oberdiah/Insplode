@@ -30,6 +30,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
         if (yourFixture == jumpBox) {
+            if (airTime > 0.3) {
+                spawnParticlesAtMyFeet(-body.velocity * 0.2, max(body.velocity.len.i, 2))
+            }
+
             canJump = true
             airTime = 0.0
             inAir = false
@@ -115,13 +119,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 val impulse = body.mass * velChange
                 body.applyImpulse(Point(0f, impulse))
 
-                for (i in 0 until 5) {
-                    spawnFragment(
-                        body.p,
-                        Velocity(5 * (Random.nextDouble() - 0.5), -8 * Random.nextDouble()),
-                        TileType.Stone
-                    )
-                }
+                spawnParticlesAtMyFeet(number = 2)
 
                 jumpUIFadeOff = UI_MAX_FADE_IN
             }
@@ -153,8 +151,30 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         val velChange = desiredVel - vel.x
+
+        // If velChange is large enough, spawn particles to simulate kicked up dirt in the direction of movement
+        if (!inAir) {
+            if (velChange > 3 || velChange < -3) {
+                spawnParticlesAtMyFeet(number = 3, addedVelocity = Point(velChange * 0.5, 0.0))
+            }
+        }
+
+
         val impulse = body.mass * velChange
         body.applyImpulse(Point(impulse.f, 0))
+    }
+
+    private fun spawnParticlesAtMyFeet(addedVelocity: Point = Point(0.0, 0.0), number: Int = 5) {
+        val tileTypeBelowMe = getTile(body.p - Point(0, 0.2)).tileType
+        val posToSpawn = body.p - Point(0.0, 0.15)
+
+        for (i in 0 until number) {
+            spawnFragment(
+                posToSpawn.cpy,
+                addedVelocity + Velocity(2 * (Random.nextDouble() - 0.5), 2 * Random.nextDouble()),
+                tileTypeBelowMe
+            )
+        }
     }
 
 }

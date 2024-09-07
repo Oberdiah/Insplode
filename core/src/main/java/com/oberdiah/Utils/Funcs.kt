@@ -55,9 +55,15 @@ fun Color.withAlpha(d: Number): Color {
 fun max(a: Number, b: Number): Double {
     return a.toDouble().coerceAtLeast(b.toDouble())
 }
+
+fun max(a: Int, b: Int): Int {
+    return a.coerceAtLeast(b)
+}
+
 fun min(a: Number, b: Number): Double {
     return a.toDouble().coerceAtMost(b.toDouble())
 }
+
 fun min(a: Int, b: Int): Int {
     return a.coerceAtMost(b)
 }
@@ -65,13 +71,19 @@ fun min(a: Int, b: Int): Int {
 fun Number.format(digits: Int) = "%.${digits}f".format(this)
 
 val Number.d: Double
-    get() { return this.toDouble() }
+    get() {
+        return this.toDouble()
+    }
 
 val Number.i: Int
-    get() { return this.toInt() }
+    get() {
+        return this.toInt()
+    }
 
 val Number.f: Float
-    get() { return this.toFloat() }
+    get() {
+        return this.toFloat()
+    }
 
 fun sqrt(n: Number): Double {
     return kotlin.math.sqrt(n.d)
@@ -124,15 +136,19 @@ operator fun Number.compareTo(i: Number): Int {
 operator fun Number.plus(i: Number): Number {
     return this.d + i.d
 }
+
 operator fun Number.minus(i: Number): Number {
     return this.d - i.d
 }
+
 operator fun Number.div(i: Number): Number {
     return this.d / i.d
 }
+
 operator fun Number.times(i: Number): Number {
     return this.d * i.d
 }
+
 operator fun Number.unaryMinus(): Number {
     return -this.d
 }
@@ -145,15 +161,15 @@ fun circleShape(radius: Number, callback: (Shape) -> Unit) {
     circleShape(radius, Point(), callback)
 }
 
-fun <T, R> T?.notNull(f: (T) -> R){
-    if (this != null){
+fun <T, R> T?.notNull(f: (T) -> R) {
+    if (this != null) {
         f(this)
     }
 }
 
 // Finds the normal of the line, pointing towards the side specified by "side"
 fun lineNormal(p0: Point, p1: Point, side: Point): Point {
-    val z = (p1.x-p0.x)*(side.y-p1.y) - (p1.y-p0.y)*(side.x-p1.x)
+    val z = (p1.x - p0.x) * (side.y - p1.y) - (p1.y - p0.y) * (side.x - p1.x)
     val vec = p1 - p0
     vec.len = 1
     if (z > 0) {
@@ -165,6 +181,7 @@ fun lineNormal(p0: Point, p1: Point, side: Point): Point {
 
 private val s1 = Point()
 private val s2 = Point()
+
 // Copied from https://stackoverflow.com/a/1968345
 fun lineIntersection(p0: Point, p1: Point, p2: Point, p3: Point, intersection: Point): Boolean {
     s1.x = p1.x - p0.x
@@ -173,10 +190,9 @@ fun lineIntersection(p0: Point, p1: Point, p2: Point, p3: Point, intersection: P
     s2.y = p3.y - p2.y
 
     val s = (-s1.y * (p0.x - p2.x) + s1.x * (p0.y - p2.y)) / (-s2.x * s1.y + s1.x * s2.y)
-    val t = ( s2.x * (p0.y - p2.y) - s2.y * (p0.x - p2.x)) / (-s2.x * s1.y + s1.x * s2.y)
+    val t = (s2.x * (p0.y - p2.y) - s2.y * (p0.x - p2.x)) / (-s2.x * s1.y + s1.x * s2.y)
 
-    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
-    {
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
         // Collision detected
         intersection.x = p0.x + (t * s1.x)
         intersection.y = p0.y + (t * s1.y)
@@ -200,8 +216,8 @@ fun ngonShape(radius: Number, sides: Int, callback: (Shape) -> Unit) {
     val polygon = PolygonShape()
     val points = Array(8) { Vector2() }
     for (i in 0 until sides) {
-        points[i].x = (cos(2 * i * PI/sides ) * radius).f
-        points[i].y = (sin(2 * i * PI/sides ) * radius).f
+        points[i].x = (cos(2 * i * PI / sides) * radius).f
+        points[i].y = (sin(2 * i * PI / sides) * radius).f
     }
     polygon.set(points)
     callback(polygon)

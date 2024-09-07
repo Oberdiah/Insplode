@@ -59,24 +59,24 @@ class Main(print: Printer) : InputAdapter(), ApplicationListener {
         timerStart()
 
         time("Set globals this frame") { setGlobalsThisFrame() }
-        time("Calculate globals") {calculateGlobals() }
+        time("Calculate globals") { calculateGlobals() }
 
         // DEBUG_STRING = "$LOWEST_SIMPLE_Y_STORED"
 
         if (!PAUSED) {
-            time("Camera") {updateCamera()}
+            time("Camera") { updateCamera() }
             setCameraGlobalsThisFrame()
-            time("Update level storage") {updateLevelStorage()}
+            time("Update level storage") { updateLevelStorage() }
 
             // 'Coz Box2d stupid, these are the centres of the positions.
-            leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + SQUARES_TALL/2), 0f)
-            rightWall.setTransform(Point(10.5, CAMERA_POS_Y + SQUARES_TALL/2), 0f)
+            leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + SQUARES_TALL / 2), 0f)
+            rightWall.setTransform(Point(10.5, CAMERA_POS_Y + SQUARES_TALL / 2), 0f)
         }
 
         worldSpaceRenderer.begin()
-        time("Render background") {renderBackground(worldSpaceRenderer)}
-        time("Render particles") {renderParticles(worldSpaceRenderer)}
-        time("Render physics objects") {renderPhysicsObjects(worldSpaceRenderer)}
+        time("Render background") { renderBackground(worldSpaceRenderer) }
+        time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
+        time("Render particles") { renderParticles(worldSpaceRenderer) }
         //renderShadowLayer(worldSpaceRenderer)
         worldSpaceRenderer.end()
 
@@ -94,17 +94,17 @@ class Main(print: Printer) : InputAdapter(), ApplicationListener {
 //            if (allDynamicPhysicsObjects.filterIsInstance<Pickup>().size < 10) {
 //                Pickup(Point(SQUARES_WIDE * Random.nextDouble(), CAMERA_POS.y + SQUARES_TALL))
 //            }
-            time("Tick level controller") {tickLevelController()}
+            time("Tick level controller") { tickLevelController() }
             time("Tick Collapse") { tickCollapse() }
-            time("Tick Particles") {tickParticles()}
-            time("Tick Physics Objects") { tickPhysicsObjects()}
+            time("Tick Particles") { tickParticles() }
+            time("Tick Physics Objects") { tickPhysicsObjects() }
 
 //            // Should happen just before the world step
-            time("Update tile physics") {updateTilePhysics()}
+            time("Update tile physics") { updateTilePhysics() }
             if (!DEBUG_MOVEMENT_MODE) {
-                time("Do physics step") {doPhysicsStep()}
+                time("Do physics step") { doPhysicsStep() }
             }
-            time("Tick physics wrapper") { tickPhysicsWrapper()}
+            time("Tick physics wrapper") { tickPhysicsWrapper() }
         }
 
         time("Render UI") {
