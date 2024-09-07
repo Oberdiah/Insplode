@@ -19,7 +19,7 @@ var ABILITY_CONTROL = ControlScheme.AbilityButton
 var JUMP_FRACT = 0.15
 var LEFT_BUTTON_FRACT = 0.45
 var RIGHT_BUTTON_FRACT = 0.55
-var SCREEN_SHAKE_SETTING = ScreenShake.Normal
+var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
 var ENABLED_GAME_MESSAGES = true
 
 var RENDER_JUMP_BUTTON = true
@@ -58,7 +58,7 @@ var WIDTH = 0.0
 var HEIGHT = 0.0
 var SIMPLES_HEIGHT_STORED = 0
 
-enum class ScreenShake(val text: String, val shakeAmount: Number) {
+enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
     Off("Off", 0.0),
     Low("Low", 1.0),
     Normal("Normal", 2.0),
@@ -66,6 +66,9 @@ enum class ScreenShake(val text: String, val shakeAmount: Number) {
 }
 
 var SCREEN_SHAKE = 0.0
+fun addScreenShake(amount: Number) {
+    SCREEN_SHAKE = max(SCREEN_SHAKE, amount.d * SCREEN_SHAKE_SETTING.shakeAmount)
+}
 
 var DEPTH_UNITS = " blocks"
 
@@ -116,7 +119,11 @@ val GRAVITY = 20.0
 val UI_MAX_FADE_IN = 0.9
 var TOUCH_CONSUMED = false
 val PLAYER_SPAWN_Y
+    get() = SQUARES_TALL * PLAYER_Y_FRACT + 30
+
+val CAMERA_SPAWN_Y
     get() = SQUARES_TALL * PLAYER_Y_FRACT
+
 val LAND_SURFACE_Y
     get() = 10
 
@@ -157,6 +164,7 @@ var PAUSED = true
 private val cameraPos = Point()
 val CAMERA_POS_Y: Number
     get() = camera.position.y.d - SQUARES_TALL / 2
+var CAMERA_LOCKED = true
 
 private val screenSize: Size = Size()
 val SIZE: Size

@@ -13,7 +13,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     lateinit var jumpBox: Fixture
     var canJump = false
     private var airTime = 0.0
-    private var inAir = false
+    private var inAir = true
 
     val numHealthDots = 3
     var health = 3
@@ -30,8 +30,17 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
         if (yourFixture == jumpBox) {
+            CAMERA_LOCKED = false
+
             if (airTime > 0.3) {
-                spawnParticlesAtMyFeet(-body.velocity * 0.2, max(body.velocity.len.i, 2))
+                spawnParticlesAtMyFeet(
+                    ferocity = body.velocity.len.d * 0.5,
+                    number = max(body.velocity.len.i * 2, 2)
+                )
+                if (body.velocity.len > 10) {
+                    addScreenShake(body.velocity.len.d * 0.03)
+                    boom(body.p, body.velocity.len.d * 0.05, hurtsThePlayer = false)
+                }
             }
 
             canJump = true
@@ -49,6 +58,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun reset() {
         body.setTransform(startingPoint, 0f)
+        inAir = true
         health = numHealthDots
     }
 
@@ -164,14 +174,21 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         body.applyImpulse(Point(impulse.f, 0))
     }
 
-    private fun spawnParticlesAtMyFeet(addedVelocity: Point = Point(0.0, 0.0), number: Int = 5) {
+    private fun spawnParticlesAtMyFeet(
+        addedVelocity: Point = Point(0.0, 0.0),
+        number: Int = 5,
+        ferocity: Double = 2.0
+    ) {
         val tileTypeBelowMe = getTile(body.p - Point(0, 0.2)).tileType
         val posToSpawn = body.p - Point(0.0, 0.15)
 
         for (i in 0 until number) {
             spawnFragment(
                 posToSpawn.cpy,
-                addedVelocity + Velocity(2 * (Random.nextDouble() - 0.5), 2 * Random.nextDouble()),
+                addedVelocity + Velocity(
+                    ferocity * (Random.nextDouble() - 0.5),
+                    ferocity * Random.nextDouble()
+                ),
                 tileTypeBelowMe
             )
         }

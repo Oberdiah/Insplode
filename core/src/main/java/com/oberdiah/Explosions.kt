@@ -4,13 +4,13 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 
-fun boom(point: Point, radius: Number) {
+fun boom(point: Point, radius: Number, hurtsThePlayer: Boolean = true) {
     val simpleRadius = (radius * SIMPLES_RESOLUTION).i
     val tempPoint = Point()
 
     spawnGlow(point, radius)
 
-    SCREEN_SHAKE = max(SCREEN_SHAKE, radius.d.pow(0.5) * SCREEN_SHAKE_SETTING.shakeAmount * 0.5)
+    addScreenShake(radius.d.pow(0.5) * 0.5)
 
     for (dx in -simpleRadius..simpleRadius) {
         for (dy in -simpleRadius..simpleRadius) {
@@ -22,7 +22,8 @@ fun boom(point: Point, radius: Number) {
             if (dist <= radius) {
                 val vx = (simpleRadius - abs(dx)) * sign(dx) + (Random.nextDouble() - 0.5)
                 val vy = (simpleRadius - abs(dy)) * sign(dy) + Random.nextDouble()
-                val velocity = Velocity(vx * 0.5 * Random.nextDouble(), (vy * 2.5 + 8) * Random.nextDouble())
+                val velocity =
+                    Velocity(vx * 0.5 * Random.nextDouble(), (vy * 2.5 + 8) * Random.nextDouble())
                 if (!DEBUG_MOVEMENT_MODE) spawnSmoke(tempPoint.cpy, velocity)
                 if (tile.exists) {
                     tile.exists = false
@@ -38,7 +39,10 @@ fun boom(point: Point, radius: Number) {
             val pushForce = (a.body.p - point)
             pushForce.len = radius * 10
             a.body.applyImpulse(pushForce)
-            a.hitByExplosion()
+
+            if (a !is Player || hurtsThePlayer) {
+                a.hitByExplosion()
+            }
         }
     }
 }

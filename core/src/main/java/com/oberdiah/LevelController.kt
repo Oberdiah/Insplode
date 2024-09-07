@@ -8,6 +8,7 @@ var currentPhase = 0
 
 class Phase(val d: Number, val callback: () -> Unit) {
     var bombType: BombType? = null
+
     constructor(d: Number, bomb: BombType, callback: () -> Unit) : this(d, callback) {
         bombType = bomb
     }
@@ -31,170 +32,173 @@ class Phase(val d: Number, val callback: () -> Unit) {
 val disabledPhases = arrayOf(BombType.StickyBomb, BombType.ImpactBomb)
 
 val phases = arrayOf(
-        Phase(2.0) { gameMessage = "GAME START" },
-        Phase(3.0) { gameMessage = "" },
-        Phase(4.0) { spawnBomb(BombType.SmallTimed, 0.25) },
-        Phase(10.0) { startRandomBombs(BombType.SmallTimed, 4.0) },
-        Phase(5.0) { startRandomBombs(BombType.SmallTimed, 3.0) },
-        Phase(4.0, BombType.MediumTimed) {
-            stopAllBombs()
-            gameMessage = "Medium Bomb"
-            spawnBomb(BombType.MediumTimed, 0.5)
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.SmallTimed, 3.0)
-            startRandomBombs(BombType.MediumTimed, 5.0)
-        },
-        Phase(4.0, BombType.LineBomb) {
-            stopAllBombs()
-            spawnBomb(BombType.LineBomb, 0.75)
-            gameMessage = "Line Bomb"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 6.0)
-            startRandomBombs(BombType.SmallTimed, 5.0)
-            startRandomBombs(BombType.MediumTimed, 7.0)
-        },
-        Phase(4.0, BombType.ImpactBomb) {
-            stopAllBombs()
-            spawnBomb(BombType.ImpactBomb, 0.5)
-            gameMessage = "Impact Bomb"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 7.0)
-            startRandomBombs(BombType.SmallTimed, 6.0)
-            startRandomBombs(BombType.MediumTimed, 7.0)
-            startRandomBombs(BombType.ImpactBomb, 6.0)
-        },
-        Phase(4.0, BombType.StickyBomb) {
-            stopAllBombs()
-            spawnBomb(BombType.StickyBomb, 0.25)
-            gameMessage = "Sticky Bomb"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 7.0)
-            startRandomBombs(BombType.SmallTimed, 6.0)
-            startRandomBombs(BombType.MediumTimed, 7.0)
-            startRandomBombs(BombType.StickyBomb, 6.0)
-            startRandomBombs(BombType.ImpactBomb, 6.0)
-        },
-        Phase(4.0, BombType.SpringBomb) {
-            stopAllBombs()
-            spawnBomb(BombType.SpringBomb, 0.25)
-            gameMessage = "Spring Bomb"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 7.0)
-            startRandomBombs(BombType.SmallTimed, 6.0)
-            startRandomBombs(BombType.MediumTimed, 7.0)
-            startRandomBombs(BombType.StickyBomb, 6.0)
-            startRandomBombs(BombType.ImpactBomb, 6.0)
-            startRandomBombs(BombType.SpringBomb, 6.0)
-        },
-        Phase(4.0, BombType.LargeTimed) {
-            stopAllBombs()
-            spawnBomb(BombType.LargeTimed, 0.5)
-            gameMessage = "Large Bomb"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 7.0)
-            startRandomBombs(BombType.SmallTimed, 6.0)
-            startRandomBombs(BombType.MediumTimed, 7.0)
-            startRandomBombs(BombType.StickyBomb, 6.0)
-            startRandomBombs(BombType.ImpactBomb, 6.0)
-            startRandomBombs(BombType.SpringBomb, 6.0)
-            startRandomBombs(BombType.LargeTimed, 10.0)
-        },
-        Phase(4.0, BombType.ClusterBomb) {
-            stopAllBombs()
-            spawnBomb(BombType.ClusterBomb, 0.75)
-            gameMessage = "Cluster Bomb"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 7.0)
-            startRandomBombs(BombType.SmallTimed, 6.0)
-            startRandomBombs(BombType.MediumTimed, 7.0)
-            startRandomBombs(BombType.StickyBomb, 6.0)
-            startRandomBombs(BombType.ImpactBomb, 6.0)
-            startRandomBombs(BombType.SpringBomb, 6.0)
-            startRandomBombs(BombType.LargeTimed, 10.0)
-            startRandomBombs(BombType.ClusterBomb, 6.0)
-        },
-        Phase(4.0, BombType.MegaTimed) {
-            stopAllBombs()
-            spawnBomb(BombType.MegaTimed, 0.75)
-            gameMessage = "Mega Bomb"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 7.0)
-            startRandomBombs(BombType.SmallTimed, 6.0)
-            startRandomBombs(BombType.MediumTimed, 7.0)
-            startRandomBombs(BombType.StickyBomb, 6.0)
-            startRandomBombs(BombType.ImpactBomb, 6.0)
-            startRandomBombs(BombType.SpringBomb, 6.0)
-            startRandomBombs(BombType.LargeTimed, 10.0)
-            startRandomBombs(BombType.ClusterBomb, 6.0)
-            startRandomBombs(BombType.MegaTimed, 15.0)
-        },
-        Phase(4.0) {
-            stopAllBombs()
-            spawnBomb(BombType.MegaTimed, 0.75)
-            gameMessage = "Extreme Phase 1"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 5.0)
-            startRandomBombs(BombType.SmallTimed, 4.0)
-            startRandomBombs(BombType.MediumTimed, 5.0)
-            startRandomBombs(BombType.StickyBomb, 4.0)
-            startRandomBombs(BombType.ImpactBomb, 4.0)
-            startRandomBombs(BombType.SpringBomb, 4.0)
-            startRandomBombs(BombType.LargeTimed, 8.0)
-            startRandomBombs(BombType.ClusterBomb, 4.0)
-            startRandomBombs(BombType.MegaTimed, 10.0)
-        },
-        Phase(4.0) {
-            stopAllBombs()
-            spawnBomb(BombType.MegaTimed, 0.75)
-            gameMessage = "Extreme Phase 2"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 4.0)
-            startRandomBombs(BombType.SmallTimed, 3.0)
-            startRandomBombs(BombType.MediumTimed, 4.0)
-            startRandomBombs(BombType.StickyBomb, 3.0)
-            startRandomBombs(BombType.ImpactBomb, 3.0)
-            startRandomBombs(BombType.SpringBomb, 3.0)
-            startRandomBombs(BombType.LargeTimed, 6.0)
-            startRandomBombs(BombType.ClusterBomb, 3.0)
-            startRandomBombs(BombType.MegaTimed, 8.0)
-        },
-        Phase(4.0) {
-            stopAllBombs()
-            spawnBomb(BombType.MegaTimed, 0.75)
-            gameMessage = "Final Phase"
-        },
-        Phase(15.0) {
-            gameMessage = ""
-            startRandomBombs(BombType.LineBomb, 3.0)
-            startRandomBombs(BombType.SmallTimed, 2.0)
-            startRandomBombs(BombType.MediumTimed, 3.0)
-            startRandomBombs(BombType.StickyBomb, 2.0)
-            startRandomBombs(BombType.ImpactBomb, 2.0)
-            startRandomBombs(BombType.SpringBomb, 2.0)
-            startRandomBombs(BombType.LargeTimed, 4.0)
-            startRandomBombs(BombType.ClusterBomb, 2.0)
-            startRandomBombs(BombType.MegaTimed, 6.0)
-        },
+    Phase(4.0) {
+        // Drop pod from above.
+    },
+    Phase(2.0) { gameMessage = "GAME START" },
+    Phase(3.0) { gameMessage = "" },
+    Phase(4.0) { spawnBomb(BombType.SmallTimed, 0.25) },
+    Phase(10.0) { startRandomBombs(BombType.SmallTimed, 4.0) },
+    Phase(5.0) { startRandomBombs(BombType.SmallTimed, 3.0) },
+    Phase(4.0, BombType.MediumTimed) {
+        stopAllBombs()
+        gameMessage = "Medium Bomb"
+        spawnBomb(BombType.MediumTimed, 0.5)
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.SmallTimed, 3.0)
+        startRandomBombs(BombType.MediumTimed, 5.0)
+    },
+    Phase(4.0, BombType.LineBomb) {
+        stopAllBombs()
+        spawnBomb(BombType.LineBomb, 0.75)
+        gameMessage = "Line Bomb"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 6.0)
+        startRandomBombs(BombType.SmallTimed, 5.0)
+        startRandomBombs(BombType.MediumTimed, 7.0)
+    },
+    Phase(4.0, BombType.ImpactBomb) {
+        stopAllBombs()
+        spawnBomb(BombType.ImpactBomb, 0.5)
+        gameMessage = "Impact Bomb"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 7.0)
+        startRandomBombs(BombType.SmallTimed, 6.0)
+        startRandomBombs(BombType.MediumTimed, 7.0)
+        startRandomBombs(BombType.ImpactBomb, 6.0)
+    },
+    Phase(4.0, BombType.StickyBomb) {
+        stopAllBombs()
+        spawnBomb(BombType.StickyBomb, 0.25)
+        gameMessage = "Sticky Bomb"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 7.0)
+        startRandomBombs(BombType.SmallTimed, 6.0)
+        startRandomBombs(BombType.MediumTimed, 7.0)
+        startRandomBombs(BombType.StickyBomb, 6.0)
+        startRandomBombs(BombType.ImpactBomb, 6.0)
+    },
+    Phase(4.0, BombType.SpringBomb) {
+        stopAllBombs()
+        spawnBomb(BombType.SpringBomb, 0.25)
+        gameMessage = "Spring Bomb"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 7.0)
+        startRandomBombs(BombType.SmallTimed, 6.0)
+        startRandomBombs(BombType.MediumTimed, 7.0)
+        startRandomBombs(BombType.StickyBomb, 6.0)
+        startRandomBombs(BombType.ImpactBomb, 6.0)
+        startRandomBombs(BombType.SpringBomb, 6.0)
+    },
+    Phase(4.0, BombType.LargeTimed) {
+        stopAllBombs()
+        spawnBomb(BombType.LargeTimed, 0.5)
+        gameMessage = "Large Bomb"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 7.0)
+        startRandomBombs(BombType.SmallTimed, 6.0)
+        startRandomBombs(BombType.MediumTimed, 7.0)
+        startRandomBombs(BombType.StickyBomb, 6.0)
+        startRandomBombs(BombType.ImpactBomb, 6.0)
+        startRandomBombs(BombType.SpringBomb, 6.0)
+        startRandomBombs(BombType.LargeTimed, 10.0)
+    },
+    Phase(4.0, BombType.ClusterBomb) {
+        stopAllBombs()
+        spawnBomb(BombType.ClusterBomb, 0.75)
+        gameMessage = "Cluster Bomb"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 7.0)
+        startRandomBombs(BombType.SmallTimed, 6.0)
+        startRandomBombs(BombType.MediumTimed, 7.0)
+        startRandomBombs(BombType.StickyBomb, 6.0)
+        startRandomBombs(BombType.ImpactBomb, 6.0)
+        startRandomBombs(BombType.SpringBomb, 6.0)
+        startRandomBombs(BombType.LargeTimed, 10.0)
+        startRandomBombs(BombType.ClusterBomb, 6.0)
+    },
+    Phase(4.0, BombType.MegaTimed) {
+        stopAllBombs()
+        spawnBomb(BombType.MegaTimed, 0.75)
+        gameMessage = "Mega Bomb"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 7.0)
+        startRandomBombs(BombType.SmallTimed, 6.0)
+        startRandomBombs(BombType.MediumTimed, 7.0)
+        startRandomBombs(BombType.StickyBomb, 6.0)
+        startRandomBombs(BombType.ImpactBomb, 6.0)
+        startRandomBombs(BombType.SpringBomb, 6.0)
+        startRandomBombs(BombType.LargeTimed, 10.0)
+        startRandomBombs(BombType.ClusterBomb, 6.0)
+        startRandomBombs(BombType.MegaTimed, 15.0)
+    },
+    Phase(4.0) {
+        stopAllBombs()
+        spawnBomb(BombType.MegaTimed, 0.75)
+        gameMessage = "Extreme Phase 1"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 5.0)
+        startRandomBombs(BombType.SmallTimed, 4.0)
+        startRandomBombs(BombType.MediumTimed, 5.0)
+        startRandomBombs(BombType.StickyBomb, 4.0)
+        startRandomBombs(BombType.ImpactBomb, 4.0)
+        startRandomBombs(BombType.SpringBomb, 4.0)
+        startRandomBombs(BombType.LargeTimed, 8.0)
+        startRandomBombs(BombType.ClusterBomb, 4.0)
+        startRandomBombs(BombType.MegaTimed, 10.0)
+    },
+    Phase(4.0) {
+        stopAllBombs()
+        spawnBomb(BombType.MegaTimed, 0.75)
+        gameMessage = "Extreme Phase 2"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 4.0)
+        startRandomBombs(BombType.SmallTimed, 3.0)
+        startRandomBombs(BombType.MediumTimed, 4.0)
+        startRandomBombs(BombType.StickyBomb, 3.0)
+        startRandomBombs(BombType.ImpactBomb, 3.0)
+        startRandomBombs(BombType.SpringBomb, 3.0)
+        startRandomBombs(BombType.LargeTimed, 6.0)
+        startRandomBombs(BombType.ClusterBomb, 3.0)
+        startRandomBombs(BombType.MegaTimed, 8.0)
+    },
+    Phase(4.0) {
+        stopAllBombs()
+        spawnBomb(BombType.MegaTimed, 0.75)
+        gameMessage = "Final Phase"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 3.0)
+        startRandomBombs(BombType.SmallTimed, 2.0)
+        startRandomBombs(BombType.MediumTimed, 3.0)
+        startRandomBombs(BombType.StickyBomb, 2.0)
+        startRandomBombs(BombType.ImpactBomb, 2.0)
+        startRandomBombs(BombType.SpringBomb, 2.0)
+        startRandomBombs(BombType.LargeTimed, 4.0)
+        startRandomBombs(BombType.ClusterBomb, 2.0)
+        startRandomBombs(BombType.MegaTimed, 6.0)
+    },
 )
 
 fun resetLevelController() {
@@ -221,7 +225,8 @@ fun tickLevelController() {
         if (runTimeElapsed > bombData.nextBombAt) {
             val minTime = bombData.delay / 2.0
             val maxTime = bombData.delay
-            bombData.nextBombAt = runTimeElapsed + minTime + (maxTime - minTime) * Random.nextDouble()
+            bombData.nextBombAt =
+                runTimeElapsed + minTime + (maxTime - minTime) * Random.nextDouble()
             spawnBomb(bombType)
         }
     }

@@ -1,6 +1,5 @@
 package com.oberdiah
 
-import com.badlogic.gdx.graphics.Color
 import com.oberdiah.Utils.Perlin
 import com.oberdiah.Utils.TileType
 
@@ -54,7 +53,7 @@ private fun shiftSimplesDown(rowsToMove: Int) {
 
 fun resetLevel() {
     LOWEST_SIMPLE_Y_STORED = 0
-    previouslowestSimpleYStored = 0
+    previouSlowestSimpleYStored = 0
 
     for (tile in simplesStored) {
         if (tile.initialised) {
@@ -70,10 +69,10 @@ fun resetLevel() {
     }
 }
 
-private var previouslowestSimpleYStored = 0
+private var previouSlowestSimpleYStored = 0
 fun updateLevelStorage() {
     // diff > 0, camera gone up, diff < 0, camera gone down.
-    val diff = LOWEST_SIMPLE_Y_STORED - previouslowestSimpleYStored
+    val diff = LOWEST_SIMPLE_Y_STORED - previouSlowestSimpleYStored
 
     // We only generate on the way down - if stuff falls off the top it's gone for good.
     // TODO Reuse could be done here - the bodies could be reused - the entire tile could be reused
@@ -127,7 +126,7 @@ fun updateLevelStorage() {
     require(simplesStored[0].isNAT || simplesStored[0].y == LOWEST_SIMPLE_Y_STORED)
     require(simplesStored[simplesStored.lastIndex].isNAT || simplesStored[simplesStored.lastIndex].y == LOWEST_SIMPLE_Y_STORED + SIMPLES_HEIGHT_STORED - 1)
 
-    previouslowestSimpleYStored = LOWEST_SIMPLE_Y_STORED
+    previouSlowestSimpleYStored = LOWEST_SIMPLE_Y_STORED
 }
 
 fun generateTile(tile: Tile) {
@@ -150,10 +149,10 @@ fun generateTile(tile: Tile) {
     if (grassDepth > depth) {
         tile.tileType = TileType.Grass
     } else {
-        val caveNoise = Perlin.noise(x, y/3, 6.0)
+        val caveNoise = Perlin.noise(x, y / 3, 6.0)
         val caveVal = -1.4 + min(depth * 0.03, 1.0)
         val caveStone = caveNoise < caveVal + 0.3
-        val randoStone = Perlin.noise(x/5, y+2839675, 7.0) > 0.3
+        val randoStone = Perlin.noise(x / 5, y + 2839675, 7.0) > 0.3
         if (caveStone || randoStone) {
             tile.tileType = TileType.Stone
         } else {
