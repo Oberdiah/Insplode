@@ -1,7 +1,6 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
@@ -31,7 +30,7 @@ fun initLevelRender() {
     cam.setToOrtho(true, WIDTH.f, HEIGHT.f)
     cam2.setToOrtho(false, SQUARES_WIDE.f, fboLoopSize.f)
     cam.update()
-    cam2.position.x = SQUARES_WIDE.f/2
+    cam2.position.x = SQUARES_WIDE.f / 2
     cam2.update()
     levelTexRenderer.projectionMatrix = cam.combined
 }
@@ -48,7 +47,7 @@ var previousLowestTile = 0
 fun renderLevel() {
     fboBaseLocation = -floor(CAMERA_POS_Y / fboLoopSize)
 //    DEBUG_STRING = "${fboBaseLocation}"
-    cam2.position.y = fboLoopSize.f/2
+    cam2.position.y = fboLoopSize.f / 2
     cam2.update()
     levelShapeRenderer.projectionMatrix = cam2.combined
 
@@ -64,7 +63,7 @@ fun renderLevel() {
     val diff = lowestTileOnScreen - previousLowestTile
     if (diff > 0) {
         // Going up
-        for (y in 0 .. diff) {
+        for (y in 0..diff) {
             for (tileX in 0 until SIMPLES_WIDTH) {
                 val tile = getTile(tileX, highestTileOnScreen - y)
                 renderTile(tile, tileX, highestTileOnScreen - y)
@@ -73,7 +72,7 @@ fun renderLevel() {
 
     } else if (diff < 0) {
         // Going down
-        for (y in 0 .. -diff) {
+        for (y in 0..-diff) {
             for (tileX in 0 until SIMPLES_WIDTH) {
                 val tile = getTile(tileX, lowestTileOnScreen + y)
                 renderTile(tile, tileX, lowestTileOnScreen + y)
@@ -91,8 +90,20 @@ fun renderLevel() {
 
     val yOffset = -Point(0, 0).ui.y.f + HEIGHT.f - fbo.height.f
     levelTexRenderer.begin()
-    levelTexRenderer.draw(fbo.colorBufferTexture, 0f, yOffset + ((fboBaseLocation - 1) * fbo.height.f), WIDTH.f, fbo.height.f)
-    levelTexRenderer.draw(fbo.colorBufferTexture, 0f, yOffset + ((fboBaseLocation) * fbo.height.f), WIDTH.f, fbo.height.f)
+    levelTexRenderer.draw(
+        fbo.colorBufferTexture,
+        0f,
+        yOffset + ((fboBaseLocation - 1) * fbo.height.f),
+        WIDTH.f,
+        fbo.height.f
+    )
+    levelTexRenderer.draw(
+        fbo.colorBufferTexture,
+        0f,
+        yOffset + ((fboBaseLocation) * fbo.height.f),
+        WIDTH.f,
+        fbo.height.f
+    )
     levelTexRenderer.end()
 
 
@@ -130,7 +141,14 @@ private fun renderTile(tile: Tile, tileX: Int, tileY: Int) {
         if (bl || br || tl || tr) {
             levelShapeRenderer.color = tileType.color()
             for (tri in marchingSquaresTriangles(bl, br, tl, tr)) {
-                levelShapeRenderer.triangle(tri.x1 + x, tri.y1 + y, tri.x2 + x, tri.y2 + y, tri.x3 + x, tri.y3 + y)
+                levelShapeRenderer.triangle(
+                    tri.x1 + x,
+                    tri.y1 + y,
+                    tri.x2 + x,
+                    tri.y2 + y,
+                    tri.x3 + x,
+                    tri.y3 + y
+                )
             }
         }
     }
@@ -152,3 +170,35 @@ fun renderBackground(r: Renderer) {
         }
     }
 }
+
+
+//fun renderLevelOld(r: Renderer) {
+//    for (tileType in TileType.values()) {
+//        for (bottomLeft in levelOnScreen) {
+//            val x = bottomLeft.x
+//            val y = bottomLeft.y
+//
+//            val topLeft = getTile(x, y + 1)
+//            val bottomRight = getTile(x + 1, y)
+//            val topRight = getTile(x + 1, y + 1)
+//
+////            val tileType = bottomLeft.tileType
+//
+//            // Fun wee rendering hack to fill in holes
+//            val bl = bottomLeft.exists && bottomLeft.tileType.ordinal >= tileType.ordinal
+//            val tl = topLeft.exists && topLeft.tileType.ordinal >= tileType.ordinal
+//            val br = bottomRight.exists && bottomRight.tileType.ordinal >= tileType.ordinal
+//            val tr = topRight.exists && topRight.tileType.ordinal >= tileType.ordinal
+//
+//            if (bl || br || tl || tr) {
+////                r.color = tileType.color.cpy().add(-0.3f, -0.3f, -0.3f, 0.0f)
+////                r.poly(marchingSquaresFAScaled(bl, br, tl, tr), 1, x * SIMPLE_SIZE + 0.1, y * SIMPLE_SIZE + 0.1)
+//                r.color = tileType.color()
+//                if (bottomLeft.attachedToGround) {
+//                    r.color = Color.BLACK
+//                }
+//                r.poly(marchingSquaresFAScaled(bl, br, tl, tr), 1, x * SIMPLE_SIZE, y * SIMPLE_SIZE)
+//            }
+//        }
+//    }
+//}

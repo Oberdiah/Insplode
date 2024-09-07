@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 val player = Player(Point(5, PLAYER_SPAWN_Y))
 
-class Player(startingPoint: Point): PhysicsObject(startingPoint) {
+class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     val size = Size(0.4, 0.7)
     lateinit var jumpBox: Fixture
     var canJump = false
@@ -51,10 +51,10 @@ class Player(startingPoint: Point): PhysicsObject(startingPoint) {
     init {
         body.isFixedRotation = true
 
-        circleShape(size.w/2) {
+        circleShape(size.w / 2) {
             addFixture(it)
         }
-        circleShape(size.w/2, Point(0, 0.35)) {
+        circleShape(size.w / 2, Point(0, 0.35)) {
             addFixture(it)
         }
 
@@ -90,12 +90,12 @@ class Player(startingPoint: Point): PhysicsObject(startingPoint) {
 
 
         for (i in 0 until numHealthDots) {
-            if ( i < health) {
+            if (i < health) {
                 r.color = Color.WHITE
             } else {
                 r.color = Color.DARK_GRAY
             }
-            r.circle(body.p.x, body.p.y + (0.35 / (numHealthDots-1)) * i, size.w / 5)
+            r.circle(body.p.x, body.p.y + (0.35 / (numHealthDots - 1)) * i, size.w / 5)
         }
     }
 
@@ -116,7 +116,11 @@ class Player(startingPoint: Point): PhysicsObject(startingPoint) {
                 body.applyImpulse(Point(0f, impulse))
 
                 for (i in 0 until 5) {
-                    spawnFragment(body.p, Velocity(5 * (Random.nextDouble() - 0.5), -8 * Random.nextDouble()), TileType.Stone)
+                    spawnFragment(
+                        body.p,
+                        Velocity(5 * (Random.nextDouble() - 0.5), -8 * Random.nextDouble()),
+                        TileType.Stone
+                    )
                 }
 
                 jumpUIFadeOff = UI_MAX_FADE_IN
@@ -128,10 +132,22 @@ class Player(startingPoint: Point): PhysicsObject(startingPoint) {
         var desiredVel = 0.0
         TOUCHES_DOWN.forEach {
             if (!TOUCH_CONSUMED && it.y > HEIGHT * JUMP_FRACT) {
-                desiredVel = if (it.x > WIDTH/2) {
-                    min(5, vel.x + acceleration)
+                val goLeft = if (FOLLOW_FINGER) {
+                    it.x < body.p.x * (SQUARE_SIZE - 1)
                 } else {
-                    max(-5, vel.x - acceleration)
+                    it.x < LEFT_BUTTON_FRACT * WIDTH
+                }
+
+                val goRight = if (FOLLOW_FINGER) {
+                    it.x > body.p.x * (SQUARE_SIZE + 1)
+                } else {
+                    it.x > RIGHT_BUTTON_FRACT * WIDTH
+                }
+
+                if (goLeft) {
+                    desiredVel = max(-5, vel.x - acceleration)
+                } else if (goRight) {
+                    desiredVel = min(5, vel.x + acceleration)
                 }
             }
         }

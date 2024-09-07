@@ -53,13 +53,17 @@ fun controlsUI(r: Renderer) {
         LEFT_RIGHT_CONTROL = if (LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) ControlScheme.MoveToFinger else ControlScheme.LeftRightTap
     })
 
-    button(r, "Change Left Button Edge", LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) {
-        currentlyChangingControl = ControlButton.Left
-        switchScreen(Screen.ChangeButtonPositions)
-    }
-    button(r, "Change Right Button Edge", LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) {
-        currentlyChangingControl = ControlButton.Right
-        switchScreen(Screen.ChangeButtonPositions)
+    toggleButton(r, "Follow finger", ::FOLLOW_FINGER)
+
+    if (!FOLLOW_FINGER) {
+        button(r, "Change Left Button Edge", LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) {
+            currentlyChangingControl = ControlButton.Left
+            switchScreen(Screen.ChangeButtonPositions)
+        }
+        button(r, "Change Right Button Edge", LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) {
+            currentlyChangingControl = ControlButton.Right
+            switchScreen(Screen.ChangeButtonPositions)
+        }
     }
 
     button(r, "Change Jump Button Height", JUMP_CONTROL == ControlScheme.JumpButton) {

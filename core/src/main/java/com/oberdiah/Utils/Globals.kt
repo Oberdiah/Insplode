@@ -17,12 +17,13 @@ var LEFT_RIGHT_CONTROL = ControlScheme.LeftRightTap
 var JUMP_CONTROL = ControlScheme.JumpButton
 var ABILITY_CONTROL = ControlScheme.AbilityButton
 var JUMP_FRACT = 0.15
-var LEFT_BUTTON_FRACT = 0.4
-var RIGHT_BUTTON_FRACT = 0.6
+var LEFT_BUTTON_FRACT = 0.45
+var RIGHT_BUTTON_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShake.Normal
 var ENABLED_GAME_MESSAGES = true
 
 var RENDER_JUMP_BUTTON = true
+var FOLLOW_FINGER = false
 
 var HIGH_SCORE = 0.0
 
@@ -49,7 +50,11 @@ enum class Screen(val title: String) {
 
 var LOWEST_SIMPLE_Y_STORED = 0
 var SIMPLES_WIDTH = 0
+
+/// Size of the screen in pixels
 var WIDTH = 0.0
+
+/// height fo the screen in pixels
 var HEIGHT = 0.0
 var SIMPLES_HEIGHT_STORED = 0
 
@@ -129,7 +134,8 @@ val PAUSE_FROM_EDGE
 val _pauseRect = Rect()
 val PAUSE_RECT: Rect
     get() {
-        _pauseRect.p.x = if (PAUSE_SIDE == Align.left) PAUSE_FROM_EDGE else WIDTH - PAUSE_SIZE - PAUSE_FROM_EDGE
+        _pauseRect.p.x =
+            if (PAUSE_SIDE == Align.left) PAUSE_FROM_EDGE else WIDTH - PAUSE_SIZE - PAUSE_FROM_EDGE
         _pauseRect.p.y = HEIGHT - PAUSE_SIZE - PAUSE_FROM_TOP
         _pauseRect.s.w = PAUSE_SIZE
         _pauseRect.s.h = PAUSE_SIZE
