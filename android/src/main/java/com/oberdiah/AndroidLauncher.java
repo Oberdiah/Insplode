@@ -1,27 +1,35 @@
 package com.oberdiah;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowManager;
-import android.widget.RelativeLayout;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidAudio;
 import com.badlogic.gdx.backends.android.AsynchronousAndroidAudio;
-import com.oberdiah.Main;
-import com.oberdiah.Utils.Printer;
+import com.badlogic.gdx.backends.android.DefaultAndroidAudio;
+import com.oberdiah.Utils.PlatformInterface;
 
 import org.jetbrains.annotations.NotNull;
 
-class AndroidPrinter implements Printer {
+import java.io.IOException;
+import java.util.Arrays;
+
+import games.rednblack.miniaudio.MiniAudio;
+
+class AndroidPlatformInterface implements PlatformInterface {
+    AssetManager assetManager;
+
     @Override
     public void print(@NotNull String string) {
         Log.i("Bomb Survival", string);
+    }
+
+    @Override
+    public void injectAssetManager(@NotNull MiniAudio miniAudio) {
+        miniAudio.setupAndroid(assetManager);
     }
 }
 
@@ -29,13 +37,16 @@ class AndroidPrinter implements Printer {
  * Launches the Android application.
  */
 public class AndroidLauncher extends AndroidApplication {
+    AndroidPlatformInterface platformInterface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.hideStatusBar = false;
         config.useImmersiveMode = true;
-        initialize(new Main(new AndroidPrinter()), config);
+        platformInterface = new AndroidPlatformInterface();
+        initialize(new Main(platformInterface), config);
     }
 
     @Override
@@ -45,6 +56,13 @@ public class AndroidLauncher extends AndroidApplication {
 
     @Override
     public AndroidAudio createAudio(Context context, AndroidApplicationConfiguration config) {
-        return new AsynchronousAndroidAudio(context, config);
+        System.out.println("Creating audio!");
+        try {
+            System.out.println(Arrays.toString(context.getAssets().list("")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        platformInterface.assetManager = context.getAssets();
+        return new DefaultAndroidAudio(context, config);
     }
 }

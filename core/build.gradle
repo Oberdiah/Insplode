@@ -2,8 +2,9 @@
 eclipse.project.name = appName + '-core'
 
 dependencies {
-	api "com.badlogicgames.gdx:gdx:$gdxVersion"
-	api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-	api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-	api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    api "games.rednblack.miniaudio:miniaudio:$miniaudioVersion"
 }

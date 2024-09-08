@@ -4,15 +4,12 @@ import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.Utils.*
-import kotlin.random.Random
 
 
 lateinit var worldSpaceRenderer: Renderer
 lateinit var uiRenderer: Renderer
-lateinit var printer: Printer
+lateinit var platformInterface: PlatformInterface
 
 fun restartGame() {
     resetPhysics()
@@ -27,9 +24,9 @@ fun restartGame() {
 lateinit var leftWall: PhysBody
 lateinit var rightWall: PhysBody
 
-class Main(print: Printer) : InputAdapter(), ApplicationListener {
+class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
     init {
-        printer = print
+        platformInterface = print
     }
 
     override fun create() {
@@ -100,7 +97,6 @@ class Main(print: Printer) : InputAdapter(), ApplicationListener {
             time("Tick Collapse") { tickCollapse() }
             time("Tick Particles") { tickParticles() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
-            time("Tick Sounds") { tickSounds() }
 
 //            // Should happen just before the world step
             time("Update tile physics") { updateTilePhysics() }
@@ -119,10 +115,18 @@ class Main(print: Printer) : InputAdapter(), ApplicationListener {
         timerEnd()
     }
 
-    override fun dispose() {}
-    override fun resume() {}
+    override fun dispose() {
+        disposeSounds()
+    }
+
+    override fun resume() {
+        miniAudio.startEngine();
+    }
+
     override fun resize(width: Int, height: Int) {
     }
 
-    override fun pause() {}
+    override fun pause() {
+        miniAudio.stopEngine();
+    }
 }
