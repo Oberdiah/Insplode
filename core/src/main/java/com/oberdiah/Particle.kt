@@ -39,14 +39,14 @@ fun renderParticles(r: Renderer) {
 fun spawnFragment(p: Point, v: Velocity, tileType: TileType) {
     if (!ENABLED_PARTICLES) return
 
-    val radius = SIMPLE_SIZE * (Random.nextDouble()*0.3 + 0.2)
+    val radius = SIMPLE_SIZE * (Random.nextDouble() * 0.3 + 0.2)
 
     allParticles.add(Fragment(p, v, radius, tileType))
 }
 
 fun spawnSmoke(p: Point, velocity: Velocity) {
     if (!ENABLED_PARTICLES) return
-    val radius = SIMPLE_SIZE * (Random.nextDouble()*0.3 + 0.2)
+    val radius = SIMPLE_SIZE * (Random.nextDouble() * 0.3 + 0.2)
     allParticles.add(Smoke(p, velocity, radius))
 }
 
@@ -69,7 +69,7 @@ class Glow(val p: Point, var radius: Number) {
     }
 }
 
-class Smoke(startP: Point, startV: Velocity, var edgeLength: Number): Particle(startP, startV) {
+class Smoke(startP: Point, startV: Velocity, var edgeLength: Number) : Particle(startP, startV) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
 
@@ -83,7 +83,7 @@ class Smoke(startP: Point, startV: Velocity, var edgeLength: Number): Particle(s
 
     override fun tick() {
         super.tick()
-        edgeLength -= DELTA/16
+        edgeLength -= DELTA / 16
         if (stoppedMoving) {
             edgeLength -= DELTA
         }
@@ -101,15 +101,16 @@ class Smoke(startP: Point, startV: Velocity, var edgeLength: Number): Particle(s
     }
 }
 
-class Fragment(startP: Point, startV: Velocity, var edgeLength: Number, val tileType: TileType): Particle(startP, startV) {
+class Fragment(startP: Point, startV: Velocity, var edgeLength: Number, val tileType: TileType) :
+    Particle(startP, startV) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
 
     override fun tick() {
         super.tick()
-        edgeLength -= DELTA/32
+        edgeLength -= DELTA / 32
         if (stoppedMoving) {
-            edgeLength -= DELTA/2
+            edgeLength -= DELTA / 2
         }
         angle += angleRate / 5
 
@@ -122,6 +123,11 @@ class Fragment(startP: Point, startV: Velocity, var edgeLength: Number, val tile
         r.color = tileType.color()
         val scaleUp = 2.5
         r.centeredRect(p, edgeLength * scaleUp, edgeLength * scaleUp, angle)
+    }
+
+    override fun collided() {
+        super.collided()
+        playParticleSound(v.len.d, edgeLength.d)
     }
 }
 
@@ -188,7 +194,8 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
             insideLevel = false
             while (i < polygon.size) {
                 if (((polygon[i].y > ey) != (polygon[j].y > ey)) &&
-                        ex < (polygon[j].x - polygon[i].x) * (ey - (polygon[i].y)) / (polygon[j].y - polygon[i].y) + (polygon[i].x)) {
+                    ex < (polygon[j].x - polygon[i].x) * (ey - (polygon[i].y)) / (polygon[j].y - polygon[i].y) + (polygon[i].x)
+                ) {
                     insideLevel = !insideLevel
                 }
                 j = i++
@@ -219,6 +226,8 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
                     val newV = v - normal * 2 * v.dot(normal)
                     v.x = newV.x * bounciness
                     v.y = newV.y * bounciness
+
+                    collided()
                 }
             }
             if (insideLevel && wasInsideLevel) {
@@ -228,4 +237,6 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
             }
         }
     }
+
+    open fun collided() {}
 }
