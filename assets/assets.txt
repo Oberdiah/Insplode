@@ -1,5 +1,10 @@
 Image.png
 Lato-Medium.ttf
+Sounds/trim_glass clink 1.wav
+Sounds/trim_glass clink 2.wav
+Sounds/trim_glass clink 3.wav
+Sounds/trim_glass clink 4.wav
+Sounds/trim_glass clink 5.wav
 Sounds/trim_orange hit hard 1.wav
 Sounds/trim_orange hit hard 2.wav
 Sounds/trim_orange hit hard 3.wav

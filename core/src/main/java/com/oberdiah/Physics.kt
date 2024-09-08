@@ -16,6 +16,7 @@ class ListenerClass : ContactListener {
             data2.collided(contact.fixtureB, contact.fixtureA)
         }
     }
+
     override fun endContact(contact: Contact) {
         val data = contact.fixtureA.body.userData
         val data2 = contact.fixtureB.body.userData
@@ -27,6 +28,7 @@ class ListenerClass : ContactListener {
             data2.endCollide(contact.fixtureB, contact.fixtureA)
         }
     }
+
     override fun preSolve(contact: Contact?, oldManifold: Manifold?) {
     }
 

@@ -117,6 +117,10 @@ fun clamp(t: Number, a: Number, b: Number): Double {
     return min(max(t, a), b)
 }
 
+fun saturate(t: Number): Double {
+    return clamp(t, 0, 1)
+}
+
 fun floor(t: Number): Int {
     return kotlin.math.floor(t.d).i
 }

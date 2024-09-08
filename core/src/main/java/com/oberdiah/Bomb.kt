@@ -37,6 +37,15 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     open fun explode() {
         destroy()
     }
+
+    override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
+        super.collided(yourFixture, otherFixture)
+        playBombBumpSound(
+            yourFixture.body.linearVelocity.len().d,
+            yourFixture.body.mass.d,
+            otherFixture.body.userData
+        )
+    }
 }
 
 enum class BombType(val power: Number, val renderRadius: Number, val color: Color) {
@@ -44,7 +53,7 @@ enum class BombType(val power: Number, val renderRadius: Number, val color: Colo
     MediumTimed(1.3, 0.3, colorScheme.bombPrimary),
     LargeTimed(2.0, 0.4, colorScheme.bombPrimary),
     MegaTimed(3.0, 0.6, colorScheme.bombPrimary),
-    LineBomb(0.3, 0.2, colorScheme.bombPrimary),
+    LineBomb(0.3, 0.15, colorScheme.bombPrimary),
     SpringBomb(1.0, 0.25, colorScheme.bombPrimary),
     StickyBomb(1.3, 0.3, colorScheme.bombPrimary),
     ClusterBomb(1.0, 0.3, colorScheme.bombPrimary),
