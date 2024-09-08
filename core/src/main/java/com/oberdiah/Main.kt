@@ -100,6 +100,7 @@ class Main(print: Printer) : InputAdapter(), ApplicationListener {
             time("Tick Collapse") { tickCollapse() }
             time("Tick Particles") { tickParticles() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
+            time("Tick Sounds") { tickSounds() }
 
 //            // Should happen just before the world step
             time("Update tile physics") { updateTilePhysics() }

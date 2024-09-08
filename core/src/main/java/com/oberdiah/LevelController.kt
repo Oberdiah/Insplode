@@ -2,7 +2,7 @@ package com.oberdiah
 
 import kotlin.random.Random
 
-var runTimeElapsed = 0.0
+var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
 var currentPhase = 0
 
@@ -16,7 +16,7 @@ class Phase(val d: Number, val callback: () -> Unit) {
 
 //val phases = arrayOf(
 //    Phase(5.0) {
-//        startRandomBombs(BombType.LargeTimed, 6.0)
+//        startRandomBombs(BombType.MegaTimed, 6.0)
 //    }
 //)
 
@@ -164,7 +164,7 @@ val phases = arrayOf(
 
 fun resetLevelController() {
     currentPhase = 0
-    runTimeElapsed = 0.0
+    RUN_TIME_ELAPSED = 0.0
     gameMessage = ""
     maxDepthThisRun = 0.0
     currentDepthThisRun = 0.0
@@ -174,7 +174,7 @@ var currentDepthThisRun = 0.0
 var maxDepthThisRun = 0.0
 
 fun tickLevelController() {
-    runTimeElapsed += DELTA
+    RUN_TIME_ELAPSED += DELTA
 
     currentDepthThisRun = max((LAND_SURFACE_Y - player.body.p.y), 0.0)
     maxDepthThisRun = max(currentDepthThisRun, maxDepthThisRun)
@@ -183,11 +183,11 @@ fun tickLevelController() {
     }
 
     bombDropData.forEach { (bombType, bombData) ->
-        if (runTimeElapsed > bombData.nextBombAt) {
+        if (RUN_TIME_ELAPSED > bombData.nextBombAt) {
             val minTime = bombData.delay / 2.0
             val maxTime = bombData.delay
             bombData.nextBombAt =
-                runTimeElapsed + minTime + (maxTime - minTime) * Random.nextDouble()
+                RUN_TIME_ELAPSED + minTime + (maxTime - minTime) * Random.nextDouble()
             spawnBomb(bombType)
         }
     }
@@ -195,7 +195,7 @@ fun tickLevelController() {
     var goalTime = 0.0
     phases.forEachIndexed { index, phase ->
         if (index == currentPhase) {
-            if (runTimeElapsed > goalTime) {
+            if (RUN_TIME_ELAPSED > goalTime) {
                 phase.callback()
                 currentPhase++
             }
@@ -225,7 +225,7 @@ data class BombData(var delay: Number, var nextBombAt: Number)
 val bombDropData = mutableMapOf<BombType, BombData>()
 
 fun startRandomBombs(type: BombType, delay: Number) {
-    bombDropData[type] = BombData(delay, runTimeElapsed)
+    bombDropData[type] = BombData(delay, RUN_TIME_ELAPSED)
 }
 
 fun stopAllBombs() {

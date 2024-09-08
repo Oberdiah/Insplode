@@ -3,7 +3,6 @@ package com.oberdiah
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.oberdiah.Utils.Colors
 import com.oberdiah.Utils.colorScheme
 import com.oberdiah.Utils.nextColorScheme
 import com.oberdiah.Utils.timerString
@@ -36,7 +35,7 @@ fun renderUI(r: Renderer) {
         r.color = Color.WHITE
         r.text(
             fontLarge,
-            GAME_SCREEN.title.toUpperCase(Locale.ROOT),
+            GAME_SCREEN.title.uppercase(Locale.ROOT),
             WIDTH / 2,
             HEIGHT * 3 / 4,
             Align.center
@@ -55,7 +54,7 @@ fun renderUI(r: Renderer) {
             Screen.Credits -> creditsUI(r)
         }
     } else {
-        var text = "${runTimeElapsed.format(1)}s"
+        var text = "${RUN_TIME_ELAPSED.format(1)}s"
         if (gameMessage != "" && ENABLED_GAME_MESSAGES) {
             text = gameMessage
         }
@@ -211,7 +210,7 @@ private fun endGameUI(r: Renderer) {
         fontSmallish,
         "Depth Reached: ${formatDepth(maxDepthThisRun)}",
         WIDTH / 2,
-        HEIGHT * (3 / 4 - 1 / 16),
+        HEIGHT * (3.0 / 4 - 1.0 / 16),
         Align.center
     )
 
