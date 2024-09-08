@@ -34,9 +34,15 @@ fun renderUI(r: Renderer) {
 
 
         r.color = Color.WHITE
-        r.text(fontLarge, GAME_SCREEN.title.toUpperCase(Locale.ROOT), WIDTH/2, HEIGHT*3/4, Align.center)
+        r.text(
+            fontLarge,
+            GAME_SCREEN.title.toUpperCase(Locale.ROOT),
+            WIDTH / 2,
+            HEIGHT * 3 / 4,
+            Align.center
+        )
 
-        startButtonsAt(HEIGHT/2)
+        startButtonsAt(HEIGHT / 2)
         when (GAME_SCREEN) {
             Screen.Paused -> pausedUI(r)
             Screen.Settings -> settingsUI(r)
@@ -53,8 +59,14 @@ fun renderUI(r: Renderer) {
         if (gameMessage != "" && ENABLED_GAME_MESSAGES) {
             text = gameMessage
         }
-        r.text(fontSmallish, text, WIDTH/2, HEIGHT*0.95, Align.center)
-        r.text(fontMedium, "Depth: ${formatDepth(currentDepthThisRun)}", WIDTH/2, HEIGHT * 0.9, Align.center)
+        r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center)
+        r.text(
+            fontMedium,
+            "Depth: ${formatDepth(currentDepthThisRun)}",
+            WIDTH / 2,
+            HEIGHT * 0.9,
+            Align.center
+        )
 
         jumpUIFadeOff *= 0.95
         if (RENDER_JUMP_BUTTON) {
@@ -64,7 +76,7 @@ fun renderUI(r: Renderer) {
                 r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.2))
             }
             r.rect(0, 0, WIDTH, HEIGHT * JUMP_FRACT)
-            r.text(fontLarge, "JUMP", WIDTH/2, HEIGHT * JUMP_FRACT/2, Align.center)
+            r.text(fontLarge, "JUMP", WIDTH / 2, HEIGHT * JUMP_FRACT / 2, Align.center)
         } else {
             r.color = Color.WHITE.withAlpha(jumpUIFadeOff)
             r.rect(0, 0, WIDTH, HEIGHT * JUMP_FRACT)
@@ -87,12 +99,30 @@ fun switchScreen(screen: Screen) {
 }
 
 private fun creditsUI(r: Renderer) {
-    r.text(fontMedium, "Game Design", WIDTH/2, HEIGHT/2, Align.center)
-    r.text(fontSmallish, "Richard Mullender", WIDTH/2, HEIGHT/2 - DIST_BETWEEN_WORDS, Align.center)
-    r.text(fontMedium, "Testing/QA", WIDTH/2, HEIGHT/2 - DIST_BETWEEN_WORDS*3, Align.center)
-    r.text(fontSmallish, "David Mullender", WIDTH/2, HEIGHT/2 - DIST_BETWEEN_WORDS*4, Align.center)
-    r.text(fontSmallish, "Peter Nisbet", WIDTH/2, HEIGHT/2 - DIST_BETWEEN_WORDS*5, Align.center)
-    uiCurrentHeight = HEIGHT/2 - DIST_BETWEEN_WORDS*7
+    r.text(fontMedium, "Game Design", WIDTH / 2, HEIGHT / 2, Align.center)
+    r.text(
+        fontSmallish,
+        "Richard Mullender",
+        WIDTH / 2,
+        HEIGHT / 2 - DIST_BETWEEN_WORDS,
+        Align.center
+    )
+    r.text(fontMedium, "Testing/QA", WIDTH / 2, HEIGHT / 2 - DIST_BETWEEN_WORDS * 3, Align.center)
+    r.text(
+        fontSmallish,
+        "David Mullender",
+        WIDTH / 2,
+        HEIGHT / 2 - DIST_BETWEEN_WORDS * 4,
+        Align.center
+    )
+    r.text(
+        fontSmallish,
+        "Peter Nisbet",
+        WIDTH / 2,
+        HEIGHT / 2 - DIST_BETWEEN_WORDS * 5,
+        Align.center
+    )
+    uiCurrentHeight = HEIGHT / 2 - DIST_BETWEEN_WORDS * 7
     button(r, "Back") {
         backAScreen()
     }
@@ -109,7 +139,7 @@ private fun customGameUI(r: Renderer) {
 }
 
 val SUBTITLE_HEIGHT
-    get() = HEIGHT*3/4.3
+    get() = HEIGHT * 3 / 4.3
 
 private fun settingsUI(r: Renderer) {
     toggleButton(r, "Render Jump Button", ::RENDER_JUMP_BUTTON)
@@ -150,7 +180,13 @@ private fun advancedSettingsUI(r: Renderer) {
 }
 
 private fun mainMenuUI(r: Renderer) {
-    r.text(fontSmallish, "High Score: ${formatDepth(HIGH_SCORE)}", WIDTH/2, SUBTITLE_HEIGHT, Align.center)
+    r.text(
+        fontSmallish,
+        "High Score: ${formatDepth(HIGH_SCORE)}",
+        WIDTH / 2,
+        SUBTITLE_HEIGHT,
+        Align.center
+    )
 
     button(r, "Start") {
         PAUSED = false
@@ -171,7 +207,13 @@ private fun mainMenuUI(r: Renderer) {
 }
 
 private fun endGameUI(r: Renderer) {
-    r.text(fontSmallish, "Depth Reached: ${formatDepth(maxDepthThisRun)}", WIDTH/2, HEIGHT * 3/4 - 250, Align.center)
+    r.text(
+        fontSmallish,
+        "Depth Reached: ${formatDepth(maxDepthThisRun)}",
+        WIDTH / 2,
+        HEIGHT * (3 / 4 - 1 / 16),
+        Align.center
+    )
 
     button(r, "Try again") {
         PAUSED = false
@@ -207,7 +249,7 @@ private fun pausedUI(r: Renderer) {
 
 
 val DIST_BETWEEN_WORDS = fontMedium.lineHeight * 1.25
-var uiCurrentHeight = HEIGHT/2
+var uiCurrentHeight = HEIGHT / 2
 
 private fun lineBreak() {
     uiCurrentHeight -= DIST_BETWEEN_WORDS
@@ -218,17 +260,30 @@ private fun startButtonsAt(v: Number) {
     uiCurrentHeight = v.d
 }
 
-fun toggleButton(r: Renderer, text: String, t: KMutableProperty0<Boolean>, enabled: Boolean = true) {
+fun toggleButton(
+    r: Renderer,
+    text: String,
+    t: KMutableProperty0<Boolean>,
+    enabled: Boolean = true
+) {
     settingButton(r, text, {
         val boxSize = DIST_BETWEEN_WORDS * 0.8
         r.color = Color.WHITE.withAlpha(0.3)
         val checkboxPoint = it
-        checkboxPoint.x -= boxSize/2
+        checkboxPoint.x -= boxSize / 2
         r.centeredRect(checkboxPoint, Size(boxSize, boxSize))
         if (t.get()) {
             r.color = Color.WHITE.withAlpha(0.85)
-            r.centeredRect(checkboxPoint + Point(boxSize * 0.1, 0), Size(boxSize * 0.6, boxSize * 0.1), PI/4)
-            r.centeredRect(checkboxPoint + Point(-boxSize * 0.15, -boxSize * 0.1), Size(boxSize * 0.3, boxSize * 0.1), -PI/4)
+            r.centeredRect(
+                checkboxPoint + Point(boxSize * 0.1, 0),
+                Size(boxSize * 0.6, boxSize * 0.1),
+                PI / 4
+            )
+            r.centeredRect(
+                checkboxPoint + Point(-boxSize * 0.15, -boxSize * 0.1),
+                Size(boxSize * 0.3, boxSize * 0.1),
+                -PI / 4
+            )
         }
     }, {
         t.set(!t.get())
@@ -239,7 +294,14 @@ fun button(r: Renderer, text: String, enabled: Boolean = true, callback: () -> U
     settingButton(r, text, {}, callback, Align.center, enabled)
 }
 
-fun settingButton(r: Renderer, text: String, renderOnRight: (Point) -> Unit, callback: () -> Unit, textAlign: Int = Align.left, enabled: Boolean = true) {
+fun settingButton(
+    r: Renderer,
+    text: String,
+    renderOnRight: (Point) -> Unit,
+    callback: () -> Unit,
+    textAlign: Int = Align.left,
+    enabled: Boolean = true
+) {
     r.color = Color.WHITE
     if (!enabled) {
         r.color = Color.WHITE.withAlpha(0.3)
@@ -248,16 +310,16 @@ fun settingButton(r: Renderer, text: String, renderOnRight: (Point) -> Unit, cal
     if (textAlign == Align.left) {
         r.text(fontMedium, text, TEXT_SIDE_OFFSET, uiCurrentHeight, textAlign)
     } else if (textAlign == Align.center) {
-        r.text(fontMedium, text, WIDTH/2, uiCurrentHeight, textAlign)
+        r.text(fontMedium, text, WIDTH / 2, uiCurrentHeight, textAlign)
     }
 
-    val buttonTop = uiCurrentHeight + DIST_BETWEEN_WORDS/2
-    val buttonBottom = uiCurrentHeight - DIST_BETWEEN_WORDS/2
+    val buttonTop = uiCurrentHeight + DIST_BETWEEN_WORDS / 2
+    val buttonBottom = uiCurrentHeight - DIST_BETWEEN_WORDS / 2
 
     r.rect(0, buttonBottom, WIDTH, 4)
     r.rect(0, buttonTop, WIDTH, 4)
 
-    renderOnRight( Point(WIDTH - TEXT_CHECKBOX_OFFSET_RIGHT, uiCurrentHeight))
+    renderOnRight(Point(WIDTH - TEXT_CHECKBOX_OFFSET_RIGHT, uiCurrentHeight))
 
     uiCurrentHeight -= DIST_BETWEEN_WORDS
 

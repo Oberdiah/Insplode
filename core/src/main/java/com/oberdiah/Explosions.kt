@@ -12,6 +12,8 @@ fun boom(point: Point, radius: Number, hurtsThePlayer: Boolean = true) {
 
     addScreenShake(radius.d.pow(0.5) * 0.5)
 
+    playExplosionSound(radius.d)
+
     for (dx in -simpleRadius..simpleRadius) {
         for (dy in -simpleRadius..simpleRadius) {
             tempPoint.x = point.x + dx * SIMPLE_SIZE

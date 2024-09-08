@@ -15,6 +15,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     private var airTime = 0.0
     private var inAir = true
 
+    /// We need these because sometimes on collide the velocity is already really small for some reason
+    private var tickVelocity = Point(0.0, 0.0)
+    private var lastTickVelocity = Point(0.0, 0.0)
+
     val numHealthDots = 3
     var health = 3
 
@@ -32,14 +36,16 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         if (yourFixture == jumpBox) {
             CAMERA_LOCKED = false
 
-            if (airTime > 0.3) {
+            if (airTime > 0.6) {
+                val vel = lastTickVelocity
+
                 spawnParticlesAtMyFeet(
-                    ferocity = body.velocity.len.d * 0.5,
-                    number = max(body.velocity.len.i * 2, 2)
+                    ferocity = vel.len.d * 0.25,
+                    number = max(vel.len.i * 2, 2)
                 )
-                if (body.velocity.len > 20) {
-                    addScreenShake(body.velocity.len.d * 0.03)
-                    boom(body.p, body.velocity.len.d * 0.05, hurtsThePlayer = false)
+                if (vel.len > 20) {
+                    addScreenShake(vel.len.d * 0.03)
+                    boom(body.p, vel.len.d * 0.05, hurtsThePlayer = false)
                 }
             }
 
@@ -115,6 +121,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun tick() {
         val vel = body.velocity
+        lastTickVelocity = tickVelocity.cpy
+        tickVelocity = vel.cpy
 
         if (inAir) {
             airTime += DELTA

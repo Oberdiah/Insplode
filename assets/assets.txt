@@ -1,0 +1,21 @@
+Image.png
+Lato-Medium.ttf
+Sounds/trim_orange hit hard 1.wav
+Sounds/trim_orange hit hard 2.wav
+Sounds/trim_orange hit hard 3.wav
+Sounds/trim_orange hit hard 4.wav
+Sounds/trim_orange hit hard 5.wav
+Sounds/trim_orange hit hard 6.wav
+Sounds/trim_orange hit hard 7.wav
+Sounds/trim_orange hit hard 8.wav
+Sounds/trim_orange hit hard 9.wav
+Sounds/trim_orange hit soft 1.wav
+Sounds/trim_orange hit soft 10.wav
+Sounds/trim_orange hit soft 2.wav
+Sounds/trim_orange hit soft 3.wav
+Sounds/trim_orange hit soft 4.wav
+Sounds/trim_orange hit soft 5.wav
+Sounds/trim_orange hit soft 6.wav
+Sounds/trim_orange hit soft 7.wav
+Sounds/trim_orange hit soft 8.wav
+Sounds/trim_orange hit soft 9.wav

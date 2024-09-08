@@ -33,6 +33,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     override fun hitByExplosion() {
         explode()
     }
+
     open fun explode() {
         destroy()
     }
@@ -51,7 +52,8 @@ enum class BombType(val power: Number, val renderRadius: Number, val color: Colo
     ImpactBomb(1.0, 0.3, colorScheme.bombPrimary),
 }
 
-class LineBomb(startingPoint: Point, val totalTime: Number = 5.0): Bomb(startingPoint, BombType.LineBomb) {
+class LineBomb(startingPoint: Point, val totalTime: Number = 5.0) :
+    Bomb(startingPoint, BombType.LineBomb) {
     private val cornerSize = size / sqrt(2)
     var timeLeft = totalTime
 
@@ -59,10 +61,10 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0): Bomb(starting
         rectShape(size) {
             body.addFixture(bombFixtureDef(it))
         }
-        rectShape(cornerSize, Point(PI/2) * radius, PI/4) {
+        rectShape(cornerSize, Point(PI / 2) * radius, PI / 4) {
             body.addFixture(bombFixtureDef(it))
         }
-        rectShape(cornerSize, Point(-PI/2) * radius, -PI/4) {
+        rectShape(cornerSize, Point(-PI / 2) * radius, -PI / 4) {
             body.addFixture(bombFixtureDef(it))
         }
     }
@@ -70,10 +72,10 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0): Bomb(starting
     var lineLength = 10
     val canBlow: Boolean
         get() {
-            val angle = (body.angle % (PI*2) + PI*2) % (PI*2)
-            val down = PI/2
-            val up = 3 * PI/2
-            val range = PI/4
+            val angle = (body.angle % (PI * 2) + PI * 2) % (PI * 2)
+            val down = PI / 2
+            val up = 3 * PI / 2
+            val range = PI / 4
             if (angle > down - range && angle < down + range) {
                 return false
             } else if (angle > up - range && angle < up + range) {
@@ -94,9 +96,13 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0): Bomb(starting
 
     override fun render(r: Renderer) {
         r.color = Color.RED.withAlpha(0.5)
-        if (canBlow && timeLeft < totalTime/4) {
-            val length = lineLength * (1-timeLeft/(totalTime/4))
-            r.line(body.p + Point(body.angle - PI/2) * length, body.p - Point(body.angle - PI/2) * length, 0.05)
+        if (canBlow && timeLeft < totalTime / 4) {
+            val length = lineLength * (1 - timeLeft / (totalTime / 4))
+            r.line(
+                body.p + Point(body.angle - PI / 2) * length,
+                body.p - Point(body.angle - PI / 2) * length,
+                0.05
+            )
         }
 
         if (canBlow) {
@@ -105,10 +111,18 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0): Bomb(starting
             r.color = Color.GRAY
         }
         r.centeredRect(body.p, size, body.angle)
-        r.centeredRect(body.p + Point(body.angle - PI/2) * radius, cornerSize, body.angle + PI/4)
-        r.centeredRect(body.p - Point(body.angle - PI/2) * radius, cornerSize, body.angle + PI/4)
+        r.centeredRect(
+            body.p + Point(body.angle - PI / 2) * radius,
+            cornerSize,
+            body.angle + PI / 4
+        )
+        r.centeredRect(
+            body.p - Point(body.angle - PI / 2) * radius,
+            cornerSize,
+            body.angle + PI / 4
+        )
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius, timeLeft/totalTime )
+        r.arcFrom0(body.p, radius, timeLeft / totalTime)
     }
 
     override fun hitByExplosion() {
@@ -119,7 +133,7 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0): Bomb(starting
         super.explode()
         val spacing = 0.5
         val distance = floor(lineLength / spacing)
-        val motion = Point(body.angle - PI/2) * 0.5
+        val motion = Point(body.angle - PI / 2) * 0.5
         val boomLoc = body.p - motion * distance
         for (i in -distance..distance) {
             boomLoc.x += motion.x
@@ -131,7 +145,8 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0): Bomb(starting
 
 // Tunnel out of dirt
 // Small, medium and large circles
-class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number = 6.0): Bomb(startingPoint, bombType) {
+class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number = 6.0) :
+    Bomb(startingPoint, bombType) {
     var timeLeft = totalTime
 
     init {
@@ -156,7 +171,7 @@ class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number 
         r.color = color
         r.circle(body.p, radius)
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius * 0.8, timeLeft/totalTime )
+        r.arcFrom0(body.p, radius * 0.8, timeLeft / totalTime)
     }
 
     override fun explode() {
@@ -170,7 +185,8 @@ class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number 
 // Question mark bomb?
 // Big black hole?
 
-class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0): Bomb(startingPoint, BombType.ClusterBomb) {
+class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0) :
+    Bomb(startingPoint, BombType.ClusterBomb) {
     var timeLeft = totalTime
 
     init {
@@ -195,7 +211,7 @@ class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0): Bomb(start
         r.color = color
         r.ngon(body.p, radius, body.angle, 6)
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius * 0.8, timeLeft/totalTime )
+        r.arcFrom0(body.p, radius * 0.8, timeLeft / totalTime)
         r.color = color.cpy().mul(0.5f)
         r.ngonLine(body.p, radius - 0.025, body.angle, 0.05, 6)
     }
@@ -211,7 +227,8 @@ class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0): Bomb(start
     }
 }
 
-class ClusterParticle(startingPoint: Point, val totalTime: Number): Bomb(startingPoint, BombType.ClusterParticle) {
+class ClusterParticle(startingPoint: Point, val totalTime: Number) :
+    Bomb(startingPoint, BombType.ClusterParticle) {
     init {
         circleShape(radius) {
             val def = bombFixtureDef(it)
@@ -242,19 +259,20 @@ class ClusterParticle(startingPoint: Point, val totalTime: Number): Bomb(startin
     }
 }
 
-class StickyBomb(startingPoint: Point, val totalTime: Number = 6.0): Bomb(startingPoint, BombType.StickyBomb) {
+class StickyBomb(startingPoint: Point, val totalTime: Number = 6.0) :
+    Bomb(startingPoint, BombType.StickyBomb) {
     val trapezoidHeight = 1.0
     private val trapezoid = listOf(
-            Point(-radius, 0),
-            Point(radius, 0),
-            Point(radius*0.4, -radius * trapezoidHeight),
-            Point(-radius*0.4, -radius * trapezoidHeight)
+        Point(-radius, 0),
+        Point(radius, 0),
+        Point(radius * 0.4, -radius * trapezoidHeight),
+        Point(-radius * 0.4, -radius * trapezoidHeight)
     )
     private val trapezoid2 = listOf(
-            Point(-radius, 0),
-            Point(radius, 0),
-            Point(radius*0.4, -radius * trapezoidHeight),
-            Point(-radius*0.4, -radius * trapezoidHeight)
+        Point(-radius, 0),
+        Point(radius, 0),
+        Point(radius * 0.4, -radius * trapezoidHeight),
+        Point(-radius * 0.4, -radius * trapezoidHeight)
     )
     private var typeToBe = BodyDef.BodyType.DynamicBody
     private val tilesTouching = mutableSetOf<Tile>()
@@ -339,7 +357,7 @@ class StickyBomb(startingPoint: Point, val totalTime: Number = 6.0): Bomb(starti
         r.poly(trapezoid, body.p, body.angle)
 
         r.color = Color.WHITE.withAlpha(0.5)
-        r.arcFrom0(body.p - Point(0, radius/2), radius/2, timeLeft/totalTime )
+        r.arcFrom0(body.p - Point(0, radius / 2), radius / 2, timeLeft / totalTime)
 
 //        r.color = Color.WHITE.withAlpha(0.5)
 //        val alpha = (timeLeft / totalTime)
@@ -357,12 +375,12 @@ class StickyBomb(startingPoint: Point, val totalTime: Number = 6.0): Bomb(starti
 // Bounce three times on head to shrink.
 // Inverted triangles falling slowly
 // Line/indicator
-class ImpactBomb(startingPoint: Point): Bomb(startingPoint, BombType.ImpactBomb) {
+class ImpactBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ImpactBomb) {
     private val trapezoidHeight = 1.0
     private val triangle = listOf(
-            Point(-radius, 0),
-            Point(radius, 0),
-            Point(0, -radius * trapezoidHeight),
+        Point(-radius, 0),
+        Point(radius, 0),
+        Point(0, -radius * trapezoidHeight),
     )
 
     init {
@@ -373,7 +391,7 @@ class ImpactBomb(startingPoint: Point): Bomb(startingPoint, BombType.ImpactBomb)
         val fixtureDef = bombFixtureDef(rect)
         body.addFixture(fixtureDef)
         body.linearDamping = 1
-        body.gravityScale = 0.5
+        body.gravityScale = 0.2
         rect.dispose()
     }
 
@@ -384,6 +402,7 @@ class ImpactBomb(startingPoint: Point): Bomb(startingPoint, BombType.ImpactBomb)
 
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
+
         if (!destroyed) {
             explode()
         }
@@ -395,11 +414,13 @@ class ImpactBomb(startingPoint: Point): Bomb(startingPoint, BombType.ImpactBomb)
     }
 }
 
-class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0): Bomb(startingPoint, BombType.SpringBomb) {
+class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0) :
+    Bomb(startingPoint, BombType.SpringBomb) {
     var timeLeft = totalTime
     val springFrequency = 2.0
     var timeTillSpring = springFrequency
     var currentSpringDelay = springFrequency
+
     init {
         rectShape(size) {
             body.addFixture(bombFixtureDef(it))
@@ -419,7 +440,7 @@ class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0): Bomb(start
             explode()
         }
         if (timeTillSpring <= 0.0) {
-            timeTillSpring += springFrequency * Random.nextDouble() *0.5 + springFrequency *0.5
+            timeTillSpring += springFrequency * Random.nextDouble() * 0.5 + springFrequency * 0.5
             currentSpringDelay = timeTillSpring
             val velocity = Point(Random.nextFloat() - 0.5, 1.5f)
             velocity.len = 8.0 * body.mass
@@ -433,10 +454,10 @@ class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0): Bomb(start
 
     override fun render(r: Renderer) {
         val bodyPos = body.p
-        val overallFract = (timeLeft/totalTime)
-        var springFract = (timeTillSpring/currentSpringDelay)
+        val overallFract = (timeLeft / totalTime)
+        var springFract = (timeTillSpring / currentSpringDelay)
         if (timeTillSpring > timeLeft) {
-            springFract = (timeLeft/currentSpringDelay).d
+            springFract = (timeLeft / currentSpringDelay).d
         }
 
         r.color = color
@@ -446,6 +467,6 @@ class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0): Bomb(start
         r.color = color
         r.circle(bodyPos, radius * 0.7)
         r.color = Color.WHITE.withAlpha(0.5)
-        r.arcFrom0(bodyPos, radius*0.7, overallFract)
+        r.arcFrom0(bodyPos, radius * 0.7, overallFract)
     }
 }

@@ -28,9 +28,6 @@ class Phase(val d: Number, val callback: () -> Unit) {
 //    }
 //)
 
-// Disable phases if they get annoying
-val disabledPhases = arrayOf(BombType.StickyBomb, BombType.ImpactBomb)
-
 val phases = arrayOf(
     Phase(4.0) {
         // Drop pod from above.
@@ -233,10 +230,6 @@ fun tickLevelController() {
 
     var goalTime = 0.0
     phases.forEachIndexed { index, phase ->
-        // Just skip this phase
-        if (disabledPhases.contains(phase.bombType)) {
-            return@forEachIndexed
-        }
         if (index == currentPhase) {
             if (runTimeElapsed > goalTime) {
                 phase.callback()
