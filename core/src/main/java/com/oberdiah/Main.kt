@@ -43,7 +43,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         loadFonts()
         loadSounds()
 
-//        createWall(Rect(Point(0, -1), Size(10, 1)))
         leftWall = createWall(Rect(Point(0, 0), Size(1, SQUARES_TALL * 3)))
         rightWall = createWall(Rect(Point(10, 0), Size(1, SQUARES_TALL * 3)))
 

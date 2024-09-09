@@ -1,5 +1,7 @@
 package com.oberdiah
 
+import com.badlogic.gdx.Application
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import games.rednblack.miniaudio.MASound
 import games.rednblack.miniaudio.MiniAudio
@@ -35,37 +37,48 @@ fun loadSounds() {
     assetManager = AssetManager()
     assetManager.setLoader(
         MASound::class.java,
-        MASoundLoader(miniAudio, assetManager.getFileHandleResolver())
+        MASoundLoader(miniAudio, assetManager.fileHandleResolver)
     )
 
-    for (file in listFolder("Sounds/")) {
-        assetManager.load(file.path(), MASound::class.java)
+    val allPaths = listFolder("Sounds/").map {
+        var path = it.path()
+
+        if (Gdx.app.type == Application.ApplicationType.Desktop) {
+            path = "C:\\Users\\richa\\Documents\\MyCodeProjects\\WeeklyGame2\\assets\\$path"
+        }
+
+        Pair(path, it.nameWithoutExtension())
     }
+
+    allPaths.forEach { assetManager.load(it.first, MASound::class.java) }
 
     assetManager.finishLoading()
 
     val numSoundsInPoolPerAsset = 25
 
-    listFolder("Sounds/").forEach {
-        val path = it.path()
+    allPaths.forEach {
+        val path = it.first
         val sounds = (0 until numSoundsInPoolPerAsset).map {
             assetManager.get(
                 path,
                 MASound::class.java
             )
         }
-        SOUND_POOL += it.nameWithoutExtension() to sounds
+        SOUND_POOL += it.second to sounds
     }
 }
 
 fun disposeSounds() {
-    // Dispose all sounds
-    SOUND_POOL.forEach { (_, sounds) ->
-        sounds.forEach { it.dispose() }
-    }
+    // I trust Windows to just do the cleanup for us - I'd like to be more responsible
+    // on Android
+    if (Gdx.app.type != Application.ApplicationType.Desktop) {
+        SOUND_POOL.forEach { (_, sounds) ->
+            sounds.forEach { it.dispose() }
+        }
 
-    assetManager.dispose()
-    miniAudio.dispose();
+        assetManager.dispose()
+        miniAudio.dispose();
+    }
 }
 
 fun playSound(

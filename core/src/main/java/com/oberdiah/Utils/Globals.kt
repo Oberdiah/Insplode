@@ -4,8 +4,11 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.Utils.camera
 
-val SIMPLES_RESOLUTION = 5
-val SIMPLES_EXTRA_STORED = 1.3
+/// If this is true we add all the debug ui stuff, and also boot straight into the game.
+const val IS_DEBUG_ENABLED = true
+
+const val SIMPLES_RESOLUTION = 5
+const val SIMPLES_EXTRA_STORED = 1.3
 // Can make really large if you're having issues with negatives.
 // But then again, other rendering gets weird enough we probably shouldn't.
 
@@ -20,7 +23,6 @@ var JUMP_FRACT = 0.15
 var LEFT_BUTTON_FRACT = 0.45
 var RIGHT_BUTTON_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
-var ENABLED_GAME_MESSAGES = true
 
 var RENDER_JUMP_BUTTON = true
 var FOLLOW_FINGER = false
@@ -158,7 +160,7 @@ var DEBUG_STRING = ""
 
 const val TIME_STEP = 1 / 120.0f
 var DELTA = 0.016
-var PAUSED = true
+var PAUSED = !IS_DEBUG_ENABLED
 
 // Bottom left of screen.
 private val cameraPos = Point()

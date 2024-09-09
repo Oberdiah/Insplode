@@ -55,7 +55,7 @@ fun renderUI(r: Renderer) {
         }
     } else {
         var text = "${RUN_TIME_ELAPSED.format(1)}s"
-        if (gameMessage != "" && ENABLED_GAME_MESSAGES) {
+        if (gameMessage != "") {
             text = gameMessage
         }
         r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center)
@@ -143,7 +143,6 @@ val SUBTITLE_HEIGHT
 private fun settingsUI(r: Renderer) {
     toggleButton(r, "Render Jump Button", ::RENDER_JUMP_BUTTON)
     toggleButton(r, "Particles", ::ENABLED_PARTICLES)
-    toggleButton(r, "Next Wave Messages", ::ENABLED_GAME_MESSAGES)
 
     settingButton(r, "Color Scheme", {
         r.text(fontMedium, colorScheme.name, it, Align.right)
@@ -159,8 +158,10 @@ private fun settingsUI(r: Renderer) {
     button(r, "Controls") {
         switchScreen(Screen.Controls)
     }
-    button(r, "Advanced Settings") {
-        switchScreen(Screen.AdvancedSettings)
+    if (IS_DEBUG_ENABLED) {
+        button(r, "Advanced Settings") {
+            switchScreen(Screen.AdvancedSettings)
+        }
     }
     button(r, "Back") {
         backAScreen()
