@@ -14,7 +14,7 @@ import kotlin.random.Random
 val player = Player(Point(5, PLAYER_SPAWN_Y))
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
-    val size = Size(0.4, 0.7)
+    val size = Size(0.4, 0.7) * GLOBAL_SCALE
     lateinit var jumpBox: Fixture
     var canJump = false
     private var airTime = 0.0
@@ -26,6 +26,25 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     val numHealthDots = 3
     var health = 3
+
+    init {
+        body.isFixedRotation = true
+
+        circleShape(size.w / 2) {
+            addFixture(it)
+        }
+        circleShape(size.w / 2, Point(0, 0.35) * GLOBAL_SCALE) {
+            addFixture(it)
+        }
+
+        rectShape(size / Point(1, 2), Point(0, 0.2) * GLOBAL_SCALE) {
+            addFixture(it)
+        }
+
+        rectShape(size / Point(1.25, 4), Point(0f, -0.2f) * GLOBAL_SCALE) {
+            jumpBox = addFixture(it, true)
+        }
+    }
 
     override fun hitByExplosion() {
         health--
@@ -73,25 +92,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         health = numHealthDots
     }
 
-    init {
-        body.isFixedRotation = true
-
-        circleShape(size.w / 2) {
-            addFixture(it)
-        }
-        circleShape(size.w / 2, Point(0, 0.35)) {
-            addFixture(it)
-        }
-
-        rectShape(size / Point(1, 2), Point(0, 0.2)) {
-            addFixture(it)
-        }
-
-        rectShape(size / Point(1.25, 4), Point(0f, -0.2f)) {
-            jumpBox = addFixture(it, true)
-        }
-    }
-
     private fun addFixture(shape: Shape, isSensor: Boolean = false): Fixture {
         val fixtureDef = FixtureDef()
         fixtureDef.shape = shape
@@ -111,7 +111,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
         r.rect(body.p.x - size.w / 2, body.p.y, size.w, size.h / 2)
         r.circle(body.p, size.w / 2)
-        r.circle(body.p.x, body.p.y + 0.35, size.w / 2)
+        r.circle(body.p.x, body.p.y + 0.35 * GLOBAL_SCALE, size.w / 2)
 
 
         for (i in 0 until numHealthDots) {
@@ -120,7 +120,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             } else {
                 r.color = Color.DARK_GRAY
             }
-            r.circle(body.p.x, body.p.y + (0.35 / (numHealthDots - 1)) * i, size.w / 5)
+            r.circle(
+                body.p.x,
+                body.p.y + (0.35 * GLOBAL_SCALE / (numHealthDots - 1)) * i,
+                size.w / 5
+            )
         }
     }
 
@@ -146,7 +150,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             attemptJump()
         }
 
-        val acceleration = 2.5
+        val acceleration = 2.5 * GLOBAL_SCALE
         var desiredXVel = 0.0
         var goLeft = false
         var goRight = false
@@ -177,9 +181,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         if (goLeft && goRight) {
             // Do nothing
         } else if (goLeft) {
-            desiredXVel = max(-5, vel.x - acceleration)
+            desiredXVel = max(-5 * GLOBAL_SCALE, vel.x - acceleration)
         } else if (goRight) {
-            desiredXVel = min(5, vel.x + acceleration)
+            desiredXVel = min(5 * GLOBAL_SCALE, vel.x + acceleration)
         }
 
         val velChange = desiredXVel - vel.x
@@ -222,7 +226,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         val desiredUpVel = 9.0f
         val velChange = desiredUpVel - body.velocity.y
         val impulse = body.mass * velChange
-        body.applyImpulse(Point(0f, impulse))
+        body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
 
         spawnParticlesAtMyFeet(number = 2)
 

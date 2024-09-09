@@ -4,9 +4,17 @@ import com.badlogic.gdx.Gdx
 import com.oberdiah.Utils.calculateInputGlobals
 import com.oberdiah.Utils.camera
 
-/// If this is true we add all the debug ui stuff, and also boot straight into the game.
+/** If this is true we add all the debug ui stuff, and also boot straight into the game. */
 const val IS_DEBUG_ENABLED = true
 
+/**
+ * A multiplier on the scale of everything non-map related - Player size, bomb size, explosion size, etc.
+ *
+ * 2.0 is zoomed in, 0.5 is zoomed out.
+ */
+const val GLOBAL_SCALE = 1.0
+
+/** The number of 'simples' per unit on the grid. */
 const val SIMPLES_RESOLUTION = 5
 const val SIMPLES_EXTRA_STORED = 1.3
 // Can make really large if you're having issues with negatives.
@@ -74,9 +82,9 @@ fun addScreenShake(amount: Number) {
 
 var DEPTH_UNITS = " blocks"
 
-val PLAYER_PHYSICS_MASK: Short = 0x2
-val BOMB_PHYSICS_MASK: Short = 0x4
-val PICKUP_PHYSICS_MASK: Short = 0x8
+const val PLAYER_PHYSICS_MASK: Short = 0x2
+const val BOMB_PHYSICS_MASK: Short = 0x4
+const val PICKUP_PHYSICS_MASK: Short = 0x8
 
 val TEXT_SIDE_OFFSET
     get() = 0.05 * WIDTH
@@ -108,14 +116,14 @@ var APP_FRAME = 0
 var APP_TIME = 0.0
 var WORLD_WIDTH = 10
 
-val SAFE_SPAWN_HEIGHT
+val SAFE_BOMB_SPAWN_HEIGHT
     // Add 5 to be super duper safe.
-    get() = CAMERA_POS_Y + SQUARES_TALL * SIMPLES_EXTRA_STORED + 5
+    get() = JUST_UP_OFF_SCREEN * SIMPLES_EXTRA_STORED + 5
 
 val JUST_UP_OFF_SCREEN
     get() = CAMERA_POS_Y + SQUARES_TALL
 
-val GRAVITY = 20.0
+const val GRAVITY = 20.0 * GLOBAL_SCALE
 val UI_MAX_FADE_IN = 0.9
 val PLAYER_SPAWN_Y
     get() = SQUARES_TALL * PLAYER_Y_FRACT + 30

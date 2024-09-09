@@ -42,6 +42,7 @@ val getAllPhysicsObjects = object : Iterable<PhysicsObject> {
                 while (j < allDynamicPhysicsObjects.size && allDynamicPhysicsObjects[j].destroyed) j++
                 return j != allDynamicPhysicsObjects.size
             }
+
             override fun next(): PhysicsObject {
                 while (i < allDynamicPhysicsObjects.size && allDynamicPhysicsObjects[i].destroyed) i++
                 return allDynamicPhysicsObjects[i++]
@@ -53,7 +54,10 @@ val getAllPhysicsObjects = object : Iterable<PhysicsObject> {
 val deadPhysicsObjects = mutableSetOf<PhysicsObject>()
 val toAddPhysicsObjects = mutableSetOf<PhysicsObject>()
 
-abstract class PhysicsObject(val startingPoint: Point, val startingVelocity: Velocity = Velocity()) {
+abstract class PhysicsObject(
+    val startingPoint: Point,
+    val startingVelocity: Velocity = Velocity()
+) {
     var body: PhysBody
 //    private val _p = Point()
 //    val p: Point
@@ -120,8 +124,6 @@ abstract class PhysicsObject(val startingPoint: Point, val startingVelocity: Vel
 }
 
 class Pickup(startingPoint: Point) : PhysicsObject(startingPoint) {
-    var size = Size(0.3f, 0.3f)
-
     init {
         circleShape(0.15) {
             val fixtureDef = FixtureDef()

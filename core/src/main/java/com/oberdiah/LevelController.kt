@@ -205,7 +205,7 @@ fun tickLevelController() {
 }
 
 fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble()) {
-    val pos = Point((fraction * 0.9 + 0.05) * SQUARES_WIDE, SAFE_SPAWN_HEIGHT)
+    val pos = Point((fraction * 0.9 + 0.05) * SQUARES_WIDE, SAFE_BOMB_SPAWN_HEIGHT)
     when (type) {
         BombType.SmallTimed -> TimedBomb(pos, type)
         BombType.MediumTimed -> TimedBomb(pos, type)

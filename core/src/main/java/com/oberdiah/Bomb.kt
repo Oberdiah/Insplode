@@ -20,7 +20,7 @@ private fun bombFixtureDef(shape: Shape): FixtureDef {
 
 abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObject(startingPoint) {
     val radius
-        get() = bombType.renderRadius
+        get() = bombType.renderRadius * GLOBAL_SCALE
 
     val color
         get() = bombType.color
@@ -78,7 +78,7 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0) :
         }
     }
 
-    var lineLength = 10
+    var lineLength = 10 * GLOBAL_SCALE
     val canBlow: Boolean
         get() {
             val angle = (body.angle % (PI * 2) + PI * 2) % (PI * 2)
@@ -141,13 +141,13 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0) :
     override fun explode() {
         super.explode()
         val spacing = 0.5
-        val distance = floor(lineLength / spacing)
+        val numExplosionsInEachDir = floor(lineLength / spacing)
         val motion = Point(body.angle - PI / 2) * 0.5
-        val boomLoc = body.p - motion * distance
-        for (i in -distance..distance) {
+        val boomLoc = body.p - motion * numExplosionsInEachDir
+        for (i in -numExplosionsInEachDir..numExplosionsInEachDir) {
             boomLoc.x += motion.x
             boomLoc.y += motion.y
-            boom(boomLoc, power)
+            boom(boomLoc, power / GLOBAL_SCALE)
         }
     }
 }
@@ -453,7 +453,7 @@ class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0) :
             currentSpringDelay = timeTillSpring
             val velocity = Point(Random.nextFloat() - 0.5, 1.5f)
             velocity.len = 8.0 * body.mass
-            body.applyImpulse(velocity)
+            body.applyImpulse(velocity * GLOBAL_SCALE)
         }
     }
 

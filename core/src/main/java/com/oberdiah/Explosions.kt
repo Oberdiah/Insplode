@@ -4,7 +4,9 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 
-fun boom(point: Point, radius: Number, hurtsThePlayer: Boolean = true) {
+fun boom(point: Point, radiusIn: Number, hurtsThePlayer: Boolean = true) {
+    val radius = radiusIn * GLOBAL_SCALE
+
     val simpleRadius = (radius * SIMPLES_RESOLUTION).i
     val tempPoint = Point()
 
