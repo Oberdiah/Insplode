@@ -1,7 +1,6 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.utils.Align
 import com.oberdiah.Utils.calculateInputGlobals
 import com.oberdiah.Utils.camera
 
@@ -20,9 +19,9 @@ var DEBUG_MOVEMENT_MODE = false
 var LEFT_RIGHT_CONTROL = ControlScheme.LeftRightTap
 var JUMP_CONTROL = ControlScheme.JumpButton
 var ABILITY_CONTROL = ControlScheme.AbilityButton
-var JUMP_FRACT = 0.15
-var LEFT_BUTTON_FRACT = 0.45
-var RIGHT_BUTTON_FRACT = 0.55
+var JUMP_UI_FRACT = 0.15
+var LEFT_BUTTON_UI_FRACT = 0.45
+var RIGHT_BUTTON_UI_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
 
 var RENDER_JUMP_BUTTON = true
@@ -74,8 +73,6 @@ fun addScreenShake(amount: Number) {
 }
 
 var DEPTH_UNITS = " blocks"
-
-var DEBUG_VERSION = true
 
 val PLAYER_PHYSICS_MASK: Short = 0x2
 val BOMB_PHYSICS_MASK: Short = 0x4

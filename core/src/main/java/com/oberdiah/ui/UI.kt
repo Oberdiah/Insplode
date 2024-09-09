@@ -5,14 +5,13 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.DEBUG_MOVEMENT_MODE
 import com.oberdiah.DEBUG_STRING
-import com.oberdiah.DEBUG_VERSION
 import com.oberdiah.DEPTH_UNITS
 import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
 import com.oberdiah.ENABLED_PARTICLES
 import com.oberdiah.HEIGHT
 import com.oberdiah.HIGH_SCORE
 import com.oberdiah.IS_DEBUG_ENABLED
-import com.oberdiah.JUMP_FRACT
+import com.oberdiah.JUMP_UI_FRACT
 import com.oberdiah.PAUSED
 import com.oberdiah.Point
 import com.oberdiah.RENDER_JUMP_BUTTON
@@ -113,11 +112,11 @@ fun renderUI(r: Renderer) {
             } else {
                 r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.2))
             }
-            r.rect(0, 0, WIDTH, HEIGHT * JUMP_FRACT)
-            r.text(fontLarge, "JUMP", WIDTH / 2, HEIGHT * JUMP_FRACT / 2, Align.center)
+            r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
+            r.text(fontLarge, "JUMP", WIDTH / 2, HEIGHT * JUMP_UI_FRACT / 2, Align.center)
         } else {
             r.color = Color.WHITE.withAlpha(jumpUIFadeOff)
-            r.rect(0, 0, WIDTH, HEIGHT * JUMP_FRACT)
+            r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
         }
 
         renderPauseButton(r)
@@ -209,7 +208,7 @@ private fun settingsUI(r: Renderer) {
 
 private fun advancedSettingsUI(r: Renderer) {
     toggleButton(r, "Profiling Data", ::SHOW_FRAMERATE_DATA)
-    if (DEBUG_VERSION) {
+    if (IS_DEBUG_ENABLED) {
         toggleButton(r, "Physics Render", ::DO_PHYSICS_DEBUG_RENDER)
         toggleButton(r, "Fly Mode", ::DEBUG_MOVEMENT_MODE)
     }

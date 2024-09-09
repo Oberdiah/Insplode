@@ -60,12 +60,10 @@ fun renderPauseButton(r: Renderer) {
             switchScreen(Screen.Paused)
         }
     }
-    if (!IS_DEBUG_ENABLED) {
-        // Escape key pauses the game.
-        if (isKeyJustPressed(Keys.ESCAPE)) {
-            PAUSED = true
-            switchScreen(Screen.Paused)
-        }
+    // Escape key pauses the game.
+    if (isKeyJustPressed(Keys.ESCAPE)) {
+        PAUSED = true
+        switchScreen(Screen.Paused)
     }
 
     val p = PAUSE_RECT.p

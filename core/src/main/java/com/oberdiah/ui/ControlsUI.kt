@@ -6,10 +6,10 @@ import com.oberdiah.ControlScheme
 import com.oberdiah.FOLLOW_FINGER
 import com.oberdiah.HEIGHT
 import com.oberdiah.JUMP_CONTROL
-import com.oberdiah.JUMP_FRACT
-import com.oberdiah.LEFT_BUTTON_FRACT
+import com.oberdiah.JUMP_UI_FRACT
+import com.oberdiah.LEFT_BUTTON_UI_FRACT
 import com.oberdiah.LEFT_RIGHT_CONTROL
-import com.oberdiah.RIGHT_BUTTON_FRACT
+import com.oberdiah.RIGHT_BUTTON_UI_FRACT
 import com.oberdiah.Renderer
 import com.oberdiah.Screen
 import com.oberdiah.Utils.TOUCHES_DOWN
@@ -41,30 +41,30 @@ fun buttonPositionUI(r: Renderer) {
     TOUCHES_DOWN.forEach {
         when (currentlyChangingControl) {
             ControlButton.Left -> {
-                LEFT_BUTTON_FRACT = it.x / WIDTH
-                RIGHT_BUTTON_FRACT = max(LEFT_BUTTON_FRACT, RIGHT_BUTTON_FRACT)
+                LEFT_BUTTON_UI_FRACT = it.x / WIDTH
+                RIGHT_BUTTON_UI_FRACT = max(LEFT_BUTTON_UI_FRACT, RIGHT_BUTTON_UI_FRACT)
             }
 
             ControlButton.Right -> {
-                RIGHT_BUTTON_FRACT = it.x / WIDTH
-                LEFT_BUTTON_FRACT = min(LEFT_BUTTON_FRACT, RIGHT_BUTTON_FRACT)
+                RIGHT_BUTTON_UI_FRACT = it.x / WIDTH
+                LEFT_BUTTON_UI_FRACT = min(LEFT_BUTTON_UI_FRACT, RIGHT_BUTTON_UI_FRACT)
             }
 
-            ControlButton.Jump -> JUMP_FRACT = it.y / HEIGHT
+            ControlButton.Jump -> JUMP_UI_FRACT = it.y / HEIGHT
         }
     }
 
     r.color = Color.WHITE.withAlpha(0.5)
     if (JUMP_CONTROL == ControlScheme.JumpButton) {
-        r.rect(0, JUMP_FRACT * HEIGHT, WIDTH, 5)
+        r.rect(0, JUMP_UI_FRACT * HEIGHT, WIDTH, 5)
     }
     if (LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) {
         var y = 0.0
         if (JUMP_CONTROL == ControlScheme.JumpButton) {
-            y = max(y, JUMP_FRACT * HEIGHT)
+            y = max(y, JUMP_UI_FRACT * HEIGHT)
         }
-        r.rect(WIDTH * LEFT_BUTTON_FRACT, y, 5, HEIGHT)
-        r.rect(WIDTH * RIGHT_BUTTON_FRACT, y, 5, HEIGHT)
+        r.rect(WIDTH * LEFT_BUTTON_UI_FRACT, y, 5, HEIGHT)
+        r.rect(WIDTH * RIGHT_BUTTON_UI_FRACT, y, 5, HEIGHT)
     }
 
     TOUCHES_WENT_UP.forEach { _ ->

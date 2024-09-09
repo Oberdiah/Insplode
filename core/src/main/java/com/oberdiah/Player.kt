@@ -136,7 +136,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         // detect jumps
         TOUCHES_WENT_DOWN.forEach {
-            if (it.y <= HEIGHT * JUMP_FRACT) {
+            if (it.y <= HEIGHT * JUMP_UI_FRACT) {
                 attemptJump()
             }
         }
@@ -151,17 +151,17 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         var goLeft = false
         var goRight = false
         TOUCHES_DOWN.forEach {
-            if (it.y > HEIGHT * JUMP_FRACT) {
+            if (it.y > HEIGHT * JUMP_UI_FRACT) {
                 goLeft = goLeft || if (FOLLOW_FINGER) {
                     it.x < body.p.x * (SQUARE_SIZE - 1)
                 } else {
-                    it.x < LEFT_BUTTON_FRACT * WIDTH
+                    it.x < LEFT_BUTTON_UI_FRACT * WIDTH
                 }
 
                 goRight = goRight || if (FOLLOW_FINGER) {
                     it.x > body.p.x * (SQUARE_SIZE + 1)
                 } else {
-                    it.x > RIGHT_BUTTON_FRACT * WIDTH
+                    it.x > RIGHT_BUTTON_UI_FRACT * WIDTH
                 }
             }
         }
