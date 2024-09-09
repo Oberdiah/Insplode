@@ -1,11 +1,50 @@
-package com.oberdiah
+package com.oberdiah.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.DEBUG_MOVEMENT_MODE
+import com.oberdiah.DEBUG_STRING
+import com.oberdiah.DEBUG_VERSION
+import com.oberdiah.DEPTH_UNITS
+import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
+import com.oberdiah.ENABLED_PARTICLES
+import com.oberdiah.HEIGHT
+import com.oberdiah.HIGH_SCORE
+import com.oberdiah.IS_DEBUG_ENABLED
+import com.oberdiah.JUMP_FRACT
+import com.oberdiah.PAUSED
+import com.oberdiah.Point
+import com.oberdiah.RENDER_JUMP_BUTTON
+import com.oberdiah.RUN_TIME_ELAPSED
+import com.oberdiah.Renderer
+import com.oberdiah.SCREEN_SHAKE_SETTING
+import com.oberdiah.SHOW_FRAMERATE_DATA
+import com.oberdiah.Screen
+import com.oberdiah.Size
+import com.oberdiah.TEXT_CHECKBOX_OFFSET_RIGHT
+import com.oberdiah.TEXT_SIDE_OFFSET
+import com.oberdiah.Utils.TOUCHES_DOWN
+import com.oberdiah.Utils.TOUCHES_WENT_UP
 import com.oberdiah.Utils.colorScheme
 import com.oberdiah.Utils.nextColorScheme
 import com.oberdiah.Utils.timerString
+import com.oberdiah.WIDTH
+import com.oberdiah.currentDepthThisRun
+import com.oberdiah.d
+import com.oberdiah.fontLarge
+import com.oberdiah.fontMedium
+import com.oberdiah.fontSmall
+import com.oberdiah.fontSmallish
+import com.oberdiah.format
+import com.oberdiah.gameMessage
+import com.oberdiah.max
+import com.oberdiah.maxDepthThisRun
+import com.oberdiah.next
+import com.oberdiah.physicsDebugString
+import com.oberdiah.player
+import com.oberdiah.restartGame
+import com.oberdiah.withAlpha
 import java.util.*
 import kotlin.math.PI
 import kotlin.reflect.KMutableProperty0
@@ -336,30 +375,4 @@ fun settingButton(
             }
         }
     }
-}
-
-private fun renderPauseButton(r: Renderer) {
-    pauseUIFadeOff *= 0.95
-    if (pauseHovered) {
-        r.color = Color.WHITE.withAlpha(max(pauseUIFadeOff, 0.9))
-    } else {
-        r.color = Color.WHITE.withAlpha(max(pauseUIFadeOff, 0.5))
-    }
-    pauseHovered = false
-    TOUCHES_DOWN.forEach {
-        if (PAUSE_RECT.contains(it)) {
-            pauseHovered = true
-        }
-    }
-    TOUCHES_WENT_UP.forEach {
-        if (PAUSE_RECT.contains(it)) {
-            pauseUIFadeOff = 1.0
-            PAUSED = true
-            switchScreen(Screen.Paused)
-        }
-    }
-
-    val p = PAUSE_RECT.p
-    r.rect(p.x + PAUSE_SIZE * 0.2, p.y + PAUSE_SIZE * 0.1, PAUSE_SIZE * 0.2, PAUSE_SIZE * 0.8)
-    r.rect(p.x + PAUSE_SIZE * 0.6, p.y + PAUSE_SIZE * 0.1, PAUSE_SIZE * 0.2, PAUSE_SIZE * 0.8)
 }

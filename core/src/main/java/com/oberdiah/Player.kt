@@ -1,12 +1,14 @@
 package com.oberdiah
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
+import com.oberdiah.Utils.TOUCHES_DOWN
+import com.oberdiah.Utils.TOUCHES_WENT_DOWN
 import com.oberdiah.Utils.colorScheme
 import com.oberdiah.Utils.isKeyPressed
+import com.oberdiah.ui.jumpUIFadeOff
+import com.oberdiah.ui.switchScreen
 import kotlin.random.Random
 
 val player = Player(Point(5, PLAYER_SPAWN_Y))

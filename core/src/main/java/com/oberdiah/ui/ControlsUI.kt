@@ -1,7 +1,25 @@
-package com.oberdiah
+package com.oberdiah.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.ControlScheme
+import com.oberdiah.FOLLOW_FINGER
+import com.oberdiah.HEIGHT
+import com.oberdiah.JUMP_CONTROL
+import com.oberdiah.JUMP_FRACT
+import com.oberdiah.LEFT_BUTTON_FRACT
+import com.oberdiah.LEFT_RIGHT_CONTROL
+import com.oberdiah.RIGHT_BUTTON_FRACT
+import com.oberdiah.Renderer
+import com.oberdiah.Screen
+import com.oberdiah.Utils.TOUCHES_DOWN
+import com.oberdiah.Utils.TOUCHES_WENT_UP
+import com.oberdiah.WIDTH
+import com.oberdiah.fontMedium
+import com.oberdiah.fontSmallish
+import com.oberdiah.max
+import com.oberdiah.min
+import com.oberdiah.withAlpha
 
 private enum class ControlButton {
     Left,
@@ -12,19 +30,27 @@ private enum class ControlButton {
 private var currentlyChangingControl = ControlButton.Jump
 
 fun buttonPositionUI(r: Renderer) {
-    r.text(fontSmallish, "Drag to move the button boundary\nLet go to save and quit", WIDTH/2, SUBTITLE_HEIGHT, Align.center)
+    r.text(
+        fontSmallish,
+        "Drag to move the button boundary\nLet go to save and quit",
+        WIDTH / 2,
+        SUBTITLE_HEIGHT,
+        Align.center
+    )
 
     TOUCHES_DOWN.forEach {
         when (currentlyChangingControl) {
             ControlButton.Left -> {
-                LEFT_BUTTON_FRACT = it.x/WIDTH
+                LEFT_BUTTON_FRACT = it.x / WIDTH
                 RIGHT_BUTTON_FRACT = max(LEFT_BUTTON_FRACT, RIGHT_BUTTON_FRACT)
             }
+
             ControlButton.Right -> {
-                RIGHT_BUTTON_FRACT = it.x/WIDTH
+                RIGHT_BUTTON_FRACT = it.x / WIDTH
                 LEFT_BUTTON_FRACT = min(LEFT_BUTTON_FRACT, RIGHT_BUTTON_FRACT)
             }
-            ControlButton.Jump -> JUMP_FRACT = it.y/HEIGHT
+
+            ControlButton.Jump -> JUMP_FRACT = it.y / HEIGHT
         }
     }
 
@@ -50,7 +76,8 @@ fun controlsUI(r: Renderer) {
     settingButton(r, "Movement", {
         r.text(fontMedium, LEFT_RIGHT_CONTROL.title, it, Align.right)
     }, {
-        LEFT_RIGHT_CONTROL = if (LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) ControlScheme.MoveToFinger else ControlScheme.LeftRightTap
+        LEFT_RIGHT_CONTROL =
+            if (LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) ControlScheme.MoveToFinger else ControlScheme.LeftRightTap
     })
 
     toggleButton(r, "Follow finger", ::FOLLOW_FINGER)

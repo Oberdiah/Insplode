@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
 import com.oberdiah.Utils.*
+import com.oberdiah.ui.renderUI
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -75,29 +76,21 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render background") { renderBackground(worldSpaceRenderer) }
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
-        //renderShadowLayer(worldSpaceRenderer)
         worldSpaceRenderer.end()
 
         time("Render level") { renderLevel() }
-
-        worldSpaceRenderer.begin()
-//        renderLevelOld(worldSpaceRenderer)
-        worldSpaceRenderer.end()
 
         if (DO_PHYSICS_DEBUG_RENDER) {
             debugRenderWorld()
         }
 
         if (!PAUSED) {
-//            if (allDynamicPhysicsObjects.filterIsInstance<Pickup>().size < 10) {
-//                Pickup(Point(SQUARES_WIDE * Random.nextDouble(), CAMERA_POS.y + SQUARES_TALL))
-//            }
             time("Tick level controller") { tickLevelController() }
             time("Tick Collapse") { tickCollapse() }
             time("Tick Particles") { tickParticles() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
 
-//            // Should happen just before the world step
+            // Should happen just before the world step
             time("Update tile physics") { updateTilePhysics() }
             if (!DEBUG_MOVEMENT_MODE) {
                 time("Do physics step") { doPhysicsStep() }
