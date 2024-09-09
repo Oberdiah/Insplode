@@ -119,7 +119,6 @@ val JUST_UP_OFF_SCREEN
 
 val GRAVITY = 20.0
 val UI_MAX_FADE_IN = 0.9
-var TOUCH_CONSUMED = false
 val PLAYER_SPAWN_Y
     get() = SQUARES_TALL * PLAYER_Y_FRACT + 30
 
@@ -227,8 +226,4 @@ fun calculateGlobals() {
     }
     TOUCHES_DOWN.sortBy { it.frameDown }
     TOUCHES_UP.sortBy { it.frameUp }
-
-    if (A_TOUCH_WENT_UP) {
-        TOUCH_CONSUMED = false
-    }
 }

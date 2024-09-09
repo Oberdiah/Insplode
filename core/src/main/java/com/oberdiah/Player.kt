@@ -1,9 +1,12 @@
 package com.oberdiah
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
-import com.oberdiah.Utils.TileType
 import com.oberdiah.Utils.colorScheme
+import com.oberdiah.Utils.isKeyPressed
 import kotlin.random.Random
 
 val player = Player(Point(5, PLAYER_SPAWN_Y))
@@ -120,9 +123,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun tick() {
-        val vel = body.velocity
         lastTickVelocity = tickVelocity.cpy
-        tickVelocity = vel.cpy
+        tickVelocity = body.velocity.cpy
+
+        val vel = body.velocity
 
         if (inAir) {
             airTime += DELTA
@@ -130,45 +134,53 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         // detect jumps
         TOUCHES_WENT_DOWN.forEach {
-            if (!TOUCH_CONSUMED && canJump && it.y <= HEIGHT * JUMP_FRACT) {
-                canJump = false
-                val desiredUpVel = 9.0f
-                val velChange = desiredUpVel - vel.y
-                val impulse = body.mass * velChange
-                body.applyImpulse(Point(0f, impulse))
-
-                spawnParticlesAtMyFeet(number = 2)
-
-                jumpUIFadeOff = UI_MAX_FADE_IN
+            if (it.y <= HEIGHT * JUMP_FRACT) {
+                attemptJump()
             }
         }
 
+        // On Desktop, spacebar also jumps, as do W and Up arrow
+        if (isKeyPressed(Keys.SPACE) || isKeyPressed(Keys.W) || isKeyPressed(Keys.UP)) {
+            attemptJump()
+        }
 
         val acceleration = 2.5
-        var desiredVel = 0.0
+        var desiredXVel = 0.0
+        var goLeft = false
+        var goRight = false
         TOUCHES_DOWN.forEach {
-            if (!TOUCH_CONSUMED && it.y > HEIGHT * JUMP_FRACT) {
-                val goLeft = if (FOLLOW_FINGER) {
+            if (it.y > HEIGHT * JUMP_FRACT) {
+                goLeft = goLeft || if (FOLLOW_FINGER) {
                     it.x < body.p.x * (SQUARE_SIZE - 1)
                 } else {
                     it.x < LEFT_BUTTON_FRACT * WIDTH
                 }
 
-                val goRight = if (FOLLOW_FINGER) {
+                goRight = goRight || if (FOLLOW_FINGER) {
                     it.x > body.p.x * (SQUARE_SIZE + 1)
                 } else {
                     it.x > RIGHT_BUTTON_FRACT * WIDTH
                 }
-
-                if (goLeft) {
-                    desiredVel = max(-5, vel.x - acceleration)
-                } else if (goRight) {
-                    desiredVel = min(5, vel.x + acceleration)
-                }
             }
         }
 
-        val velChange = desiredVel - vel.x
+        // If on Desktop, read A/D and Left/Right arrow keys
+        if (isKeyPressed(Keys.A) || isKeyPressed(Keys.LEFT)) {
+            goLeft = true
+        }
+        if (isKeyPressed(Keys.D) || isKeyPressed(Keys.RIGHT)) {
+            goRight = true
+        }
+
+        if (goLeft && goRight) {
+            // Do nothing
+        } else if (goLeft) {
+            desiredXVel = max(-5, vel.x - acceleration)
+        } else if (goRight) {
+            desiredXVel = min(5, vel.x + acceleration)
+        }
+
+        val velChange = desiredXVel - vel.x
 
         // If velChange is large enough, spawn particles to simulate kicked up dirt in the direction of movement
         if (!inAir) {
@@ -200,6 +212,19 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 tileTypeBelowMe
             )
         }
+    }
+
+    private fun attemptJump() {
+        if (!canJump) return
+        canJump = false
+        val desiredUpVel = 9.0f
+        val velChange = desiredUpVel - body.velocity.y
+        val impulse = body.mass * velChange
+        body.applyImpulse(Point(0f, impulse))
+
+        spawnParticlesAtMyFeet(number = 2)
+
+        jumpUIFadeOff = UI_MAX_FADE_IN
     }
 
 }
