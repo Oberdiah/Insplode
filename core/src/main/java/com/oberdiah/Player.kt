@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.Utils.TOUCHES_DOWN
 import com.oberdiah.Utils.TOUCHES_WENT_DOWN
 import com.oberdiah.Utils.colorScheme
+import com.oberdiah.Utils.isKeyJustPressed
 import com.oberdiah.Utils.isKeyPressed
 import com.oberdiah.ui.jumpUIFadeOff
 import com.oberdiah.ui.switchScreen
@@ -17,8 +18,16 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     val size = Size(0.4, 0.7) * GLOBAL_SCALE
     lateinit var jumpBox: Fixture
     var canJump = false
-    private var airTime = 0.0
+    var slamming = false
+    private var airTime = 10.0
     private var inAir = true
+    private var tileBelowMe: Tile = nonTile
+
+    val feetPosition
+        get() = body.p - Point(0.0, 0.35 * GLOBAL_SCALE)
+
+    val willSmash
+        get() = lastTickVelocity.len > 8 && slamming
 
     /// We need these because sometimes on collide the velocity is already really small for some reason
     private var tickVelocity = Point(0.0, 0.0)
@@ -57,38 +66,58 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
+
+        var didBounce = false
+        val obj = otherFixture.body.userData
+        if (obj is Bomb) {
+            if (slamming) {
+                // If the player was moving fast enough
+                if (willSmash) {
+                    boom(obj.body.p, obj.power, hurtsThePlayer = false)
+                    obj.destroy()
+                    val currentVel = body.velocity.y
+                    val desiredVel = 10.0
+                    val impulse = body.mass * (desiredVel - currentVel)
+                    body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
+
+                    didBounce = true
+                }
+
+                slamming = false
+            }
+        }
+
         if (yourFixture == jumpBox) {
             CAMERA_LOCKED = false
 
             if (airTime > 0.6) {
-                val vel = lastTickVelocity
+                val vel = lastTickVelocity / GLOBAL_SCALE
 
                 spawnParticlesAtMyFeet(
-                    ferocity = vel.len.d * 0.25,
-                    number = max(vel.len.i * 2, 2)
+                    ferocity = vel.len.d * 0.2,
+                    number = max((vel.len.d * 1.5).i, 2)
                 )
+
                 if (vel.len > 20) {
                     addScreenShake(vel.len.d * 0.03)
                     boom(body.p, vel.len.d * 0.05, hurtsThePlayer = false)
                 }
             }
-
-            canJump = true
             airTime = 0.0
-            inAir = false
-        }
-    }
 
-    override fun endCollide(yourFixture: Fixture, otherFixture: Fixture) {
-        super.endCollide(yourFixture, otherFixture)
-        if (yourFixture == jumpBox) {
-            inAir = true
+            if (!didBounce) {
+                canJump = true
+                slamming = false
+                inAir = false
+            }
         }
     }
 
     override fun reset() {
         body.setTransform(startingPoint, 0f)
         inAir = true
+        canJump = false
+        slamming = false
         health = numHealthDots
     }
 
@@ -106,13 +135,16 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun render(r: Renderer) {
         if (canJump) {
             r.color = colorScheme.player
+        } else if (willSmash) {
+            r.color = colorScheme.playerSmashable
+        } else if (slamming) {
+            r.color = colorScheme.playerSlamming
         } else {
             r.color = colorScheme.playerNoJump
         }
         r.rect(body.p.x - size.w / 2, body.p.y, size.w, size.h / 2)
         r.circle(body.p, size.w / 2)
         r.circle(body.p.x, body.p.y + 0.35 * GLOBAL_SCALE, size.w / 2)
-
 
         for (i in 0 until numHealthDots) {
             if (i < health) {
@@ -134,8 +166,17 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         val vel = body.velocity
 
+        tileBelowMe = getTile(feetPosition - Point(0, SIMPLE_SIZE * 0.5))
+
         if (inAir) {
             airTime += DELTA
+        }
+
+        if (slamming) {
+            // Slam into the ground
+            val downVelChange = -1.0f
+            val impulse = body.mass * downVelChange
+            body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
         }
 
         // detect jumps
@@ -146,7 +187,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         // On Desktop, spacebar also jumps, as do W and Up arrow
-        if (isKeyPressed(Keys.SPACE) || isKeyPressed(Keys.W) || isKeyPressed(Keys.UP)) {
+        if (isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)) {
             attemptJump()
         }
 
@@ -195,7 +236,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             }
         }
 
-
         val impulse = body.mass * velChange
         body.applyImpulse(Point(impulse.f, 0))
     }
@@ -205,8 +245,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         number: Int = 5,
         ferocity: Double = 2.0
     ) {
-        val tileTypeBelowMe = getTile(body.p - Point(0, 0.2)).tileType
-        val posToSpawn = body.p - Point(0.0, 0.15)
+        val posToSpawn = body.p - Point(0.0, 0.15 * GLOBAL_SCALE)
 
         for (i in 0 until number) {
             spawnFragment(
@@ -215,22 +254,24 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                     ferocity * (Random.nextDouble() - 0.5),
                     ferocity * Random.nextDouble()
                 ),
-                tileTypeBelowMe
+                tileBelowMe.tileType
             )
         }
     }
 
     private fun attemptJump() {
-        if (!canJump) return
-        canJump = false
-        val desiredUpVel = 9.0f
-        val velChange = desiredUpVel - body.velocity.y
-        val impulse = body.mass * velChange
-        body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
+        if (canJump) {
+            canJump = false
+            val desiredUpVel = 9.0f
+            val velChange = min(desiredUpVel - body.velocity.y, desiredUpVel)
+            val impulse = body.mass * velChange
+            body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
 
-        spawnParticlesAtMyFeet(number = 2)
-
-        jumpUIFadeOff = UI_MAX_FADE_IN
+            spawnParticlesAtMyFeet(number = 2)
+        } else if (!slamming) {
+            slamming = true
+            jumpUIFadeOff = UI_MAX_FADE_IN
+        }
     }
 
 }

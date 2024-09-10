@@ -8,8 +8,18 @@ import com.oberdiah.withAlpha
 object Colors {
     val transparent = Color.BLACK.withAlpha(0.0)
 }
+
 // Invisible
-private val schemes = mutableListOf(Grassy(), Grassy2(), Oceany(), Deserty(), Classic(), Castle(), Canyon(), Princess())
+private val schemes = mutableListOf(
+    Grassy(),
+    Grassy2(),
+    Oceany(),
+    Deserty(),
+    Classic(),
+    Castle(),
+    Canyon(),
+    Princess()
+)
 private var schemeNum = 0
 
 fun nextColorScheme() {
@@ -20,9 +30,11 @@ fun nextColorScheme() {
 
 var colorScheme: ColorScheme = Grassy()
 
-class Grassy: ColorScheme("Forest") {
+class Grassy : ColorScheme("Forest") {
     init {
         player = colorFrom(0xbc4749)
+        playerSlamming = colorFrom(0xd27c2d)
+        playerSmashable = colorFrom(0xf1e00e)
         bombPrimary = colorFrom(0xbc4749)
         backgroundA = colorFrom(0xf2e8cf)
         backgroundB = colorFrom(0xf2e8cf).mul(1.03f)
@@ -31,7 +43,8 @@ class Grassy: ColorScheme("Forest") {
         grass = colorFrom(0x103E1F)
     }
 }
-class Grassy2: ColorScheme("Grass Lands") {
+
+class Grassy2 : ColorScheme("Grass Lands") {
     init {
         player = colorFrom(0xbc4749)
         bombPrimary = colorFrom(0xbc4749)
@@ -43,7 +56,7 @@ class Grassy2: ColorScheme("Grass Lands") {
     }
 }
 
-class Oceany: ColorScheme("Ocean") {
+class Oceany : ColorScheme("Ocean") {
     init {
         player = colorFrom(0x77b2f2)
         bombPrimary = colorFrom(0xe63946)
@@ -55,7 +68,7 @@ class Oceany: ColorScheme("Ocean") {
     }
 }
 
-class Deserty: ColorScheme("Desert") {
+class Deserty : ColorScheme("Desert") {
     init {
         player = colorFrom(0xFFFCF2)
         bombPrimary = Color.RED.cpy().mul(0.8f)
@@ -67,7 +80,7 @@ class Deserty: ColorScheme("Desert") {
     }
 }
 
-class Classic: ColorScheme("Classic") {
+class Classic : ColorScheme("Classic") {
     init {
         player = colorFrom(0xFFFCF2)
         bombPrimary = Color.RED.cpy().mul(0.8f)
@@ -79,7 +92,7 @@ class Classic: ColorScheme("Classic") {
     }
 }
 
-class Castle: ColorScheme("Castle") {
+class Castle : ColorScheme("Castle") {
     init {
         player = colorFrom(0x9c7878)
         bombPrimary = colorFrom(0x000000).mul(0.8f)
@@ -91,7 +104,7 @@ class Castle: ColorScheme("Castle") {
     }
 }
 
-class Canyon: ColorScheme("Canyon") {
+class Canyon : ColorScheme("Canyon") {
     init {
         player = colorFrom(0xffe712)
         bombPrimary = colorFrom(0x000000).mul(0.8f)
@@ -103,7 +116,7 @@ class Canyon: ColorScheme("Canyon") {
     }
 }
 
-class Princess: ColorScheme("Princess") {
+class Princess : ColorScheme("Princess") {
     init {
         player = colorFrom(0xf587ed)
         bombPrimary = colorFrom(0x000000).mul(0.8f)
@@ -116,12 +129,13 @@ class Princess: ColorScheme("Princess") {
 }
 
 
-
 open class ColorScheme(val name: String) {
     var playerNoJump: Color = Color.GRAY
     var overlay: Color = Color.WHITE.withAlpha(0.3)
     var textColor: Color = colorFrom(0x242423)
     lateinit var player: Color
+    lateinit var playerSlamming: Color
+    lateinit var playerSmashable: Color
     lateinit var bombPrimary: Color
     lateinit var backgroundA: Color
     lateinit var backgroundB: Color
@@ -133,7 +147,8 @@ open class ColorScheme(val name: String) {
 // https://coolors.co/6a994e-54793e-003e1f-f2e8cf-bc4648-404840-242423
 
 enum class TileType(var color: () -> Color) {
-    Stone({colorScheme.stone}),
-    Dirt({colorScheme.dirt}),
-    Grass({colorScheme.grass}),
+    Stone({ colorScheme.stone }),
+    Dirt({ colorScheme.dirt }),
+    Grass({ colorScheme.grass }),
+    Air({ Colors.transparent })
 }

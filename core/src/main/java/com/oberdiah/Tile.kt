@@ -39,6 +39,7 @@ class Tile(private val id: Int) {
         }
 
     var tileType = TileType.Grass
+        // get() = if (exists) field else TileType.Air
         set(value) {
             changedTiles.add(this)
             field = value
@@ -91,13 +92,13 @@ class Tile(private val id: Int) {
     val x: Int
         get() {
             require(isSafe)
-            return (id%SIMPLES_WIDTH + SIMPLES_WIDTH) % SIMPLES_WIDTH
+            return (id % SIMPLES_WIDTH + SIMPLES_WIDTH) % SIMPLES_WIDTH
         }
 
     val y: Int
         get() {
             require(isSafe)
-            return floor(id.d/SIMPLES_WIDTH)
+            return floor(id.d / SIMPLES_WIDTH)
         }
 
     private var _rect = Rect(Point(), Size(SIMPLE_SIZE, SIMPLE_SIZE))

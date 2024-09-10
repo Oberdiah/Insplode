@@ -107,13 +107,22 @@ fun renderUI(r: Renderer) {
 
         jumpUIFadeOff *= 0.95
         if (RENDER_JUMP_BUTTON) {
-            if (player.canJump) {
+            if (player.canJump || !player.slamming) {
                 r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.5))
             } else {
                 r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.2))
             }
             r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
-            r.text(fontLarge, "JUMP", WIDTH / 2, HEIGHT * JUMP_UI_FRACT / 2, Align.center)
+
+            val bigButton = if (player.canJump) {
+                "JUMP"
+            } else {
+                "SLAM"
+            }
+
+            r.text(
+                fontLarge, bigButton, WIDTH / 2, HEIGHT * JUMP_UI_FRACT / 2, Align.center
+            )
         } else {
             r.color = Color.WHITE.withAlpha(jumpUIFadeOff)
             r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
