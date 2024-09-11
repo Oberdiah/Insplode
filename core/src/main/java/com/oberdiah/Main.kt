@@ -76,6 +76,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render background") { renderBackground(worldSpaceRenderer) }
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
+//        time("Render level") { renderLevelOld(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
         time("Render level") { renderLevel() }

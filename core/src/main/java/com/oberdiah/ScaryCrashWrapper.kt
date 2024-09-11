@@ -2,6 +2,7 @@ package com.oberdiah
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.oberdiah.Utils.MyBox2DDebugRenderer
 import com.oberdiah.Utils.camera
 import com.oberdiah.Utils.time
 
@@ -26,14 +27,15 @@ fun initWorld() {
     Box2D.init()
     world = World(Vector2(0f, -GRAVITY.f), true)
     world.setContactListener(collisionListener)
-    debugRenderer = Box2DDebugRenderer()
+    debugRenderer = MyBox2DDebugRenderer()
 }
 
 fun physicsDebugString(): String {
     return "Physics Objects: $numPhysicsObjects Body Count: ${world.bodyCount}"
 }
+
 fun debugRenderWorld() {
-    time("Physics debug") {debugRenderer.render(world, camera.combined)}
+    time("Physics debug") { debugRenderer.render(world, camera.combined) }
 }
 
 val allPhysBodies = mutableSetOf<PhysBody>()

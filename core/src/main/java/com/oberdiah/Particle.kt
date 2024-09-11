@@ -36,17 +36,17 @@ fun renderParticles(r: Renderer) {
     allParticles.forEach { it.render(r) }
 }
 
-fun spawnFragment(p: Point, v: Velocity, tileType: TileType) {
+fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: Boolean = true) {
     if (!ENABLED_PARTICLES) return
 
-    val radius = SIMPLE_SIZE * (Random.nextDouble() * 0.3 + 0.2)
+    val radius = SIMPLE_SIZE_IN_WORLD * (Random.nextDouble() * 0.3 + 0.2)
 
-    allParticles.add(Fragment(p, v, radius, tileType))
+    allParticles.add(Fragment(p, v, radius, tileType, affectedByGravity))
 }
 
 fun spawnSmoke(p: Point, velocity: Velocity) {
     if (!ENABLED_PARTICLES) return
-    val radius = SIMPLE_SIZE * (Random.nextDouble() * 0.3 + 0.2)
+    val radius = SIMPLE_SIZE_IN_WORLD * (Random.nextDouble() * 0.3 + 0.2)
     allParticles.add(Smoke(p, velocity, radius))
 }
 
@@ -101,10 +101,22 @@ class Smoke(startP: Point, startV: Velocity, var edgeLength: Number) : Particle(
     }
 }
 
-class Fragment(startP: Point, startV: Velocity, var edgeLength: Number, val tileType: TileType) :
+class Fragment(
+    startP: Point,
+    startV: Velocity,
+    var edgeLength: Number,
+    val tileType: TileType,
+    var affectedByGravity: Boolean = true
+) :
     Particle(startP, startV) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
+
+    override fun applyForces() {
+        if (affectedByGravity) {
+            v.y -= GRAVITY * DELTA * 0.5
+        }
+    }
 
     override fun tick() {
         super.tick()
@@ -142,9 +154,7 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
         particlesToDestroy.add(this)
     }
 
-    open fun applyForces() {
-        v.y -= GRAVITY * DELTA * 0.5
-    }
+    abstract fun applyForces();
 
     private var wasInsideLevel = false
     private val previousP = Point()

@@ -1,6 +1,5 @@
 package com.oberdiah
 
-import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.Fixture
 import com.oberdiah.Utils.TileType
@@ -76,7 +75,7 @@ class Tile(private val id: Int) {
         initialised = true
         rebuildNeighbours()
         val groundBodyDef = BodyDef()
-        groundBodyDef.position.set(x * SIMPLE_SIZE.f, y * SIMPLE_SIZE.f)
+        groundBodyDef.position.set(x * SIMPLE_SIZE_IN_WORLD.f, y * SIMPLE_SIZE_IN_WORLD.f)
         body = createBody(groundBodyDef, false)
         body.userData = this
     }
@@ -84,8 +83,8 @@ class Tile(private val id: Int) {
     private var _coord = Point()
     val coord: Point
         get() {
-            _coord.x = x.d * SIMPLE_SIZE
-            _coord.y = y.d * SIMPLE_SIZE
+            _coord.x = x.d * SIMPLE_SIZE_IN_WORLD
+            _coord.y = y.d * SIMPLE_SIZE_IN_WORLD
             return _coord
         }
 
@@ -101,7 +100,7 @@ class Tile(private val id: Int) {
             return floor(id.d / SIMPLES_WIDTH)
         }
 
-    private var _rect = Rect(Point(), Size(SIMPLE_SIZE, SIMPLE_SIZE))
+    private var _rect = Rect(Point(), Size(SIMPLE_SIZE_IN_WORLD, SIMPLE_SIZE_IN_WORLD))
     val rect: Rect
         get() {
             _rect.p = coord

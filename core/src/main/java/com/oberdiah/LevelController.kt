@@ -37,9 +37,7 @@ val phases = arrayOf(
     Phase(4.0) {
         // Drop pod from above.
     },
-    Phase(3.0) { spawnBomb(BombType.SmallTimed, 0.25) },
-    Phase(10.0) { startRandomBombs(BombType.SmallTimed, 4.0) },
-    Phase(5.0) { startRandomBombs(BombType.SmallTimed, 3.0) },
+    Phase(5.0) { startRandomBombs(BombType.SmallTimed, 1.0) },
     Phase(4.0, BombType.MediumTimed) {
         stopAllBombs()
         gameMessage = "Medium Bomb"

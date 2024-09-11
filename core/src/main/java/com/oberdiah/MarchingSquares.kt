@@ -2,7 +2,14 @@ package com.oberdiah
 
 import com.badlogic.gdx.utils.ShortArray
 
-class Triangle(val x1: Float, val y1: Float, val x2: Float, val y2: Float, val x3: Float, val y3: Float)
+class Triangle(
+    val x1: Float,
+    val y1: Float,
+    val x2: Float,
+    val y2: Float,
+    val x3: Float,
+    val y3: Float
+)
 
 val floatArrLookup = mutableListOf<FloatArray>()
 val floatArrLookupScaled = mutableListOf<FloatArray>()
@@ -19,22 +26,48 @@ fun idx(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: B
     return i
 }
 
-fun marchingSquaresFA(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: Boolean): FloatArray {
+fun marchingSquaresFA(
+    bottomLeft: Boolean,
+    bottomRight: Boolean,
+    topLeft: Boolean,
+    topRight: Boolean
+): FloatArray {
     return floatArrLookup[idx(bottomLeft, bottomRight, topLeft, topRight)]
 }
-fun marchingSquaresFAScaled(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: Boolean): FloatArray {
+
+fun marchingSquaresFAScaled(
+    bottomLeft: Boolean,
+    bottomRight: Boolean,
+    topLeft: Boolean,
+    topRight: Boolean
+): FloatArray {
     return floatArrLookupScaled[idx(bottomLeft, bottomRight, topLeft, topRight)]
 }
 
-fun marchingSquaresTriangles(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: Boolean): List<Triangle> {
+fun marchingSquaresTriangles(
+    bottomLeft: Boolean,
+    bottomRight: Boolean,
+    topLeft: Boolean,
+    topRight: Boolean
+): List<Triangle> {
     return triangleMarchingLookup[idx(bottomLeft, bottomRight, topLeft, topRight)]
 }
 
-fun marchingSquaresScaled(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: Boolean): List<Point> {
+fun marchingSquaresScaled(
+    bottomLeft: Boolean,
+    bottomRight: Boolean,
+    topLeft: Boolean,
+    topRight: Boolean
+): List<Point> {
     return pointLookupScaled[idx(bottomLeft, bottomRight, topLeft, topRight)]
 }
 
-fun marchingSquaresMiddle(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: Boolean): Point {
+fun marchingSquaresMiddle(
+    bottomLeft: Boolean,
+    bottomRight: Boolean,
+    topLeft: Boolean,
+    topRight: Boolean
+): Point {
     return pointMiddleLookup[idx(bottomLeft, bottomRight, topLeft, topRight)]
 }
 
@@ -46,12 +79,19 @@ fun initMarchingSquares() {
         val topRight = i.and(8) != 0
 
         val squarePoints = marchingSquares(bottomLeft, bottomRight, topLeft, topRight)
-        val pointsScaled = squarePoints * SIMPLE_SIZE
+        val pointsScaled = squarePoints * SIMPLE_SIZE_IN_WORLD
         pointLookupScaled.add(pointsScaled)
         floatArrLookup.add(pointListToFloatArr(squarePoints))
         val scaledFA = pointListToFloatArr(pointsScaled)
         floatArrLookupScaled.add(scaledFA)
-        pointMiddleLookup.add(calculateMarchingSquaresMiddle(bottomLeft, bottomRight, topLeft, topRight))
+        pointMiddleLookup.add(
+            calculateMarchingSquaresMiddle(
+                bottomLeft,
+                bottomRight,
+                topLeft,
+                topRight
+            )
+        )
         triangleMarchingLookup.add(calculateMarchingTriangles(scaledFA))
     }
 }
@@ -98,7 +138,12 @@ private val o_o = listOf(tr, tm, rm)
 private val p_p = listOf(bl_a, br, tr, tl)
 private val empty = listOf<Point>()
 
-fun marchingSquares(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: Boolean): List<Point> {
+fun marchingSquares(
+    bottomLeft: Boolean,
+    bottomRight: Boolean,
+    topLeft: Boolean,
+    topRight: Boolean
+): List<Point> {
     return (if (bottomLeft && bottomRight && topLeft && topRight) {
         p_p
     } else if (bottomLeft && bottomRight && topLeft) {
@@ -134,7 +179,12 @@ fun marchingSquares(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean,
     })
 }
 
-fun calculateMarchingSquaresMiddle(bottomLeft: Boolean, bottomRight: Boolean, topLeft: Boolean, topRight: Boolean): Point {
+fun calculateMarchingSquaresMiddle(
+    bottomLeft: Boolean,
+    bottomRight: Boolean,
+    topLeft: Boolean,
+    topRight: Boolean
+): Point {
     return (if (bottomLeft && bottomRight && topLeft && topRight) {
         Point(0.5, 0.5)
     } else if (bottomLeft && bottomRight && topLeft) {

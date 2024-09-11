@@ -105,14 +105,14 @@ fun setCameraGlobalsThisFrame() {
     LOWEST_SIMPLE_Y_STORED = min((CAMERA_POS_Y * SIMPLES_RESOLUTION - 1).i, LOWEST_SIMPLE_Y_STORED)
 }
 
-val SQUARE_SIZE: Double
+val SQUARE_SIZE_IN_PIXELS: Double
     get() = WIDTH / WORLD_WIDTH
 
 val SQUARES_WIDE: Int
     get() = WORLD_WIDTH
 
 val SQUARES_TALL: Double
-    get() = HEIGHT / SQUARE_SIZE
+    get() = HEIGHT / SQUARE_SIZE_IN_PIXELS
 
 var APP_FRAME = 0
 var APP_TIME = 0.0
@@ -128,7 +128,7 @@ val JUST_UP_OFF_SCREEN
 const val GRAVITY = 20.0 * GLOBAL_SCALE
 val UI_MAX_FADE_IN = 0.9
 val PLAYER_SPAWN_Y
-    get() = SQUARES_TALL * PLAYER_Y_FRACT + 30
+    get() = SQUARES_TALL * PLAYER_Y_FRACT + 15
 
 val CAMERA_SPAWN_Y
     get() = SQUARES_TALL * PLAYER_Y_FRACT
@@ -136,7 +136,7 @@ val CAMERA_SPAWN_Y
 val LAND_SURFACE_Y
     get() = 10
 
-val SIMPLE_SIZE
+val SIMPLE_SIZE_IN_WORLD
     get() = 1.0 / SIMPLES_RESOLUTION
 
 /// The position of the player up the screen - where the camera likes to keep them.

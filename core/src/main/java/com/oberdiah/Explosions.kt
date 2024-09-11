@@ -18,8 +18,8 @@ fun boom(point: Point, radiusIn: Number, hurtsThePlayer: Boolean = true) {
 
     for (dx in -simpleRadius..simpleRadius) {
         for (dy in -simpleRadius..simpleRadius) {
-            tempPoint.x = point.x + dx * SIMPLE_SIZE
-            tempPoint.y = point.y + dy * SIMPLE_SIZE
+            tempPoint.x = point.x + dx * SIMPLE_SIZE_IN_WORLD
+            tempPoint.y = point.y + dy * SIMPLE_SIZE_IN_WORLD
             val tile = getTile(tempPoint)
             val dist = point.distTo(tempPoint)
 

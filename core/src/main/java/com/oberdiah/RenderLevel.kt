@@ -1,6 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
@@ -23,7 +24,8 @@ val fboLoopSizeSimples
     get() = fboLoopSize * SIMPLES_RESOLUTION
 
 fun initLevelRender() {
-    fbo = FrameBuffer(Pixmap.Format.RGBA8888, WIDTH.i, (fboLoopSize * SQUARE_SIZE).i, false)
+    fbo =
+        FrameBuffer(Pixmap.Format.RGBA8888, WIDTH.i, (fboLoopSize * SQUARE_SIZE_IN_PIXELS).i, false)
     levelShapeRenderer = ShapeRenderer()
     levelTexRenderer = SpriteBatch()
 
@@ -119,9 +121,9 @@ private fun renderTile(tile: Tile, tileX: Int, tileY: Int) {
 
     val yRenderingOffset = -floor(tileY / fboLoopSizeSimples.f) * fboLoopSize
 
-    val x = (tileX * SIMPLE_SIZE).f
-    val y = (tileY * SIMPLE_SIZE).f + yRenderingOffset
-    levelShapeRenderer.rect(x, y, SIMPLE_SIZE.f, SIMPLE_SIZE.f)
+    val x = (tileX * SIMPLE_SIZE_IN_WORLD).f
+    val y = (tileY * SIMPLE_SIZE_IN_WORLD).f + yRenderingOffset
+    levelShapeRenderer.rect(x, y, SIMPLE_SIZE_IN_WORLD.f, SIMPLE_SIZE_IN_WORLD.f)
     if (tile.isNAT) {
         return
     }
@@ -172,33 +174,43 @@ fun renderBackground(r: Renderer) {
 }
 
 
-//fun renderLevelOld(r: Renderer) {
-//    for (tileType in TileType.values()) {
-//        for (bottomLeft in levelOnScreen) {
-//            val x = bottomLeft.x
-//            val y = bottomLeft.y
-//
-//            val topLeft = getTile(x, y + 1)
-//            val bottomRight = getTile(x + 1, y)
-//            val topRight = getTile(x + 1, y + 1)
-//
-////            val tileType = bottomLeft.tileType
-//
-//            // Fun wee rendering hack to fill in holes
-//            val bl = bottomLeft.exists && bottomLeft.tileType.ordinal >= tileType.ordinal
-//            val tl = topLeft.exists && topLeft.tileType.ordinal >= tileType.ordinal
-//            val br = bottomRight.exists && bottomRight.tileType.ordinal >= tileType.ordinal
-//            val tr = topRight.exists && topRight.tileType.ordinal >= tileType.ordinal
-//
-//            if (bl || br || tl || tr) {
-////                r.color = tileType.color.cpy().add(-0.3f, -0.3f, -0.3f, 0.0f)
-////                r.poly(marchingSquaresFAScaled(bl, br, tl, tr), 1, x * SIMPLE_SIZE + 0.1, y * SIMPLE_SIZE + 0.1)
-//                r.color = tileType.color()
-//                if (bottomLeft.attachedToGround) {
-//                    r.color = Color.BLACK
-//                }
-//                r.poly(marchingSquaresFAScaled(bl, br, tl, tr), 1, x * SIMPLE_SIZE, y * SIMPLE_SIZE)
-//            }
-//        }
-//    }
-//}
+fun renderLevelOld(r: Renderer) {
+    for (tileType in TileType.values()) {
+        for (bottomLeft in levelOnScreen) {
+            val x = bottomLeft.x
+            val y = bottomLeft.y
+
+            val topLeft = getTile(x, y + 1)
+            val bottomRight = getTile(x + 1, y)
+            val topRight = getTile(x + 1, y + 1)
+
+//            val tileType = bottomLeft.tileType
+
+            // Fun wee rendering hack to fill in holes
+            val bl = bottomLeft.exists && bottomLeft.tileType.ordinal >= tileType.ordinal
+            val tl = topLeft.exists && topLeft.tileType.ordinal >= tileType.ordinal
+            val br = bottomRight.exists && bottomRight.tileType.ordinal >= tileType.ordinal
+            val tr = topRight.exists && topRight.tileType.ordinal >= tileType.ordinal
+
+            if (bl || br || tl || tr) {
+//                r.color = tileType.color().cpy().add(-0.3f, -0.3f, -0.3f, 0.0f)
+//                r.poly(
+//                    marchingSquaresFAScaled(bl, br, tl, tr),
+//                    1,
+//                    x * SIMPLE_SIZE + 0.1,
+//                    y * SIMPLE_SIZE + 0.1
+//                )
+                r.color = tileType.color()
+                if (bottomLeft.attachedToGround) {
+                    r.color = Color.BLACK
+                }
+                r.poly(
+                    marchingSquaresFAScaled(bl, br, tl, tr),
+                    1,
+                    x * SIMPLE_SIZE_IN_WORLD,
+                    y * SIMPLE_SIZE_IN_WORLD
+                )
+            }
+        }
+    }
+}
