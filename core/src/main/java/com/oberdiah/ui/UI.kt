@@ -107,18 +107,18 @@ fun renderUI(r: Renderer) {
 
         jumpUIFadeOff *= 0.95
         if (RENDER_JUMP_BUTTON) {
-            if (player.canJump()) {
-                r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.5))
-            } else {
-                r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.2))
-            }
-            r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
-
-            val bigButton = "JUMP"
-
-            r.text(
-                fontLarge, bigButton, WIDTH / 2, HEIGHT * JUMP_UI_FRACT / 2, Align.center
-            )
+//            if (player.canJump()) {
+//                r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.5))
+//            } else {
+//                r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.2))
+//            }
+//            r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
+//
+//            val bigButton = "JUMP"
+//
+//            r.text(
+//                fontLarge, bigButton, WIDTH / 2, HEIGHT * JUMP_UI_FRACT / 2, Align.center
+//            )
         } else {
             r.color = Color.WHITE.withAlpha(jumpUIFadeOff)
             r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)

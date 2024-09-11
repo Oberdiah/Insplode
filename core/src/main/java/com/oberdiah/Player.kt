@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.Utils.TOUCHES_DOWN
+import com.oberdiah.Utils.TOUCHES_WENT_DOWN
 import com.oberdiah.Utils.TOUCHES_WENT_UP
 import com.oberdiah.Utils.colorScheme
 import com.oberdiah.Utils.isKeyJustPressed
@@ -29,19 +30,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     /** What we use to determine if we've hit something on the way down or not. Wider than the player */
     lateinit var slamBox: Fixture
 
-    /**
-     * We need this because slamming is an action that only requires a button to be held, not pressed
-     * So if a player holds the button to jump, we can't immediately transition to slamming, we need
-     * to wait for the player to release the button first
-     */
-    private var willSlamInsteadOfJump = false
-
     private var airTime = 0.0
     private var inAir = true
-    private var timeSinceLastSlam = 10.0
     private var tileBelowMe: Tile = nonTile
     private var health = 3
-    private var justSpawned = true
+    private var isSlamming = true
 
     private val numHealthDots = 3
     private val feetPosition
@@ -88,8 +81,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         super.collided(yourFixture, otherFixture)
 
         if (yourFixture == slamBox) {
-            if (isSlamming()) {
-                justSpawned = false
+            if (isSlamming) {
+                isSlamming = false
                 CAMERA_LOCKED = false
 
                 val obj = otherFixture.body.userData
@@ -100,7 +93,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                     val desiredVel = 10.0
                     val impulse = body.mass * (desiredVel - currentVel)
                     body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
-                    timeSinceLastSlam = 0.0
                 } else {
                     val vel = lastTickVelocity
                     spawnParticlesAtMyFeet(
@@ -125,7 +117,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun reset() {
         body.setTransform(startingPoint, 0f)
         inAir = true
-        justSpawned = true
         health = numHealthDots
     }
 
@@ -143,7 +134,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun render(r: Renderer) {
         if (canJump()) {
             r.color = colorScheme.player
-        } else if (isSlamming()) {
+        } else if (isSlamming) {
             r.color = colorScheme.playerSlamming
         } else {
             r.color = colorScheme.playerNoJump
@@ -166,53 +157,53 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
     }
 
+    private var lastXValue = 0.0
+    private var lastBodyXValue = 0.0
+
     override fun tick() {
         lastTickVelocity = tickVelocity.cpy
         tickVelocity = body.velocity.cpy
 
-        timeSinceLastSlam += DELTA
-
         val vel = body.velocity
 
-        tileBelowMe = getTileBelowMe()
-
-        if (!tileBelowMe.exists) {
-            inAir = true
-        }
+        tileBelowMe = getTile(feetPosition - Point(0.0, SIMPLE_SIZE_IN_WORLD * 0.5))
 
         if (inAir) {
             airTime += DELTA
         } else {
             airTime = 0.0
-            willSlamInsteadOfJump = false
-        }
-
-        if (isSlamming()) {
-            // Slam into the ground
-            body.applyImpulse(Point(0f, -body.mass) * GLOBAL_SCALE)
         }
 
         if (isActionButtonJustPressed() && canJump()) {
             doJump()
+        } else if (isActionButtonJustPressed() && !canJump()) {
+            isSlamming = true
         }
-        if (!isActionButtonPressed() && !canJump()) {
-            willSlamInsteadOfJump = true
+        if (isSlamming) {
+            // Slam into the ground
+            body.applyImpulse(Point(0f, -body.mass) * GLOBAL_SCALE)
         }
 
         val acceleration = 2.5 * GLOBAL_SCALE
         var desiredXVel = 0.0
         var goLeft = false
         var goRight = false
+
+        TOUCHES_WENT_DOWN.forEach {
+            lastXValue = it.x
+            lastBodyXValue = body.p.x * SQUARE_SIZE_IN_PIXELS
+        }
+
         TOUCHES_DOWN.forEach {
             if (it.y > HEIGHT * JUMP_UI_FRACT) {
                 goLeft = goLeft || if (FOLLOW_FINGER) {
-                    it.x < body.p.x * (SQUARE_SIZE_IN_PIXELS - 1)
+                    (lastBodyXValue + it.x - lastXValue) < (body.p.x - SIMPLE_SIZE_IN_WORLD) * SQUARE_SIZE_IN_PIXELS
                 } else {
                     it.x < LEFT_BUTTON_UI_FRACT * WIDTH
                 }
 
                 goRight = goRight || if (FOLLOW_FINGER) {
-                    it.x > body.p.x * (SQUARE_SIZE_IN_PIXELS + 1)
+                    (lastBodyXValue + it.x - lastXValue) > (body.p.x + SIMPLE_SIZE_IN_WORLD) * SQUARE_SIZE_IN_PIXELS
                 } else {
                     it.x > RIGHT_BUTTON_UI_FRACT * WIDTH
                 }
@@ -284,14 +275,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         return airTime < COYOTE_TIME
     }
 
-    private fun isSlamming(): Boolean {
-        if (justSpawned) {
-            return true
-        }
-
-        return isActionButtonPressed() && willSlamInsteadOfJump && timeSinceLastSlam > SLAM_PREVENTION_WINDOW
-    }
-
     private fun isActionButtonPressed(): Boolean {
         // If on desktop, we're slamming if space is held and we cannot jump
         return if (Gdx.app.type == Application.ApplicationType.Desktop) {
@@ -308,27 +291,5 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         } else {
             TOUCHES_WENT_UP.isNotEmpty()
         }
-    }
-
-    private fun getTileBelowMe(): Tile {
-        // We effectively need to check in a 3x3 grid below the player
-
-        // Top middle of the search grid
-        val searchStartPos = feetPosition
-
-        for (x in intArrayOf(0, 1, -1)) {
-            for (y in 0 downTo -2) {
-                val pos = searchStartPos + Point(
-                    x * SIMPLE_SIZE_IN_WORLD * 0.5,
-                    y * SIMPLE_SIZE_IN_WORLD * 0.5
-                )
-                val newTile = getTile(pos)
-                if (newTile.exists) {
-                    return newTile
-                }
-            }
-        }
-
-        return nonTile
     }
 }

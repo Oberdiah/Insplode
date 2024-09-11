@@ -33,7 +33,7 @@ var RIGHT_BUTTON_UI_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
 
 var RENDER_JUMP_BUTTON = true
-var FOLLOW_FINGER = false
+var FOLLOW_FINGER = true
 
 var HIGH_SCORE = 0.0
 
