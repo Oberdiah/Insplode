@@ -19,6 +19,9 @@ private fun bombFixtureDef(shape: Shape): FixtureDef {
 }
 
 abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObject(startingPoint) {
+    val fuseLength
+        get() = bombType.fuseLength
+
     val radius
         get() = bombType.renderRadius * GLOBAL_SCALE
 
@@ -48,23 +51,27 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     }
 }
 
-enum class BombType(val power: Number, val renderRadius: Number, val color: Color) {
-    SmallTimed(0.8, 0.2, colorScheme.bombPrimary),
-    MediumTimed(1.3, 0.3, colorScheme.bombPrimary),
-    LargeTimed(2.0, 0.4, colorScheme.bombPrimary),
-    MegaTimed(3.0, 0.6, colorScheme.bombPrimary),
-    LineBomb(0.3, 0.15, colorScheme.bombPrimary),
-    SpringBomb(1.0, 0.25, colorScheme.bombPrimary),
-    StickyBomb(1.3, 0.3, colorScheme.bombPrimary),
-    ClusterBomb(1.0, 0.3, colorScheme.bombPrimary),
-    ClusterParticle(0.8, 0.1, Color.BLACK),
-    ImpactBomb(1.0, 0.3, colorScheme.bombPrimary),
+enum class BombType(
+    val power: Number,
+    val renderRadius: Number,
+    val fuseLength: Number,
+    val color: Color
+) {
+    SmallTimed(0.8, 0.2, 8.0, colorScheme.bombPrimary),
+    MediumTimed(1.3, 0.3, 8.0, colorScheme.bombPrimary),
+    LargeTimed(2.0, 0.4, 8.0, colorScheme.bombPrimary),
+    MegaTimed(3.0, 0.6, 8.0, colorScheme.bombPrimary),
+    LineBomb(0.3, 0.15, 7.0, colorScheme.bombPrimary),
+    SpringBomb(1.0, 0.25, 12.0, colorScheme.bombPrimary),
+    StickyBomb(1.3, 0.3, 6.0, colorScheme.bombPrimary),
+    ClusterBomb(1.0, 0.3, 8.0, colorScheme.bombPrimary),
+    ClusterParticle(0.8, 0.1, Double.NaN, Color.BLACK),
+    ImpactBomb(1.0, 0.3, Double.NaN, colorScheme.bombPrimary),
 }
 
-class LineBomb(startingPoint: Point, val totalTime: Number = 5.0) :
-    Bomb(startingPoint, BombType.LineBomb) {
+class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
     private val cornerSize = size / sqrt(2)
-    var timeLeft = totalTime
+    var timeLeft = fuseLength
 
     init {
         rectShape(size) {
@@ -105,8 +112,8 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0) :
 
     override fun render(r: Renderer) {
         r.color = Color.RED.withAlpha(0.5)
-        if (canBlow && timeLeft < totalTime / 4) {
-            val length = lineLength * (1 - timeLeft / (totalTime / 4))
+        if (canBlow && timeLeft < fuseLength / 4) {
+            val length = lineLength * (1 - timeLeft / (fuseLength / 4))
             r.line(
                 body.p + Point(body.angle - PI / 2) * length,
                 body.p - Point(body.angle - PI / 2) * length,
@@ -131,11 +138,11 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0) :
             body.angle + PI / 4
         )
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius, timeLeft / totalTime)
+        r.arcFrom0(body.p, radius, timeLeft / fuseLength)
     }
 
     override fun hitByExplosion() {
-        timeLeft = min(0.5, totalTime)
+        timeLeft = min(0.5, fuseLength)
     }
 
     override fun explode() {
@@ -154,9 +161,8 @@ class LineBomb(startingPoint: Point, val totalTime: Number = 5.0) :
 
 // Tunnel out of dirt
 // Small, medium and large circles
-class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number = 6.0) :
-    Bomb(startingPoint, bombType) {
-    var timeLeft = totalTime
+class TimedBomb(startingPoint: Point, bombType: BombType) : Bomb(startingPoint, bombType) {
+    var timeLeft = fuseLength
 
     init {
         circleShape(radius) {
@@ -165,7 +171,7 @@ class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number 
     }
 
     override fun hitByExplosion() {
-        timeLeft = min(0.5, totalTime)
+        timeLeft = min(0.5, fuseLength)
     }
 
     override fun tick() {
@@ -180,7 +186,7 @@ class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number 
         r.color = color
         r.circle(body.p, radius)
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius * 0.8, timeLeft / totalTime)
+        r.arcFrom0(body.p, radius * 0.8, timeLeft / fuseLength)
     }
 
     override fun explode() {
@@ -194,9 +200,8 @@ class TimedBomb(startingPoint: Point, bombType: BombType, val totalTime: Number 
 // Question mark bomb?
 // Big black hole?
 
-class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0) :
-    Bomb(startingPoint, BombType.ClusterBomb) {
-    var timeLeft = totalTime
+class ClusterBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ClusterBomb) {
+    var timeLeft = fuseLength
 
     init {
         ngonShape(radius, 6) {
@@ -205,7 +210,7 @@ class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0) :
     }
 
     override fun hitByExplosion() {
-        timeLeft = min(0.5, totalTime)
+        timeLeft = min(0.5, fuseLength)
     }
 
     override fun tick() {
@@ -220,7 +225,7 @@ class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0) :
         r.color = color
         r.ngon(body.p, radius, body.angle, 6)
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius * 0.8, timeLeft / totalTime)
+        r.arcFrom0(body.p, radius * 0.8, timeLeft / fuseLength)
         r.color = color.cpy().mul(0.5f)
         r.ngonLine(body.p, radius - 0.025, body.angle, 0.05, 6)
     }
@@ -236,7 +241,7 @@ class ClusterBomb(startingPoint: Point, val totalTime: Number = 6.0) :
     }
 }
 
-class ClusterParticle(startingPoint: Point, val totalTime: Number) :
+class ClusterParticle(startingPoint: Point, fuseLength: Number) :
     Bomb(startingPoint, BombType.ClusterParticle) {
     init {
         circleShape(radius) {
@@ -246,9 +251,10 @@ class ClusterParticle(startingPoint: Point, val totalTime: Number) :
         }
     }
 
+    var timeLeft = fuseLength
+
     override fun hitByExplosion() {}
 
-    var timeLeft = totalTime
     override fun tick() {
         super.tick()
         timeLeft -= DELTA
@@ -268,8 +274,7 @@ class ClusterParticle(startingPoint: Point, val totalTime: Number) :
     }
 }
 
-class StickyBomb(startingPoint: Point, val totalTime: Number = 6.0) :
-    Bomb(startingPoint, BombType.StickyBomb) {
+class StickyBomb(startingPoint: Point) : Bomb(startingPoint, BombType.StickyBomb) {
     val trapezoidHeight = 1.0
     private val trapezoid = listOf(
         Point(-radius, 0),
@@ -285,7 +290,7 @@ class StickyBomb(startingPoint: Point, val totalTime: Number = 6.0) :
     )
     private var typeToBe = BodyDef.BodyType.DynamicBody
     private val tilesTouching = mutableSetOf<Tile>()
-    private var timeLeft = totalTime
+    private var timeLeft = fuseLength
 
     init {
         body.isFixedRotation = true
@@ -366,10 +371,10 @@ class StickyBomb(startingPoint: Point, val totalTime: Number = 6.0) :
         r.poly(trapezoid, body.p, body.angle)
 
         r.color = Color.WHITE.withAlpha(0.5)
-        r.arcFrom0(body.p - Point(0, radius / 2), radius / 2, timeLeft / totalTime)
+        r.arcFrom0(body.p - Point(0, radius / 2), radius / 2, timeLeft / fuseLength)
 
 //        r.color = Color.WHITE.withAlpha(0.5)
-//        val alpha = (timeLeft / totalTime)
+//        val alpha = (timeLeft / fuseLength)
 //        trapezoid2[2].y = -(trapezoidHeight * radius * alpha).d
 //        trapezoid2[2].x = (radius * (0.4 + (1-alpha)*(1-0.4))).d
 //        trapezoid2[3].y = -(trapezoidHeight * radius * alpha).d
@@ -423,9 +428,8 @@ class ImpactBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ImpactBomb
     }
 }
 
-class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0) :
-    Bomb(startingPoint, BombType.SpringBomb) {
-    var timeLeft = totalTime
+class SpringBomb(startingPoint: Point) : Bomb(startingPoint, BombType.SpringBomb) {
+    var timeLeft = fuseLength
     val springFrequency = 2.0
     var timeTillSpring = springFrequency
     var currentSpringDelay = springFrequency
@@ -463,7 +467,7 @@ class SpringBomb(startingPoint: Point, val totalTime: Number = 10.0) :
 
     override fun render(r: Renderer) {
         val bodyPos = body.p
-        val overallFract = (timeLeft / totalTime)
+        val overallFract = (timeLeft / fuseLength)
         var springFract = (timeTillSpring / currentSpringDelay)
         if (timeTillSpring > timeLeft) {
             springFract = (timeLeft / currentSpringDelay).d
