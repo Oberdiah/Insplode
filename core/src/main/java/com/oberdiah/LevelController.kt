@@ -33,29 +33,29 @@ class Phase(val d: Number, val callback: () -> Unit) {
 //    }
 //)
 
+// It's all going wrong in BombVille
+
 val phases = arrayOf(
     Phase(4.0) {
         // Drop pod from above.
     },
-    Phase(5.0) { startRandomBombs(BombType.SmallTimed, 1.0) },
-    Phase(4.0, BombType.MediumTimed) {
-        stopAllBombs()
-        gameMessage = "Medium Bomb"
-        spawnBomb(BombType.MediumTimed, 0.5)
+    Phase(5.0) {
+        spawnBomb(BombType.SmallTimed, 0.25)
+    },
+    Phase(5.0) {
+        spawnBomb(BombType.MediumTimed, 0.75)
+    },
+    Phase(5.0) {
+        spawnBomb(BombType.SmallTimed, 0.25)
+        spawnBomb(BombType.SmallTimed, 0.3)
+        spawnBomb(BombType.MediumTimed, 0.7)
+    },
+    Phase(7.0) {
+        spawnBomb(BombType.ClusterBomb, 0.5)
     },
     Phase(15.0) {
         gameMessage = ""
-        startRandomBombs(BombType.SmallTimed, 3.0)
-        startRandomBombs(BombType.MediumTimed, 5.0)
-    },
-    Phase(4.0, BombType.LineBomb) {
-        stopAllBombs()
-        spawnBomb(BombType.LineBomb, 0.75)
-        gameMessage = "Line Bomb"
-    },
-    Phase(15.0) {
-        gameMessage = ""
-        startRandomBombs(BombType.LineBomb, 6.0)
+        startRandomBombs(BombType.ClusterBomb, 6.0)
         startRandomBombs(BombType.SmallTimed, 5.0)
         startRandomBombs(BombType.MediumTimed, 7.0)
     },
@@ -83,11 +83,6 @@ val phases = arrayOf(
         startRandomBombs(BombType.MediumTimed, 7.0)
         startRandomBombs(BombType.SpringBomb, 6.0)
         startRandomBombs(BombType.LargeTimed, 10.0)
-    },
-    Phase(4.0, BombType.ClusterBomb) {
-        stopAllBombs()
-        spawnBomb(BombType.ClusterBomb, 0.75)
-        gameMessage = "Cluster Bomb"
     },
     Phase(15.0) {
         gameMessage = ""
