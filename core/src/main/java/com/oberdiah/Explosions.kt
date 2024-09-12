@@ -4,7 +4,7 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 
-fun boom(point: Point, radiusIn: Number, hurtsThePlayer: Boolean = true) {
+fun boom(point: Point, radiusIn: Number, affectsThePlayer: Boolean = true) {
     val radius = radiusIn * GLOBAL_SCALE
 
     val simpleRadius = (radius * SIMPLES_RESOLUTION).i
@@ -40,11 +40,10 @@ fun boom(point: Point, radiusIn: Number, hurtsThePlayer: Boolean = true) {
 
     for (a in getAllPhysicsObjects) {
         if (a.body.p.distTo(point) < radius) {
-            val pushForce = (a.body.p - point)
-            pushForce.len = radius * 10
-            a.body.applyImpulse(pushForce)
-
-            if (a !is Player || hurtsThePlayer) {
+            if (a !is Player || affectsThePlayer) {
+                val pushForce = (a.body.p - point)
+                pushForce.len = radius * 10
+                a.body.applyImpulse(pushForce)
                 a.hitByExplosion()
             }
         }
