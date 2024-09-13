@@ -56,6 +56,10 @@ fun max(a: Number, b: Number): Double {
     return a.toDouble().coerceAtLeast(b.toDouble())
 }
 
+fun lerp(a: Number, b: Number, t: Number): Double {
+    return a.d + (b.d - a.d) * t.d
+}
+
 fun max(a: Int, b: Int): Int {
     return a.coerceAtLeast(b)
 }

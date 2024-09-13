@@ -1,5 +1,6 @@
 package com.oberdiah.Utils
 
+import com.oberdiah.AVERAGE_DELTA
 import com.oberdiah.format
 
 var timerString = "No data yet"
@@ -11,11 +12,13 @@ fun timerStart() {
 
 private val fpsQueue = mutableListOf<Double>()
 private var lastFrameTime = 0.0
+
 class TimedInstance(val name: String, val timeMS: Double) {
     override fun toString(): String {
         return "$name: ${timeMS.format(2)}ms"
     }
 }
+
 val frameTimes = mutableListOf<TimedInstance>()
 
 fun timerEnd() {
@@ -28,15 +31,15 @@ fun timerEnd() {
 
     frameTimes.sortByDescending { it.timeMS }
 
-    val line1 = "Last frame: ${lastFrameTime.format(3)} avg: ${avg.format(3)} (${(avg/(10/120.0)).format(1)}%)"
-    var line2 = ""
+    timerString = "Last frame: ${lastFrameTime.format(3)} avg: ${avg.format(3)} (${
+        (avg / (10 / 120.0)).format(1)
+    }%)\n"
+    timerString += "Average delta: ${AVERAGE_DELTA.format(3)}\n"
     for (t in frameTimes) {
         if (t.timeMS > 0.2) {
-            line2 += "$t\n"
+            timerString += "$t\n"
         }
     }
-
-    timerString = "$line1\n$line2"
 
     frameTimes.clear()
 }

@@ -160,8 +160,16 @@ val SIZE: Size
         return screenSize
     }
 
+private val LAST_HUNDRED_DELTAS = mutableListOf<Double>()
+val AVERAGE_DELTA: Double
+    get() = LAST_HUNDRED_DELTAS.average()
+
 fun calculateGlobals() {
     DELTA = Gdx.graphics.deltaTime.d
+    LAST_HUNDRED_DELTAS.add(DELTA)
+    if (LAST_HUNDRED_DELTAS.size > 100) {
+        LAST_HUNDRED_DELTAS.removeAt(0)
+    }
     APP_FRAME++
     APP_TIME += DELTA
 

@@ -62,7 +62,7 @@ fun renderUI(r: Renderer) {
     val secondLine = DEBUG_STRING
     val thirdLine = timerString
     if (SHOW_FRAMERATE_DATA) {
-        r.text(fontSmall, "$firstLine\n$secondLine\n$thirdLine", 100, HEIGHT - 100)
+        r.text(fontSmall, "$firstLine\n$secondLine\n$thirdLine", 10, HEIGHT * 0.6)
     }
 
     if (PAUSED) {

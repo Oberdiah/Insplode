@@ -14,7 +14,7 @@ import com.oberdiah.ui.switchScreen
 import kotlin.math.pow
 import kotlin.random.Random
 
-private val PLAYER_SIZE = Size(0.4, 0.7) * GLOBAL_SCALE
+private val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 private const val COYOTE_TIME = 0.2
 private const val PLAYER_GRAVITY_MODIFIER = 0.5
 
@@ -77,7 +77,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             jumpBox = addFixture(it, true)
         }
 
-        rectShape(PLAYER_SIZE / Point(0.8, 2), Point(0f, -PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
+        rectShape(PLAYER_SIZE / Point(0.6, 1.5), Point(0f, -PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
             slamBox = addFixture(it, true)
         }
     }
@@ -98,33 +98,34 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
 
-        if (yourFixture == slamBox) {
-            if (isSlamming) {
+        if (isSlamming) {
+            val obj = otherFixture.body.userData
+            if (yourFixture == slamBox && obj is Bomb) {
                 isSlamming = false
                 CAMERA_LOCKED = false
 
-                val obj = otherFixture.body.userData
-                if (obj is Bomb) {
-                    boom(obj.body.p, obj.power, affectsThePlayer = false)
-                    obj.destroy()
-                    val currentVel = body.velocity.y
-                    val desiredVel =
-                        clamp((-body.velocity.y).pow(0.75) + obj.power * 2.0, 3.0, 20.0)
-//                    println("Desired vel: $desiredVel, obj power: ${obj.power}, body velocity: $currentVel")
-                    val impulse = body.mass * (desiredVel - currentVel)
-                    body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
-                    timeSinceLastSlamHit = 0.0
-                } else {
-                    val vel = lastTickVelocity
-                    spawnParticlesAtMyFeet(
-                        ferocity = vel.len.d * 0.2,
-                        number = max((vel.len.d * 0.5).i, 2)
-                    )
+                boom(obj.body.p, obj.power, affectsThePlayer = false)
+                obj.destroy()
+                val currentVel = body.velocity.y
+                val desiredVel =
+                    clamp((-body.velocity.y).pow(0.75) + obj.power * 2.0, 5.0, 15.0)
+                val impulse = body.mass * (desiredVel - currentVel)
+                body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
+                timeSinceLastSlamHit = 0.0
+            }
+            if (yourFixture == jumpBox && obj !is Bomb) {
+                isSlamming = false
+                CAMERA_LOCKED = false
 
-                    if (vel.len > 10) {
-                        addScreenShake(vel.len.d * 0.02)
-                        boom(body.p, vel.len.d * 0.05, affectsThePlayer = false)
-                    }
+                val vel = lastTickVelocity
+                spawnParticlesAtMyFeet(
+                    ferocity = vel.len.d * 0.2,
+                    number = max((vel.len.d * 0.5).i, 2)
+                )
+
+                if (vel.len > 10) {
+                    addScreenShake(vel.len.d * 0.02)
+                    boom(body.p, vel.len.d * 0.05, affectsThePlayer = false)
                 }
             }
         }

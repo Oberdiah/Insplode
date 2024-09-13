@@ -14,13 +14,8 @@ private var accumulator = 0f
 fun doPhysicsStep() {
     val frameTime = min(DELTA, 0.25f).f
     accumulator += frameTime
-    var numIterations = 0
-    while (accumulator >= TIME_STEP) {
-        world.step(TIME_STEP, 6, 2)
-        accumulator -= TIME_STEP
 
-        numIterations++
-    }
+    world.step(AVERAGE_DELTA.f, 6, 2)
 }
 
 fun initWorld() {
