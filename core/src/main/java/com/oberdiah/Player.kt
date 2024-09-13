@@ -11,6 +11,7 @@ import com.oberdiah.Utils.colorScheme
 import com.oberdiah.Utils.isKeyJustPressed
 import com.oberdiah.Utils.isKeyPressed
 import com.oberdiah.ui.switchScreen
+import kotlin.math.pow
 import kotlin.random.Random
 
 private val PLAYER_SIZE = Size(0.4, 0.7) * GLOBAL_SCALE
@@ -108,8 +109,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                     obj.destroy()
                     val currentVel = body.velocity.y
                     val desiredVel =
-                        clamp(-body.velocity.y + obj.power * 4.0, 10.0, 25.0)
-                    println("Desired vel: $desiredVel, obj power: ${obj.power}, body velocity: $currentVel")
+                        clamp((-body.velocity.y).pow(0.75) + obj.power * 2.0, 3.0, 20.0)
+//                    println("Desired vel: $desiredVel, obj power: ${obj.power}, body velocity: $currentVel")
                     val impulse = body.mass * (desiredVel - currentVel)
                     body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
                     timeSinceLastSlamHit = 0.0

@@ -12,7 +12,7 @@ const val IS_DEBUG_ENABLED = true
  *
  * 2.0 is zoomed in, 0.5 is zoomed out.
  */
-const val GLOBAL_SCALE = 0.65
+const val GLOBAL_SCALE = 1.0
 
 /** The number of 'simples' per unit on the grid. */
 const val SIMPLES_RESOLUTION = 5
