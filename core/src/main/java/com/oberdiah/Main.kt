@@ -39,6 +39,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         worldSpaceRenderer = Renderer("World Space Renderer")
         uiRenderer = Renderer("UI Renderer")
         initWorld()
+        initTiles()
 
         loadFiles()
         loadFonts()

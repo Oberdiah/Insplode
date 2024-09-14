@@ -51,14 +51,19 @@ private fun shiftSimplesDown(rowsToMove: Int) {
     }
 }
 
+// Called once on app load.
+fun initTiles() {
+    for (tile in simplesStored) {
+        tile.init()
+    }
+}
+
 fun resetLevel() {
     LOWEST_SIMPLE_Y_STORED = 0
     previouSlowestSimpleYStored = 0
 
     for (tile in simplesStored) {
-        if (tile.initialised) {
-            tile.body.destroy()
-        }
+        tile.body.destroy()
     }
     for (i in simplesStored.indices) {
         simplesStored[i] = Tile(i)

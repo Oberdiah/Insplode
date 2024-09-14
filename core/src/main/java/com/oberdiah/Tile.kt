@@ -68,11 +68,8 @@ class Tile(private val id: Int) {
         data = TileData(this)
     }
 
-    var initialised = false
-
     fun init() {
         require(isSafe)
-        initialised = true
         rebuildNeighbours()
         val groundBodyDef = BodyDef()
         groundBodyDef.position.set(x * SIMPLE_SIZE_IN_WORLD.f, y * SIMPLE_SIZE_IN_WORLD.f)
