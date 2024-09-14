@@ -84,6 +84,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun hitByExplosion() {
         deadEndingCountdown = 2.5
+        body.gravityScale = 0.0
         // Spawn a bunch of smoke in the shape of the player
         for (i in 0 until 100) {
             val pos = body.p + Point(
