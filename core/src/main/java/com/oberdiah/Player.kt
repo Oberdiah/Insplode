@@ -138,6 +138,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun reset() {
         body.setTransform(startingPoint, 0f)
+        body.gravityScale = PLAYER_GRAVITY_MODIFIER
         airTime = 0.0
         deadEndingCountdown = null
         isSlamming = true
