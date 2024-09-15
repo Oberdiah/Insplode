@@ -62,9 +62,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     private var lastTickVelocity = Point(0.0, 0.0)
 
     init {
-        body.isFixedRotation = true
-        body.gravityScale = PLAYER_GRAVITY_MODIFIER
-
         circleShape(PLAYER_SIZE.w / 2) {
             addFixture(it)
         }
@@ -83,11 +80,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         rectShape(PLAYER_SIZE / Point(0.6, 1.5), Point(0f, -PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
             slamBox = addFixture(it, true)
         }
+
+        reset()
     }
 
     override fun hitByExplosion() {
         deadEndingCountdown = 2.5
-        body.gravityScale = 0.0
+        body.linearDamping = Float.MAX_VALUE
         // Spawn a bunch of smoke in the shape of the player
         for (i in 0 until 100) {
             val pos = body.p + Point(
@@ -113,7 +112,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 val currentVel = body.velocity.y
                 val desiredVel =
                     clamp((-body.velocity.y).pow(0.75) + obj.power * 2.0, 5.0, 15.0)
-                val impulse = body.mass * (desiredVel - currentVel)
+                val impulse = body.mass * (desiredVel * 2 - currentVel)
                 body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
                 timeSinceLastSlamHit = 0.0
             }
@@ -141,7 +140,12 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun reset() {
         body.setTransform(startingPoint, 0f)
+        body.isFixedRotation = true
         body.gravityScale = PLAYER_GRAVITY_MODIFIER
+        body.velocity = Point(0.0, 0.0)
+        body.linearDamping = 0.0
+        tickVelocity = Point(0.0, 0.0)
+        lastTickVelocity = Point(0.0, 0.0)
         airTime = 0.0
         deadEndingCountdown = null
         isSlamming = true

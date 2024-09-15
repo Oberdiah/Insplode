@@ -46,7 +46,13 @@ fun tickPhysicsWrapper() {
 
 class PhysBody(private val body: Body, val shouldUpdate: Boolean = true) {
     val p = Point()
-    val velocity = Point()
+    var velocity: Point = Point()
+        set(value) {
+            body.linearVelocity = value.v2
+            field = value
+        }
+
+
     private var exists = true
     private var fixtures = mutableListOf<Fixture>()
 

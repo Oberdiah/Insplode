@@ -114,6 +114,8 @@ fun playExplosionSound(force: Double) {
     /// Vary the pitch a bit
     pitch += Random.nextDouble(-0.05, 0.05)
 
+//    println("Explosion sound pitch: $pitch, force: $force")
+
     if (pitch > 0.4) {
         playSound(
             "trim_orange hit hard ${Random.nextInt(1, 10)}",
