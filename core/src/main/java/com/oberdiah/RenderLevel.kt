@@ -39,10 +39,10 @@ fun initLevelRender() {
 
 fun rerenderLevel() {
     // Literally just request every tile to re-render itself
-    tilesChangedThisFrame = simplesStored.toList()
+    tileIdsChangedInTheLastFrame = simplesStored.map(Tile::getId)
 }
 
-var tilesChangedThisFrame = listOf<Tile>()
+var tileIdsChangedInTheLastFrame = listOf<TileId>()
 
 var fboBaseLocation = 0
 var previousLowestTile = 0
@@ -85,9 +85,9 @@ fun renderLevel() {
         }
     }
 
-    for (tile in tilesChangedThisFrame) {
-        if (tile.y in lowestTileOnScreen..highestTileOnScreen) {
-            renderTile(tile, tile.x, tile.y)
+    for (tileId in tileIdsChangedInTheLastFrame) {
+        if (tileId.y in lowestTileOnScreen..highestTileOnScreen) {
+            renderTile(getTile(tileId), tileId.x, tileId.y)
         }
     }
     levelShapeRenderer.end()

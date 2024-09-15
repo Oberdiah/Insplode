@@ -3,9 +3,9 @@ package com.oberdiah
 import kotlin.random.Random
 
 /** We don't store tiles here as this array exists across frames and the tiles may not. */
-val currentlyFloatingTileIds = mutableSetOf<Int>()
+private val currentlyFloatingTileIds = mutableSetOf<TileId>()
 fun tickCollapse() {
-    if (tilesChangedThisFrame.isNotEmpty()) {
+    if (tileIdsChangedInTheLastFrame.isNotEmpty()) {
         val wavefront = mutableSetOf<Tile>()
         val visited = mutableSetOf<Tile>()
         currentlyFloatingTileIds.clear()

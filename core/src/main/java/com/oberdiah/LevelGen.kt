@@ -34,7 +34,7 @@ val levelOnScreen = sequence {
  * This should be the only persistent storage of tiles cross-frame. Anything else is
  * risky as we can invalidate tiles at any time.
  */
-val simplesStored = MutableList(SIMPLES_WIDTH * SIMPLES_HEIGHT_STORED) { Tile(it) }
+val simplesStored = MutableList(SIMPLES_WIDTH * SIMPLES_HEIGHT_STORED) { Tile(TileId(it)) }
 
 /** If null is returned you've requested a tile outside the bounds of the stored tiles. */
 fun getTile(p: Point): TileLike {
@@ -55,8 +55,8 @@ fun getTile(x: Int, y: Int): TileLike {
     return tile
 }
 
-fun getTile(tileId: Int): TileLike {
-    val storageIdx = tileId - currentLowestSimpleY * SIMPLES_WIDTH
+fun getTile(tileId: TileId): TileLike {
+    val storageIdx = tileId.id - currentLowestSimpleY * SIMPLES_WIDTH
     if (storageIdx >= 0 && storageIdx < simplesStored.size) {
         return simplesStored[storageIdx]
     }
@@ -95,7 +95,7 @@ fun resetLevel() {
         tile.dispose()
     }
     for (i in simplesStored.indices) {
-        simplesStored[i] = Tile(i)
+        simplesStored[i] = Tile(TileId(i))
     }
     for (tile in simplesStored) {
         tile.init()
@@ -135,7 +135,7 @@ fun updateLevelStorage() {
 
         // Generate new ones at the bottom.
         for (i in 0 until amountToMove) {
-            simplesStored[i] = Tile(i + currentLowestSimpleY * SIMPLES_WIDTH)
+            simplesStored[i] = Tile(TileId(i + currentLowestSimpleY * SIMPLES_WIDTH))
         }
 
         // Rebuild top row neighbours (i.e let them know they no longer have anyone above them)
@@ -161,7 +161,7 @@ fun updateLevelStorage() {
 
         // Generate new ones at the top.
         for (i in simplesStored.size - amountToMove until simplesStored.size) {
-            simplesStored[i] = Tile(i + currentLowestSimpleY * SIMPLES_WIDTH)
+            simplesStored[i] = Tile(TileId(i + currentLowestSimpleY * SIMPLES_WIDTH))
         }
 
         // Rebuild bottom row neighbours (i.e let them know they no longer have anyone below them)

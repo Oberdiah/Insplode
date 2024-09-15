@@ -53,7 +53,7 @@ fun updateTilePhysics() {
         }
     }
 
-    tilesChangedThisFrame = tilesToRebuild.toList()
+    tileIdsChangedInTheLastFrame = tilesToRebuild.map(Tile::getId)
 
     changedTiles.clear()
 

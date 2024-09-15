@@ -43,6 +43,30 @@ class EmptyTile : TileLike {
 }
 
 /**
+ * Low IDs are at the bottom of the screen, increasing as we go up.
+ *
+ * IDs are nearly always negative, as they're all underground.
+ */
+@JvmInline
+value class TileId(val id: Int) {
+    companion object {
+        fun fromXY(x: Int, y: Int): TileId {
+            return TileId(x + y * SIMPLES_WIDTH)
+        }
+    }
+
+    val x: Int
+        get() {
+            return (id % SIMPLES_WIDTH + SIMPLES_WIDTH) % SIMPLES_WIDTH
+        }
+
+    val y: Int
+        get() {
+            return floor(id.d / SIMPLES_WIDTH)
+        }
+}
+
+/**
  * The way tiles work conceptually is they're a 2D array of spaces on the grid. They may or
  * may not have a presence in the world. A 'tile' object represents a single space on the grid,
  * and we create and destroy tiles as we move further down. We do not create tiles for any other reason.
@@ -50,12 +74,12 @@ class EmptyTile : TileLike {
  * A low id is at the bottom of the screen, increasing as we go up.
  * IDs are nearly always negative, as they're all underground.
  */
-class Tile(private val id: Int) : TileLike {
+class Tile(private val id: TileId) : TileLike {
     override fun toString(): String {
         return "${if (doesExistPhysically) tileType else "Air"}: ($x, $y)"
     }
 
-    fun getId(): Int {
+    fun getId(): TileId {
         return id
     }
 
@@ -170,13 +194,13 @@ class Tile(private val id: Int) : TileLike {
     val x: Int
         get() {
             require(isSafe)
-            return (id % SIMPLES_WIDTH + SIMPLES_WIDTH) % SIMPLES_WIDTH
+            return id.x
         }
 
     val y: Int
         get() {
             require(isSafe)
-            return floor(id.d / SIMPLES_WIDTH)
+            return id.y
         }
 
     private var _rect = Rect(Point(), Size(SIMPLE_SIZE_IN_WORLD, SIMPLE_SIZE_IN_WORLD))
