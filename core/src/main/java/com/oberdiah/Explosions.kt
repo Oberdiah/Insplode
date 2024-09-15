@@ -4,7 +4,12 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 
-fun boom(point: Point, radiusIn: Number, affectsThePlayer: Boolean = true) {
+fun boom(
+    point: Point,
+    radiusIn: Number,
+    affectsThePlayer: Boolean = true,
+    playSound: Boolean = true
+) {
     val radius = radiusIn * GLOBAL_SCALE
 
     val simpleRadius = (radius * SIMPLES_RESOLUTION).i
@@ -14,7 +19,9 @@ fun boom(point: Point, radiusIn: Number, affectsThePlayer: Boolean = true) {
 
     addScreenShake(radius.d.pow(0.5) * 0.5)
 
-    playExplosionSound(radius.d)
+    if (playSound) {
+        playExplosionSound(radius.d)
+    }
 
     for (dx in -simpleRadius..simpleRadius) {
         for (dy in -simpleRadius..simpleRadius) {

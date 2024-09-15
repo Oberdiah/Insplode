@@ -15,7 +15,6 @@ import kotlin.random.Random
 
 private var SOUND_POOL: Map<String, List<MASound>> = mutableMapOf()
 lateinit var miniAudio: MiniAudio
-lateinit var assetManager: AssetManager
 lateinit var caveSplitter: MASplitter
 
 // https://sonniss.com/gameaudiogdc
@@ -34,12 +33,6 @@ fun loadSounds() {
     lowPassFilter.attachToThisNode(caveSplitter, 0)
     delayNode.attachToThisNode(caveSplitter, 1)
 
-    assetManager = AssetManager()
-    assetManager.setLoader(
-        MASound::class.java,
-        MASoundLoader(miniAudio, assetManager.fileHandleResolver)
-    )
-
     val allPaths = listFolder("Sounds/").map {
         var path = it.path()
 
@@ -50,19 +43,12 @@ fun loadSounds() {
         Pair(path, it.nameWithoutExtension())
     }
 
-    allPaths.forEach { assetManager.load(it.first, MASound::class.java) }
-
-    assetManager.finishLoading()
-
-    val numSoundsInPoolPerAsset = 25
+    val numSoundsInPoolPerAsset = 10
 
     allPaths.forEach {
         val path = it.first
         val sounds = (0 until numSoundsInPoolPerAsset).map {
-            assetManager.get(
-                path,
-                MASound::class.java
-            )
+            miniAudio.createSound(path)
         }
         SOUND_POOL += it.second to sounds
     }
@@ -76,8 +62,7 @@ fun disposeSounds() {
             sounds.forEach { it.dispose() }
         }
 
-        assetManager.dispose()
-        miniAudio.dispose();
+        miniAudio.dispose()
     }
 }
 
@@ -87,21 +72,27 @@ fun playSound(
     volume: Double = 1.0,
     splitter: MASplitter? = null
 ) {
+    if (volume < 0.005) return
+
     // Get the first sound that isn't playing (sound.isPlaying())
     val sound = SOUND_POOL[soundName]?.firstOrNull { !it.isPlaying }
 
     if (sound == null) {
+        println("No available sound for $soundName :(")
         return
     }
 
-    if (volume < 0.005) return
     sound.setVolume(volume.f)
     sound.setPitch(pitch.f)
     // Random pan
     sound.setPan(Random.nextDouble(-0.5, 0.5).f)
     sound.fadeIn(0.1f)
 
-    splitter?.attachToThisNode(sound, 0)
+    if (splitter != null) {
+        splitter.attachToThisNode(sound, 0)
+    } else {
+        miniAudio.attachToEngineOutput(sound, 0)
+    }
 
     sound.play()
 }
@@ -109,12 +100,10 @@ fun playSound(
 fun playExplosionSound(force: Double) {
     // Force generally ranges from 0 to 2 for the very large explosions
 
-    var pitch = 0.7 - force * 0.3
+    var pitch = max(0.7 - force * 0.3, 0.1)
 
     /// Vary the pitch a bit
-    pitch += Random.nextDouble(-0.05, 0.05)
-
-//    println("Explosion sound pitch: $pitch, force: $force")
+    pitch *= Random.nextDouble(0.9, 1.1)
 
     if (pitch > 0.4) {
         playSound(
@@ -128,15 +117,23 @@ fun playExplosionSound(force: Double) {
             volume = 0.5
         )
     } else {
-//        playSound("trim_metal hits metal 7", ReasonSoundCreated.Explosion, 0.05, volume = 0.5)
+        val splitter = if (force > 1.8) {
+            println("Cave splitter! Playing a big boom :)")
+            caveSplitter
+        } else {
+            null
+        }
+
         playSound(
             "trim_orange hit hard ${Random.nextInt(1, 10)}",
-            max(pitch, 0.1),
-            volume = 0.5
+            pitch,
+            volume = 0.5,
+            splitter = splitter,
         )
         playSound(
             "trim_trim_bat hit 4",
-            max(pitch, 0.1),
+            pitch,
+            splitter = splitter,
         )
     }
 }
@@ -185,6 +182,7 @@ fun playParticleSound(velocity: Double, size: Double) {
     val impact = velocity * size * 25.0
     val volume = saturate((impact - 2.0) / 10).pow(1.5) * 0.25
     val pitch = Random.nextDouble(1.0, 2.6)
+
     playSound(
         "trim_glass clink ${Random.nextInt(2, 6)}",
         pitch,

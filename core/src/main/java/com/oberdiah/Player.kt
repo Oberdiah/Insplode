@@ -112,7 +112,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 val currentVel = body.velocity.y
                 val desiredVel =
                     clamp((-body.velocity.y).pow(0.75) + obj.power * 2.0, 5.0, 15.0)
-                val impulse = body.mass * (desiredVel * 2 - currentVel)
+                val impulse = body.mass * (desiredVel - currentVel)
                 body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
                 timeSinceLastSlamHit = 0.0
             }
