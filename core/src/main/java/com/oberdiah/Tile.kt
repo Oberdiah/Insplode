@@ -1,9 +1,8 @@
 package com.oberdiah
 
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.Fixture
+import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.oberdiah.Utils.TileType
-import kotlin.random.Random
 
 class TileData(var tile: Tile) {
     private val x = tile.x
@@ -23,45 +22,96 @@ class TileData(var tile: Tile) {
     val intCoordinateNeighbors = listOf(tr, tm, rm)
 }
 
-class Tile(private val id: Int) {
-    override fun toString(): String {
-        return "${if (exists) tileType else "Air"}: ($x, $y), ${if (attachedToGround) "" else "Not "}Grounded"
+interface TileLike {
+    /** Does this tile physically exist; can you collide with it and see it? */
+    fun doesExist(): Boolean
+
+    /** What type of tile is this? If it doesn't exist this will always return air. */
+    fun getTileType(): TileType
+}
+
+// Useful so we can write methods that don't care about the difference between a tile and an empty
+// space outside the world.
+class EmptyTile : TileLike {
+    override fun doesExist(): Boolean {
+        return false
     }
 
-    var exists: Boolean = false
-        set(value) {
-            require(!(value && isNAT))
-            if (field != value) {
-                changedTiles.add(this)
-            }
-            field = value
-        }
+    override fun getTileType(): TileType {
+        return TileType.Air
+    }
+}
 
-    var tileType = TileType.Grass
-        // get() = if (exists) field else TileType.Air
-        set(value) {
+/**
+ * The way tiles work conceptually is they're a 2D array of spaces on the grid. They may or
+ * may not have a presence in the world. A 'tile' object represents a single space on the grid,
+ * and we create and destroy tiles as we move further down. We do not create tiles for any other reason.
+ *
+ * A low id is at the bottom of the screen, increasing as we go up.
+ * IDs are nearly always negative, as they're all underground.
+ */
+class Tile(private val id: Int) : TileLike {
+    override fun toString(): String {
+        return "${if (doesExistPhysically) tileType else "Air"}: ($x, $y)"
+    }
+
+    /**
+     * The tile 'exists' property tracks whether the tile has a physical presence in the world.
+     * If exists is true, the body is guaranteed to have a fixture. The opposite is not always the case,
+     * as we do fixture cleanup at the end of the tick.
+     */
+    private var doesExistPhysically: Boolean = false
+    private var tileType = TileType.Grass
+
+    /**
+     * This purely exists to make sure we don't accidentally use a tile that's been disposed of
+     * or not initialized.
+     * It cannot be referenced outside this class, and should not be relied upon.
+     */
+    private var isSafe = false
+
+    /** Register this tile as now materially existing. It will collide, it will render, etc. */
+    fun materialize() {
+        setExists(true)
+    }
+
+    /** Register this tile as no longer materially existing. It will not collide, it will not render, etc. */
+    fun dematerialize() {
+        setExists(false)
+    }
+
+    private fun setExists(exists: Boolean) {
+        if (this.doesExistPhysically != exists) {
             changedTiles.add(this)
-            field = value
         }
+        this.doesExistPhysically = exists
+    }
 
-    val isNAT
-        get() = id == Int.MAX_VALUE
-    val isSafe
-        get() = id != Int.MAX_VALUE
+    override fun doesExist(): Boolean {
+        return doesExistPhysically
+    }
+
+    fun setTileType(tileType: TileType) {
+        require(tileType != TileType.Air) { "Cannot set a tile to air." }
+        this.tileType = tileType
+    }
+
+    override fun getTileType(): TileType {
+        return tileType
+        // return if (exists) tileType else TileType.Air
+    }
+
 
     var attachedToGround = false
     var destructionTime = 0.0
 
     lateinit var data: TileData
-    lateinit var body: PhysBody
-    val rando = Random.nextDouble()
+    private lateinit var body: PhysBody
 
-    val fixtures = mutableListOf<Fixture>()
-
-    val marchingCubeNeighbors: List<Tile>
+    val marchingCubeNeighbors: List<TileLike>
         get() = data.marchingCubeNeighbors
 
-    val allSurroundingTiles: List<Tile>
+    val allSurroundingTiles: List<TileLike>
         get() = data.allSurroundingTiles
 
     fun rebuildNeighbours() {
@@ -69,7 +119,7 @@ class Tile(private val id: Int) {
     }
 
     fun init() {
-        require(isSafe)
+        isSafe = true
         rebuildNeighbours()
         val groundBodyDef = BodyDef()
         groundBodyDef.position.set(x * SIMPLE_SIZE_IN_WORLD.f, y * SIMPLE_SIZE_IN_WORLD.f)
@@ -77,9 +127,16 @@ class Tile(private val id: Int) {
         body.userData = this
     }
 
+    /** Call only if you're certain this tile will never be used again. */
+    fun dispose() {
+        body.destroy()
+        isSafe = false
+    }
+
     private var _coord = Point()
     val coord: Point
         get() {
+            require(isSafe)
             _coord.x = x.d * SIMPLE_SIZE_IN_WORLD
             _coord.y = y.d * SIMPLE_SIZE_IN_WORLD
             return _coord
@@ -100,7 +157,29 @@ class Tile(private val id: Int) {
     private var _rect = Rect(Point(), Size(SIMPLE_SIZE_IN_WORLD, SIMPLE_SIZE_IN_WORLD))
     val rect: Rect
         get() {
+            require(isSafe)
             _rect.p = coord
             return _rect
         }
+
+    fun recalculatePhysicsBody() {
+        body.removeAllFixtures()
+
+        val bottomLeft = this
+        val topLeft = data.tm
+        val bottomRight = data.rm
+        val topRight = data.tr
+
+        val bl = bottomLeft.doesExist()
+        val tl = topLeft.doesExist()
+        val br = bottomRight.doesExist()
+        val tr = topRight.doesExist()
+        if (bl || br || tl || tr) {
+            val fa = marchingSquaresFAScaled(bl, br, tl, tr)
+            val groundBox = PolygonShape()
+            groundBox.set(fa)
+            body.addFixture(groundBox, 0.0f)
+            groundBox.dispose()
+        }
+    }
 }

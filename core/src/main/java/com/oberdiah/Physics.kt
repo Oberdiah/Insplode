@@ -42,39 +42,23 @@ fun resetPhysics() {
 
 val changedTiles = mutableSetOf<Tile>()
 fun updateTilePhysics() {
+    // Rebuild ourselves and all of our neighbors
     val tilesToRebuild = mutableSetOf<Tile>()
     tilesToRebuild.addAll(changedTiles)
     for (tile in changedTiles) {
-        if (tile == nonTile) continue
-        tilesToRebuild.addAll(tile.marchingCubeNeighbors)
+        tile.marchingCubeNeighbors.forEach {
+            if (it is Tile) {
+                tilesToRebuild.add(it)
+            }
+        }
     }
-    tilesToRebuild.remove(nonTile)
 
     tilesChangedThisFrame = tilesToRebuild.toList()
 
     changedTiles.clear()
 
     for (tile in tilesToRebuild) {
-        tile.body.removeAllFixtures()
-    }
-
-    for (tile in tilesToRebuild) {
-        val bottomLeft = tile
-        val topLeft = tile.data.tm
-        val bottomRight = tile.data.rm
-        val topRight = tile.data.tr
-
-        val bl = bottomLeft.exists
-        val tl = topLeft.exists
-        val br = bottomRight.exists
-        val tr = topRight.exists
-        if (bl || br || tl || tr) {
-            val fa = marchingSquaresFAScaled(bl, br, tl, tr)
-            val groundBox = PolygonShape()
-            groundBox.set(fa)
-            tile.body.addFixture(groundBox, 0.0f)
-            groundBox.dispose()
-        }
+        tile.recalculatePhysicsBody()
     }
 }
 

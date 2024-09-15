@@ -29,10 +29,9 @@ fun boom(point: Point, radiusIn: Number, affectsThePlayer: Boolean = true) {
                 val velocity =
                     Velocity(vx * 0.5 * Random.nextDouble(), (vy * 2.5 + 8) * Random.nextDouble())
                 if (!DEBUG_MOVEMENT_MODE) spawnSmoke(tempPoint.cpy, velocity)
-                if (tile.exists) {
-                    tile.exists = false
-
-                    spawnFragment(tempPoint.cpy, velocity, tile.tileType)
+                if (tile is Tile && tile.doesExist()) {
+                    tile.dematerialize()
+                    spawnFragment(tempPoint.cpy, velocity, tile.getTileType())
                 }
             }
         }

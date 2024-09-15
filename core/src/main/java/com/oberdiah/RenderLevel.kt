@@ -115,16 +115,18 @@ fun renderLevel() {
 //    levelShapeRenderer.end()
 }
 
-// TileX/Y are passed in in case tile is a NAT. Feel free to use tile.x/y as arguments if you wanna crash instead.
-private fun renderTile(tile: Tile, tileX: Int, tileY: Int) {
+private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {
     levelShapeRenderer.color = Colors.transparent
 
     val yRenderingOffset = -floor(tileY / fboLoopSizeSimples.f) * fboLoopSize
 
     val x = (tileX * SIMPLE_SIZE_IN_WORLD).f
     val y = (tileY * SIMPLE_SIZE_IN_WORLD).f + yRenderingOffset
+
+    // Clear the old tile
     levelShapeRenderer.rect(x, y, SIMPLE_SIZE_IN_WORLD.f, SIMPLE_SIZE_IN_WORLD.f)
-    if (tile.isNAT) {
+
+    if (tile !is Tile) {
         return
     }
 
@@ -135,10 +137,10 @@ private fun renderTile(tile: Tile, tileX: Int, tileY: Int) {
 
     for (tileType in TileType.values()) {
         // Fun wee rendering hack to fill in holes
-        val bl = bottomLeft.exists && bottomLeft.tileType.ordinal >= tileType.ordinal
-        val tl = topLeft.exists && topLeft.tileType.ordinal >= tileType.ordinal
-        val br = bottomRight.exists && bottomRight.tileType.ordinal >= tileType.ordinal
-        val tr = topRight.exists && topRight.tileType.ordinal >= tileType.ordinal
+        val bl = bottomLeft.doesExist() && bottomLeft.getTileType().ordinal >= tileType.ordinal
+        val tl = topLeft.doesExist() && topLeft.getTileType().ordinal >= tileType.ordinal
+        val br = bottomRight.doesExist() && bottomRight.getTileType().ordinal >= tileType.ordinal
+        val tr = topRight.doesExist() && topRight.getTileType().ordinal >= tileType.ordinal
 
         if (bl || br || tl || tr) {
             levelShapeRenderer.color = tileType.color()
@@ -187,10 +189,11 @@ fun renderLevelOld(r: Renderer) {
 //            val tileType = bottomLeft.tileType
 
             // Fun wee rendering hack to fill in holes
-            val bl = bottomLeft.exists && bottomLeft.tileType.ordinal >= tileType.ordinal
-            val tl = topLeft.exists && topLeft.tileType.ordinal >= tileType.ordinal
-            val br = bottomRight.exists && bottomRight.tileType.ordinal >= tileType.ordinal
-            val tr = topRight.exists && topRight.tileType.ordinal >= tileType.ordinal
+            val bl = bottomLeft.doesExist() && bottomLeft.getTileType().ordinal >= tileType.ordinal
+            val tl = topLeft.doesExist() && topLeft.getTileType().ordinal >= tileType.ordinal
+            val br =
+                bottomRight.doesExist() && bottomRight.getTileType().ordinal >= tileType.ordinal
+            val tr = topRight.doesExist() && topRight.getTileType().ordinal >= tileType.ordinal
 
             if (bl || br || tl || tr) {
 //                r.color = tileType.color().cpy().add(-0.3f, -0.3f, -0.3f, 0.0f)

@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.Utils.TOUCHES_DOWN
 import com.oberdiah.Utils.TOUCHES_WENT_DOWN
 import com.oberdiah.Utils.TOUCHES_WENT_UP
+import com.oberdiah.Utils.TileType
 import com.oberdiah.Utils.colorScheme
 import com.oberdiah.Utils.isKeyJustPressed
 import com.oberdiah.Utils.isKeyPressed
@@ -35,7 +36,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     /** If this is non-null we're in the air. If it's null we're on the ground. */
     private var airTime: Double? = 0.0
-    private var tileBelowMe: Tile = nonTile
+
+    // If this is non-null, then it is a tile that exists.
+    private var tileBelowMe: Tile? = null
     private var isSlamming = true
     private var timeSinceLastSlamHit = 0.0
 
@@ -182,7 +185,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         tileBelowMe = getTileBelowMe()
         timeSinceLastSlamHit += DELTA
 
-        if (!tileBelowMe.exists && !inAir) {
+        if (tileBelowMe == null && !inAir) {
             airTime = 0.0
         }
 
@@ -290,7 +293,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                     ferocity * (Random.nextDouble() - 0.5),
                     ferocity * Random.nextDouble()
                 ),
-                tileBelowMe.tileType
+                tileBelowMe?.getTileType() ?: TileType.Air
             )
         }
     }
@@ -329,7 +332,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
 
-    private fun getTileBelowMe(): Tile {
+    private fun getTileBelowMe(): Tile? {
         // We effectively need to check in a 3x3 grid below the player
 
         // Top middle of the search grid
@@ -342,12 +345,12 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                     y * SIMPLE_SIZE_IN_WORLD * 0.5
                 )
                 val newTile = getTile(pos)
-                if (newTile.exists) {
+                if (newTile is Tile && newTile.doesExist()) {
                     return newTile
                 }
             }
         }
 
-        return nonTile
+        return null
     }
 }

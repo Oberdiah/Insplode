@@ -58,8 +58,6 @@ enum class Screen(val title: String) {
     Credits("Credits"),
 }
 
-var LOWEST_SIMPLE_Y_STORED = 0
-
 /** The number of simples across the world. */
 var SIMPLES_WIDTH = 0
 
@@ -102,7 +100,7 @@ fun setGlobalsThisFrame() {
 }
 
 fun setCameraGlobalsThisFrame() {
-    LOWEST_SIMPLE_Y_STORED = min((CAMERA_POS_Y * SIMPLES_RESOLUTION - 1).i, LOWEST_SIMPLE_Y_STORED)
+    requestNewLowestSimpleY((CAMERA_POS_Y * SIMPLES_RESOLUTION - 1).i)
 }
 
 val SQUARE_SIZE_IN_PIXELS: Double

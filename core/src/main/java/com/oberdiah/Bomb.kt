@@ -327,7 +327,7 @@ class StickyBomb(startingPoint: Point) : Bomb(startingPoint, BombType.StickyBomb
     override fun tick() {
         super.tick()
 
-        if (tilesTouching.none { it.exists }) {
+        if (tilesTouching.none { it.doesExist() }) {
             tilesTouching.clear()
             typeToBe = BodyDef.BodyType.DynamicBody
         }

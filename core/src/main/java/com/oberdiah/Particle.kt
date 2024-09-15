@@ -38,6 +38,7 @@ fun renderParticles(r: Renderer) {
 
 fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: Boolean = true) {
     if (!ENABLED_PARTICLES) return
+    if (tileType == TileType.Air) return
 
     val radius = SIMPLE_SIZE_IN_WORLD * (Random.nextDouble() * 0.3 + 0.2)
 
@@ -183,14 +184,14 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
     private fun bounce() {
         val tile = getTile(p)
         // if it's not a tile we can forget it.
-        if (tile.isNAT) return
+        if (tile !is Tile) return
 
         val tx = tile.x
         val ty = tile.y
-        val bottomLeft = tile.exists
-        val topLeft = getTile(tx, ty + 1).exists
-        val bottomRight = getTile(tx + 1, ty).exists
-        val topRight = getTile(tx + 1, ty + 1).exists
+        val bottomLeft = tile.doesExist()
+        val topLeft = getTile(tx, ty + 1).doesExist()
+        val bottomRight = getTile(tx + 1, ty).doesExist()
+        val topRight = getTile(tx + 1, ty + 1).doesExist()
 
         if (bottomLeft || topLeft || bottomRight || topRight) {
             val polygon = marchingSquaresScaled(bottomLeft, bottomRight, topLeft, topRight)

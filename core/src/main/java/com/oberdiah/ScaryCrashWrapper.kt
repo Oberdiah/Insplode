@@ -33,7 +33,7 @@ fun debugRenderWorld() {
     time("Physics debug") { debugRenderer.render(world, camera.combined) }
 }
 
-val allPhysBodies = mutableSetOf<PhysBody>()
+private val allPhysBodies = mutableSetOf<PhysBody>()
 fun createBody(def: BodyDef, shouldUpdate: Boolean = true): PhysBody {
     val physBody = PhysBody(world.createBody(def), shouldUpdate)
     allPhysBodies.add(physBody)
