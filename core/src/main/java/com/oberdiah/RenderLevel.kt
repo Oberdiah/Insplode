@@ -56,12 +56,8 @@ fun renderLevel() {
     levelShapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
     levelShapeRenderer.color = Colors.transparent
 
-
-    // Plus 2 because off-by-one errors are hard.
-    // It really doesn't matter.
-    // It's possibly got something to do with the fact we deal with bottom-right squares.
-    val highestTileOnScreen = ((CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS) * TILES_PER_UNIT + 2).i
     val lowestTileOnScreen = (CAMERA_POS_Y * TILES_PER_UNIT - 1).i
+    val highestTileOnScreen = lowestTileOnScreen + ceil(SCREEN_HEIGHT_IN_UNITS * TILES_PER_UNIT) + 1
     val diff = lowestTileOnScreen - previousLowestTile
     if (diff > 0) {
         // Going up
