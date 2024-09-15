@@ -42,8 +42,6 @@ fun rerenderLevel() {
     tileIdsChangedInTheLastFrame = simplesStored.map(Tile::getId)
 }
 
-var tileIdsChangedInTheLastFrame = listOf<TileId>()
-
 var fboBaseLocation = 0
 var previousLowestTile = 0
 fun renderLevel() {

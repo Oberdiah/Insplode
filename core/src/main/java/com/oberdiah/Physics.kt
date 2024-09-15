@@ -37,15 +37,26 @@ class ListenerClass : ContactListener {
 }
 
 fun resetPhysics() {
-    changedTiles.clear()
+    directlyChangedTileIds.clear()
 }
 
-val changedTiles = mutableSetOf<Tile>()
+/**
+ * This is the list of tiles that have changed in the last frame, directly or indirectly
+ * (a neighbour changed and we may have to recompute our shape)
+ */
+var tileIdsChangedInTheLastFrame = listOf<TileId>()
+
+/**
+ * This is the list of tiles that have directly been changed in the last frame.
+ * i.e they themselves have been destroyed or created.
+ */
+val directlyChangedTileIds = mutableSetOf<TileId>()
 fun updateTilePhysics() {
     // Rebuild ourselves and all of our neighbors
     val tilesToRebuild = mutableSetOf<Tile>()
-    tilesToRebuild.addAll(changedTiles)
-    for (tile in changedTiles) {
+    tilesToRebuild.addAll(directlyChangedTileIds.mapNotNull { getTile(it) as? Tile })
+    for (tileId in directlyChangedTileIds) {
+        val tile = getTile(tileId) as? Tile ?: continue
         tile.marchingCubeNeighbors.forEach {
             if (it is Tile) {
                 tilesToRebuild.add(it)
@@ -54,8 +65,7 @@ fun updateTilePhysics() {
     }
 
     tileIdsChangedInTheLastFrame = tilesToRebuild.map(Tile::getId)
-
-    changedTiles.clear()
+    directlyChangedTileIds.clear()
 
     for (tile in tilesToRebuild) {
         tile.recalculatePhysicsBody()

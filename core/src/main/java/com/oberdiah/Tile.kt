@@ -110,7 +110,7 @@ class Tile(private val id: TileId) : TileLike {
 
     private fun setExists(exists: Boolean) {
         if (this.doesExistPhysically != exists) {
-            changedTiles.add(this)
+            directlyChangedTileIds.add(this.id)
         }
         this.doesExistPhysically = exists
     }
