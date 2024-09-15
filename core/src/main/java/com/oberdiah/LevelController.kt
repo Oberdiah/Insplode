@@ -168,10 +168,7 @@ fun tickLevelController() {
 
     bombDropData.forEach { (bombType, bombData) ->
         if (RUN_TIME_ELAPSED > bombData.nextBombAt) {
-            val minTime = bombData.delay / 2.0
-            val maxTime = bombData.delay
-            bombData.nextBombAt =
-                RUN_TIME_ELAPSED + minTime + (maxTime - minTime) * Random.nextDouble()
+            bombData.randomiseNextBombAt()
             spawnBomb(bombType)
         }
     }
@@ -204,12 +201,24 @@ fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble()) {
     }
 }
 
-data class BombData(var delay: Number, var nextBombAt: Number)
+data class BombData(var delay: Number) {
+    var nextBombAt: Number = 0.0
+
+    init {
+        randomiseNextBombAt()
+    }
+
+    fun randomiseNextBombAt() {
+        val minTime = delay / 2.0
+        val maxTime = delay
+        nextBombAt = RUN_TIME_ELAPSED + minTime + (maxTime - minTime) * Random.nextDouble()
+    }
+}
 
 val bombDropData = mutableMapOf<BombType, BombData>()
 
 fun startRandomBombs(type: BombType, delay: Number) {
-    bombDropData[type] = BombData(delay, RUN_TIME_ELAPSED)
+    bombDropData[type] = BombData(delay)
 }
 
 fun stopAllBombs() {
