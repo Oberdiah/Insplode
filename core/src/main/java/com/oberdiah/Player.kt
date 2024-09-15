@@ -247,13 +247,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         TOUCHES_DOWN.forEach {
             if (it.y > HEIGHT * JUMP_UI_FRACT) {
                 goLeft = goLeft || if (FOLLOW_FINGER) {
-                    (lastBodyXValue + it.x - lastXValue) < (body.p.x - SIMPLE_SIZE_IN_WORLD) * UNIT_SIZE_IN_PIXELS
+                    (lastBodyXValue + it.x - lastXValue) < (body.p.x - TILE_SIZE_IN_UNITS) * UNIT_SIZE_IN_PIXELS
                 } else {
                     it.x < LEFT_BUTTON_UI_FRACT * WIDTH
                 }
 
                 goRight = goRight || if (FOLLOW_FINGER) {
-                    (lastBodyXValue + it.x - lastXValue) > (body.p.x + SIMPLE_SIZE_IN_WORLD) * UNIT_SIZE_IN_PIXELS
+                    (lastBodyXValue + it.x - lastXValue) > (body.p.x + TILE_SIZE_IN_UNITS) * UNIT_SIZE_IN_PIXELS
                 } else {
                     it.x > RIGHT_BUTTON_UI_FRACT * WIDTH
                 }
@@ -351,8 +351,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         for (x in intArrayOf(0, 1, -1)) {
             for (y in 0 downTo -2) {
                 val pos = searchStartPos + Point(
-                    x * SIMPLE_SIZE_IN_WORLD * 0.5,
-                    y * SIMPLE_SIZE_IN_WORLD * 0.5
+                    x * TILE_SIZE_IN_UNITS * 0.5,
+                    y * TILE_SIZE_IN_UNITS * 0.5
                 )
                 val newTile = getTile(pos)
                 if (newTile is Tile && newTile.doesExist()) {

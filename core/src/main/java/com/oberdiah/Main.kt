@@ -60,7 +60,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Set globals this frame") { setGlobalsThisFrame() }
         time("Calculate globals") { calculateGlobals() }
 
-        // DEBUG_STRING = "$LOWEST_SIMPLE_Y_STORED"
+        // DEBUG_STRING = "$LOWEST_TILE_Y_STORED"
 
         if (!PAUSED) {
             time("Camera") { updateCamera() }

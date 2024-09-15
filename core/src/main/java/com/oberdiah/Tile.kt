@@ -198,7 +198,7 @@ class Tile(private val id: TileId) : TileLike {
     fun init() {
         rebuildNeighbours()
         val groundBodyDef = BodyDef()
-        groundBodyDef.position.set(x * SIMPLE_SIZE_IN_WORLD.f, y * SIMPLE_SIZE_IN_WORLD.f)
+        groundBodyDef.position.set(x * TILE_SIZE_IN_UNITS.f, y * TILE_SIZE_IN_UNITS.f)
         body = createBody(groundBodyDef, false)
         body.userData = this
     }
@@ -213,8 +213,8 @@ class Tile(private val id: TileId) : TileLike {
     val coord: Point
         get() {
             require(isSafe)
-            _coord.x = x.d * SIMPLE_SIZE_IN_WORLD
-            _coord.y = y.d * SIMPLE_SIZE_IN_WORLD
+            _coord.x = x.d * TILE_SIZE_IN_UNITS
+            _coord.y = y.d * TILE_SIZE_IN_UNITS
             return _coord
         }
 
@@ -230,7 +230,7 @@ class Tile(private val id: TileId) : TileLike {
             return id.y
         }
 
-    private var _rect = Rect(Point(), Size(SIMPLE_SIZE_IN_WORLD, SIMPLE_SIZE_IN_WORLD))
+    private var _rect = Rect(Point(), Size(TILE_SIZE_IN_UNITS, TILE_SIZE_IN_UNITS))
     val rect: Rect
         get() {
             require(isSafe)

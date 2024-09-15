@@ -13,7 +13,7 @@ fun boom(
 ) {
     val radius = radiusIn * GLOBAL_SCALE
 
-    val simpleRadius = (radius * TILES_PER_UNIT).i
+    val tileRadius = (radius * TILES_PER_UNIT).i
     val tempPoint = Point()
 
     spawnGlow(point, radius)
@@ -24,16 +24,16 @@ fun boom(
         playExplosionSound(radius.d)
     }
 
-    for (dx in -simpleRadius..simpleRadius) {
-        for (dy in -simpleRadius..simpleRadius) {
-            tempPoint.x = point.x + dx * SIMPLE_SIZE_IN_WORLD
-            tempPoint.y = point.y + dy * SIMPLE_SIZE_IN_WORLD
+    for (dx in -tileRadius..tileRadius) {
+        for (dy in -tileRadius..tileRadius) {
+            tempPoint.x = point.x + dx * TILE_SIZE_IN_UNITS
+            tempPoint.y = point.y + dy * TILE_SIZE_IN_UNITS
             val tile = getTile(tempPoint)
             val dist = point.distTo(tempPoint)
 
             if (dist <= radius) {
-                val vx = (simpleRadius - abs(dx)) * sign(dx) + (Random.nextDouble() - 0.5)
-                val vy = (simpleRadius - abs(dy)) * sign(dy) + Random.nextDouble()
+                val vx = (tileRadius - abs(dx)) * sign(dx) + (Random.nextDouble() - 0.5)
+                val vy = (tileRadius - abs(dy)) * sign(dy) + Random.nextDouble()
                 val velocity =
                     Velocity(vx * 0.5 * Random.nextDouble(), (vy * 2.5 + 8) * Random.nextDouble())
                 if (!DEBUG_MOVEMENT_MODE) spawnSmoke(tempPoint.cpy, velocity)

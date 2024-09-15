@@ -10,8 +10,8 @@ fun List<Point>.toV2Array(): Array<Vector2> {
     return Array(this.size) { this[it].v2 }
 }
 
-operator fun Iterable<Point>.times(simpleSize: Number): List<Point> {
-    return this.map { it * simpleSize }
+operator fun Iterable<Point>.times(tileSize: Number): List<Point> {
+    return this.map { it * tileSize }
 }
 
 val Vector2.p: Point

@@ -126,7 +126,7 @@ val CAMERA_SPAWN_Y
 val LAND_SURFACE_Y
     get() = 10
 
-val SIMPLE_SIZE_IN_WORLD
+val TILE_SIZE_IN_UNITS
     get() = 1.0 / TILES_PER_UNIT
 
 /// The position of the player up the screen - where the camera likes to keep them.

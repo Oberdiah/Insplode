@@ -40,14 +40,14 @@ fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: 
     if (!ENABLED_PARTICLES) return
     if (tileType == TileType.Air) return
 
-    val radius = SIMPLE_SIZE_IN_WORLD * (Random.nextDouble() * 0.3 + 0.2)
+    val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
 
     allParticles.add(Fragment(p, v, radius, tileType, affectedByGravity))
 }
 
 fun spawnSmoke(p: Point, velocity: Velocity) {
     if (!ENABLED_PARTICLES) return
-    val radius = SIMPLE_SIZE_IN_WORLD * (Random.nextDouble() * 0.3 + 0.2)
+    val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
     allParticles.add(Smoke(p, velocity, radius))
 }
 

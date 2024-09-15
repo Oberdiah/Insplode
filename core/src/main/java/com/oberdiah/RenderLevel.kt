@@ -120,11 +120,11 @@ private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {
 
     val yRenderingOffset = -floor(tileY / fboLoopHeightInTiles.f) * fboLoopSizeInUnits
 
-    val x = (tileX * SIMPLE_SIZE_IN_WORLD).f
-    val y = (tileY * SIMPLE_SIZE_IN_WORLD).f + yRenderingOffset
+    val x = (tileX * TILE_SIZE_IN_UNITS).f
+    val y = (tileY * TILE_SIZE_IN_UNITS).f + yRenderingOffset
 
     // Clear the old tile
-    levelShapeRenderer.rect(x, y, SIMPLE_SIZE_IN_WORLD.f, SIMPLE_SIZE_IN_WORLD.f)
+    levelShapeRenderer.rect(x, y, TILE_SIZE_IN_UNITS.f, TILE_SIZE_IN_UNITS.f)
 
     if (tile !is Tile) {
         return
@@ -200,15 +200,15 @@ fun renderLevelOld(r: Renderer) {
 //                r.poly(
 //                    marchingSquaresFAScaled(bl, br, tl, tr),
 //                    1,
-//                    x * SIMPLE_SIZE + 0.1,
-//                    y * SIMPLE_SIZE + 0.1
+//                    x * TILE_SIZE + 0.1,
+//                    y * TILE_SIZE + 0.1
 //                )
                 r.color = tileType.color()
                 r.poly(
                     marchingSquaresFAScaled(bl, br, tl, tr),
                     1,
-                    x * SIMPLE_SIZE_IN_WORLD,
-                    y * SIMPLE_SIZE_IN_WORLD
+                    x * TILE_SIZE_IN_UNITS,
+                    y * TILE_SIZE_IN_UNITS
                 )
             }
         }

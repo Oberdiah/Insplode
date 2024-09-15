@@ -79,7 +79,7 @@ fun initMarchingSquares() {
         val topRight = i.and(8) != 0
 
         val squarePoints = marchingSquares(bottomLeft, bottomRight, topLeft, topRight)
-        val pointsScaled = squarePoints * SIMPLE_SIZE_IN_WORLD
+        val pointsScaled = squarePoints * TILE_SIZE_IN_UNITS
         pointLookupScaled.add(pointsScaled)
         floatArrLookup.add(pointListToFloatArr(squarePoints))
         val scaledFA = pointListToFloatArr(pointsScaled)
