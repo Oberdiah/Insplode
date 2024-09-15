@@ -13,6 +13,10 @@ fun boom(
 ) {
     val radius = radiusIn * GLOBAL_SCALE
 
+    // To prevent explosions on exact integer coords from behaving weirdly.
+    point.x += Random.nextDouble(-0.001, 0.001)
+    point.y += Random.nextDouble(-0.001, 0.001)
+
     val tileRadius = (radius * TILES_PER_UNIT).i
     val tempPoint = Point()
 
