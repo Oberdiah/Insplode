@@ -1,5 +1,6 @@
 package com.oberdiah
 
+import com.oberdiah.Utils.addScreenShake
 import kotlin.math.pow
 import kotlin.random.Random
 

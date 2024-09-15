@@ -1,6 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
+import com.oberdiah.Utils.ScreenShakeSettings
 import com.oberdiah.Utils.calculateInputGlobals
 import com.oberdiah.Utils.camera
 
@@ -71,19 +72,7 @@ var HEIGHT = 0.0
  */
 var SIMULATED_REGION_NUM_TILES_HIGH = 0
 
-enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
-    Off("Off", 0.0),
-    Low("Low", 1.0),
-    Normal("Normal", 2.0),
-    Extreme("Extreme", 5.0),
-}
-
-var SCREEN_SHAKE = 0.0
-fun addScreenShake(amount: Number) {
-    SCREEN_SHAKE = max(SCREEN_SHAKE, amount.d * SCREEN_SHAKE_SETTING.shakeAmount)
-}
-
-var DEPTH_UNITS = " blocks"
+const val DEPTH_UNITS = " blocks"
 
 const val PLAYER_PHYSICS_MASK: Short = 0x2
 const val BOMB_PHYSICS_MASK: Short = 0x4
@@ -98,7 +87,8 @@ val TEXT_CHECKBOX_OFFSET_RIGHT
 fun setGlobalsThisFrame() {
     HEIGHT = Gdx.graphics.height.d
     WIDTH = Gdx.graphics.width.d
-    SIMULATED_REGION_NUM_TILES_HIGH = (UNITS_TALL * TILES_PER_UNIT * TILES_EXTRA_FRACTION_STORED).i
+    SIMULATED_REGION_NUM_TILES_HIGH =
+        (SCREEN_HEIGHT_IN_UNITS * TILES_PER_UNIT * TILES_EXTRA_FRACTION_STORED).i
 }
 
 fun setCameraGlobalsThisFrame() {
@@ -115,26 +105,23 @@ const val UNITS_WIDE = 10
 /** The number of tiles across the world. */
 const val NUM_TILES_ACROSS = UNITS_WIDE * TILES_PER_UNIT + 1
 
-val UNITS_TALL: Double
+val SCREEN_HEIGHT_IN_UNITS: Double
     get() = HEIGHT / UNIT_SIZE_IN_PIXELS
-
-var APP_FRAME = 0
-var APP_TIME = 0.0
 
 val SAFE_BOMB_SPAWN_HEIGHT
     // Add 5 to be super duper safe.
     get() = JUST_UP_OFF_SCREEN * TILES_EXTRA_FRACTION_STORED + 5
 
 val JUST_UP_OFF_SCREEN
-    get() = CAMERA_POS_Y + UNITS_TALL
+    get() = CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS
 
 const val GRAVITY = 20.0 * GLOBAL_SCALE
-val UI_MAX_FADE_IN = 0.9
+
 val PLAYER_SPAWN_Y
-    get() = UNITS_TALL * PLAYER_Y_FRACT + 15
+    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT + 15
 
 val CAMERA_SPAWN_Y
-    get() = UNITS_TALL * PLAYER_Y_FRACT
+    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT
 
 val LAND_SURFACE_Y
     get() = 10
@@ -155,8 +142,11 @@ var PAUSED = !IS_DEBUG_ENABLED
  * The camera Y position (bottom of the screen) in world coordinates.
  */
 val CAMERA_POS_Y: Number
-    get() = camera.position.y.d - UNITS_TALL / 2
+    get() = camera.position.y.d - SCREEN_HEIGHT_IN_UNITS / 2
 var CAMERA_LOCKED = true
+
+var APP_FRAME = 0
+var APP_TIME = 0.0
 
 private val screenSize: Size = Size()
 val SIZE: Size

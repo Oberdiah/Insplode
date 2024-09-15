@@ -44,8 +44,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         loadFonts()
         loadSounds()
 
-        leftWall = createWall(Rect(Point(0, 0), Size(1, UNITS_TALL * 3)))
-        rightWall = createWall(Rect(Point(10, 0), Size(1, UNITS_TALL * 3)))
+        leftWall = createWall(Rect(Point(0, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 3)))
+        rightWall = createWall(Rect(Point(10, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 3)))
 
         restartGame()
     }
@@ -69,8 +69,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Update tile changes") { updateTileChanges() }
 
             // 'Coz Box2d stupid, these are the centres of the positions.
-            leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + UNITS_TALL / 2), 0f)
-            rightWall.setTransform(Point(10.5, CAMERA_POS_Y + UNITS_TALL / 2), 0f)
+            leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS / 2), 0f)
+            rightWall.setTransform(Point(10.5, CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS / 2), 0f)
         }
 
         worldSpaceRenderer.begin()

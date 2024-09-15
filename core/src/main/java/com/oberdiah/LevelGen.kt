@@ -10,7 +10,7 @@ import com.oberdiah.Utils.TileType
 private val emptyTile = EmptyTile()
 
 val levelOnScreen = sequence {
-    for (sy in 0..(UNITS_TALL * TILES_PER_UNIT + 2).i) {
+    for (sy in 0..(SCREEN_HEIGHT_IN_UNITS * TILES_PER_UNIT + 2).i) {
         for (x in 0 until NUM_TILES_ACROSS) {
             val y = sy + floor(CAMERA_POS_Y * TILES_PER_UNIT)
             val tile = getTile(x, y)

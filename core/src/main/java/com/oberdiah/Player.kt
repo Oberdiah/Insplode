@@ -8,6 +8,7 @@ import com.oberdiah.Utils.TOUCHES_DOWN
 import com.oberdiah.Utils.TOUCHES_WENT_DOWN
 import com.oberdiah.Utils.TOUCHES_WENT_UP
 import com.oberdiah.Utils.TileType
+import com.oberdiah.Utils.addScreenShake
 import com.oberdiah.Utils.colorScheme
 import com.oberdiah.Utils.isKeyJustPressed
 import com.oberdiah.Utils.isKeyPressed
@@ -127,7 +128,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 )
 
                 if (vel.len > 10) {
-                    addScreenShake(vel.len.d * 0.02)
+                    // Player landing deserves more than the normal amount of shake
+                    addScreenShake(vel.len.d * 0.025)
                     boom(body.p, vel.len.d * 0.05, affectsThePlayer = false)
                 }
             }

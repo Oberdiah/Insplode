@@ -9,14 +9,14 @@ var camera = OrthographicCamera()
 
 fun resetCamera() {
     CAMERA_LOCKED = true
-    camera.setToOrtho(false, UNITS_WIDE.f, UNITS_TALL.f)
+    camera.setToOrtho(false, UNITS_WIDE.f, SCREEN_HEIGHT_IN_UNITS.f)
     camera.position.y = getDesiredCameraY(CAMERA_SPAWN_Y)
     cameraY = camera.position.y.d
     camera.update()
 }
 
 private fun getDesiredCameraY(focusPoint: Double): Float {
-    return (focusPoint + UNITS_TALL / 2 - UNITS_TALL * PLAYER_Y_FRACT).f
+    return (focusPoint + SCREEN_HEIGHT_IN_UNITS / 2 - SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT).f
 }
 
 private var bombing = false
@@ -45,7 +45,7 @@ fun updateCamera() {
         }
     }
 
-    SCREEN_SHAKE -= 0.1
+    SCREEN_SHAKE -= 12 * DELTA
     SCREEN_SHAKE = max(SCREEN_SHAKE, 0)
 
     if (!CAMERA_LOCKED) {
@@ -62,4 +62,16 @@ fun updateCamera() {
     camera.update()
 
     worldSpaceRenderer.renderer.projectionMatrix = camera.combined
+}
+
+enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
+    Off("Off", 0.0),
+    Low("Low", 1.0),
+    Normal("Normal", 2.0),
+    Extreme("Extreme", 5.0),
+}
+
+private var SCREEN_SHAKE = 0.0
+fun addScreenShake(amount: Number) {
+    SCREEN_SHAKE = max(SCREEN_SHAKE, amount.d * SCREEN_SHAKE_SETTING.shakeAmount)
 }

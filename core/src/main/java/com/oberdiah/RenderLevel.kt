@@ -18,7 +18,7 @@ val cam = OrthographicCamera()
 val cam2 = OrthographicCamera()
 val fboLoopSizeInUnits
     // Add 1 so that even on screens where the number of tiles matches perfectly, wrapping isn't seen.
-    get() = ceil(UNITS_TALL + 1)
+    get() = ceil(SCREEN_HEIGHT_IN_UNITS + 1)
 val fboLoopHeightInTiles
     get() = fboLoopSizeInUnits * TILES_PER_UNIT
 
@@ -60,7 +60,7 @@ fun renderLevel() {
     // Plus 2 because off-by-one errors are hard.
     // It really doesn't matter.
     // It's possibly got something to do with the fact we deal with bottom-right squares.
-    val highestTileOnScreen = ((CAMERA_POS_Y + UNITS_TALL) * TILES_PER_UNIT + 2).i
+    val highestTileOnScreen = ((CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS) * TILES_PER_UNIT + 2).i
     val lowestTileOnScreen = (CAMERA_POS_Y * TILES_PER_UNIT - 1).i
     val diff = lowestTileOnScreen - previousLowestTile
     if (diff > 0) {
@@ -160,7 +160,7 @@ private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {
 
 fun renderBackground(r: Renderer) {
     for (tx in 0 until UNITS_WIDE) {
-        val numYSquares = (UNITS_TALL + 2).i
+        val numYSquares = (SCREEN_HEIGHT_IN_UNITS + 2).i
         for (y in 0 until numYSquares) {
             val ty = y + floor(CAMERA_POS_Y)
 
