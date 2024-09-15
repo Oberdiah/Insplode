@@ -12,7 +12,7 @@ fun boom(
 ) {
     val radius = radiusIn * GLOBAL_SCALE
 
-    val simpleRadius = (radius * SIMPLES_RESOLUTION).i
+    val simpleRadius = (radius * SIMPLES_PER_UNIT).i
     val tempPoint = Point()
 
     spawnGlow(point, radius)

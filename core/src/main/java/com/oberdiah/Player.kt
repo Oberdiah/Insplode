@@ -239,19 +239,19 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         TOUCHES_WENT_DOWN.forEach {
             lastXValue = it.x
-            lastBodyXValue = body.p.x * SQUARE_SIZE_IN_PIXELS
+            lastBodyXValue = body.p.x * UNIT_SIZE_IN_PIXELS
         }
 
         TOUCHES_DOWN.forEach {
             if (it.y > HEIGHT * JUMP_UI_FRACT) {
                 goLeft = goLeft || if (FOLLOW_FINGER) {
-                    (lastBodyXValue + it.x - lastXValue) < (body.p.x - SIMPLE_SIZE_IN_WORLD) * SQUARE_SIZE_IN_PIXELS
+                    (lastBodyXValue + it.x - lastXValue) < (body.p.x - SIMPLE_SIZE_IN_WORLD) * UNIT_SIZE_IN_PIXELS
                 } else {
                     it.x < LEFT_BUTTON_UI_FRACT * WIDTH
                 }
 
                 goRight = goRight || if (FOLLOW_FINGER) {
-                    (lastBodyXValue + it.x - lastXValue) > (body.p.x + SIMPLE_SIZE_IN_WORLD) * SQUARE_SIZE_IN_PIXELS
+                    (lastBodyXValue + it.x - lastXValue) > (body.p.x + SIMPLE_SIZE_IN_WORLD) * UNIT_SIZE_IN_PIXELS
                 } else {
                     it.x > RIGHT_BUTTON_UI_FRACT * WIDTH
                 }

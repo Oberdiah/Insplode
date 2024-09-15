@@ -1,12 +1,10 @@
 package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import kotlin.experimental.inv
-import kotlin.random.Random
 
 fun tickPhysicsObjects() {
     getAllPhysicsObjects.forEach { it.tick() }
@@ -115,7 +113,7 @@ abstract class PhysicsObject(
     }
 
     open fun tick() {
-        if (body.p.x < 0 || body.p.x > WORLD_WIDTH) {
+        if (body.p.x < 0 || body.p.x > UNITS_WIDE) {
             destroy()
         }
     }

@@ -18,10 +18,8 @@ const val DEBUG_VERIFY = IS_DEBUG_ENABLED
 const val GLOBAL_SCALE = 1.0
 
 /** The number of 'simples' per unit on the grid. */
-const val SIMPLES_RESOLUTION = 5
+const val SIMPLES_PER_UNIT = 5
 const val SIMPLES_EXTRA_STORED = 1.3
-// Can make really large if you're having issues with negatives.
-// But then again, other rendering gets weird enough we probably shouldn't.
 
 var SHOW_FRAMERATE_DATA = false
 var ENABLED_PARTICLES = true
@@ -61,14 +59,16 @@ enum class Screen(val title: String) {
     Credits("Credits"),
 }
 
-/** The number of simples across the world. */
-var SIMPLES_WIDTH = 0
-
 /// Size of the screen in pixels
 var WIDTH = 0.0
 
-/// height fo the screen in pixels
+/// height of the screen in pixels
 var HEIGHT = 0.0
+
+/**
+ * The number of simples tall our big simples array is
+ * somewhat larger than what's visible on screen
+ */
 var SIMPLES_HEIGHT_STORED = 0
 
 enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
@@ -94,51 +94,53 @@ val TEXT_SIDE_OFFSET
 val TEXT_CHECKBOX_OFFSET_RIGHT
     get() = 0.03 * WIDTH
 
-// For stuff that's too complex to evaluate each time it's needed.
+// For stuff that relies on runtime constants such as the height of the screen
 fun setGlobalsThisFrame() {
     HEIGHT = Gdx.graphics.height.d
     WIDTH = Gdx.graphics.width.d
-    SIMPLES_WIDTH = WORLD_WIDTH * SIMPLES_RESOLUTION + 1
-    SIMPLES_HEIGHT_STORED = (SQUARES_TALL * SIMPLES_RESOLUTION * SIMPLES_EXTRA_STORED).i
+    SIMPLES_HEIGHT_STORED = (UNITS_TALL * SIMPLES_PER_UNIT * SIMPLES_EXTRA_STORED).i
 }
 
 fun setCameraGlobalsThisFrame() {
-    requestNewLowestSimpleY((CAMERA_POS_Y * SIMPLES_RESOLUTION - 1).i)
+    requestNewLowestSimpleY((CAMERA_POS_Y * SIMPLES_PER_UNIT - 1).i)
 }
 
-val SQUARE_SIZE_IN_PIXELS: Double
-    get() = WIDTH / WORLD_WIDTH
+/** The size of 1m in pixels */
+val UNIT_SIZE_IN_PIXELS: Double
+    get() = WIDTH / UNITS_WIDE
 
-val SQUARES_WIDE: Int
-    get() = WORLD_WIDTH
+/** In game units */
+const val UNITS_WIDE = 10
 
-val SQUARES_TALL: Double
-    get() = HEIGHT / SQUARE_SIZE_IN_PIXELS
+/** The number of simples across the world. */
+const val NUM_SIMPLES_ACROSS = UNITS_WIDE * SIMPLES_PER_UNIT + 1
+
+val UNITS_TALL: Double
+    get() = HEIGHT / UNIT_SIZE_IN_PIXELS
 
 var APP_FRAME = 0
 var APP_TIME = 0.0
-var WORLD_WIDTH = 10
 
 val SAFE_BOMB_SPAWN_HEIGHT
     // Add 5 to be super duper safe.
     get() = JUST_UP_OFF_SCREEN * SIMPLES_EXTRA_STORED + 5
 
 val JUST_UP_OFF_SCREEN
-    get() = CAMERA_POS_Y + SQUARES_TALL
+    get() = CAMERA_POS_Y + UNITS_TALL
 
 const val GRAVITY = 20.0 * GLOBAL_SCALE
 val UI_MAX_FADE_IN = 0.9
 val PLAYER_SPAWN_Y
-    get() = SQUARES_TALL * PLAYER_Y_FRACT + 15
+    get() = UNITS_TALL * PLAYER_Y_FRACT + 15
 
 val CAMERA_SPAWN_Y
-    get() = SQUARES_TALL * PLAYER_Y_FRACT
+    get() = UNITS_TALL * PLAYER_Y_FRACT
 
 val LAND_SURFACE_Y
     get() = 10
 
 val SIMPLE_SIZE_IN_WORLD
-    get() = 1.0 / SIMPLES_RESOLUTION
+    get() = 1.0 / SIMPLES_PER_UNIT
 
 /// The position of the player up the screen - where the camera likes to keep them.
 const val PLAYER_Y_FRACT = 0.6
@@ -153,7 +155,7 @@ var PAUSED = !IS_DEBUG_ENABLED
  * The camera Y position (bottom of the screen) in world coordinates.
  */
 val CAMERA_POS_Y: Number
-    get() = camera.position.y.d - SQUARES_TALL / 2
+    get() = camera.position.y.d - UNITS_TALL / 2
 var CAMERA_LOCKED = true
 
 private val screenSize: Size = Size()

@@ -21,7 +21,7 @@ fun tickCollapse() {
         allFloatingTileIds.clear()
         allFloatingTileIds.addAll(simplesStored.map { it.getId() })
 
-        for (x in 0 until SIMPLES_WIDTH) {
+        for (x in 0 until NUM_SIMPLES_ACROSS) {
             val tile = getTile(x, getLowestStoredSimpleY())
             if (tile is Tile && tile.doesExist()) {
                 wavefront.add(tile)

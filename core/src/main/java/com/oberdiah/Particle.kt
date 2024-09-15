@@ -160,7 +160,7 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
     private var wasInsideLevel = false
     private val previousP = Point()
     open fun tick() {
-        if (p.x == 0.0 || p.x == WORLD_WIDTH.d) {
+        if (p.x == 0.0 || p.x == UNITS_WIDE.d) {
             destroy()
         }
 
@@ -174,7 +174,7 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
 
         if (p.x < 0) {
             v.x *= -1
-        } else if (p.x > WORLD_WIDTH) {
+        } else if (p.x > UNITS_WIDE) {
             v.x *= -1
         }
 

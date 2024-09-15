@@ -3,21 +3,20 @@ package com.oberdiah.Utils
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.oberdiah.*
 import kotlin.math.pow
-import kotlin.random.Random
 
 private var cameraY = 0.0
 var camera = OrthographicCamera()
 
 fun resetCamera() {
     CAMERA_LOCKED = true
-    camera.setToOrtho(false, SQUARES_WIDE.f, SQUARES_TALL.f)
+    camera.setToOrtho(false, UNITS_WIDE.f, UNITS_TALL.f)
     camera.position.y = getDesiredCameraY(CAMERA_SPAWN_Y)
     cameraY = camera.position.y.d
     camera.update()
 }
 
 private fun getDesiredCameraY(focusPoint: Double): Float {
-    return (focusPoint + SQUARES_TALL / 2 - SQUARES_TALL * PLAYER_Y_FRACT).f
+    return (focusPoint + UNITS_TALL / 2 - UNITS_TALL * PLAYER_Y_FRACT).f
 }
 
 private var bombing = false
@@ -59,7 +58,7 @@ fun updateCamera() {
 
     camera.position.y = cameraY.f + shake
 
-    camera.position.x = SQUARES_WIDE.f / 2
+    camera.position.x = UNITS_WIDE.f / 2
     camera.update()
 
     worldSpaceRenderer.renderer.projectionMatrix = camera.combined

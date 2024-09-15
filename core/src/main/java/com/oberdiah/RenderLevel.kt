@@ -18,20 +18,20 @@ val cam = OrthographicCamera()
 val cam2 = OrthographicCamera()
 val fboLoopSize
     // Add 1 so that even on screens where the number of tiles matches perfectly, wrapping isn't seen.
-    get() = ceil(SQUARES_TALL + 1)
+    get() = ceil(UNITS_TALL + 1)
 val fboLoopSizeSimples
-    get() = fboLoopSize * SIMPLES_RESOLUTION
+    get() = fboLoopSize * SIMPLES_PER_UNIT
 
 fun initLevelRender() {
     fbo =
-        FrameBuffer(Pixmap.Format.RGBA8888, WIDTH.i, (fboLoopSize * SQUARE_SIZE_IN_PIXELS).i, false)
+        FrameBuffer(Pixmap.Format.RGBA8888, WIDTH.i, (fboLoopSize * UNIT_SIZE_IN_PIXELS).i, false)
     levelShapeRenderer = ShapeRenderer()
     levelTexRenderer = SpriteBatch()
 
     cam.setToOrtho(true, WIDTH.f, HEIGHT.f)
-    cam2.setToOrtho(false, SQUARES_WIDE.f, fboLoopSize.f)
+    cam2.setToOrtho(false, UNITS_WIDE.f, fboLoopSize.f)
     cam.update()
-    cam2.position.x = SQUARES_WIDE.f / 2
+    cam2.position.x = UNITS_WIDE.f / 2
     cam2.update()
     levelTexRenderer.projectionMatrix = cam.combined
 }
@@ -55,13 +55,13 @@ fun renderLevel() {
     // Plus 2 because off-by-one errors are hard.
     // It really doesn't matter.
     // It's possibly got something to do with the fact we deal with bottom-right squares.
-    val highestTileOnScreen = ((CAMERA_POS_Y + SQUARES_TALL) * SIMPLES_RESOLUTION + 2).i
-    val lowestTileOnScreen = (CAMERA_POS_Y * SIMPLES_RESOLUTION - 1).i
+    val highestTileOnScreen = ((CAMERA_POS_Y + UNITS_TALL) * SIMPLES_PER_UNIT + 2).i
+    val lowestTileOnScreen = (CAMERA_POS_Y * SIMPLES_PER_UNIT - 1).i
     val diff = lowestTileOnScreen - previousLowestTile
     if (diff > 0) {
         // Going up
         for (y in 0..diff) {
-            for (tileX in 0 until SIMPLES_WIDTH) {
+            for (tileX in 0 until NUM_SIMPLES_ACROSS) {
                 val tile = getTile(tileX, highestTileOnScreen - y)
                 renderTile(tile, tileX, highestTileOnScreen - y)
             }
@@ -70,7 +70,7 @@ fun renderLevel() {
     } else if (diff < 0) {
         // Going down
         for (y in 0..-diff) {
-            for (tileX in 0 until SIMPLES_WIDTH) {
+            for (tileX in 0 until NUM_SIMPLES_ACROSS) {
                 val tile = getTile(tileX, lowestTileOnScreen + y)
                 renderTile(tile, tileX, lowestTileOnScreen + y)
             }
@@ -154,8 +154,8 @@ private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {
 }
 
 fun renderBackground(r: Renderer) {
-    for (tx in 0 until WORLD_WIDTH) {
-        val numYSquares = (SQUARES_TALL + 2).i
+    for (tx in 0 until UNITS_WIDE) {
+        val numYSquares = (UNITS_TALL + 2).i
         for (y in 0 until numYSquares) {
             val ty = y + floor(CAMERA_POS_Y)
 

@@ -51,18 +51,18 @@ class EmptyTile : TileLike {
 value class TileId(val id: Int) {
     companion object {
         fun fromXY(x: Int, y: Int): TileId {
-            return TileId(x + y * SIMPLES_WIDTH)
+            return TileId(x + y * NUM_SIMPLES_ACROSS)
         }
     }
 
     val x: Int
         get() {
-            return (id % SIMPLES_WIDTH + SIMPLES_WIDTH) % SIMPLES_WIDTH
+            return (id % NUM_SIMPLES_ACROSS + NUM_SIMPLES_ACROSS) % NUM_SIMPLES_ACROSS
         }
 
     val y: Int
         get() {
-            return floor(id.d / SIMPLES_WIDTH)
+            return floor(id.d / NUM_SIMPLES_ACROSS)
         }
 }
 
