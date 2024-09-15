@@ -17,9 +17,9 @@ const val DEBUG_VERIFY = IS_DEBUG_ENABLED
  */
 const val GLOBAL_SCALE = 1.0
 
-/** The number of 'simples' per unit on the grid. */
-const val SIMPLES_PER_UNIT = 5
-const val SIMPLES_EXTRA_STORED = 1.3
+/** The number of 'tiles' per unit on the grid. */
+const val TILES_PER_UNIT = 5
+const val TILES_EXTRA_FRACTION_STORED = 1.3
 
 var SHOW_FRAMERATE_DATA = false
 var ENABLED_PARTICLES = true
@@ -66,10 +66,10 @@ var WIDTH = 0.0
 var HEIGHT = 0.0
 
 /**
- * The number of simples tall our big simples array is
+ * The number of tiles tall our big tiles array is
  * somewhat larger than what's visible on screen
  */
-var SIMPLES_HEIGHT_STORED = 0
+var SIMULATED_REGION_NUM_TILES_HIGH = 0
 
 enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
     Off("Off", 0.0),
@@ -98,11 +98,11 @@ val TEXT_CHECKBOX_OFFSET_RIGHT
 fun setGlobalsThisFrame() {
     HEIGHT = Gdx.graphics.height.d
     WIDTH = Gdx.graphics.width.d
-    SIMPLES_HEIGHT_STORED = (UNITS_TALL * SIMPLES_PER_UNIT * SIMPLES_EXTRA_STORED).i
+    SIMULATED_REGION_NUM_TILES_HIGH = (UNITS_TALL * TILES_PER_UNIT * TILES_EXTRA_FRACTION_STORED).i
 }
 
 fun setCameraGlobalsThisFrame() {
-    requestNewLowestSimpleY((CAMERA_POS_Y * SIMPLES_PER_UNIT - 1).i)
+    requestNewLowestSimpleY((CAMERA_POS_Y * TILES_PER_UNIT - 1).i)
 }
 
 /** The size of 1m in pixels */
@@ -112,8 +112,8 @@ val UNIT_SIZE_IN_PIXELS: Double
 /** In game units */
 const val UNITS_WIDE = 10
 
-/** The number of simples across the world. */
-const val NUM_SIMPLES_ACROSS = UNITS_WIDE * SIMPLES_PER_UNIT + 1
+/** The number of tiles across the world. */
+const val NUM_TILES_ACROSS = UNITS_WIDE * TILES_PER_UNIT + 1
 
 val UNITS_TALL: Double
     get() = HEIGHT / UNIT_SIZE_IN_PIXELS
@@ -123,7 +123,7 @@ var APP_TIME = 0.0
 
 val SAFE_BOMB_SPAWN_HEIGHT
     // Add 5 to be super duper safe.
-    get() = JUST_UP_OFF_SCREEN * SIMPLES_EXTRA_STORED + 5
+    get() = JUST_UP_OFF_SCREEN * TILES_EXTRA_FRACTION_STORED + 5
 
 val JUST_UP_OFF_SCREEN
     get() = CAMERA_POS_Y + UNITS_TALL
@@ -140,7 +140,7 @@ val LAND_SURFACE_Y
     get() = 10
 
 val SIMPLE_SIZE_IN_WORLD
-    get() = 1.0 / SIMPLES_PER_UNIT
+    get() = 1.0 / TILES_PER_UNIT
 
 /// The position of the player up the screen - where the camera likes to keep them.
 const val PLAYER_Y_FRACT = 0.6

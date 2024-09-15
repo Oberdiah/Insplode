@@ -16,20 +16,25 @@ lateinit var levelShapeRenderer: ShapeRenderer
 lateinit var levelTexRenderer: SpriteBatch
 val cam = OrthographicCamera()
 val cam2 = OrthographicCamera()
-val fboLoopSize
+val fboLoopSizeInUnits
     // Add 1 so that even on screens where the number of tiles matches perfectly, wrapping isn't seen.
     get() = ceil(UNITS_TALL + 1)
-val fboLoopSizeSimples
-    get() = fboLoopSize * SIMPLES_PER_UNIT
+val fboLoopHeightInTiles
+    get() = fboLoopSizeInUnits * TILES_PER_UNIT
 
 fun initLevelRender() {
     fbo =
-        FrameBuffer(Pixmap.Format.RGBA8888, WIDTH.i, (fboLoopSize * UNIT_SIZE_IN_PIXELS).i, false)
+        FrameBuffer(
+            Pixmap.Format.RGBA8888,
+            WIDTH.i,
+            (fboLoopSizeInUnits * UNIT_SIZE_IN_PIXELS).i,
+            false
+        )
     levelShapeRenderer = ShapeRenderer()
     levelTexRenderer = SpriteBatch()
 
     cam.setToOrtho(true, WIDTH.f, HEIGHT.f)
-    cam2.setToOrtho(false, UNITS_WIDE.f, fboLoopSize.f)
+    cam2.setToOrtho(false, UNITS_WIDE.f, fboLoopSizeInUnits.f)
     cam.update()
     cam2.position.x = UNITS_WIDE.f / 2
     cam2.update()
@@ -39,9 +44,9 @@ fun initLevelRender() {
 var fboBaseLocation = 0
 var previousLowestTile = 0
 fun renderLevel() {
-    fboBaseLocation = -floor(CAMERA_POS_Y / fboLoopSize)
+    fboBaseLocation = -floor(CAMERA_POS_Y / fboLoopSizeInUnits)
 //    DEBUG_STRING = "${fboBaseLocation}"
-    cam2.position.y = fboLoopSize.f / 2
+    cam2.position.y = fboLoopSizeInUnits.f / 2
     cam2.update()
     levelShapeRenderer.projectionMatrix = cam2.combined
 
@@ -55,13 +60,13 @@ fun renderLevel() {
     // Plus 2 because off-by-one errors are hard.
     // It really doesn't matter.
     // It's possibly got something to do with the fact we deal with bottom-right squares.
-    val highestTileOnScreen = ((CAMERA_POS_Y + UNITS_TALL) * SIMPLES_PER_UNIT + 2).i
-    val lowestTileOnScreen = (CAMERA_POS_Y * SIMPLES_PER_UNIT - 1).i
+    val highestTileOnScreen = ((CAMERA_POS_Y + UNITS_TALL) * TILES_PER_UNIT + 2).i
+    val lowestTileOnScreen = (CAMERA_POS_Y * TILES_PER_UNIT - 1).i
     val diff = lowestTileOnScreen - previousLowestTile
     if (diff > 0) {
         // Going up
         for (y in 0..diff) {
-            for (tileX in 0 until NUM_SIMPLES_ACROSS) {
+            for (tileX in 0 until NUM_TILES_ACROSS) {
                 val tile = getTile(tileX, highestTileOnScreen - y)
                 renderTile(tile, tileX, highestTileOnScreen - y)
             }
@@ -70,7 +75,7 @@ fun renderLevel() {
     } else if (diff < 0) {
         // Going down
         for (y in 0..-diff) {
-            for (tileX in 0 until NUM_SIMPLES_ACROSS) {
+            for (tileX in 0 until NUM_TILES_ACROSS) {
                 val tile = getTile(tileX, lowestTileOnScreen + y)
                 renderTile(tile, tileX, lowestTileOnScreen + y)
             }
@@ -113,7 +118,7 @@ fun renderLevel() {
 private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {
     levelShapeRenderer.color = Colors.transparent
 
-    val yRenderingOffset = -floor(tileY / fboLoopSizeSimples.f) * fboLoopSize
+    val yRenderingOffset = -floor(tileY / fboLoopHeightInTiles.f) * fboLoopSizeInUnits
 
     val x = (tileX * SIMPLE_SIZE_IN_WORLD).f
     val y = (tileY * SIMPLE_SIZE_IN_WORLD).f + yRenderingOffset

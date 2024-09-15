@@ -10,9 +10,9 @@ import com.oberdiah.Utils.TileType
 private val emptyTile = EmptyTile()
 
 val levelOnScreen = sequence {
-    for (sy in 0..(UNITS_TALL * SIMPLES_PER_UNIT + 2).i) {
-        for (x in 0 until NUM_SIMPLES_ACROSS) {
-            val y = sy + floor(CAMERA_POS_Y * SIMPLES_PER_UNIT)
+    for (sy in 0..(UNITS_TALL * TILES_PER_UNIT + 2).i) {
+        for (x in 0 until NUM_TILES_ACROSS) {
+            val y = sy + floor(CAMERA_POS_Y * TILES_PER_UNIT)
             val tile = getTile(x, y)
             if (tile is Tile) {
                 yield(tile)
@@ -34,19 +34,20 @@ val levelOnScreen = sequence {
  * This should be the only persistent storage of tiles cross-frame. Anything else is
  * risky as we can invalidate tiles at any time.
  */
-val simplesStored = MutableList(NUM_SIMPLES_ACROSS * SIMPLES_HEIGHT_STORED) { Tile(TileId(it)) }
+val tilesStorage =
+    MutableList(NUM_TILES_ACROSS * SIMULATED_REGION_NUM_TILES_HIGH) { Tile(TileId(it)) }
 
 /** If null is returned you've requested a tile outside the bounds of the stored tiles. */
 fun getTile(p: Point): TileLike {
-    return getTile(floor(p.x * SIMPLES_PER_UNIT), floor(p.y * SIMPLES_PER_UNIT))
+    return getTile(floor(p.x * TILES_PER_UNIT), floor(p.y * TILES_PER_UNIT))
 }
 
 /** If null is returned you've requested a tile outside the bounds of the stored tiles. */
 fun getTile(x: Int, y: Int): TileLike {
-    if (x >= NUM_SIMPLES_ACROSS || x < 0 || y >= currentLowestSimpleY + SIMPLES_HEIGHT_STORED || y < requestedLowestSimpleY) {
+    if (x >= NUM_TILES_ACROSS || x < 0 || y >= currentLowestSimpleY + SIMULATED_REGION_NUM_TILES_HIGH || y < requestedLowestSimpleY) {
         return emptyTile
     }
-    val tile = simplesStored[x + (y - currentLowestSimpleY) * NUM_SIMPLES_ACROSS]
+    val tile = tilesStorage[x + (y - currentLowestSimpleY) * NUM_TILES_ACROSS]
     if (DEBUG_VERIFY) {
         require(tile.x == x && tile.y == y) {
             "Tile not correct. Asked for $x, $y, received ${tile.x}, ${tile.y}"
@@ -56,33 +57,33 @@ fun getTile(x: Int, y: Int): TileLike {
 }
 
 fun getTile(tileId: TileId): TileLike {
-    val storageIdx = tileId.id - currentLowestSimpleY * NUM_SIMPLES_ACROSS
-    if (storageIdx >= 0 && storageIdx < simplesStored.size) {
-        return simplesStored[storageIdx]
+    val storageIdx = tileId.id - currentLowestSimpleY * NUM_TILES_ACROSS
+    if (storageIdx >= 0 && storageIdx < tilesStorage.size) {
+        return tilesStorage[storageIdx]
     }
     return emptyTile
 }
 
-private val simplesStoredTopRow
-    get() = simplesStored.size - NUM_SIMPLES_ACROSS until simplesStored.size
+private val tilesStoredTopRow
+    get() = tilesStorage.size - NUM_TILES_ACROSS until tilesStorage.size
 
-private fun shiftSimplesUp(rowsToMove: Int) {
-    val amountToMove = rowsToMove * NUM_SIMPLES_ACROSS
-    for (i in simplesStored.lastIndex downTo amountToMove) {
-        simplesStored[i] = simplesStored[i - amountToMove]
+private fun shiftTilesUp(rowsToMove: Int) {
+    val amountToMove = rowsToMove * NUM_TILES_ACROSS
+    for (i in tilesStorage.lastIndex downTo amountToMove) {
+        tilesStorage[i] = tilesStorage[i - amountToMove]
     }
 }
 
-private fun shiftSimplesDown(rowsToMove: Int) {
-    val amountToMove = rowsToMove * NUM_SIMPLES_ACROSS
-    for (i in 0 until simplesStored.size - amountToMove) {
-        simplesStored[i] = simplesStored[i + amountToMove]
+private fun shiftTilesDown(rowsToMove: Int) {
+    val amountToMove = rowsToMove * NUM_TILES_ACROSS
+    for (i in 0 until tilesStorage.size - amountToMove) {
+        tilesStorage[i] = tilesStorage[i + amountToMove]
     }
 }
 
 // Called once on app load.
 fun initTiles() {
-    for (tile in simplesStored) {
+    for (tile in tilesStorage) {
         tile.init()
     }
 }
@@ -91,13 +92,13 @@ fun resetLevel() {
     requestedLowestSimpleY = 0
     currentLowestSimpleY = 0
 
-    for (tile in simplesStored) {
+    for (tile in tilesStorage) {
         tile.dispose()
     }
-    for (i in simplesStored.indices) {
-        simplesStored[i] = Tile(TileId(i))
+    for (i in tilesStorage.indices) {
+        tilesStorage[i] = Tile(TileId(i))
     }
-    for (tile in simplesStored) {
+    for (tile in tilesStorage) {
         tile.init()
         generateTile(tile)
     }
@@ -110,7 +111,7 @@ fun requestNewLowestSimpleY(newLowest: Int) {
 // What's been asked of us by the camera this frame
 private var requestedLowestSimpleY = 0
 
-// What the simplesStored array is actually currently using as truth
+// What the tilesStored array is actually currently using as truth
 private var currentLowestSimpleY = 0
 
 fun getLowestStoredSimpleY(): Int {
@@ -123,59 +124,59 @@ fun updateLevelStorage() {
     currentLowestSimpleY = requestedLowestSimpleY
 
     // We only generate on the way down - if stuff falls off the top it's gone for good.
-    val amountToMove = abs(diff) * NUM_SIMPLES_ACROSS
+    val amountToMove = abs(diff) * NUM_TILES_ACROSS
 
     if (diff < 0) { // Camera moved down
         // Dispose of the ones at the top, we're about to get rid of them.
-        for (i in simplesStored.size - amountToMove until simplesStored.size) {
-            simplesStored[i].dispose()
+        for (i in tilesStorage.size - amountToMove until tilesStorage.size) {
+            tilesStorage[i].dispose()
         }
 
-        shiftSimplesUp(abs(diff))
+        shiftTilesUp(abs(diff))
 
         // Generate new ones at the bottom.
         for (i in 0 until amountToMove) {
-            simplesStored[i] = Tile(TileId(i + currentLowestSimpleY * NUM_SIMPLES_ACROSS))
+            tilesStorage[i] = Tile(TileId(i + currentLowestSimpleY * NUM_TILES_ACROSS))
         }
 
         // Rebuild top row neighbours (i.e let them know they no longer have anyone above them)
-        for (i in simplesStoredTopRow) {
-            simplesStored[i].rebuildNeighbours()
+        for (i in tilesStoredTopRow) {
+            tilesStorage[i].rebuildNeighbours()
         }
         // Rebuild the row that used to be at the bottom's neighbours, as they now have new neighbours below them.
-        for (i in amountToMove until amountToMove + NUM_SIMPLES_ACROSS) {
-            simplesStored[i].rebuildNeighbours()
+        for (i in amountToMove until amountToMove + NUM_TILES_ACROSS) {
+            tilesStorage[i].rebuildNeighbours()
         }
 
         for (i in 0 until amountToMove) {
-            simplesStored[i].init()
-            generateTile(simplesStored[i])
+            tilesStorage[i].init()
+            generateTile(tilesStorage[i])
         }
     } else if (diff > 0) { // Camera moved up
         // Dispose of the ones at the bottom, we're about to get rid of them.
         for (i in 0 until amountToMove) {
-            simplesStored[i].dispose()
+            tilesStorage[i].dispose()
         }
 
-        shiftSimplesDown(abs(diff))
+        shiftTilesDown(abs(diff))
 
         // Generate new ones at the top.
-        for (i in simplesStored.size - amountToMove until simplesStored.size) {
-            simplesStored[i] = Tile(TileId(i + currentLowestSimpleY * NUM_SIMPLES_ACROSS))
+        for (i in tilesStorage.size - amountToMove until tilesStorage.size) {
+            tilesStorage[i] = Tile(TileId(i + currentLowestSimpleY * NUM_TILES_ACROSS))
         }
 
         // Rebuild bottom row neighbours (i.e let them know they no longer have anyone below them)
-        for (i in 0 until NUM_SIMPLES_ACROSS) {
-            simplesStored[i].rebuildNeighbours()
+        for (i in 0 until NUM_TILES_ACROSS) {
+            tilesStorage[i].rebuildNeighbours()
         }
 
         // Rebuild the row that used to be at the top's neighbours, as they now have new neighbours above them.
-        for (i in simplesStored.size - amountToMove until simplesStored.size - amountToMove + NUM_SIMPLES_ACROSS) {
-            simplesStored[i].rebuildNeighbours()
+        for (i in tilesStorage.size - amountToMove until tilesStorage.size - amountToMove + NUM_TILES_ACROSS) {
+            tilesStorage[i].rebuildNeighbours()
         }
 
-        for (i in simplesStored.size - amountToMove until simplesStored.size) {
-            simplesStored[i].init()
+        for (i in tilesStorage.size - amountToMove until tilesStorage.size) {
+            tilesStorage[i].init()
         }
     }
 }
@@ -183,11 +184,11 @@ fun updateLevelStorage() {
 fun generateTile(tile: Tile) {
     tile.materialize()
 
-    // All coordinates here in simples coords
+    // All coordinates here in tiles coords
     val x = tile.x.d
     val y = tile.y.d
 
-    val worldHeight = LAND_SURFACE_Y * SIMPLES_PER_UNIT - abs(Perlin.noise(x, 0, 16)) * 5
+    val worldHeight = LAND_SURFACE_Y * TILES_PER_UNIT - abs(Perlin.noise(x, 0, 16)) * 5
     val depth = worldHeight - y
     if (depth < 0) {
         tile.dematerialize()

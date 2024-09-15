@@ -51,18 +51,18 @@ class EmptyTile : TileLike {
 value class TileId(val id: Int) {
     companion object {
         fun fromXY(x: Int, y: Int): TileId {
-            return TileId(x + y * NUM_SIMPLES_ACROSS)
+            return TileId(x + y * NUM_TILES_ACROSS)
         }
     }
 
     val x: Int
         get() {
-            return (id % NUM_SIMPLES_ACROSS + NUM_SIMPLES_ACROSS) % NUM_SIMPLES_ACROSS
+            return (id % NUM_TILES_ACROSS + NUM_TILES_ACROSS) % NUM_TILES_ACROSS
         }
 
     val y: Int
         get() {
-            return floor(id.d / NUM_SIMPLES_ACROSS)
+            return floor(id.d / NUM_TILES_ACROSS)
         }
 }
 
@@ -80,7 +80,7 @@ var tileIdsChangedLastFrame = setOf<TileId>()
     private set
 
 fun forceFullScreenRefresh() {
-    tileIdsChangedInThisFrame = simplesStored.map(Tile::getId).toMutableSet()
+    tileIdsChangedInThisFrame = tilesStorage.map(Tile::getId).toMutableSet()
     updateTileChanges()
 }
 
