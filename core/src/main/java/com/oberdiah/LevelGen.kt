@@ -142,6 +142,7 @@ fun updateLevelStorage() {
         // Rebuild top row neighbours (i.e let them know they no longer have anyone above them)
         for (i in tilesStoredTopRow) {
             tilesStorage[i].rebuildNeighbours()
+            tilesStorage[i].forceUpdate()
         }
         // Rebuild the row that used to be at the bottom's neighbours, as they now have new neighbours below them.
         for (i in amountToMove until amountToMove + NUM_TILES_ACROSS) {
@@ -150,6 +151,7 @@ fun updateLevelStorage() {
 
         for (i in 0 until amountToMove) {
             tilesStorage[i].init()
+            // GenerateTile forces the update for us.
             generateTile(tilesStorage[i])
         }
     } else if (diff > 0) { // Camera moved up

@@ -131,6 +131,11 @@ class Tile(private val id: TileId) : TileLike {
         setExists(false)
     }
 
+    /** Force a recalculate of this tile's physics body and render. */
+    fun forceUpdate() {
+        tileIdsChangedInThisFrame.add(this.id)
+    }
+
     private fun setExists(exists: Boolean) {
         if (this.doesExistPhysically != exists) {
             tileIdsChangedInThisFrame.add(this.id)
