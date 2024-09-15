@@ -189,6 +189,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             airTime = 0.0
         }
 
+//        if (isKeyPressed(Keys.R)) {
+//            boom(body.p, 2.0, false)
+//        }
+
         deadEndingCountdown = deadEndingCountdown?.minus(DELTA)
 
         if ((deadEndingCountdown ?: 0.0) < 0.0) {

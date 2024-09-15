@@ -55,6 +55,10 @@ class Tile(private val id: Int) : TileLike {
         return "${if (doesExistPhysically) tileType else "Air"}: ($x, $y)"
     }
 
+    fun getId(): Int {
+        return id
+    }
+
     /**
      * The tile 'exists' property tracks whether the tile has a physical presence in the world.
      * If exists is true, the body is guaranteed to have a fixture. The opposite is not always the case,
@@ -68,7 +72,7 @@ class Tile(private val id: Int) : TileLike {
      * or not initialized.
      * It cannot be referenced outside this class, and should not be relied upon.
      */
-    private var isSafe = false
+    private var isSafe = true
 
     /** Register this tile as now materially existing. It will collide, it will render, etc. */
     fun materialize() {
@@ -109,17 +113,38 @@ class Tile(private val id: Int) : TileLike {
     private lateinit var body: PhysBody
 
     val marchingCubeNeighbors: List<TileLike>
-        get() = data.marchingCubeNeighbors
+        get() {
+            require(isSafe)
+            if (DEBUG_VERIFY) {
+                // Verify each of the neighbors is also safe
+                data.marchingCubeNeighbors.forEach {
+                    require(it !is Tile || it.isSafe) {
+                        "Tile $this has a marching cube neighbor that is not safe: $it"
+                    }
+                }
+            }
+            return data.marchingCubeNeighbors
+        }
 
     val allSurroundingTiles: List<TileLike>
-        get() = data.allSurroundingTiles
+        get() {
+            require(isSafe)
+            if (DEBUG_VERIFY) {
+                // Verify each of the neighbors is also safe
+                data.allSurroundingTiles.forEach {
+                    require(it !is Tile || it.isSafe) {
+                        "Tile $this has a surrounding tile that is not safe: $it"
+                    }
+                }
+            }
+            return data.allSurroundingTiles
+        }
 
     fun rebuildNeighbours() {
         data = TileData(this)
     }
 
     fun init() {
-        isSafe = true
         rebuildNeighbours()
         val groundBodyDef = BodyDef()
         groundBodyDef.position.set(x * SIMPLE_SIZE_IN_WORLD.f, y * SIMPLE_SIZE_IN_WORLD.f)

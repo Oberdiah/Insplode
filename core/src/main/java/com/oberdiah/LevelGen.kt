@@ -30,6 +30,9 @@ val levelOnScreen = sequence {
  * Low IDs (and therefor first in the list) are at the bottom of the screen, increasing as we go up.
  *
  * IDs are nearly always negative, as they're all underground.
+ *
+ * This should be the only persistent storage of tiles cross-frame. Anything else is
+ * risky as we can invalidate tiles at any time.
  */
 val simplesStored = MutableList(SIMPLES_WIDTH * SIMPLES_HEIGHT_STORED) { Tile(it) }
 
@@ -40,14 +43,24 @@ fun getTile(p: Point): TileLike {
 
 /** If null is returned you've requested a tile outside the bounds of the stored tiles. */
 fun getTile(x: Int, y: Int): TileLike {
-    if (x >= SIMPLES_WIDTH || x < 0 || y >= requestedLowestSimpleY + SIMPLES_HEIGHT_STORED || y < requestedLowestSimpleY) {
+    if (x >= SIMPLES_WIDTH || x < 0 || y >= currentLowestSimpleY + SIMPLES_HEIGHT_STORED || y < requestedLowestSimpleY) {
         return emptyTile
     }
-    val tile = simplesStored[x + (y - requestedLowestSimpleY) * SIMPLES_WIDTH]
-//    require(tile.x == x && tile.y == y) {
-//        "Tile not correct. Asked for $x, $y, received ${tile.x}, ${tile.y}"
-//    }
+    val tile = simplesStored[x + (y - currentLowestSimpleY) * SIMPLES_WIDTH]
+    if (DEBUG_VERIFY) {
+        require(tile.x == x && tile.y == y) {
+            "Tile not correct. Asked for $x, $y, received ${tile.x}, ${tile.y}"
+        }
+    }
     return tile
+}
+
+fun getTile(tileId: Int): TileLike {
+    val storageIdx = tileId - currentLowestSimpleY * SIMPLES_WIDTH
+    if (storageIdx >= 0 && storageIdx < simplesStored.size) {
+        return simplesStored[storageIdx]
+    }
+    return emptyTile
 }
 
 private val simplesStoredTopRow

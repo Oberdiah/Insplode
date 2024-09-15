@@ -7,6 +7,9 @@ import com.oberdiah.Utils.camera
 /** If this is true we add all the debug ui stuff, and also boot straight into the game. */
 const val IS_DEBUG_ENABLED = true
 
+/** If this is true, we do a bunch of extra debug checks to ensure things are behaving correctly. */
+const val DEBUG_VERIFY = true
+
 /**
  * A multiplier on the scale of everything non-map related - Player size, bomb size, explosion size, etc.
  *
@@ -146,6 +149,9 @@ const val TIME_STEP = 1 / 120.0f
 var DELTA = 0.016
 var PAUSED = !IS_DEBUG_ENABLED
 
+/**
+ * The camera Y position (bottom of the screen) in world coordinates.
+ */
 val CAMERA_POS_Y: Number
     get() = camera.position.y.d - SQUARES_TALL / 2
 var CAMERA_LOCKED = true
