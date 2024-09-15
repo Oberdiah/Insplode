@@ -2,7 +2,10 @@ package com.oberdiah.Utils
 
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.colorFrom
-import com.oberdiah.rerenderLevel
+import com.oberdiah.forceFullScreenRefresh
+import com.oberdiah.renderLevel
+import com.oberdiah.updateTileChanges
+import com.oberdiah.updateTilePhysics
 import com.oberdiah.withAlpha
 
 object Colors {
@@ -25,7 +28,7 @@ private var schemeNum = 0
 fun nextColorScheme() {
     schemeNum = (schemeNum + 1) % schemes.size
     colorScheme = schemes[schemeNum]
-    rerenderLevel()
+    forceFullScreenRefresh()
 }
 
 var colorScheme: ColorScheme = Grassy()
@@ -34,7 +37,6 @@ class Grassy : ColorScheme("Forest") {
     init {
         player = colorFrom(0xbc4749)
         playerSlamming = colorFrom(0xd27c2d)
-        playerSmashable = colorFrom(0xf1e00e)
         bombPrimary = colorFrom(0xbc4749)
         backgroundA = colorFrom(0xf2e8cf)
         backgroundB = colorFrom(0xf2e8cf).mul(1.03f)
@@ -47,6 +49,7 @@ class Grassy : ColorScheme("Forest") {
 class Grassy2 : ColorScheme("Grass Lands") {
     init {
         player = colorFrom(0xbc4749)
+        playerSlamming = colorFrom(0xd27c2d)
         bombPrimary = colorFrom(0xbc4749)
         backgroundA = colorFrom(0xf2e8cf)
         backgroundB = colorFrom(0xf2e8cf).mul(1.03f)
@@ -59,6 +62,7 @@ class Grassy2 : ColorScheme("Grass Lands") {
 class Oceany : ColorScheme("Ocean") {
     init {
         player = colorFrom(0x77b2f2)
+        playerSlamming = colorFrom(0xd27c2d)
         bombPrimary = colorFrom(0xe63946)
         backgroundA = colorFrom(0xf1faee)
         backgroundB = colorFrom(0xf1faee).mul(1.03f)
@@ -71,6 +75,7 @@ class Oceany : ColorScheme("Ocean") {
 class Deserty : ColorScheme("Desert") {
     init {
         player = colorFrom(0xFFFCF2)
+        playerSlamming = colorFrom(0xd27c2d)
         bombPrimary = Color.RED.cpy().mul(0.8f)
         backgroundA = colorFrom(0x90AACB)
         backgroundB = colorFrom(0x90AACB).mul(1.03f)
@@ -83,6 +88,7 @@ class Deserty : ColorScheme("Desert") {
 class Classic : ColorScheme("Classic") {
     init {
         player = colorFrom(0xFFFCF2)
+        playerSlamming = colorFrom(0xd27c2d)
         bombPrimary = Color.RED.cpy().mul(0.8f)
         backgroundA = colorFrom(0x9DCFEA)
         backgroundB = colorFrom(0x9DCFEA).mul(1.03f)
@@ -95,6 +101,7 @@ class Classic : ColorScheme("Classic") {
 class Castle : ColorScheme("Castle") {
     init {
         player = colorFrom(0x9c7878)
+        playerSlamming = colorFrom(0xd27c2d)
         bombPrimary = colorFrom(0x000000).mul(0.8f)
         backgroundA = colorFrom(0xe0ac4a)
         backgroundB = colorFrom(0xe0ac4a).mul(1.03f)
@@ -107,6 +114,7 @@ class Castle : ColorScheme("Castle") {
 class Canyon : ColorScheme("Canyon") {
     init {
         player = colorFrom(0xffe712)
+        playerSlamming = colorFrom(0xd27c2d)
         bombPrimary = colorFrom(0x000000).mul(0.8f)
         backgroundA = colorFrom(0x4e9fc2)
         backgroundB = colorFrom(0x4e9fc2).mul(1.03f)
@@ -119,6 +127,7 @@ class Canyon : ColorScheme("Canyon") {
 class Princess : ColorScheme("Princess") {
     init {
         player = colorFrom(0xf587ed)
+        playerSlamming = colorFrom(0xd27c2d)
         bombPrimary = colorFrom(0x000000).mul(0.8f)
         backgroundA = colorFrom(0x9DCFEA)
         backgroundB = colorFrom(0x9DCFEA).mul(1.03f)
@@ -135,7 +144,6 @@ open class ColorScheme(val name: String) {
     var textColor: Color = colorFrom(0x242423)
     lateinit var player: Color
     lateinit var playerSlamming: Color
-    lateinit var playerSmashable: Color
     lateinit var bombPrimary: Color
     lateinit var backgroundA: Color
     lateinit var backgroundB: Color

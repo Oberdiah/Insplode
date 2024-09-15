@@ -67,6 +67,29 @@ value class TileId(val id: Int) {
 }
 
 /**
+ * This is the list of tiles that have changed in this frame, directly or indirectly
+ * (a neighbour changed and we may have to recompute our shape).
+ */
+private var tileIdsChangedInThisFrame = mutableSetOf<TileId>()
+
+/**
+ * We keep this around so people can be sure they deal with a full frame's worth of changes,
+ * no matter the order of things
+ */
+var tileIdsChangedLastFrame = setOf<TileId>()
+    private set
+
+fun forceFullScreenRefresh() {
+    tileIdsChangedInThisFrame = simplesStored.map(Tile::getId).toMutableSet()
+    updateTileChanges()
+}
+
+fun updateTileChanges() {
+    tileIdsChangedLastFrame = tileIdsChangedInThisFrame
+    tileIdsChangedInThisFrame = mutableSetOf()
+}
+
+/**
  * The way tiles work conceptually is they're a 2D array of spaces on the grid. They may or
  * may not have a presence in the world. A 'tile' object represents a single space on the grid,
  * and we create and destroy tiles as we move further down. We do not create tiles for any other reason.
@@ -110,7 +133,13 @@ class Tile(private val id: TileId) : TileLike {
 
     private fun setExists(exists: Boolean) {
         if (this.doesExistPhysically != exists) {
-            directlyChangedTileIds.add(this.id)
+            tileIdsChangedInThisFrame.add(this.id)
+
+            this.marchingCubeNeighbors.forEach {
+                if (it is Tile) {
+                    tileIdsChangedInThisFrame.add(it.id)
+                }
+            }
         }
         this.doesExistPhysically = exists
     }
@@ -129,8 +158,6 @@ class Tile(private val id: TileId) : TileLike {
         // return if (exists) tileType else TileType.Air
     }
 
-
-    var attachedToGround = false
     var destructionTime = 0.0
 
     lateinit var data: TileData

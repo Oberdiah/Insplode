@@ -2,14 +2,24 @@ package com.oberdiah
 
 import kotlin.random.Random
 
-/** We don't store tiles here as this array exists across frames and the tiles may not. */
-private val currentlyFloatingTileIds = mutableSetOf<TileId>()
+/**
+ * We don't store tiles here as this array exists across frames and the tiles may not.
+ *
+ * This is a slightly confusing set - it not only contains all existing tiles known to be floating,
+ * but also all non-existing tiles. We do it this way because we want to be able to avoid
+ * triggering the collapse algorithm due to the floating tile collapse animation.
+ *
+ * We can't just filter out the non-existing tiles from the update list
+ * because we need to know if they used to exist last frame.
+ */
+private val allFloatingTileIds = mutableSetOf<TileId>()
 fun tickCollapse() {
-    if (tileIdsChangedInTheLastFrame.isNotEmpty()) {
+    if ((tileIdsChangedLastFrame.filter { it.y != getLowestStoredSimpleY() } - allFloatingTileIds).isNotEmpty()) {
         val wavefront = mutableSetOf<Tile>()
         val visited = mutableSetOf<Tile>()
-        currentlyFloatingTileIds.clear()
-        currentlyFloatingTileIds.addAll(simplesStored.filter { it.doesExist() }.map { it.getId() })
+
+        allFloatingTileIds.clear()
+        allFloatingTileIds.addAll(simplesStored.map { it.getId() })
 
         for (x in 0 until SIMPLES_WIDTH) {
             val tile = getTile(x, getLowestStoredSimpleY())
@@ -20,8 +30,8 @@ fun tickCollapse() {
 
         while (wavefront.size > 0) {
             val tile = wavefront.elementAt(0)
+            allFloatingTileIds.remove(tile.getId())
             wavefront.remove(tile)
-            currentlyFloatingTileIds.remove(tile.getId())
             visited.add(tile)
             for (t in tile.allSurroundingTiles) {
                 if (t is Tile && !visited.contains(t) && t.doesExist()) {
@@ -32,22 +42,31 @@ fun tickCollapse() {
     }
 
     val toRemove = mutableSetOf<Tile>()
-    for (tileId in currentlyFloatingTileIds) {
+    val noLongerFloating = mutableSetOf<TileId>()
+    for (tileId in allFloatingTileIds) {
         val tile = getTile(tileId)
-
-        if (tile is Tile) {
-            if (!tile.data.bl.doesExist() && !tile.data.br.doesExist() && !tile.data.bm.doesExist()) {
-                tile.destructionTime += DELTA
-            }
-            if (tile.destructionTime > Random.nextDouble()) {
-                toRemove.add(tile)
-            }
+        if (tile !is Tile) {
+            noLongerFloating.add(tileId)
+            continue
         }
+        if (!tile.doesExist()) {
+            continue
+        }
+
+        if (!tile.data.bl.doesExist() && !tile.data.br.doesExist() && !tile.data.bm.doesExist()) {
+            tile.destructionTime += DELTA
+        }
+        if (tile.destructionTime > Random.nextDouble()) {
+            toRemove.add(tile)
+        }
+    }
+
+    for (tileId in noLongerFloating) {
+        allFloatingTileIds.remove(tileId)
     }
 
     for (tile in toRemove) {
         tile.dematerialize()
-        currentlyFloatingTileIds.remove(tile.getId())
         spawnFragment(
             tile.coord.cpy,
             Point(Random.nextDouble() - 0.5, -Random.nextDouble()),

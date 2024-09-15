@@ -78,7 +78,6 @@ fun playSound(
     val sound = SOUND_POOL[soundName]?.firstOrNull { !it.isPlaying }
 
     if (sound == null) {
-        println("No available sound for $soundName :(")
         return
     }
 
@@ -118,7 +117,6 @@ fun playExplosionSound(force: Double) {
         )
     } else {
         val splitter = if (force > 1.8) {
-            println("Cave splitter! Playing a big boom :)")
             caveSplitter
         } else {
             null

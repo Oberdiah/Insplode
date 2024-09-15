@@ -13,7 +13,6 @@ lateinit var uiRenderer: Renderer
 lateinit var platformInterface: PlatformInterface
 
 fun restartGame() {
-    resetPhysics()
     resetParticles()
     resetPhysicsObjects()
     resetLevel()
@@ -67,6 +66,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Camera") { updateCamera() }
             setCameraGlobalsThisFrame()
             time("Update level storage") { updateLevelStorage() }
+            time("Update tile changes") { updateTileChanges() }
 
             // 'Coz Box2d stupid, these are the centres of the positions.
             leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + SQUARES_TALL / 2), 0f)

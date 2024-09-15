@@ -1,7 +1,6 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
@@ -35,11 +34,6 @@ fun initLevelRender() {
     cam2.position.x = SQUARES_WIDE.f / 2
     cam2.update()
     levelTexRenderer.projectionMatrix = cam.combined
-}
-
-fun rerenderLevel() {
-    // Literally just request every tile to re-render itself
-    tileIdsChangedInTheLastFrame = simplesStored.map(Tile::getId)
 }
 
 var fboBaseLocation = 0
@@ -83,7 +77,7 @@ fun renderLevel() {
         }
     }
 
-    for (tileId in tileIdsChangedInTheLastFrame) {
+    for (tileId in tileIdsChangedLastFrame) {
         if (tileId.y in lowestTileOnScreen..highestTileOnScreen) {
             renderTile(getTile(tileId), tileId.x, tileId.y)
         }
@@ -205,9 +199,6 @@ fun renderLevelOld(r: Renderer) {
 //                    y * SIMPLE_SIZE + 0.1
 //                )
                 r.color = tileType.color()
-                if (bottomLeft.attachedToGround) {
-                    r.color = Color.BLACK
-                }
                 r.poly(
                     marchingSquaresFAScaled(bl, br, tl, tr),
                     1,
