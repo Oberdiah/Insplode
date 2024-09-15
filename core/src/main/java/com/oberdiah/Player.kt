@@ -69,9 +69,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             addFixture(it)
         }
 
-        rectShape(PLAYER_SIZE / Point(1, 2), Point(0, PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
-            addFixture(it)
-        }
+//        rectShape(PLAYER_SIZE / Point(1, 2), Point(0, PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
+//            addFixture(it)
+//        }
 
         rectShape(PLAYER_SIZE / Point(1.25, 4), Point(0f, -PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
             jumpBox = addFixture(it, true)

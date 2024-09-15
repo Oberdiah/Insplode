@@ -8,7 +8,7 @@ import com.oberdiah.Utils.camera
 const val IS_DEBUG_ENABLED = true
 
 /** If this is true, we do a bunch of extra debug checks to ensure things are behaving correctly. */
-const val DEBUG_VERIFY = true
+const val DEBUG_VERIFY = IS_DEBUG_ENABLED
 
 /**
  * A multiplier on the scale of everything non-map related - Player size, bomb size, explosion size, etc.

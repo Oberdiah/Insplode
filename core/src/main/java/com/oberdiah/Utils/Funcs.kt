@@ -89,6 +89,11 @@ val Number.f: Float
         return this.toFloat()
     }
 
+val Number.abs: Double
+    get() {
+        return kotlin.math.abs(this.d)
+    }
+
 fun sqrt(n: Number): Double {
     return kotlin.math.sqrt(n.d)
 }
