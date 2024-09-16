@@ -233,7 +233,7 @@ private fun playPickupPrimitive(scheduledAt: Double? = null, pitch: Double = 1.0
     playSound(
         "trim_glass ding ${Random.nextInt(1, 3)}",
         pitch,
-        0.5,
+        0.25,
         caveSplitter,
         scheduledAt
     )
