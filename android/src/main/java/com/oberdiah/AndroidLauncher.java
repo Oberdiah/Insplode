@@ -8,9 +8,8 @@ import android.util.Log;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidAudio;
-import com.badlogic.gdx.backends.android.AsynchronousAndroidAudio;
 import com.badlogic.gdx.backends.android.DefaultAndroidAudio;
-import com.oberdiah.Utils.PlatformInterface;
+import com.oberdiah.utils.PlatformInterface;
 
 import org.jetbrains.annotations.NotNull;
 

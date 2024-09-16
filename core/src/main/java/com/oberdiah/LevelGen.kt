@@ -1,7 +1,7 @@
 package com.oberdiah
 
-import com.oberdiah.Utils.Perlin
-import com.oberdiah.Utils.TileType
+import com.oberdiah.utils.Perlin
+import com.oberdiah.utils.TileType
 
 /**
  * Should only really be used to represent the tiles off the top and the bottom of the play area.

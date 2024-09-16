@@ -1,4 +1,4 @@
-package com.oberdiah.Utils
+package com.oberdiah.utils
 
 import games.rednblack.miniaudio.MiniAudio
 

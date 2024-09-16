@@ -2,9 +2,9 @@ package com.oberdiah
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
-import com.oberdiah.Utils.MyBox2DDebugRenderer
-import com.oberdiah.Utils.camera
-import com.oberdiah.Utils.time
+import com.oberdiah.utils.MyBox2DDebugRenderer
+import com.oberdiah.utils.camera
+import com.oberdiah.utils.time
 
 private lateinit var world: World
 private lateinit var debugRenderer: Box2DDebugRenderer

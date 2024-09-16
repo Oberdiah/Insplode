@@ -1,7 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
-import com.oberdiah.Utils.TileType
+import com.oberdiah.utils.TileType
 import kotlin.random.Random
 
 private val allParticles = mutableListOf<Particle>()

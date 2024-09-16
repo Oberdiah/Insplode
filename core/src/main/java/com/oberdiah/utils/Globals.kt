@@ -1,9 +1,9 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
-import com.oberdiah.Utils.ScreenShakeSettings
-import com.oberdiah.Utils.calculateInputGlobals
-import com.oberdiah.Utils.camera
+import com.oberdiah.utils.ScreenShakeSettings
+import com.oberdiah.utils.calculateInputGlobals
+import com.oberdiah.utils.camera
 
 /** If this is true we add all the debug ui stuff, and also boot straight into the game. */
 const val IS_DEBUG_ENABLED = true

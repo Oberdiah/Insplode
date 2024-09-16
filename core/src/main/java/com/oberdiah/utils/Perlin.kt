@@ -1,4 +1,4 @@
-package com.oberdiah.Utils
+package com.oberdiah.utils
 
 import com.oberdiah.d
 import kotlin.math.pow
@@ -16,8 +16,8 @@ object Perlin {
     }
 
     fun fbm(xI: Number, yI: Number, octaves: Int, smoothing: Number): Double {
-        var x = xI.d/2.0.pow(octaves)
-        var y = yI.d/2.0.pow(octaves)
+        var x = xI.d / 2.0.pow(octaves)
+        var y = yI.d / 2.0.pow(octaves)
         var value = 0.0
         var amplitude = 1.0
         for (i in 0 until octaves) {

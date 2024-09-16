@@ -1,4 +1,4 @@
-package com.oberdiah.Utils
+package com.oberdiah.utils
 
 import com.oberdiah.AVERAGE_DELTA
 import com.oberdiah.format

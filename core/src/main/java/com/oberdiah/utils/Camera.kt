@@ -1,4 +1,4 @@
-package com.oberdiah.Utils
+package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.oberdiah.*

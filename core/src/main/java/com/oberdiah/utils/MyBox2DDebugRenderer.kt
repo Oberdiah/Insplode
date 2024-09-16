@@ -1,4 +1,4 @@
-package com.oberdiah.Utils
+package com.oberdiah.utils
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Matrix4

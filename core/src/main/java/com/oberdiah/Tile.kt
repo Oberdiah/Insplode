@@ -2,7 +2,7 @@ package com.oberdiah
 
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
-import com.oberdiah.Utils.TileType
+import com.oberdiah.utils.TileType
 
 class TileData(var tile: Tile) {
     private val x = tile.x

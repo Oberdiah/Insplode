@@ -1,19 +1,16 @@
 package com.oberdiah.ui
 
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.HEIGHT
-import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.PAUSED
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.Screen
-import com.oberdiah.Utils.TOUCHES_DOWN
-import com.oberdiah.Utils.TOUCHES_WENT_UP
-import com.oberdiah.Utils.isKeyJustPressed
-import com.oberdiah.Utils.isKeyPressed
+import com.oberdiah.utils.TOUCHES_DOWN
+import com.oberdiah.utils.TOUCHES_WENT_UP
+import com.oberdiah.utils.isKeyJustPressed
 import com.oberdiah.WIDTH
 import com.oberdiah.max
 import com.oberdiah.withAlpha

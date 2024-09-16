@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.CircleShape
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.Shape
-import com.oberdiah.Utils.camera
+import com.oberdiah.utils.camera
 import kotlin.math.PI
 import kotlin.random.Random
 

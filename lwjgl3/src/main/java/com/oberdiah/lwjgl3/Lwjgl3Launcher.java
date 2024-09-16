@@ -3,7 +3,7 @@ package com.oberdiah.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.oberdiah.Main;
-import com.oberdiah.Utils.PlatformInterface;
+import com.oberdiah.utils.PlatformInterface;
 
 import org.jetbrains.annotations.NotNull;
 

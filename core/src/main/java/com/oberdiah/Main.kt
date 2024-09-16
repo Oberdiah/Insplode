@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
-import com.oberdiah.Utils.*
+import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUI
 
 

@@ -1,11 +1,8 @@
-package com.oberdiah.Utils
+package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.colorFrom
 import com.oberdiah.forceFullScreenRefresh
-import com.oberdiah.renderLevel
-import com.oberdiah.updateTileChanges
-import com.oberdiah.updateTilePhysics
 import com.oberdiah.withAlpha
 
 object Colors {

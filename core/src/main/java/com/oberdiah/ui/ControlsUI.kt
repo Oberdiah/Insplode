@@ -11,8 +11,8 @@ import com.oberdiah.LEFT_RIGHT_CONTROL
 import com.oberdiah.RIGHT_BUTTON_UI_FRACT
 import com.oberdiah.Renderer
 import com.oberdiah.Screen
-import com.oberdiah.Utils.TOUCHES_DOWN
-import com.oberdiah.Utils.TOUCHES_WENT_UP
+import com.oberdiah.utils.TOUCHES_DOWN
+import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.WIDTH
 import com.oberdiah.fontMedium
 import com.oberdiah.fontSmallish

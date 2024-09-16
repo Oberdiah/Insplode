@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.oberdiah.Utils.Colors
-import com.oberdiah.Utils.TileType
-import com.oberdiah.Utils.colorScheme
+import com.oberdiah.utils.Colors
+import com.oberdiah.utils.TileType
+import com.oberdiah.utils.colorScheme
 
 private lateinit var fbo: FrameBuffer
 lateinit var levelShapeRenderer: ShapeRenderer

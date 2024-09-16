@@ -2,7 +2,7 @@ package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
-import com.oberdiah.Utils.colorScheme
+import com.oberdiah.utils.colorScheme
 import kotlin.experimental.inv
 import kotlin.math.PI
 import kotlin.random.Random
