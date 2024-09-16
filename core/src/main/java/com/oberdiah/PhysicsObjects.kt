@@ -1,10 +1,7 @@
 package com.oberdiah
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.Fixture
-import com.badlogic.gdx.physics.box2d.FixtureDef
-import kotlin.experimental.inv
 
 fun tickPhysicsObjects() {
     getAllPhysicsObjects.forEach { it.tick() }
@@ -21,11 +18,11 @@ fun resetPhysicsObjects() {
 }
 
 fun renderPhysicsObjects(r: Renderer) {
-    getAllPhysicsObjects.filter { it !is Pickup }.forEach { it.render(r) }
-    getAllPhysicsObjects.filterIsInstance<Pickup>().forEach { it.render(r) }
+    getAllPhysicsObjects.filter { it !is PointOrb }.forEach { it.render(r) }
+    getAllPhysicsObjects.filterIsInstance<PointOrb>().forEach { it.render(r) }
 }
 
-val allDynamicPhysicsObjects = mutableListOf<PhysicsObject>()
+private val allDynamicPhysicsObjects = mutableListOf<PhysicsObject>()
 
 val numPhysicsObjects: Int
     get() = allDynamicPhysicsObjects.size - deadPhysicsObjects.size + toAddPhysicsObjects.size
@@ -119,34 +116,4 @@ abstract class PhysicsObject(
     }
 
     abstract fun render(r: Renderer)
-}
-
-class Pickup(startingPoint: Point) : PhysicsObject(startingPoint) {
-    init {
-        circleShape(0.15) {
-            val fixtureDef = FixtureDef()
-            fixtureDef.shape = it
-            fixtureDef.density = 5.5f
-            fixtureDef.friction = 0.5f
-            fixtureDef.restitution = 0.4f
-            fixtureDef.filter.categoryBits = PICKUP_PHYSICS_MASK
-            fixtureDef.filter.maskBits = BOMB_PHYSICS_MASK.inv()
-            body.addFixture(fixtureDef)
-        }
-    }
-
-    override fun collided(obj: PhysicsObject) {
-        super.collided(obj)
-        if (obj == player) {
-            destroy()
-            for (i in 0..5) {
-                spawnSmoke(body.p, createRandomFacingPoint())
-            }
-        }
-    }
-
-    override fun render(r: Renderer) {
-        r.color = Color.ROYAL.cpy().mul(0.9f)
-        r.circle(body.p, 0.15)
-    }
 }

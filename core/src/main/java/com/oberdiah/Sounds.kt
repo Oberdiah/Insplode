@@ -54,6 +54,16 @@ fun loadSounds() {
     }
 }
 
+val scheduledSounds = mutableListOf<ASound>()
+fun tickSounds() {
+    scheduledSounds.forEach {
+        if (it.scheduledAt!! < RUN_TIME_ELAPSED) {
+            playSound(it.name, it.pitch, it.volume, it.splitter)
+        }
+    }
+    scheduledSounds.removeAll { it.scheduledAt!! < RUN_TIME_ELAPSED }
+}
+
 fun disposeSounds() {
     // I trust Windows to just do the cleanup for us - I'd like to be more responsible
     // on Android
@@ -66,11 +76,20 @@ fun disposeSounds() {
     }
 }
 
+data class ASound(
+    val name: String,
+    val pitch: Double,
+    val volume: Double,
+    val splitter: MASplitter?,
+    val scheduledAt: Double?
+)
+
 fun playSound(
     soundName: String,
     pitch: Double = 1.0,
     volume: Double = 1.0,
-    splitter: MASplitter? = null
+    splitter: MASplitter? = null,
+    scheduledAt: Double? = null
 ) {
     if (volume < 0.005) return
 
@@ -78,6 +97,11 @@ fun playSound(
     val sound = SOUND_POOL[soundName]?.firstOrNull { !it.isPlaying }
 
     if (sound == null) {
+        return
+    }
+
+    if (scheduledAt != null) {
+        scheduledSounds.add(ASound(soundName, pitch, volume, splitter, scheduledAt))
         return
     }
 
@@ -186,5 +210,31 @@ fun playParticleSound(velocity: Double, size: Double) {
         pitch,
         volume,
         caveSplitter
+    )
+}
+
+fun playPickupSound(value: PointOrbValue) {
+    if (value == PointOrbValue.One) {
+        playPickupPrimitive()
+        return
+    }
+
+    var time = 0.0
+
+    for (i in 0..value.scoreGiven) {
+        // Do a Shepard tone
+        playPickupPrimitive(time, 1.0 + i * 0.1)
+
+        time += Random.nextDouble(0.2, 0.22)
+    }
+}
+
+private fun playPickupPrimitive(scheduledAt: Double? = null, pitch: Double = 1.0) {
+    playSound(
+        "trim_glass ding ${Random.nextInt(1, 3)}",
+        pitch,
+        0.5,
+        caveSplitter,
+        scheduledAt
     )
 }

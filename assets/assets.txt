@@ -5,6 +5,10 @@ Sounds/trim_glass clink 2.wav
 Sounds/trim_glass clink 3.wav
 Sounds/trim_glass clink 4.wav
 Sounds/trim_glass clink 5.wav
+Sounds/trim_glass ding 1.wav
+Sounds/trim_glass ding 2.wav
+Sounds/trim_glass ding 3.wav
+Sounds/trim_metal hit 6.wav
 Sounds/trim_metal hit with hammer 2.wav
 Sounds/trim_metal hit with hammer 3.wav
 Sounds/trim_metal hit with hammer 4.wav

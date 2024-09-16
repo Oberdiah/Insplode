@@ -14,7 +14,7 @@ private fun bombFixtureDef(shape: Shape): FixtureDef {
     fixtureDef.friction = 1.0f
     fixtureDef.restitution = 0.1f
     fixtureDef.filter.categoryBits = BOMB_PHYSICS_MASK
-    fixtureDef.filter.maskBits = PICKUP_PHYSICS_MASK.inv()
+//    fixtureDef.filter.maskBits = PICKUP_PHYSICS_MASK.inv()
     return fixtureDef
 }
 

@@ -59,6 +59,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         time("Set globals this frame") { setGlobalsThisFrame() }
         time("Calculate globals") { calculateGlobals() }
+        time("Save State") { saveState() }
+        time("Tick Sounds") { tickSounds() }
 
         // DEBUG_STRING = "$LOWEST_TILE_Y_STORED"
 
@@ -91,6 +93,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Collapse") { tickCollapse() }
             time("Tick Particles") { tickParticles() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
+            time("Tick Point Orbs") { tickPointOrbs() }
 
             // Should happen just before the world step
             time("Update tile physics") { updateTilePhysics() }

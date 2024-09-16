@@ -28,12 +28,10 @@ var DO_PHYSICS_DEBUG_RENDER = false
 var DEBUG_MOVEMENT_MODE = false
 var LEFT_RIGHT_CONTROL = ControlScheme.LeftRightTap
 var JUMP_CONTROL = ControlScheme.JumpButton
-var ABILITY_CONTROL = ControlScheme.AbilityButton
 var JUMP_UI_FRACT = 0.15
 var LEFT_BUTTON_UI_FRACT = 0.45
 var RIGHT_BUTTON_UI_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
-
 var RENDER_JUMP_BUTTON = true
 
 var HIGH_SCORE = 0.0

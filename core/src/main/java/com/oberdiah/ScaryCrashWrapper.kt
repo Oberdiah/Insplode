@@ -15,7 +15,7 @@ fun doPhysicsStep() {
     val frameTime = min(DELTA, 0.25f).f
     accumulator += frameTime
 
-    world.step(AVERAGE_DELTA.f, 6, 2)
+    world.step(min(AVERAGE_DELTA, 1 / 60.0).f, 6, 2)
 }
 
 fun initWorld() {
@@ -103,11 +103,18 @@ class PhysBody(private val body: Body, val shouldUpdate: Boolean = true) {
 
     fun applyImpulse(velocity: Point, point: Point = p) {
         require(exists)
+        require(velocity.x.f.isFinite())
+        require(velocity.y.f.isFinite())
+        require(point.x.f.isFinite())
+        require(point.y.f.isFinite())
         body.applyLinearImpulse(velocity.v2, point.v2, true)
     }
 
     fun setTransform(p: Point, angle: Number) {
         require(exists)
+        require(p.x.f.isFinite())
+        require(p.y.f.isFinite())
+        require(angle.f.isFinite())
         body.setTransform(p.v2, angle.f)
     }
 

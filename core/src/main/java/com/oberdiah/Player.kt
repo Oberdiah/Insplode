@@ -120,6 +120,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 val impulse = body.mass * (desiredVel - currentVel)
                 body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
                 timeSinceLastSlamHit = 0.0
+                spawnPointOrbs(obj.body.p, (obj.power.d * 2.0).pow(2.0).i)
             }
             if (yourFixture == jumpBox && obj !is Bomb) {
                 isSlamming = false

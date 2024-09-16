@@ -45,10 +45,10 @@ fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: 
     allParticles.add(Fragment(p, v, radius, tileType, affectedByGravity))
 }
 
-fun spawnSmoke(p: Point, velocity: Velocity) {
+fun spawnSmoke(p: Point, velocity: Velocity, color: Color = Color.DARK_GRAY.withAlpha(0.5)) {
     if (!ENABLED_PARTICLES) return
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
-    allParticles.add(Smoke(p, velocity, radius))
+    allParticles.add(Smoke(p, velocity, radius, color))
 }
 
 fun spawnGlow(p: Point, radius: Number) {
@@ -70,7 +70,12 @@ class Glow(val p: Point, var radius: Number) {
     }
 }
 
-class Smoke(startP: Point, startV: Velocity, var edgeLength: Number) : Particle(startP, startV) {
+class Smoke(
+    startP: Point,
+    startV: Velocity,
+    var edgeLength: Number,
+    val color: Color = Color.DARK_GRAY.withAlpha(0.5)
+) : Particle(startP, startV) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
 
@@ -96,7 +101,7 @@ class Smoke(startP: Point, startV: Velocity, var edgeLength: Number) : Particle(
     }
 
     override fun render(r: Renderer) {
-        r.color = Color.DARK_GRAY.withAlpha(0.5)
+        r.color = color
         val scaleUp = 2.5
         r.centeredRect(p, edgeLength * scaleUp, edgeLength * scaleUp, angle)
     }
