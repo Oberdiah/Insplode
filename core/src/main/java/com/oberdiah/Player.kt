@@ -178,10 +178,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             val lineX = desiredXPos(it.x) / UNIT_SIZE_IN_PIXELS
 
             if (lineX in (body.p.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(body.p.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
-                r.color = Color.GREEN.withAlpha(0.25)
+                r.color = Color.WHITE.withAlpha(0.5)
             } else {
                 r.color = Color.WHITE.withAlpha(0.25)
             }
+            // For visual interest, draw two lines one thinner than the other
             r.line(
                 lineX,
                 CAMERA_POS_Y,
