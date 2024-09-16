@@ -3,7 +3,6 @@ package com.oberdiah.ui
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.ControlScheme
-import com.oberdiah.FOLLOW_FINGER
 import com.oberdiah.HEIGHT
 import com.oberdiah.JUMP_CONTROL
 import com.oberdiah.JUMP_UI_FRACT
@@ -79,19 +78,6 @@ fun controlsUI(r: Renderer) {
         LEFT_RIGHT_CONTROL =
             if (LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) ControlScheme.MoveToFinger else ControlScheme.LeftRightTap
     })
-
-    toggleButton(r, "Follow finger", ::FOLLOW_FINGER)
-
-    if (!FOLLOW_FINGER) {
-        button(r, "Change Left Button Edge", LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) {
-            currentlyChangingControl = ControlButton.Left
-            switchScreen(Screen.ChangeButtonPositions)
-        }
-        button(r, "Change Right Button Edge", LEFT_RIGHT_CONTROL == ControlScheme.LeftRightTap) {
-            currentlyChangingControl = ControlButton.Right
-            switchScreen(Screen.ChangeButtonPositions)
-        }
-    }
 
     button(r, "Change Jump Button Height", JUMP_CONTROL == ControlScheme.JumpButton) {
         currentlyChangingControl = ControlButton.Jump

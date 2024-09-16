@@ -35,7 +35,6 @@ var RIGHT_BUTTON_UI_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
 
 var RENDER_JUMP_BUTTON = true
-var FOLLOW_FINGER = true
 
 var HIGH_SCORE = 0.0
 
@@ -126,8 +125,7 @@ val CAMERA_SPAWN_Y
 val LAND_SURFACE_Y
     get() = 10
 
-val TILE_SIZE_IN_UNITS
-    get() = 1.0 / TILES_PER_UNIT
+const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
 
 /// The position of the player up the screen - where the camera likes to keep them.
 const val PLAYER_Y_FRACT = 0.6

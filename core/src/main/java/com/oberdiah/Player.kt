@@ -3,6 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.Utils.TOUCHES_DOWN
 import com.oberdiah.Utils.TOUCHES_WENT_DOWN
@@ -19,6 +20,9 @@ import kotlin.random.Random
 private val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 private const val COYOTE_TIME = 0.2
 private const val PLAYER_GRAVITY_MODIFIER = 0.5
+
+/** The x-zone in which the player will no longer be moved closer to where they want to be */
+private const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS
 
 /**
  * A duration in which the player cannot regain jump, to prevent them from regaining jump just after
@@ -169,6 +173,24 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             return
         }
 
+        TOUCHES_DOWN.forEach {
+            // If the player is within the uncertainty window, make the line green
+            val lineX = desiredXPos(it.x) / UNIT_SIZE_IN_PIXELS
+
+            if (lineX in (body.p.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(body.p.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
+                r.color = Color.GREEN.withAlpha(0.25)
+            } else {
+                r.color = Color.WHITE.withAlpha(0.25)
+            }
+            r.line(
+                lineX,
+                CAMERA_POS_Y,
+                lineX,
+                CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS,
+                0.3,
+            )
+        }
+
         if (canJump()) {
             r.color = colorScheme.player
         } else if (isSlamming) {
@@ -183,6 +205,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     private var lastXValue = 0.0
     private var lastBodyXValue = 0.0
+    private fun desiredXPos(fingerX: Double): Double {
+        return lastBodyXValue + fingerX - lastXValue
+    }
 
     override fun tick() {
         lastTickVelocity = tickVelocity.cpy
@@ -245,19 +270,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         TOUCHES_DOWN.forEach {
-            if (it.y > HEIGHT * JUMP_UI_FRACT) {
-                goLeft = goLeft || if (FOLLOW_FINGER) {
-                    (lastBodyXValue + it.x - lastXValue) < (body.p.x - TILE_SIZE_IN_UNITS) * UNIT_SIZE_IN_PIXELS
-                } else {
-                    it.x < LEFT_BUTTON_UI_FRACT * WIDTH
-                }
+            goLeft = goLeft ||
+                    desiredXPos(it.x) < (body.p.x - PLAYER_UNCERTAINTY_WINDOW) * UNIT_SIZE_IN_PIXELS
 
-                goRight = goRight || if (FOLLOW_FINGER) {
-                    (lastBodyXValue + it.x - lastXValue) > (body.p.x + TILE_SIZE_IN_UNITS) * UNIT_SIZE_IN_PIXELS
-                } else {
-                    it.x > RIGHT_BUTTON_UI_FRACT * WIDTH
-                }
-            }
+            goRight = goRight ||
+                    desiredXPos(it.x) > (body.p.x + PLAYER_UNCERTAINTY_WINDOW) * UNIT_SIZE_IN_PIXELS
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys
