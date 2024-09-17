@@ -103,10 +103,10 @@ class PhysBody(private val body: Body, val shouldUpdate: Boolean = true) {
 
     fun applyImpulse(velocity: Point, point: Point = p) {
         require(exists)
-        require(velocity.x.f.isFinite())
-        require(velocity.y.f.isFinite())
-        require(point.x.f.isFinite())
-        require(point.y.f.isFinite())
+        require(velocity.x.f.isFinite()) { "velocity.x is not finite: ${velocity.x}" }
+        require(velocity.y.f.isFinite()) { "velocity.y is not finite: ${velocity.y}" }
+        require(point.x.f.isFinite()) { "point.x is not finite: ${point.x}" }
+        require(point.y.f.isFinite()) { "point.y is not finite: ${point.y}" }
         body.applyLinearImpulse(velocity.v2, point.v2, true)
     }
 

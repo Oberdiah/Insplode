@@ -67,6 +67,7 @@ fun tickCollapse() {
 
     for (tile in toRemove) {
         tile.dematerialize()
+        playRockCrumbleSound()
         spawnFragment(
             tile.coord.cpy,
             Point(Random.nextDouble() - 0.5, -Random.nextDouble()),

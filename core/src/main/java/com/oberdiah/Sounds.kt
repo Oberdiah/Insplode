@@ -2,12 +2,10 @@ package com.oberdiah
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.AssetManager
 import games.rednblack.miniaudio.MASound
 import games.rednblack.miniaudio.MiniAudio
 import games.rednblack.miniaudio.effect.MADelayNode
 import games.rednblack.miniaudio.filter.MALowPassFilter
-import games.rednblack.miniaudio.loader.MASoundLoader
 import games.rednblack.miniaudio.mix.MASplitter
 import kotlin.math.pow
 import kotlin.random.Random
@@ -89,19 +87,25 @@ fun playSound(
     pitch: Double = 1.0,
     volume: Double = 1.0,
     splitter: MASplitter? = null,
-    scheduledAt: Double? = null
+    delay: Double? = null
 ) {
     if (volume < 0.005) return
 
     // Get the first sound that isn't playing (sound.isPlaying())
-    val sound = SOUND_POOL[soundName]?.firstOrNull { !it.isPlaying }
+    val soundPool = SOUND_POOL[soundName]
+    if (soundPool == null) {
+        println("Sound not found: $soundName")
+        return
+    }
+
+    val sound = soundPool.firstOrNull { !it.isPlaying }
 
     if (sound == null) {
         return
     }
 
-    if (scheduledAt != null) {
-        scheduledSounds.add(ASound(soundName, pitch, volume, splitter, scheduledAt))
+    if (delay != null) {
+        scheduledSounds.add(ASound(soundName, pitch, volume, splitter, RUN_TIME_ELAPSED + delay))
         return
     }
 
@@ -197,19 +201,27 @@ fun playBombBumpSound(velocity: Double, mass: Double, hitObject: Any?) {
     }
 }
 
-fun playParticleSound(velocity: Double, size: Double) {
+fun playRockCrumbleSound() {
+    if (Random.nextDouble() > 0.25) return
+    playSound(
+        "trim_rocks handle ${Random.nextInt(13, 17)} low",
+        Random.nextDouble(1.1, 1.3),
+        Random.nextDouble(0.05, 0.1)
+    )
+}
+
+fun playParticleHitSound(velocity: Double, size: Double) {
     // Randomly drop some sounds
-    if (Random.nextDouble() > 0.5) return
+//    if (Random.nextDouble() > 0.5) return
 
     val impact = velocity * size * 25.0
     val volume = saturate((impact - 2.0) / 10).pow(1.5) * 0.25
-    val pitch = Random.nextDouble(1.0, 2.6)
+    val pitch = Random.nextDouble(1.9, 2.1)
 
     playSound(
-        "trim_glass clink ${Random.nextInt(2, 6)}",
+        "trim_rock ${Random.nextInt(12, 18)} low",
         pitch,
-        volume,
-        caveSplitter
+        volume * 0.5,
     )
 }
 
@@ -222,19 +234,18 @@ fun playPickupSound(value: PointOrbValue) {
     var time = 0.0
 
     for (i in 0..value.scoreGiven) {
-        // Do a Shepard tone
-        playPickupPrimitive(time, 1.0 + i * 0.1)
+        playPickupPrimitive(time, 1.0 + i * 0.05)
 
-        time += Random.nextDouble(0.2, 0.22)
+        time += Random.nextDouble(0.1, 0.12)
     }
 }
 
-private fun playPickupPrimitive(scheduledAt: Double? = null, pitch: Double = 1.0) {
+private fun playPickupPrimitive(delay: Double? = null, pitch: Double = 1.0) {
     playSound(
         "trim_glass ding ${Random.nextInt(1, 3)}",
         pitch,
         0.25,
         caveSplitter,
-        scheduledAt
+        delay
     )
 }

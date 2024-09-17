@@ -145,7 +145,7 @@ class Fragment(
 
     override fun collided() {
         super.collided()
-        playParticleSound(v.len.d, edgeLength.d)
+        playParticleHitSound(v.len.d, edgeLength.d)
     }
 }
 
