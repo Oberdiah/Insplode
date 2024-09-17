@@ -9,7 +9,6 @@ object Colors {
     val transparent = Color.BLACK.withAlpha(0.0)
 }
 
-// Invisible
 private val schemes = mutableListOf(
     Grassy(),
     Grassy2(),
@@ -40,6 +39,7 @@ class Grassy : ColorScheme("Forest") {
         stone = colorFrom(0x303930)
         dirt = colorFrom(0x54793E)
         grass = colorFrom(0x103E1F)
+        pickupColor = colorFrom(0x48f06f)
     }
 }
 
@@ -141,6 +141,7 @@ open class ColorScheme(val name: String) {
     var textColor: Color = colorFrom(0x242423)
     lateinit var player: Color
     lateinit var playerSlamming: Color
+    lateinit var pickupColor: Color
     lateinit var bombPrimary: Color
     lateinit var backgroundA: Color
     lateinit var backgroundB: Color

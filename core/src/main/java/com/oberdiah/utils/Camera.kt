@@ -1,6 +1,7 @@
 package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.math.Vector3
 import com.oberdiah.*
 import kotlin.math.pow
 
@@ -62,6 +63,13 @@ fun updateCamera() {
     camera.update()
 
     worldSpaceRenderer.renderer.projectionMatrix = camera.combined
+}
+
+/** World space to screen space */
+fun wToSSpace(p: Point): Point {
+    // Use the camera projection matrix. p is a 2d point in world space.
+    val vec = camera.project(Vector3(p.x.f, p.y.f, 0f))
+    return Point(vec.x.d, vec.y.d)
 }
 
 enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {

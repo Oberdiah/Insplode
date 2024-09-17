@@ -58,5 +58,9 @@ fun boom(
                 a.hitByExplosion()
             }
         }
+        // Also give all physics objects on stage a kick upward
+        if (a !is Player) {
+            a.body.applyImpulse(Point(0.0, radius))
+        }
     }
 }

@@ -40,8 +40,11 @@ import com.oberdiah.gameMessage
 import com.oberdiah.maxDepthThisRun
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
+import com.oberdiah.playerScore
+import com.oberdiah.renderScoreSystem
 import com.oberdiah.restartGame
 import com.oberdiah.withAlpha
+import com.oberdiah.worldSpaceRenderer
 import java.util.*
 import kotlin.math.PI
 import kotlin.reflect.KMutableProperty0
@@ -56,10 +59,11 @@ private fun formatDepth(depth: Number): String {
 
 fun renderUI(r: Renderer) {
     r.color = colorScheme.textColor
-    val firstLine = "FPS: ${Gdx.graphics.framesPerSecond} ${physicsDebugString()}"
-    val secondLine = DEBUG_STRING
-    val thirdLine = timerString
+
     if (SHOW_FRAMERATE_DATA) {
+        val firstLine = "FPS: ${Gdx.graphics.framesPerSecond} ${physicsDebugString()}"
+        val secondLine = DEBUG_STRING
+        val thirdLine = timerString
         r.text(fontSmall, "$firstLine\n$secondLine\n$thirdLine", 10, HEIGHT * 0.6)
     }
 
@@ -96,8 +100,8 @@ fun renderUI(r: Renderer) {
         }
         r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center)
         r.text(
-            fontMedium,
-            "Depth: ${formatDepth(currentDepthThisRun)}",
+            fontLarge,
+            "$playerScore",
             WIDTH / 2,
             HEIGHT * 0.9,
             Align.center
@@ -122,6 +126,7 @@ fun renderUI(r: Renderer) {
             r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
         }
 
+        renderScoreSystem(r)
         renderPauseButton(r)
     }
 }

@@ -3,8 +3,10 @@ package com.oberdiah
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.oberdiah.utils.addScreenShake
+import com.oberdiah.utils.colorScheme
 import kotlin.experimental.inv
 import kotlin.math.pow
+import kotlin.random.Random
 
 var orbsToSpawn = mutableListOf<Pair<Point, Int>>()
 
@@ -31,11 +33,11 @@ fun spawnPointOrbs(p: Point, scoreGiven: Int) {
 
 private val pointOrbValues = PointOrbValue.values().sortedByDescending { it.scoreGiven }
 
-enum class PointOrbValue(val scoreGiven: Int, val radius: Double, val color: Color) {
-    One(1, 0.15, Color.ROYAL.withAlpha(0.5)),
-    Five(5, 0.20, Color.ROYAL.withAlpha(0.5)),
-    Twenty(20, 0.25, Color.ROYAL.withAlpha(0.5)),
-    Hundred(100, 0.30, Color.ROYAL.withAlpha(0.5)),
+enum class PointOrbValue(val scoreGiven: Int, val radius: Double) {
+    One(1, 0.15),
+    Five(5, 0.20),
+    Twenty(20, 0.25),
+    Hundred(100, 0.30),
 }
 
 class PointOrb(
@@ -66,29 +68,40 @@ class PointOrb(
 
     override fun collided(obj: PhysicsObject) {
         super.collided(obj)
-        if (obj == player && timeAlive > 0.5) {
+        if (obj == player && timeAlive > 0.5 && !player.isDead) {
             destroy()
+
+            val strength = value.scoreGiven.d.pow(0.5)
+            val radius = strength * TILE_SIZE_IN_UNITS
 
             if (value != PointOrbValue.One) {
                 boom(
                     body.p,
-                    value.scoreGiven.d.pow(0.5) * TILE_SIZE_IN_UNITS,
+                    radius * 0.5,
                     affectsThePlayer = false,
                 )
             }
-            playPickupSound(value)
-            for (i in 0..15) {
+
+            givePlayerScore(value.scoreGiven)
+            for (i in 0..15 * strength.i) {
                 spawnSmoke(
-                    body.p + createRandomFacingPoint() * 0.1,
-                    createRandomFacingPoint(),
-                    value.color
+                    body.p + createRandomFacingPoint() * Random.nextDouble() * radius * 0.25,
+                    createRandomFacingPoint() * Random.nextDouble(),
+                    colorScheme.pickupColor.cpy().lerp(Color.WHITE, Random.nextDouble(0.3, 0.8).f)
                 )
             }
         }
     }
 
     override fun render(r: Renderer) {
-        r.color = value.color
+        r.color = colorScheme.pickupColor.cpy().lerp(Color.BLACK, 0.75f).withAlpha(0.5)
+        r.circle(body.p, value.radius * 1.15)
+
+        r.color = colorScheme.pickupColor
         r.circle(body.p, value.radius)
+
+        // render a second white circle on top, pulsing in size
+        r.color = Color.WHITE.withAlpha(0.4)
+        r.circle(body.p, value.radius * (0.6 + sin(timeAlive * 5) * 0.2))
     }
 }

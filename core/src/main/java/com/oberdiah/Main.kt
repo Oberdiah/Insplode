@@ -19,6 +19,7 @@ fun restartGame() {
     resetLevelController()
     updateTilePhysics()
     resetCamera()
+    resetScoreSystem()
 }
 
 lateinit var leftWall: PhysBody
@@ -73,6 +74,20 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             // 'Coz Box2d stupid, these are the centres of the positions.
             leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS / 2), 0f)
             rightWall.setTransform(Point(10.5, CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS / 2), 0f)
+
+            time("Tick level controller") { tickLevelController() }
+            time("Tick Collapse") { tickCollapse() }
+            time("Tick Particles") { tickParticles() }
+            time("Tick Physics Objects") { tickPhysicsObjects() }
+            time("Tick Point Orbs") { tickPointOrbs() }
+            time("Tick Score System") { tickScoreSystem() }
+
+            // Should happen just before the world step
+            time("Update tile physics") { updateTilePhysics() }
+            if (!DEBUG_MOVEMENT_MODE) {
+                time("Do physics step") { doPhysicsStep() }
+            }
+            time("Tick physics wrapper") { tickPhysicsWrapper() }
         }
 
         worldSpaceRenderer.begin()
@@ -86,21 +101,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         if (DO_PHYSICS_DEBUG_RENDER) {
             debugRenderWorld()
-        }
-
-        if (!PAUSED) {
-            time("Tick level controller") { tickLevelController() }
-            time("Tick Collapse") { tickCollapse() }
-            time("Tick Particles") { tickParticles() }
-            time("Tick Physics Objects") { tickPhysicsObjects() }
-            time("Tick Point Orbs") { tickPointOrbs() }
-
-            // Should happen just before the world step
-            time("Update tile physics") { updateTilePhysics() }
-            if (!DEBUG_MOVEMENT_MODE) {
-                time("Do physics step") { doPhysicsStep() }
-            }
-            time("Tick physics wrapper") { tickPhysicsWrapper() }
         }
 
         time("Render UI") {

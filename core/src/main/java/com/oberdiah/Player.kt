@@ -17,7 +17,7 @@ import com.oberdiah.ui.switchScreen
 import kotlin.math.pow
 import kotlin.random.Random
 
-private val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
+val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 private const val COYOTE_TIME = 0.2
 private const val PLAYER_GRAVITY_MODIFIER = 0.5
 
@@ -50,7 +50,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     private val inAir: Boolean
         get() = airTime != null
 
-    private val isDead: Boolean
+    val isDead: Boolean
         get() = deadEndingCountdown != null
 
     private val isAlive: Boolean
@@ -120,11 +120,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 val impulse = body.mass * (desiredVel - currentVel)
                 body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
                 timeSinceLastSlamHit = 0.0
-                spawnPointOrbs(obj.body.p, (obj.power.d * 2.0).pow(2.0).i)
+                registerBombDestroyWithScoreSystem(obj)
             }
             if (yourFixture == jumpBox && obj !is Bomb) {
                 isSlamming = false
                 CAMERA_LOCKED = false
+
+//                spawnPointOrbs(body.p, 100)
 
                 val vel = lastTickVelocity
                 spawnParticlesAtMyFeet(
@@ -135,13 +137,14 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 if (vel.len > 10) {
                     // Player landing deserves more than the normal amount of shake
                     addScreenShake(vel.len.d * 0.025)
-                    boom(body.p, vel.len.d * 0.05, affectsThePlayer = false)
+                    boom(body.p, vel.len.d * 0.03, affectsThePlayer = false)
                 }
             }
         }
 
-        if (yourFixture == jumpBox && timeSinceLastSlamHit > JUMP_PREVENTION_WINDOW) {
+        if (yourFixture == jumpBox && timeSinceLastSlamHit > JUMP_PREVENTION_WINDOW && !isSlamming) {
             airTime = null
+            registerLandedOnGroundWithScoreSystem()
         }
     }
 

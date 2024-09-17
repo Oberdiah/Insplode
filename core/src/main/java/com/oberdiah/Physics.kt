@@ -9,10 +9,10 @@ class ListenerClass : ContactListener {
         val data = contact.fixtureA.body.userData
         val data2 = contact.fixtureB.body.userData
 
-        if (data is PhysicsObject) {
+        if (data is PhysicsObject && !data.destroyed) {
             data.collided(contact.fixtureA, contact.fixtureB)
         }
-        if (data2 is PhysicsObject) {
+        if (data2 is PhysicsObject && !data2.destroyed) {
             data2.collided(contact.fixtureB, contact.fixtureA)
         }
     }
@@ -21,10 +21,10 @@ class ListenerClass : ContactListener {
         val data = contact.fixtureA.body.userData
         val data2 = contact.fixtureB.body.userData
 
-        if (data is PhysicsObject) {
+        if (data is PhysicsObject && !data.destroyed) {
             data.endCollide(contact.fixtureA, contact.fixtureB)
         }
-        if (data2 is PhysicsObject) {
+        if (data2 is PhysicsObject && !data2.destroyed) {
             data2.endCollide(contact.fixtureB, contact.fixtureA)
         }
     }

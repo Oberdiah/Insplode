@@ -41,7 +41,7 @@ fun loadSounds() {
         Pair(path, it.nameWithoutExtension())
     }
 
-    val numSoundsInPoolPerAsset = 10
+    val numSoundsInPoolPerAsset = 30
 
     allPaths.forEach {
         val path = it.first
@@ -225,27 +225,21 @@ fun playParticleHitSound(velocity: Double, size: Double) {
     )
 }
 
-fun playPickupSound(value: PointOrbValue) {
-    if (value == PointOrbValue.One) {
-        playPickupPrimitive()
-        return
-    }
+const val PICKUP_CHAIN_LENGTH = 20
 
-    var time = 0.0
-
-    for (i in 0..value.scoreGiven) {
-        playPickupPrimitive(time, 1.0 + i * 0.05)
-
-        time += Random.nextDouble(0.1, 0.12)
-    }
+fun playPickupSound(numberInChain: Int) {
+    playPickupSoundInternal(numberInChain % PICKUP_CHAIN_LENGTH)
+    playPickupSoundInternal((numberInChain + PICKUP_CHAIN_LENGTH / 2) % PICKUP_CHAIN_LENGTH)
 }
 
-private fun playPickupPrimitive(delay: Double? = null, pitch: Double = 1.0) {
+private fun playPickupSoundInternal(loopId: Int) {
+    val pitch = 1.0 + loopId * 0.05
+    val volume = 1.0 - abs(PICKUP_CHAIN_LENGTH / 2 - loopId).d / PICKUP_CHAIN_LENGTH
+
     playSound(
         "trim_glass ding ${Random.nextInt(1, 3)}",
         pitch,
-        0.25,
+        volume * 0.25,
         caveSplitter,
-        delay
     )
 }
