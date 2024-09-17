@@ -22,7 +22,7 @@ private const val COYOTE_TIME = 0.2
 private const val PLAYER_GRAVITY_MODIFIER = 0.5
 
 /** The x-zone in which the player will no longer be moved closer to where they want to be */
-private const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS
+private const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS * 0.5
 
 /**
  * A duration in which the player cannot regain jump, to prevent them from regaining jump just after
@@ -208,7 +208,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     private var lastXValue = 0.0
     private var lastBodyXValue = 0.0
     private fun desiredXPos(fingerX: Double): Double {
-        return lastBodyXValue + fingerX - lastXValue
+        return lastBodyXValue + (fingerX - lastXValue) * 2.5
     }
 
     override fun tick() {
