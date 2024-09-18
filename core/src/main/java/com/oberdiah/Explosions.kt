@@ -9,7 +9,8 @@ fun boom(
     point: Point,
     radiusIn: Number,
     affectsThePlayer: Boolean = true,
-    playSound: Boolean = true
+    playSound: Boolean = true,
+    affectsTheLandscape: Boolean = true
 ) {
     val radius = radiusIn * GLOBAL_SCALE
 
@@ -41,7 +42,7 @@ fun boom(
                 val velocity =
                     Velocity(vx * 0.5 * Random.nextDouble(), (vy * 2.5 + 8) * Random.nextDouble())
                 spawnSmoke(tempPoint.cpy, velocity)
-                if (tile is Tile && tile.doesExist()) {
+                if (tile is Tile && tile.doesExist() && affectsTheLandscape) {
                     tile.dematerialize()
                     spawnFragment(tempPoint.cpy, velocity, tile.getTileType())
                 }

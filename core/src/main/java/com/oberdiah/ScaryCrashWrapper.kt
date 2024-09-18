@@ -40,11 +40,56 @@ fun createBody(def: BodyDef, shouldUpdate: Boolean = true): PhysBody {
     return physBody
 }
 
+fun whatAmITouching(body: PhysBody): Set<PhysicsObject> {
+    val bodies = mutableListOf<Any?>()
+    for (contact in world.contactList) {
+        if (!contact.isTouching) continue
+        if (!contact.isEnabled) continue
+        if (contact.fixtureA.body == body.body) {
+            bodies.add(contact.fixtureB.body.userData)
+        } else if (contact.fixtureB.body == body.body) {
+            bodies.add(contact.fixtureA.body.userData)
+        }
+    }
+
+    return bodies.filterIsInstance<PhysicsObject>().toSet()
+}
+
+fun whatAmITouching(fixtures: List<Fixture>): Set<PhysicsObject> {
+    val bodies = mutableListOf<Any?>()
+    for (contact in world.contactList) {
+        if (!contact.isTouching) continue
+        if (!contact.isEnabled) continue
+        if (fixtures.contains(contact.fixtureA)) {
+            bodies.add(contact.fixtureB.body.userData)
+        }
+        if (fixtures.contains(contact.fixtureB)) {
+            bodies.add(contact.fixtureA.body.userData)
+        }
+    }
+
+    return bodies.filterIsInstance<PhysicsObject>().toSet()
+}
+
+fun amITouchingTheGround(body: PhysBody): Boolean {
+    for (contact in world.contactList) {
+        if (!contact.isTouching) continue
+        if (contact.fixtureA.body == body.body || contact.fixtureB.body == body.body) {
+            val userData1 = contact.fixtureA.body.userData
+            val userData2 = contact.fixtureB.body.userData
+            if (userData1 is Tile || userData2 is Tile) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
 fun tickPhysicsWrapper() {
     allPhysBodies.forEach { it.updateInternals() }
 }
 
-class PhysBody(private val body: Body, val shouldUpdate: Boolean = true) {
+class PhysBody(internal val body: Body, val shouldUpdate: Boolean = true) {
     val p = Point()
     var velocity: Point = Point()
         set(value) {
@@ -138,7 +183,7 @@ class PhysBody(private val body: Body, val shouldUpdate: Boolean = true) {
         fixtures.add(body.createFixture(shape, density.f))
     }
 
-    fun updateInternals() {
+    internal fun updateInternals() {
         if (!shouldUpdate) {
             return
         }

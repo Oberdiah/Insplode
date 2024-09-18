@@ -79,6 +79,8 @@ class PointOrb(
                     body.p,
                     radius * 0.5,
                     affectsThePlayer = false,
+                    affectsTheLandscape = false,
+                    playSound = false
                 )
             }
 
