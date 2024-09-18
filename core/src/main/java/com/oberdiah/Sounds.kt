@@ -225,21 +225,22 @@ fun playParticleHitSound(velocity: Double, size: Double) {
     )
 }
 
-const val PICKUP_CHAIN_LENGTH = 20
+const val PICKUP_CHAIN_LENGTH = 40
 
 fun playPickupSound(numberInChain: Int) {
-    playPickupSoundInternal(numberInChain % PICKUP_CHAIN_LENGTH)
-    playPickupSoundInternal((numberInChain + PICKUP_CHAIN_LENGTH / 2) % PICKUP_CHAIN_LENGTH)
+    playPickupSoundInternal((numberInChain + 0 * PICKUP_CHAIN_LENGTH / 3) % PICKUP_CHAIN_LENGTH)
+    playPickupSoundInternal((numberInChain + 1 * PICKUP_CHAIN_LENGTH / 3) % PICKUP_CHAIN_LENGTH)
+    playPickupSoundInternal((numberInChain + 2 * PICKUP_CHAIN_LENGTH / 3) % PICKUP_CHAIN_LENGTH)
 }
 
 private fun playPickupSoundInternal(loopId: Int) {
     val pitch = 1.0 + loopId * 0.05
-    val volume = 1.0 - abs(PICKUP_CHAIN_LENGTH / 2 - loopId).d / PICKUP_CHAIN_LENGTH
+    val volume = 1.0 - abs(PICKUP_CHAIN_LENGTH / 2 - loopId).d / (PICKUP_CHAIN_LENGTH / 2)
 
     playSound(
         "trim_glass ding ${Random.nextInt(1, 3)}",
         pitch,
-        volume * 0.25,
+        volume.pow(2) * 0.25,
         caveSplitter,
     )
 }

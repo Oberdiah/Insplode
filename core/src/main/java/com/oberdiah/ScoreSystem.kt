@@ -83,16 +83,19 @@ fun tickScoreSystem() {
     }
 }
 
+const val HEIGHT_ABOVE_HEAD = 0.5
+
 fun renderScoreSystem(r: Renderer) {
     if (player.isDead) return
 
     if (numConsecutiveBounces > 0) {
-        val textOffset = Point(0, PLAYER_SIZE.h * 1.5)
+        val textOffset = Point(0, PLAYER_SIZE.h)
+        val textOffset2 = Point(0, fontSmall.lineHeight * HEIGHT_ABOVE_HEAD)
         r.color = colorScheme.textColor
         r.text(
             fontSmall,
             "x${multiplier().format(1)}",
-            wToSSpace(player.body.p + textOffset),
+            wToSSpace(player.body.p + textOffset) + textOffset2,
             Align.center
         )
     }
@@ -106,9 +109,15 @@ fun renderScoreSystem(r: Renderer) {
         val pickupMotion =
             1 - saturate((RUN_TIME_ELAPSED - lastScoreCollectionTime) / FADE_OUT_TIME)
 
-        val textOffset = Point(0, PLAYER_SIZE.h * 2.0 + pickupMotion * 0.15)
+        val textOffset = Point(0, PLAYER_SIZE.h + pickupMotion * 0.15)
+        val textOffset2 = Point(0, fontSmall.lineHeight * (1 + HEIGHT_ABOVE_HEAD))
 
         r.color = colorScheme.textColor.withAlpha(alpha)
-        r.text(fontSmall, "+$growingScore", wToSSpace(player.body.p + textOffset), Align.center)
+        r.text(
+            fontSmall,
+            "+$growingScore",
+            wToSSpace(player.body.p + textOffset) + textOffset2,
+            Align.center
+        )
     }
 }

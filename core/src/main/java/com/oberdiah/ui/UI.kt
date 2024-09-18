@@ -255,7 +255,7 @@ private fun mainMenuUI(r: Renderer) {
 private fun endGameUI(r: Renderer) {
     r.text(
         fontSmallish,
-        "Depth Reached: ${formatDepth(maxDepthThisRun)}",
+        "Score: $playerScore",
         WIDTH / 2,
         HEIGHT * (3.0 / 4 - 1.0 / 16),
         Align.center

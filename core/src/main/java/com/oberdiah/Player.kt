@@ -211,7 +211,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     private var lastXValue = 0.0
     private var lastBodyXValue = 0.0
     private fun desiredXPos(fingerX: Double): Double {
-        return lastBodyXValue + (fingerX - lastXValue) * 2.5
+        return lastBodyXValue + (fingerX - lastXValue) * 1.8
     }
 
     override fun tick() {
