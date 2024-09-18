@@ -41,7 +41,7 @@ fun loadSounds() {
         Pair(path, it.nameWithoutExtension())
     }
 
-    val numSoundsInPoolPerAsset = 30
+    val numSoundsInPoolPerAsset = 10
 
     allPaths.forEach {
         val path = it.first
@@ -204,9 +204,9 @@ fun playBombBumpSound(velocity: Double, mass: Double, hitObject: Any?) {
 fun playRockCrumbleSound() {
     if (Random.nextDouble() > 0.25) return
     playSound(
-        "trim_rocks handle ${Random.nextInt(13, 17)} low",
-        Random.nextDouble(1.1, 1.3),
-        Random.nextDouble(0.05, 0.1)
+        "Crunch ${Random.nextInt(1, 6)}",
+        Random.nextDouble(0.6, 0.8),
+        Random.nextDouble(0.05, 0.2)
     )
 }
 
@@ -216,12 +216,12 @@ fun playParticleHitSound(velocity: Double, size: Double) {
 
     val impact = velocity * size * 25.0
     val volume = saturate((impact - 2.0) / 10).pow(1.5) * 0.25
-    val pitch = Random.nextDouble(1.9, 2.1)
+    val pitch = Random.nextDouble(0.4, 0.7)
 
     playSound(
-        "trim_rock ${Random.nextInt(12, 18)} low",
+        "Tap ${Random.nextInt(1, 6)}",
         pitch,
-        volume * 0.5,
+        volume,
     )
 }
 
@@ -238,7 +238,7 @@ private fun playPickupSoundInternal(loopId: Int) {
     val volume = 1.0 - abs(PICKUP_CHAIN_LENGTH / 2 - loopId).d / (PICKUP_CHAIN_LENGTH / 2)
 
     playSound(
-        "trim_glass ding ${Random.nextInt(1, 3)}",
+        "Ding ${Random.nextInt(1, 6)}",
         pitch,
         volume.pow(2) * 0.25,
         caveSplitter,

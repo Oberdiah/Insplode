@@ -1,5 +1,20 @@
 Image.png
 Lato-Medium.ttf
+Sounds/Crunch 1.wav
+Sounds/Crunch 2.wav
+Sounds/Crunch 3.wav
+Sounds/Crunch 4.wav
+Sounds/Crunch 5.wav
+Sounds/Ding 1.wav
+Sounds/Ding 2.wav
+Sounds/Ding 3.wav
+Sounds/Ding 4.wav
+Sounds/Ding 5.wav
+Sounds/Tap 1.wav
+Sounds/Tap 2.wav
+Sounds/Tap 3.wav
+Sounds/Tap 4.wav
+Sounds/Tap 5.wav
 Sounds/trim_glass clink 1.wav
 Sounds/trim_glass clink 2.wav
 Sounds/trim_glass clink 3.wav

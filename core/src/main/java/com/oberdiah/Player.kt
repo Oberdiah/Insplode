@@ -126,7 +126,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 isSlamming = false
                 CAMERA_LOCKED = false
 
-//                spawnPointOrbs(body.p, 100)
+                spawnPointOrbs(body.p, 100)
 
                 val vel = lastTickVelocity
                 spawnParticlesAtMyFeet(
@@ -225,9 +225,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             airTime = 0.0
         }
 
-//        if (isKeyPressed(Keys.R)) {
-//            boom(body.p, 1.5, false)
-//        }
+        if (isKeyPressed(Keys.R)) {
+            boom(body.p, 1.5, false)
+        }
 
         deadEndingCountdown = deadEndingCountdown?.minus(DELTA)
 
