@@ -38,10 +38,15 @@ fun resetScoreSystem() {
     lastTimeScoreSounded = 0.0
 }
 
-fun registerBombDestroyWithScoreSystem(bomb: Bomb) {
+fun registerBombSlamWithScoreSystem(bomb: Bomb) {
     val numToNormallySpawn = (bomb.power.d * 2.0).pow(2.0).i
     spawnPointOrbs(bomb.body.p, (numToNormallySpawn * multiplier()).i)
     numConsecutiveBounces++
+}
+
+/** A bomb pop is when you pop a bomb by jumping on it or it hitting your head too hard. */
+fun registerBombPopWithScoreSystem(bomb: Bomb) {
+    spawnPointOrbs(bomb.body.p, 1)
 }
 
 fun registerLandedOnGroundWithScoreSystem() {

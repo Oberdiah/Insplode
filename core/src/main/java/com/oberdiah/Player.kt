@@ -115,12 +115,27 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
 
-        if (isSlamming) {
-            val obj = otherFixture.body.userData
-            if (obj is Bomb) {
+        val obj = otherFixture.body.userData
+
+        if (obj is Bomb) {
+            if (isSlamming) {
                 finishSlamHitBomb(obj)
+            } else {
+                // jumping on bombs with a high enough velocity destroys them without an explosion
+//                if (body.velocity.y < -1) {
+//                    obj.destroy()
+//                    registerBombPopWithScoreSystem(obj)
+//                    boom(
+//                        obj.body.p, obj.radius,
+//                        affectsThePlayer = false,
+//                        affectsTheLandscape = false,
+//                        playSound = false
+//                    )
+//                }
             }
-            if (yourFixture == jumpBox && obj is Tile) {
+        }
+        if (yourFixture == jumpBox && obj is Tile) {
+            if (isSlamming) {
                 finishSlamHitGround()
             }
         }
@@ -152,7 +167,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         val impulse = body.mass * (desiredVel - currentVel)
         body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
         timeSinceLastJumpOrSlam = 0.0
-        registerBombDestroyWithScoreSystem(bombHit)
+        registerBombSlamWithScoreSystem(bombHit)
     }
 
     private fun finishSlamHitGround() {
