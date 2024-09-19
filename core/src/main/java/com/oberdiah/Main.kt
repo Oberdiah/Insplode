@@ -84,9 +84,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
             // Should happen just before the world step
             time("Update tile physics") { updateTilePhysics() }
-            if (!DEBUG_MOVEMENT_MODE) {
-                time("Do physics step") { doPhysicsStep() }
-            }
+            time("Do physics step") { doPhysicsStep() }
             time("Tick physics wrapper") { tickPhysicsWrapper() }
         }
 

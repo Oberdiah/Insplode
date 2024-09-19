@@ -20,32 +20,7 @@ private fun getDesiredCameraY(focusPoint: Double): Float {
     return (focusPoint + SCREEN_HEIGHT_IN_UNITS / 2 - SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT).f
 }
 
-private var bombing = false
 fun updateCamera() {
-    if (DEBUG_MOVEMENT_MODE) {
-        TOUCHES_WENT_DOWN.forEach {
-            if (it.y > HEIGHT - 200) {
-                bombing = true
-            }
-        }
-        TOUCHES_WENT_UP.forEach {
-            bombing = false
-        }
-        TOUCHES_DOWN.forEach {
-            if (!bombing) {
-                if (it.y < HEIGHT / 2) {
-                    player.body.setTransform(player.body.p + Point(0, -0.5), 0f)
-                } else {
-                    player.body.setTransform(player.body.p + Point(0, 0.5), 0f)
-                }
-            } else {
-                if (APP_FRAME % 20 == 0) {
-                    boom(it.wo, 1.3)
-                }
-            }
-        }
-    }
-
     SCREEN_SHAKE -= 12 * DELTA
     SCREEN_SHAKE = max(SCREEN_SHAKE, 0)
 

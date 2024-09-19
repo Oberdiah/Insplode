@@ -25,7 +25,6 @@ const val TILES_EXTRA_FRACTION_STORED = 1.3
 var SHOW_FRAMERATE_DATA = false
 var ENABLED_PARTICLES = true
 var DO_PHYSICS_DEBUG_RENDER = false
-var DEBUG_MOVEMENT_MODE = false
 var LEFT_RIGHT_CONTROL = ControlScheme.LeftRightTap
 var JUMP_CONTROL = ControlScheme.JumpButton
 var JUMP_UI_FRACT = 0.15
@@ -89,7 +88,7 @@ fun setGlobalsThisFrame() {
 }
 
 fun setCameraGlobalsThisFrame() {
-    requestNewLowestSimpleY((CAMERA_POS_Y * TILES_PER_UNIT - 1).i)
+    requestNewLowestTileY((CAMERA_POS_Y * TILES_PER_UNIT - 1).i)
 }
 
 /** The size of 1m in pixels */
@@ -122,8 +121,11 @@ val CAMERA_SPAWN_Y
 
 const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
 
-/// The position of the player up the screen - where the camera likes to keep them.
-const val PLAYER_Y_FRACT = 0.6
+/**
+ * The position of the player up the screen - where the camera likes to keep them.
+ * This can change dynamically depending on what the player is up to.
+ */
+var PLAYER_Y_FRACT = 0.6
 
 var DEBUG_STRING = ""
 
@@ -136,7 +138,7 @@ var PAUSED = !IS_DEBUG_ENABLED
  *
  * This takes screen shake into account - should be pixel accurate.
  */
-val CAMERA_POS_Y: Number
+val CAMERA_POS_Y: Double
     get() = camera.position.y.d - SCREEN_HEIGHT_IN_UNITS / 2
 var CAMERA_LOCKED = true
 

@@ -44,10 +44,10 @@ fun getTile(p: Point): TileLike {
 
 /** If null is returned you've requested a tile outside the bounds of the stored tiles. */
 fun getTile(x: Int, y: Int): TileLike {
-    if (x >= NUM_TILES_ACROSS || x < 0 || y >= currentLowestSimpleY + SIMULATED_REGION_NUM_TILES_HIGH || y < requestedLowestSimpleY) {
+    if (x >= NUM_TILES_ACROSS || x < 0 || y >= currentLowestTileY + SIMULATED_REGION_NUM_TILES_HIGH || y < requestedLowestTileY) {
         return emptyTile
     }
-    val tile = tilesStorage[x + (y - currentLowestSimpleY) * NUM_TILES_ACROSS]
+    val tile = tilesStorage[x + (y - currentLowestTileY) * NUM_TILES_ACROSS]
     if (DEBUG_VERIFY) {
         require(tile.x == x && tile.y == y) {
             "Tile not correct. Asked for $x, $y, received ${tile.x}, ${tile.y}"
@@ -57,7 +57,7 @@ fun getTile(x: Int, y: Int): TileLike {
 }
 
 fun getTile(tileId: TileId): TileLike {
-    val storageIdx = tileId.id - currentLowestSimpleY * NUM_TILES_ACROSS
+    val storageIdx = tileId.id - currentLowestTileY * NUM_TILES_ACROSS
     if (storageIdx >= 0 && storageIdx < tilesStorage.size) {
         return tilesStorage[storageIdx]
     }
@@ -89,8 +89,8 @@ fun initTiles() {
 }
 
 fun resetLevel() {
-    requestedLowestSimpleY = 0
-    currentLowestSimpleY = 0
+    requestedLowestTileY = 0
+    currentLowestTileY = 0
 
     for (tile in tilesStorage) {
         tile.dispose()
@@ -104,24 +104,27 @@ fun resetLevel() {
     }
 }
 
-fun requestNewLowestSimpleY(newLowest: Int) {
-    requestedLowestSimpleY = min(currentLowestSimpleY, newLowest)
+fun requestNewLowestTileY(newLowest: Int) {
+    requestedLowestTileY = min(currentLowestTileY, newLowest)
 }
 
 // What's been asked of us by the camera this frame
-private var requestedLowestSimpleY = 0
+private var requestedLowestTileY = 0
 
 // What the tilesStored array is actually currently using as truth
-private var currentLowestSimpleY = 0
+private var currentLowestTileY = 0
 
-fun getLowestStoredSimpleY(): Int {
-    return currentLowestSimpleY
+/**
+ * This returns the y as an index in the tilesStorage array.
+ */
+fun getLowestStoredTileYIdx(): Int {
+    return currentLowestTileY
 }
 
 fun updateLevelStorage() {
     // diff > 0, camera gone up, diff < 0, camera gone down.
-    val diff = requestedLowestSimpleY - currentLowestSimpleY
-    currentLowestSimpleY = requestedLowestSimpleY
+    val diff = requestedLowestTileY - currentLowestTileY
+    currentLowestTileY = requestedLowestTileY
 
     // We only generate on the way down - if stuff falls off the top it's gone for good.
     val amountToMove = abs(diff) * NUM_TILES_ACROSS
@@ -136,7 +139,7 @@ fun updateLevelStorage() {
 
         // Generate new ones at the bottom.
         for (i in 0 until amountToMove) {
-            tilesStorage[i] = Tile(TileId(i + currentLowestSimpleY * NUM_TILES_ACROSS))
+            tilesStorage[i] = Tile(TileId(i + currentLowestTileY * NUM_TILES_ACROSS))
         }
 
         // Rebuild top row neighbours (i.e let them know they no longer have anyone above them)
@@ -164,7 +167,7 @@ fun updateLevelStorage() {
 
         // Generate new ones at the top.
         for (i in tilesStorage.size - amountToMove until tilesStorage.size) {
-            tilesStorage[i] = Tile(TileId(i + currentLowestSimpleY * NUM_TILES_ACROSS))
+            tilesStorage[i] = Tile(TileId(i + currentLowestTileY * NUM_TILES_ACROSS))
         }
 
         // Rebuild bottom row neighbours (i.e let them know they no longer have anyone below them)

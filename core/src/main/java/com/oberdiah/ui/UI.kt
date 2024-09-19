@@ -3,7 +3,6 @@ package com.oberdiah.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.oberdiah.DEBUG_MOVEMENT_MODE
 import com.oberdiah.DEBUG_STRING
 import com.oberdiah.DEPTH_UNITS
 import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
@@ -218,7 +217,6 @@ private fun advancedSettingsUI(r: Renderer) {
     toggleButton(r, "Profiling Data", ::SHOW_FRAMERATE_DATA)
     if (IS_DEBUG_ENABLED) {
         toggleButton(r, "Physics Render", ::DO_PHYSICS_DEBUG_RENDER)
-        toggleButton(r, "Fly Mode", ::DEBUG_MOVEMENT_MODE)
     }
     button(r, "Back") {
         backAScreen()

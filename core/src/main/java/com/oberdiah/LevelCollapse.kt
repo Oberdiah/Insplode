@@ -13,8 +13,11 @@ import kotlin.random.Random
  * because we need to know if they used to exist last frame.
  */
 private val allFloatingTileIds = mutableSetOf<TileId>()
+var CURRENT_HIGHEST_TILE_Y = 0.0
+    private set
+
 fun tickCollapse() {
-    if ((tileIdsChangedLastFrame.filter { it.y != getLowestStoredSimpleY() } - allFloatingTileIds).isNotEmpty()) {
+    if ((tileIdsChangedLastFrame.filter { it.y != getLowestStoredTileYIdx() } - allFloatingTileIds).isNotEmpty()) {
         val wavefront = mutableSetOf<Tile>()
         val visited = mutableSetOf<Tile>()
 
@@ -22,17 +25,23 @@ fun tickCollapse() {
         allFloatingTileIds.addAll(tilesStorage.map { it.getId() })
 
         for (x in 0 until NUM_TILES_ACROSS) {
-            val tile = getTile(x, getLowestStoredSimpleY())
+            val tile = getTile(x, getLowestStoredTileYIdx())
             if (tile is Tile && tile.doesExist()) {
                 wavefront.add(tile)
             }
         }
 
+        CURRENT_HIGHEST_TILE_Y = -Double.MAX_VALUE
         while (wavefront.size > 0) {
             val tile = wavefront.elementAt(0)
             allFloatingTileIds.remove(tile.getId())
             wavefront.remove(tile)
             visited.add(tile)
+
+            if (tile.coord.y > CURRENT_HIGHEST_TILE_Y) {
+                CURRENT_HIGHEST_TILE_Y = tile.coord.y
+            }
+
             for (t in tile.allSurroundingTiles) {
                 if (t is Tile && !visited.contains(t) && t.doesExist()) {
                     wavefront.add(t)
