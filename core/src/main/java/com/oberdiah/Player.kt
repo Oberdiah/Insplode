@@ -24,6 +24,9 @@ private const val PLAYER_GRAVITY_MODIFIER = 0.5
 /** The x-zone in which the player will no longer be moved closer to where they want to be */
 private const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS * 0.5
 
+/** Below this, slams don't happen */
+private const val MINIMUM_SLAM_VELOCITY = 5.0
+
 /**
  * A duration in which the player cannot regain jump, to prevent them from regaining jump just after
  * a successful slam hit
@@ -38,8 +41,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     /** What we use to determine if we've hit something on the way down or not. Wider than the player */
     lateinit var slamBox: Fixture
-
-    var mainBodyFixtures = mutableListOf<Fixture>()
+    lateinit var bottomCircleFixture: Fixture
+    lateinit var topCircleFixture: Fixture
 
     /** If this is non-null we're in the air. If it's null we're on the ground. */
     private var airTime: Double? = 0.0
@@ -73,10 +76,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     init {
         circleShape(PLAYER_SIZE.w / 2) {
-            mainBodyFixtures.add(addFixture(it))
+            bottomCircleFixture = addFixture(it)
         }
         circleShape(PLAYER_SIZE.w / 2, Point(0, PLAYER_SIZE.y / 2) * GLOBAL_SCALE) {
-            mainBodyFixtures.add(addFixture(it))
+            topCircleFixture = addFixture(it)
         }
 
 //        rectShape(PLAYER_SIZE / Point(1, 2), Point(0, PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
@@ -156,18 +159,21 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
     }
 
-    private fun finishSlamHitBomb(bombHit: Bomb) {
+    private fun finishSlamHitBomb(hitBomb: Bomb) {
         isSlamming = false
         CAMERA_LOCKED = false
-        boom(bombHit.body.p, bombHit.power, affectsThePlayer = false)
-        bombHit.destroy()
-        val currentVel = body.velocity.y
-        val desiredVel =
-            clamp(abs(body.velocity.y).pow(0.75) + bombHit.power * 2.0, 5.0, 15.0)
-        val impulse = body.mass * (desiredVel - currentVel)
-        body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
-        timeSinceLastJumpOrSlam = 0.0
-        registerBombSlamWithScoreSystem(bombHit)
+
+        if (abs(lastTickVelocity.y) > MINIMUM_SLAM_VELOCITY) {
+            boom(hitBomb.body.p, hitBomb.power, affectsThePlayer = false)
+            hitBomb.destroy()
+            val currentVel = body.velocity.y
+            val desiredVel =
+                clamp(abs(body.velocity.y).pow(0.75) + hitBomb.power * 2.0, 5.0, 15.0)
+            val impulse = body.mass * (desiredVel - currentVel)
+            body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
+            timeSinceLastJumpOrSlam = 0.0
+            registerBombSlamWithScoreSystem(hitBomb)
+        }
     }
 
     private fun finishSlamHitGround() {
@@ -263,15 +269,14 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         timeSinceLastJumpOrSlam += DELTA
 
         var amOnTopOfBomb = false
-        val touchingMe = whatAmITouching(mainBodyFixtures)
-        touchingMe.forEach {
+        val objectsStandingOn = whatAmITouching(listOf(jumpBox))
+        objectsStandingOn.forEach {
             if (isSlamming) {
                 if (it is Bomb) {
                     finishSlamHitBomb(it)
                 }
             } else {
                 // Doesn't need to be a tile, we can land 'on ground' on bombs too.
-                // This will directly counteract the previous
                 landOnGround()
                 amOnTopOfBomb = true
             }
