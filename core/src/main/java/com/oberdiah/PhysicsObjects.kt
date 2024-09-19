@@ -113,6 +113,9 @@ abstract class PhysicsObject(
         if (body.p.x < 0 || body.p.x > UNITS_WIDE) {
             destroy()
         }
+        if (body.p.y < CAMERA_POS_Y - SCREEN_HEIGHT_IN_UNITS * 4) {
+            destroy()
+        }
     }
 
     abstract fun render(r: Renderer)

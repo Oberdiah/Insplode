@@ -45,8 +45,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         loadFonts()
         loadSounds()
 
-        leftWall = createWall(Rect(Point(0, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 3)))
-        rightWall = createWall(Rect(Point(10, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 3)))
+        leftWall = createWall(Rect(Point(0, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 4)))
+        rightWall = createWall(Rect(Point(10, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 4)))
 
         restartGame()
     }
