@@ -114,18 +114,24 @@ val JUST_UP_OFF_SCREEN
 const val GRAVITY = 20.0 * GLOBAL_SCALE
 
 val PLAYER_SPAWN_Y
-    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT + 5
+    get() = SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT + 5
 
 val CAMERA_SPAWN_Y
-    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT - 10
+    get() = SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT - 10
 
 const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
+
+/** The player y fract most of the time */
+const val BASE_PLAYER_Y_FRACT = 0.6
+
+/** The player y fract when they're high in the air */
+const val ELEVATED_PLAYER_Y_FRACT = 0.8
 
 /**
  * The position of the player up the screen - where the camera likes to keep them.
  * This can change dynamically depending on what the player is up to.
  */
-var PLAYER_Y_FRACT = 0.6
+var CURRENT_PLAYER_Y_FRACT = BASE_PLAYER_Y_FRACT
 
 var DEBUG_STRING = ""
 

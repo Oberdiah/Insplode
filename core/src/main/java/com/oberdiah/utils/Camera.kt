@@ -17,12 +17,22 @@ fun resetCamera() {
 }
 
 private fun getDesiredCameraY(focusPoint: Double): Float {
-    return (focusPoint + SCREEN_HEIGHT_IN_UNITS / 2 - SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT).f
+    return (focusPoint + SCREEN_HEIGHT_IN_UNITS / 2 - SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT).f
 }
+
+val TRANSITION_TO_LOWER_CAMERA_HEIGHT
+    get() = CURRENT_HIGHEST_TILE_Y + 3
+
+const val LOWER_CAMERA_HEIGHT_TRANSITION_RANGE = 8
 
 fun updateCamera() {
     SCREEN_SHAKE -= 12 * DELTA
     SCREEN_SHAKE = max(SCREEN_SHAKE, 0)
+
+    val diff = player.body.p.y - TRANSITION_TO_LOWER_CAMERA_HEIGHT
+    val transitionAmount = diff / LOWER_CAMERA_HEIGHT_TRANSITION_RANGE
+    CURRENT_PLAYER_Y_FRACT =
+        lerp(BASE_PLAYER_Y_FRACT, ELEVATED_PLAYER_Y_FRACT, saturate(transitionAmount))
 
     if (!CAMERA_LOCKED) {
         val cameraFocus = player.body.p.y
