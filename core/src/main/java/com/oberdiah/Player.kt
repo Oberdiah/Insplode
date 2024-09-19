@@ -18,7 +18,7 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
-private const val COYOTE_TIME = 0.2
+private const val COYOTE_TIME = 0.15
 private const val PLAYER_GRAVITY_MODIFIER = 0.5
 
 /** The x-zone in which the player will no longer be moved closer to where they want to be */
@@ -78,7 +78,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         circleShape(PLAYER_SIZE.w / 2) {
             bottomCircleFixture = addFixture(it)
         }
-        circleShape(PLAYER_SIZE.w / 2, Point(0, PLAYER_SIZE.y / 2) * GLOBAL_SCALE) {
+        // Put the second circle up a circle diameter above the first
+        circleShape(PLAYER_SIZE.w / 2, Point(0, PLAYER_SIZE.w)) {
             topCircleFixture = addFixture(it)
         }
 
@@ -86,11 +87,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 //            addFixture(it)
 //        }
 
-        rectShape(PLAYER_SIZE / Point(1.25, 4), Point(0f, -PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
+        rectShape(PLAYER_SIZE / Point(1.25, 4), Point(0f, -PLAYER_SIZE.w / 2)) {
             jumpBox = addFixture(it, true)
         }
 
-        rectShape(PLAYER_SIZE / Point(0.6, 1.5), Point(0f, -PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
+        rectShape(PLAYER_SIZE / Point(0.6, 1.5), Point(0f, -PLAYER_SIZE.w / 2)) {
             slamBox = addFixture(it, true)
         }
 
@@ -286,6 +287,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         // any longer. (Assuming we're not sitting on a bomb)
         if (tileBelowMe == null && onGround && !amOnTopOfBomb) {
             airTime = 0.0
+            println("I'm in the air")
         }
 
         if (isSlamming && onGround) {
@@ -441,9 +443,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         for (x in intArrayOf(0, 1, -1)) {
             for (y in 0 downTo -2) {
                 val pos = searchStartPos + Point(
-                    x * TILE_SIZE_IN_UNITS * 0.5,
-                    y * TILE_SIZE_IN_UNITS * 0.5
+                    x * TILE_SIZE_IN_UNITS * 0.75,
+                    y * TILE_SIZE_IN_UNITS * 0.75
                 )
+
                 val newTile = getTile(pos)
                 if (newTile is Tile && newTile.doesExist()) {
                     return newTile
