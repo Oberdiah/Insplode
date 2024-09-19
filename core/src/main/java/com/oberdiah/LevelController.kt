@@ -160,7 +160,7 @@ var maxDepthThisRun = 0.0
 fun tickLevelController() {
     RUN_TIME_ELAPSED += DELTA
 
-    currentDepthThisRun = max((LAND_SURFACE_Y - player.body.p.y), 0.0)
+    currentDepthThisRun = max(player.body.p.y, 0.0)
     maxDepthThisRun = max(currentDepthThisRun, maxDepthThisRun)
     if (maxDepthThisRun > HIGH_SCORE) {
         HIGH_SCORE = maxDepthThisRun

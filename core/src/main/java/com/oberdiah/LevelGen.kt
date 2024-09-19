@@ -190,7 +190,7 @@ fun generateTile(tile: Tile) {
     val x = tile.x.d
     val y = tile.y.d
 
-    val worldHeight = LAND_SURFACE_Y * TILES_PER_UNIT - abs(Perlin.noise(x, 0, 16)) * 5
+    val worldHeight = -abs(Perlin.noise(x, 0, 16)) * 5
     val depth = worldHeight - y
     if (depth < 0) {
         tile.dematerialize()

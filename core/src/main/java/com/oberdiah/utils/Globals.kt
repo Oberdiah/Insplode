@@ -115,13 +115,10 @@ val JUST_UP_OFF_SCREEN
 const val GRAVITY = 20.0 * GLOBAL_SCALE
 
 val PLAYER_SPAWN_Y
-    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT + 15
+    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT + 5
 
 val CAMERA_SPAWN_Y
-    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT
-
-val LAND_SURFACE_Y
-    get() = 10
+    get() = SCREEN_HEIGHT_IN_UNITS * PLAYER_Y_FRACT - 10
 
 const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
 
@@ -136,6 +133,8 @@ var PAUSED = !IS_DEBUG_ENABLED
 
 /**
  * The camera Y position (bottom of the screen) in world coordinates.
+ *
+ * This takes screen shake into account - should be pixel accurate.
  */
 val CAMERA_POS_Y: Number
     get() = camera.position.y.d - SCREEN_HEIGHT_IN_UNITS / 2
