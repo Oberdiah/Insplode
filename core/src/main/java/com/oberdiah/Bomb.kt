@@ -3,7 +3,6 @@ package com.oberdiah
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.utils.colorScheme
-import kotlin.experimental.inv
 import kotlin.math.PI
 import kotlin.random.Random
 
@@ -19,7 +18,7 @@ private fun bombFixtureDef(shape: Shape): FixtureDef {
 }
 
 abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObject(startingPoint) {
-    val fuseLength
+    val maxFuseLength
         get() = bombType.fuseLength
 
     val radius
@@ -31,10 +30,12 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     val power
         get() = bombType.power
 
+    protected var timeLeft = maxFuseLength
+
     val size = Size(radius * 2, radius * 2)
 
     override fun hitByExplosion() {
-        explode()
+        timeLeft = min(Random.nextDouble(0.4, 0.6), timeLeft)
     }
 
     open fun explode() {
@@ -71,7 +72,6 @@ enum class BombType(
 
 class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
     private val cornerSize = size / sqrt(2)
-    var timeLeft = fuseLength
 
     init {
         rectShape(size) {
@@ -112,8 +112,8 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     override fun render(r: Renderer) {
         r.color = Color.RED.withAlpha(0.5)
-        if (canBlow && timeLeft < fuseLength / 4) {
-            val length = lineLength * (1 - timeLeft / (fuseLength / 4))
+        if (canBlow && timeLeft < maxFuseLength / 4) {
+            val length = lineLength * (1 - timeLeft / (maxFuseLength / 4))
             r.line(
                 body.p + Point(body.angle - PI / 2) * length,
                 body.p - Point(body.angle - PI / 2) * length,
@@ -138,11 +138,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
             body.angle + PI / 4
         )
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius, timeLeft / fuseLength)
-    }
-
-    override fun hitByExplosion() {
-        timeLeft = min(0.5, fuseLength)
+        r.arcFrom0(body.p, radius, timeLeft / maxFuseLength)
     }
 
     override fun explode() {
@@ -162,16 +158,10 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 // Tunnel out of dirt
 // Small, medium and large circles
 class TimedBomb(startingPoint: Point, bombType: BombType) : Bomb(startingPoint, bombType) {
-    var timeLeft = fuseLength
-
     init {
         circleShape(radius) {
             body.addFixture(bombFixtureDef(it))
         }
-    }
-
-    override fun hitByExplosion() {
-        timeLeft = min(0.5, fuseLength)
     }
 
     override fun tick() {
@@ -186,7 +176,7 @@ class TimedBomb(startingPoint: Point, bombType: BombType) : Bomb(startingPoint, 
         r.color = color
         r.circle(body.p, radius)
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius * 0.8, timeLeft / fuseLength)
+        r.arcFrom0(body.p, radius * 0.8, timeLeft / maxFuseLength)
     }
 
     override fun explode() {
@@ -201,16 +191,10 @@ class TimedBomb(startingPoint: Point, bombType: BombType) : Bomb(startingPoint, 
 // Big black hole?
 
 class ClusterBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ClusterBomb) {
-    var timeLeft = fuseLength
-
     init {
         ngonShape(radius, 6) {
             body.addFixture(bombFixtureDef(it))
         }
-    }
-
-    override fun hitByExplosion() {
-        timeLeft = min(0.5, fuseLength)
     }
 
     override fun tick() {
@@ -225,7 +209,7 @@ class ClusterBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ClusterBo
         r.color = color
         r.ngon(body.p, radius, body.angle, 6)
         r.color = Color.WHITE.withAlpha(0.6)
-        r.arcFrom0(body.p, radius * 0.8, timeLeft / fuseLength)
+        r.arcFrom0(body.p, radius * 0.8, timeLeft / maxFuseLength)
         r.color = color.cpy().mul(0.5f)
         r.ngonLine(body.p, radius - 0.025, body.angle, 0.05, 6)
     }
@@ -244,14 +228,13 @@ class ClusterBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ClusterBo
 class ClusterParticle(startingPoint: Point, fuseLength: Number) :
     Bomb(startingPoint, BombType.ClusterParticle) {
     init {
+        this.timeLeft = fuseLength
         circleShape(radius) {
             val def = bombFixtureDef(it)
             def.filter.groupIndex = -5
             body.addFixture(def)
         }
     }
-
-    var timeLeft = fuseLength
 
     override fun hitByExplosion() {}
 
@@ -290,7 +273,6 @@ class StickyBomb(startingPoint: Point) : Bomb(startingPoint, BombType.StickyBomb
     )
     private var typeToBe = BodyDef.BodyType.DynamicBody
     private val tilesTouching = mutableSetOf<Tile>()
-    private var timeLeft = fuseLength
 
     init {
         body.isFixedRotation = true
@@ -371,7 +353,7 @@ class StickyBomb(startingPoint: Point) : Bomb(startingPoint, BombType.StickyBomb
         r.poly(trapezoid, body.p, body.angle)
 
         r.color = Color.WHITE.withAlpha(0.5)
-        r.arcFrom0(body.p - Point(0, radius / 2), radius / 2, timeLeft / fuseLength)
+        r.arcFrom0(body.p - Point(0, radius / 2), radius / 2, timeLeft / maxFuseLength)
 
 //        r.color = Color.WHITE.withAlpha(0.5)
 //        val alpha = (timeLeft / fuseLength)
@@ -429,7 +411,6 @@ class ImpactBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ImpactBomb
 }
 
 class SpringBomb(startingPoint: Point) : Bomb(startingPoint, BombType.SpringBomb) {
-    var timeLeft = fuseLength
     val springFrequency = 2.0
     var timeTillSpring = springFrequency
     var currentSpringDelay = springFrequency
@@ -461,13 +442,9 @@ class SpringBomb(startingPoint: Point) : Bomb(startingPoint, BombType.SpringBomb
         }
     }
 
-    override fun hitByExplosion() {
-        timeLeft = min(0.5, timeLeft)
-    }
-
     override fun render(r: Renderer) {
         val bodyPos = body.p
-        val overallFract = (timeLeft / fuseLength)
+        val overallFract = (timeLeft / maxFuseLength)
         var springFract = (timeTillSpring / currentSpringDelay)
         if (timeTillSpring > timeLeft) {
             springFract = (timeLeft / currentSpringDelay).d
