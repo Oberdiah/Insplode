@@ -86,7 +86,6 @@ fun renderUI(r: Renderer) {
             Screen.CustomGame -> customGameUI(r)
             Screen.AdvancedSettings -> advancedSettingsUI(r)
             Screen.Controls -> controlsUI(r)
-            Screen.ChangeButtonPositions -> buttonPositionUI(r)
             Screen.Credits -> creditsUI(r)
         }
     } else {

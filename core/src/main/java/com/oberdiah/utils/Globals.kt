@@ -25,22 +25,9 @@ const val TILES_EXTRA_FRACTION_STORED = 1.3
 var SHOW_FRAMERATE_DATA = false
 var ENABLED_PARTICLES = true
 var DO_PHYSICS_DEBUG_RENDER = false
-var LEFT_RIGHT_CONTROL = ControlScheme.LeftRightTap
-var JUMP_CONTROL = ControlScheme.JumpButton
 var JUMP_UI_FRACT = 0.15
-var LEFT_BUTTON_UI_FRACT = 0.45
-var RIGHT_BUTTON_UI_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
 var RENDER_JUMP_BUTTON = true
-
-enum class ControlScheme(val title: String) {
-    LeftRightTap("Left/Right"),
-    MoveToFinger("Move to Finger"),
-    JumpButton("Jump Button"),
-    SwipeUp("Swipe Up"),
-    AbilityButton("Ability Button"),
-    TapPlayer("Tap On Player"),
-}
 
 enum class Screen(val title: String) {
     Paused("Paused"),
@@ -50,7 +37,6 @@ enum class Screen(val title: String) {
     CustomGame("Custom Game"),
     AdvancedSettings("Advanced\nSettings"),
     Controls("Controls"),
-    ChangeButtonPositions(""),
     Credits("Credits"),
 }
 
@@ -133,7 +119,6 @@ var CURRENT_PLAYER_Y_FRACT = BASE_PLAYER_Y_FRACT
 
 var DEBUG_STRING = ""
 
-const val TIME_STEP = 1 / 120.0f
 var DELTA = 0.016
 var PAUSED = !IS_DEBUG_ENABLED
 

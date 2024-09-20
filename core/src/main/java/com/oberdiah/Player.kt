@@ -228,23 +228,25 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             return
         }
 
-        TOUCHES_DOWN.firstOrNull()?.let { touch ->
-            // If the player is within the uncertainty window, make the line green
-            val lineX = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
+        if (!PAUSED) {
+            TOUCHES_DOWN.firstOrNull()?.let { touch ->
+                // If the player is within the uncertainty window, make the line green
+                val lineX = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
 
-            if (lineX in (body.p.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(body.p.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
-                r.color = Color.WHITE.withAlpha(0.5)
-            } else {
-                r.color = Color.WHITE.withAlpha(0.25)
+                if (lineX in (body.p.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(body.p.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
+                    r.color = Color.WHITE.withAlpha(0.5)
+                } else {
+                    r.color = Color.WHITE.withAlpha(0.25)
+                }
+                // For visual interest, draw two lines one thinner than the other
+                r.line(
+                    lineX,
+                    CAMERA_POS_Y,
+                    lineX,
+                    CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS,
+                    0.3,
+                )
             }
-            // For visual interest, draw two lines one thinner than the other
-            r.line(
-                lineX,
-                CAMERA_POS_Y,
-                lineX,
-                CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS,
-                0.3,
-            )
         }
 
         if (canJump()) {
@@ -364,7 +366,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 (touch.y / UNIT_SIZE_IN_PIXELS - driftingPlayerSwipeStartY) / PLAYER_FINGER_DRAG_DISTANCE
             if (v >= 1) {
                 return 1.0
-            } else if (v <= -1) {
+            } else if (v <= -1 && statefulSwipeToSlam.value) {
                 return -1.0
             }
         }
@@ -474,7 +476,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     private fun isSlamJustPressed(): Boolean {
         return TOUCHES_WENT_UP.firstOrNull()?.let {
-            previousActionPerformAmount <= -1
+            if (statefulSwipeToSlam.value) {
+                previousActionPerformAmount <= -1
+            } else {
+                previousActionPerformAmount <= 0.0
+            }
         } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
             isKeyJustPressed(Keys.S) || isKeyJustPressed(Keys.DOWN)
         } else {

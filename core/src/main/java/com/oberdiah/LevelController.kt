@@ -35,37 +35,46 @@ class Phase(val d: Number, val callback: () -> Unit) {
 
 // It's all going wrong in BombVille
 
+// The values in a phase are how long we wait on that phase before moving on.
 val phases = arrayOf(
-    Phase(4.0) {
+    Phase(2.0) {
         // Drop pod from above.
     },
-    Phase(5.0) {
+    Phase(7.0) {
         spawnBomb(BombType.SmallTimed, 0.25)
     },
-    Phase(5.0) {
+    Phase(2.0) {
         spawnBomb(BombType.MediumTimed, 0.75)
     },
-    Phase(5.0) {
+    Phase(2.5) {
         spawnBomb(BombType.SmallTimed, 0.25)
-        spawnBomb(BombType.SmallTimed, 0.3)
-        spawnBomb(BombType.MediumTimed, 0.7)
     },
-    Phase(15.0) {
-        gameMessage = ""
+    Phase(2.0) {
+        spawnBomb(BombType.SmallTimed, 0.6)
+    },
+    Phase(2.0) {
+        spawnBomb(BombType.SmallTimed, 0.2)
+    },
+    Phase(1.75) {
         startRandomBombs(BombType.SmallTimed, 5.0)
         startRandomBombs(BombType.MediumTimed, 7.0)
+        spawnBomb(BombType.MediumTimed)
     },
-    Phase(4.0, BombType.SpringBomb) {
+    Phase(0.5, BombType.SpringBomb) {
         stopAllBombs()
         spawnBomb(BombType.SpringBomb, 0.25)
         gameMessage = "Spring Bomb"
     },
-    Phase(15.0) {
+    Phase(1.75) {
         gameMessage = ""
+        spawnBomb(BombType.SmallTimed)
         startRandomBombs(BombType.LineBomb, 7.0)
         startRandomBombs(BombType.SmallTimed, 6.0)
         startRandomBombs(BombType.MediumTimed, 7.0)
         startRandomBombs(BombType.SpringBomb, 6.0)
+    },
+    Phase(2.0) {
+        spawnBomb(BombType.SmallTimed, 0.25)
     },
     Phase(4.0, BombType.LargeTimed) {
         stopAllBombs()
