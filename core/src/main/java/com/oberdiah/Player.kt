@@ -227,7 +227,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         TOUCHES_DOWN.forEach {
             // If the player is within the uncertainty window, make the line green
-            val lineX = desiredXPos(it.x) / UNIT_SIZE_IN_PIXELS
+            val lineX = getDesiredXPos(it.x / UNIT_SIZE_IN_PIXELS)
 
             if (lineX in (body.p.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(body.p.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
                 r.color = Color.WHITE.withAlpha(0.5)
@@ -258,7 +258,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     private var lastXValue = 0.0
     private var lastBodyXValue = 0.0
-    private fun desiredXPos(fingerX: Double): Double {
+    private fun getDesiredXPos(fingerX: Double): Double {
         return lastBodyXValue + (fingerX - lastXValue) * 1.8
     }
 
@@ -327,44 +327,40 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     private fun playerControl() {
         val vel = body.velocity
 
-        val acceleration = 2.5 * GLOBAL_SCALE
-        var desiredXVel = 0.0
-        var goLeft = false
-        var goRight = false
-
         if (isActionButtonJustPressed() && canJump()) {
             doJump()
         } else if (isActionButtonJustPressed() && !canJump()) {
             isSlamming = true
         }
 
-        TOUCHES_WENT_DOWN.forEach {
-            lastXValue = it.x
-            lastBodyXValue = body.p.x * UNIT_SIZE_IN_PIXELS
+        if (TOUCHES_DOWN.size == 1) {
+            TOUCHES_WENT_DOWN.forEach {
+                lastXValue = it.x / UNIT_SIZE_IN_PIXELS
+                lastBodyXValue = body.p.x
+            }
         }
 
-        TOUCHES_DOWN.forEach {
-            goLeft = goLeft ||
-                    desiredXPos(it.x) < (body.p.x - PLAYER_UNCERTAINTY_WINDOW) * UNIT_SIZE_IN_PIXELS
+        var desiredXPos = body.p.x
 
-            goRight = goRight ||
-                    desiredXPos(it.x) > (body.p.x + PLAYER_UNCERTAINTY_WINDOW) * UNIT_SIZE_IN_PIXELS
+        for (touch in TOUCHES_DOWN) {
+            desiredXPos = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
+            break
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys
         if (isKeyPressed(Keys.A) || isKeyPressed(Keys.LEFT)) {
-            goLeft = true
+            desiredXPos = 0.0
         }
         if (isKeyPressed(Keys.D) || isKeyPressed(Keys.RIGHT)) {
-            goRight = true
+            desiredXPos = UNITS_WIDE.d
         }
 
-        if (goLeft && goRight) {
-            // Do nothing
-        } else if (goLeft) {
-            desiredXVel = max(-5 * GLOBAL_SCALE, vel.x - acceleration)
-        } else if (goRight) {
-            desiredXVel = min(5 * GLOBAL_SCALE, vel.x + acceleration)
+        val magnitude = saturate(abs(desiredXPos - body.p.x) / PLAYER_UNCERTAINTY_WINDOW)
+
+        val desiredXVel = when {
+            desiredXPos < body.p.x -> -5 * magnitude
+            desiredXPos > body.p.x -> 5 * magnitude
+            else -> 0.0
         }
 
         val velChange = desiredXVel - vel.x
