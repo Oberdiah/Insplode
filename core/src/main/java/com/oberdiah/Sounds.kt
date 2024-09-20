@@ -11,6 +11,7 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 
+const val MAX_NUM_SOUNDS_PLAYING = 30
 private var SOUND_POOL: Map<String, List<MASound>> = mutableMapOf()
 lateinit var miniAudio: MiniAudio
 lateinit var caveSplitter: MASplitter
@@ -52,14 +53,26 @@ fun loadSounds() {
     }
 }
 
-val scheduledSounds = mutableListOf<ASound>()
+data class PlayingSound(
+    val sound: MASound,
+    val data: SoundData
+) : Comparable<PlayingSound> {
+    override fun compareTo(other: PlayingSound): Int {
+        return data.volume.compareTo(other.data.volume)
+    }
+}
+
+/** Sorted from lowest to highest volume */
+val allSoundsPlaying = sortedSetOf<PlayingSound>()
+val scheduledSounds = mutableListOf<SoundData>()
 fun tickSounds() {
     scheduledSounds.forEach {
         if (it.scheduledAt!! < RUN_TIME_ELAPSED) {
-            playSound(it.name, it.pitch, it.volume, it.splitter)
+            playSound(it.name, it.pitch, it.volume, splitter = it.splitter)
         }
     }
     scheduledSounds.removeAll { it.scheduledAt!! < RUN_TIME_ELAPSED }
+    allSoundsPlaying.removeAll { !it.sound.isPlaying }
 }
 
 fun disposeSounds() {
@@ -74,7 +87,7 @@ fun disposeSounds() {
     }
 }
 
-data class ASound(
+data class SoundData(
     val name: String,
     val pitch: Double,
     val volume: Double,
@@ -87,7 +100,7 @@ fun playSound(
     pitch: Double = 1.0,
     volume: Double = 1.0,
     splitter: MASplitter? = null,
-    delay: Double? = null
+    delay: Double? = null,
 ) {
     if (volume < 0.005) return
 
@@ -99,21 +112,34 @@ fun playSound(
     }
 
     val sound = soundPool.firstOrNull { !it.isPlaying }
-
     if (sound == null) {
         return
     }
 
+    val soundData =
+        SoundData(soundName, pitch, volume, splitter, RUN_TIME_ELAPSED + (delay ?: 0.0));
+
     if (delay != null) {
-        scheduledSounds.add(ASound(soundName, pitch, volume, splitter, RUN_TIME_ELAPSED + delay))
+        scheduledSounds.add(soundData)
         return
+    }
+
+    // We know we are more important than the quietest sound playing, so we can kick them out
+    if (allSoundsPlaying.size >= MAX_NUM_SOUNDS_PLAYING) {
+        if (volume < (allSoundsPlaying.firstOrNull()?.data?.volume ?: 0.0)) {
+            // We're too quiet to play this sound right now
+            return
+        }
+
+        allSoundsPlaying.first().sound.stop()
+        allSoundsPlaying.remove(allSoundsPlaying.first())
     }
 
     sound.setVolume(volume.f)
     sound.setPitch(pitch.f)
     // Random pan
     sound.setPan(Random.nextDouble(-0.5, 0.5).f)
-    sound.fadeIn(0.1f)
+    sound.play()
 
     if (splitter != null) {
         splitter.attachToThisNode(sound, 0)
@@ -121,7 +147,7 @@ fun playSound(
         miniAudio.attachToEngineOutput(sound, 0)
     }
 
-    sound.play()
+    allSoundsPlaying.add(PlayingSound(sound, soundData))
 }
 
 fun playExplosionSound(force: Double) {
@@ -151,12 +177,6 @@ fun playExplosionSound(force: Double) {
         }
 
         playSound(
-            "trim_orange hit hard ${Random.nextInt(1, 10)}",
-            pitch,
-            volume = 0.5,
-            splitter = splitter,
-        )
-        playSound(
             "trim_trim_bat hit 4",
             pitch,
             splitter = splitter,
@@ -171,7 +191,7 @@ fun playBombBumpSound(velocity: Double, mass: Double, hitObject: Any?) {
     var pitch = Random.nextDouble(0.2, 0.3)
     // Mass generally ranges from 1 to 5
     // Higher mass means lower pitch
-    pitch *= saturate(1 - mass / 10) + 0.1
+    pitch *= max(saturate(1 - mass / 10) + 0.1, 0.7)
 
     if (hitObject is Bomb) {
         playSound(
@@ -241,6 +261,6 @@ private fun playPickupSoundInternal(loopId: Int) {
         "Ding ${Random.nextInt(1, 6)}",
         pitch,
         volume.pow(2) * 0.25,
-        caveSplitter,
+        splitter = caveSplitter,
     )
 }
