@@ -27,6 +27,9 @@ private const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS * 0.5
 /** Below this, slams don't happen */
 private const val MINIMUM_SLAM_VELOCITY = 5.0
 
+/** This is in units */
+private const val PLAYER_FINGER_DRAG_DISTANCE = 0.2
+
 /**
  * A duration in which the player cannot regain jump, to prevent them from regaining jump just after
  * a successful slam hit
@@ -251,15 +254,36 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         } else {
             r.color = colorScheme.playerNoJump
         }
-        r.rect(body.p.x - PLAYER_SIZE.w / 2, body.p.y, PLAYER_SIZE.w, PLAYER_SIZE.h / 2)
+
         r.circle(body.p, PLAYER_SIZE.w / 2)
-        r.circle(body.p.x, body.p.y + 0.35 * GLOBAL_SCALE, PLAYER_SIZE.w / 2)
+
+        val desiredHeadOffset = clamp(previousActionPerformAmount, -1.0, 1.0) * 0.2
+        renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 30.0)
+
+        r.rect(
+            body.p.x - PLAYER_SIZE.w / 2,
+            body.p.y,
+            PLAYER_SIZE.w,
+            PLAYER_SIZE.h / 2 + renderedHeadOffset
+        )
+
+        // Move the player's head up and down based on the actionPerformAmount
+        r.circle(
+            body.p.x,
+            body.p.y + 0.35 * GLOBAL_SCALE + renderedHeadOffset,
+            PLAYER_SIZE.w / 2
+        )
     }
 
-    private var lastXValue = 0.0
+    private var renderedHeadOffset = 0.0
+
+    /** The point where the player's finger last went down. */
+    private var lastFingerPoint = Point()
+    private var driftingPlayerSwipeStartY = 0.0
+
     private var lastBodyXValue = 0.0
     private fun getDesiredXPos(fingerX: Double): Double {
-        return lastBodyXValue + (fingerX - lastXValue) * 1.8
+        return lastBodyXValue + (fingerX - lastFingerPoint.x) * 1.8
     }
 
     override fun tick() {
@@ -326,18 +350,39 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
     }
 
+
+    private var previousActionPerformAmount = 0.0
+
+    /**
+     * If this is one or greater, if the player lets go we'll do a jump.
+     * If it's negative one or less, we'll do a slam.
+     */
+    private fun actionPerformAmount(): Double {
+        TOUCHES_DOWN.firstOrNull()?.let { touch ->
+            val v =
+                (touch.y / UNIT_SIZE_IN_PIXELS - driftingPlayerSwipeStartY) / PLAYER_FINGER_DRAG_DISTANCE
+            if (v >= 1) {
+                return 1.0
+            } else if (v <= -1) {
+                return -1.0
+            }
+        }
+        return 0.0
+    }
+
     private fun playerControl() {
         val vel = body.velocity
 
-        if (isActionButtonJustPressed() && canJump()) {
+        if (isJumpJustPressed() && canJump()) {
             doJump()
-        } else if (isActionButtonJustPressed() && !canJump()) {
+        } else if (isSlamJustPressed() && !canJump()) {
             isSlamming = true
         }
 
         if (TOUCHES_DOWN.size == 1) {
             TOUCHES_WENT_DOWN.forEach {
-                lastXValue = it.x / UNIT_SIZE_IN_PIXELS
+                lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
+                driftingPlayerSwipeStartY = lastFingerPoint.y
                 lastBodyXValue = body.p.x
             }
         }
@@ -346,6 +391,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
             desiredXPos = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
+            driftingPlayerSwipeStartY =
+                frameAccurateLerp(driftingPlayerSwipeStartY, touch.y / UNIT_SIZE_IN_PIXELS, 10.0)
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys
@@ -375,6 +422,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         val impulse = body.mass * velChange
         body.applyImpulse(Point(impulse.f, 0))
+
+        previousActionPerformAmount = actionPerformAmount()
     }
 
     private fun spawnParticlesAtMyFeet(
@@ -408,25 +457,27 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         spawnParticlesAtMyFeet(number = 2)
     }
 
-    fun canJump(): Boolean {
+    private fun canJump(): Boolean {
         return (airTime ?: 0.0) < COYOTE_TIME
     }
 
-    private fun isActionButtonPressed(): Boolean {
-        // If on desktop, we're slamming if space is held and we cannot jump
-        return if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            isKeyPressed(Keys.SPACE) || isKeyPressed(Keys.W) || isKeyPressed(Keys.UP)
+    private fun isJumpJustPressed(): Boolean {
+        return TOUCHES_WENT_UP.firstOrNull()?.let {
+            previousActionPerformAmount >= 1
+        } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
+            isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
         } else {
-            // If on mobile, we're doing an action if there are no touches on the screen and we cannot jump
-            TOUCHES_DOWN.isEmpty()
+            false
         }
     }
 
-    private fun isActionButtonJustPressed(): Boolean {
-        return isActionButtonPressed() && if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
+    private fun isSlamJustPressed(): Boolean {
+        return TOUCHES_WENT_UP.firstOrNull()?.let {
+            previousActionPerformAmount <= -1
+        } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
+            isKeyJustPressed(Keys.S) || isKeyJustPressed(Keys.DOWN)
         } else {
-            TOUCHES_WENT_UP.isNotEmpty()
+            false
         }
     }
 

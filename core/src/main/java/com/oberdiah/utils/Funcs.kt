@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.Shape
 import com.oberdiah.utils.camera
 import kotlin.math.PI
+import kotlin.math.pow
 import kotlin.random.Random
 
 fun toUISpace(p: Point): Point {
@@ -54,10 +55,6 @@ fun Color.withAlpha(d: Number): Color {
 
 fun max(a: Number, b: Number): Double {
     return a.toDouble().coerceAtLeast(b.toDouble())
-}
-
-fun lerp(a: Number, b: Number, t: Number): Double {
-    return a.d + (b.d - a.d) * t.d
 }
 
 fun max(a: Int, b: Int): Int {
@@ -253,4 +250,19 @@ fun rectShape(size: Size, middle: Point, angle: Number, callback: (Shape) -> Uni
     rect.setAsBox(size.w.f / 2, size.h.f / 2, middle.v2, angle.f)
     callback(rect)
     rect.dispose()
+}
+
+fun lerp(a: Number, b: Number, t: Number): Double {
+    return a.d + (b.d - a.d) * t.d
+}
+
+/**
+ * If you don't know what you want for speed, for reference a
+ * speed of 10.0 is approximately a regular frame-lerp of 0.1
+ */
+fun frameAccurateLerp(a: Number, b: Number, speed: Number): Double {
+    // https://youtu.be/yGhfUcPjXuE?t=1155
+    val blend = 0.5.pow(DELTA * speed.d)
+    println("Blend: $blend, ${lerp(b, a, blend)}")
+    return lerp(b, a, blend)
 }
