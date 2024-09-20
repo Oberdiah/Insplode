@@ -270,14 +270,17 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         timeSinceLastJumpOrSlam += DELTA
 
         var amOnTopOfBomb = false
-        val objectsStandingOn = whatAmITouching(listOf(jumpBox))
-        objectsStandingOn.forEach {
+        whatAmITouching(listOf(slamBox)).forEach {
             if (isSlamming) {
                 if (it is Bomb) {
                     finishSlamHitBomb(it)
                 }
-            } else {
-                // Doesn't need to be a tile, we can land 'on ground' on bombs too.
+            }
+        }
+        whatAmITouching(listOf(jumpBox)).forEach {
+            // We can land 'on ground' on bombs too.
+            // No amount of slamming on a bomb should ever cause us to land though.
+            if (!isSlamming && it is Bomb) {
                 landOnGround()
                 amOnTopOfBomb = true
             }
@@ -287,7 +290,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         // any longer. (Assuming we're not sitting on a bomb)
         if (tileBelowMe == null && onGround && !amOnTopOfBomb) {
             airTime = 0.0
-            println("I'm in the air")
         }
 
         if (isSlamming && onGround) {
