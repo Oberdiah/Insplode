@@ -150,7 +150,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         for (i in -numExplosionsInEachDir..numExplosionsInEachDir) {
             boomLoc.x += motion.x
             boomLoc.y += motion.y
-            boom(boomLoc, power / GLOBAL_SCALE, playSound = (abs(i) < 3))
+            boom(boomLoc, power / GLOBAL_SCALE, playSound = (abs(i) < 3), affectsThePlayer = false)
         }
     }
 }
