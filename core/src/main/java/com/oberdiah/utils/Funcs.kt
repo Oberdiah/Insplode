@@ -263,6 +263,5 @@ fun lerp(a: Number, b: Number, t: Number): Double {
 fun frameAccurateLerp(a: Number, b: Number, speed: Number): Double {
     // https://youtu.be/yGhfUcPjXuE?t=1155
     val blend = 0.5.pow(DELTA * speed.d)
-    println("Blend: $blend, ${lerp(b, a, blend)}")
     return lerp(b, a, blend)
 }
