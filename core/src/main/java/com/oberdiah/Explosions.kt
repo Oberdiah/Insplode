@@ -60,7 +60,7 @@ fun boom(
             }
         }
         // Also give all physics objects on stage a kick upward
-        if (a !is Player) {
+        if (a !is Player && a.body.velocity.len < 2.0) {
             a.body.applyImpulse(Point(0.0, radius))
         }
     }
