@@ -8,7 +8,6 @@ import com.oberdiah.DEPTH_UNITS
 import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
 import com.oberdiah.ENABLED_PARTICLES
 import com.oberdiah.HEIGHT
-import com.oberdiah.HIGH_SCORE
 import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.JUMP_UI_FRACT
 import com.oberdiah.PAUSED
@@ -28,7 +27,6 @@ import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.nextColorScheme
 import com.oberdiah.utils.timerString
 import com.oberdiah.WIDTH
-import com.oberdiah.currentDepthThisRun
 import com.oberdiah.d
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
@@ -36,14 +34,13 @@ import com.oberdiah.fontSmall
 import com.oberdiah.fontSmallish
 import com.oberdiah.format
 import com.oberdiah.gameMessage
-import com.oberdiah.maxDepthThisRun
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playerScore
 import com.oberdiah.renderScoreSystem
 import com.oberdiah.restartGame
+import com.oberdiah.statefulHighScore
 import com.oberdiah.withAlpha
-import com.oberdiah.worldSpaceRenderer
 import java.util.*
 import kotlin.math.PI
 import kotlin.reflect.KMutableProperty0
@@ -218,6 +215,9 @@ private fun advancedSettingsUI(r: Renderer) {
     if (IS_DEBUG_ENABLED) {
         toggleButton(r, "Physics Render", ::DO_PHYSICS_DEBUG_RENDER)
     }
+    button(r, "Reset High Score") {
+        statefulHighScore.value = 0
+    }
     button(r, "Back") {
         backAScreen()
     }
@@ -226,7 +226,7 @@ private fun advancedSettingsUI(r: Renderer) {
 private fun mainMenuUI(r: Renderer) {
     r.text(
         fontSmallish,
-        "High Score: ${formatDepth(HIGH_SCORE)}",
+        "High Score: ${statefulHighScore.value}",
         WIDTH / 2,
         SUBTITLE_HEIGHT,
         Align.center

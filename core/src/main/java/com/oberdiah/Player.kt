@@ -328,6 +328,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         if ((deadEndingCountdown ?: 0.0) < 0.0) {
             PAUSED = true
+            registerGameEndWithScoreSystem()
             switchScreen(Screen.EndGame)
         }
 

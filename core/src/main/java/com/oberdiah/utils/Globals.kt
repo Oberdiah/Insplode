@@ -33,8 +33,6 @@ var RIGHT_BUTTON_UI_FRACT = 0.55
 var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
 var RENDER_JUMP_BUTTON = true
 
-var HIGH_SCORE = 0.0
-
 enum class ControlScheme(val title: String) {
     LeftRightTap("Left/Right"),
     MoveToFinger("Move to Finger"),

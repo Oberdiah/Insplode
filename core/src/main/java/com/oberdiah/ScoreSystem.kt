@@ -44,6 +44,10 @@ fun registerBombSlamWithScoreSystem(bomb: Bomb) {
     numConsecutiveBounces++
 }
 
+fun registerGameEndWithScoreSystem() {
+    // Nothing :)
+}
+
 /** A bomb pop is when you pop a bomb by jumping on it or it hitting your head too hard. */
 fun registerBombPopWithScoreSystem(bomb: Bomb) {
     spawnPointOrbs(bomb.body.p, 1)
@@ -69,6 +73,7 @@ private fun givePlayerScoreInternal(score: Int) {
     }
     growingScore += score
     playerScore += score
+    statefulHighScore.value = max(playerScore, statefulHighScore.value)
     lastScoreCollectionTime = RUN_TIME_ELAPSED
 }
 

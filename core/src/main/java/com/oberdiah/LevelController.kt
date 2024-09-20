@@ -162,9 +162,6 @@ fun tickLevelController() {
 
     currentDepthThisRun = max(player.body.p.y, 0.0)
     maxDepthThisRun = max(currentDepthThisRun, maxDepthThisRun)
-    if (maxDepthThisRun > HIGH_SCORE) {
-        HIGH_SCORE = maxDepthThisRun
-    }
 
     bombDropData.forEach { (bombType, bombData) ->
         if (RUN_TIME_ELAPSED > bombData.nextBombAt) {
