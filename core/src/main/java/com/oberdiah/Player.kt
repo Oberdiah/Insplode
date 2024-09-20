@@ -225,9 +225,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             return
         }
 
-        TOUCHES_DOWN.forEach {
+        TOUCHES_DOWN.firstOrNull()?.let { touch ->
             // If the player is within the uncertainty window, make the line green
-            val lineX = getDesiredXPos(it.x / UNIT_SIZE_IN_PIXELS)
+            val lineX = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
 
             if (lineX in (body.p.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(body.p.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
                 r.color = Color.WHITE.withAlpha(0.5)
@@ -344,9 +344,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         var desiredXPos = body.p.x
 
-        for (touch in TOUCHES_DOWN) {
+        TOUCHES_DOWN.firstOrNull()?.let { touch ->
             desiredXPos = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
-            break
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys

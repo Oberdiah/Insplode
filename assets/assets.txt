@@ -1,4 +1,3 @@
-Image.png
 Lato-Medium.ttf
 Sounds/Crunch 1.wav
 Sounds/Crunch 2.wav

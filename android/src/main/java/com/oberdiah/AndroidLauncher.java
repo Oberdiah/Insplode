@@ -42,7 +42,6 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-        config.hideStatusBar = false;
         config.useImmersiveMode = true;
         platformInterface = new AndroidPlatformInterface();
         initialize(new Main(platformInterface), config);
