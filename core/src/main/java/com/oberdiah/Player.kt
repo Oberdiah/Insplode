@@ -418,7 +418,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         // If velChange is large enough, spawn particles to simulate kicked up dirt in the direction of movement
         if (!inAir) {
-            if (velChange > 3 || velChange < -3) {
+            if (abs(velChange) > 5.1) {
                 spawnParticlesAtMyFeet(number = 3, addedVelocity = Point(velChange * 0.5, 0.0))
             }
         }
