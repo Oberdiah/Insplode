@@ -12,3 +12,4 @@ val statefulRenderParticles = StatefulBoolean("renderParticles", true)
 val statefulPauseSide = StatefulInt("pauseSide", Align.right)
 val statefulScreenShakeSetting =
     StatefulEnum("screenShakeSetting", ScreenShakeSettings.Normal, ScreenShakeSettings.values())
+val statefulVibrationSetting = StatefulBoolean("doVibration", true)

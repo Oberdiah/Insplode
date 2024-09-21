@@ -38,6 +38,7 @@ import com.oberdiah.restartGame
 import com.oberdiah.statefulHighScore
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
+import com.oberdiah.statefulVibrationSetting
 import com.oberdiah.withAlpha
 import java.util.*
 import kotlin.math.PI
@@ -161,6 +162,7 @@ val SUBTITLE_HEIGHT
 
 private fun settingsUI(r: Renderer) {
     toggleButton(r, "Particles", statefulRenderParticles::value)
+    toggleButton(r, "Vibration", statefulVibrationSetting::value)
 
     // todo - re-enable this
 //    settingButton(r, "Color Scheme", {

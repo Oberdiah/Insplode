@@ -20,6 +20,7 @@ import kotlin.random.Random
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 private const val COYOTE_TIME = 0.15
 private const val PLAYER_GRAVITY_MODIFIER = 0.5
+private const val JUMP_BUILD_UP_TIME = 1.0
 
 /** The x-zone in which the player will no longer be moved closer to where they want to be */
 private const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS * 0.5
@@ -259,7 +260,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         r.circle(body.p, PLAYER_SIZE.w / 2)
 
-        val desiredHeadOffset = clamp(previousActionPerformAmount, -1.0, 1.0) * 0.2
+        val desiredHeadOffset = getJumpPower() * 0.2
         renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 30.0)
 
         r.rect(
@@ -277,11 +278,22 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         )
     }
 
+    /** Between 0 and 1 */
+    private fun getJumpPower(): Double {
+        if (!isBuildingUpJump) {
+            return 0.0
+        }
+
+        val elapsed = RUN_TIME_ELAPSED - lastFingerTime
+        return saturate(lerp(0.6, 1.0, elapsed / JUMP_BUILD_UP_TIME)) / JUMP_BUILD_UP_TIME
+    }
+
+    private var isBuildingUpJump = false
     private var renderedHeadOffset = 0.0
 
     /** The point where the player's finger last went down. */
     private var lastFingerPoint = Point()
-    private var driftingPlayerSwipeStartY = 0.0
+    private var lastFingerTime = 0.0
 
     private var lastBodyXValue = 0.0
     private fun getDesiredXPos(fingerX: Double): Double {
@@ -354,25 +366,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
 
-    private var previousActionPerformAmount = 0.0
-
-    /**
-     * If this is one or greater, if the player lets go we'll do a jump.
-     * If it's negative one or less, we'll do a slam.
-     */
-    private fun actionPerformAmount(): Double {
-        TOUCHES_DOWN.firstOrNull()?.let { touch ->
-            val v =
-                (touch.y / UNIT_SIZE_IN_PIXELS - driftingPlayerSwipeStartY) / PLAYER_FINGER_DRAG_DISTANCE
-            if (v >= 1) {
-                return 1.0
-            } else if (v <= -1 && statefulSwipeToSlam.value) {
-                return -1.0
-            }
-        }
-        return 0.0
-    }
-
     private fun playerControl() {
         val vel = body.velocity
 
@@ -385,8 +378,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         if (TOUCHES_DOWN.size == 1) {
             TOUCHES_WENT_DOWN.forEach {
                 lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
-                driftingPlayerSwipeStartY = lastFingerPoint.y
+                lastFingerTime = RUN_TIME_ELAPSED
                 lastBodyXValue = body.p.x
+                if (canJump()) {
+                    isBuildingUpJump = true
+                }
             }
         }
 
@@ -394,8 +390,17 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
             desiredXPos = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
-            driftingPlayerSwipeStartY =
-                frameAccurateLerp(driftingPlayerSwipeStartY, touch.y / UNIT_SIZE_IN_PIXELS, 10.0)
+
+            if ((touch / UNIT_SIZE_IN_PIXELS - lastFingerPoint).len > 0.5) {
+                // We're outside the jump circle, we're no longer building up a jump.
+                isBuildingUpJump = false
+            }
+            val v = lastFingerTime + JUMP_BUILD_UP_TIME
+            if (isBuildingUpJump && v > RUN_TIME_ELAPSED && v < RUN_TIME_ELAPSED + 0.1) {
+                if (statefulVibrationSetting.value) {
+                    Gdx.input.vibrate(100)
+                }
+            }
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys
@@ -425,8 +430,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         val impulse = body.mass * velChange
         body.applyImpulse(Point(impulse.f, 0))
-
-        previousActionPerformAmount = actionPerformAmount()
     }
 
     private fun spawnParticlesAtMyFeet(
@@ -452,10 +455,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         // Prevent double jumping
         airTime = COYOTE_TIME
         timeSinceLastJumpOrSlam = 0.0
-        val desiredUpVel = 9.0f
+        val desiredUpVel = 15.0 * getJumpPower()
         val velChange = min(desiredUpVel - body.velocity.y, desiredUpVel)
         val impulse = body.mass * velChange
         body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
+        isBuildingUpJump = false
 
         spawnParticlesAtMyFeet(number = 2)
     }
@@ -466,7 +470,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     private fun isJumpJustPressed(): Boolean {
         return TOUCHES_WENT_UP.firstOrNull()?.let {
-            previousActionPerformAmount >= 1
+            return isBuildingUpJump
         } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
             isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
         } else {
@@ -476,11 +480,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     private fun isSlamJustPressed(): Boolean {
         return TOUCHES_WENT_UP.firstOrNull()?.let {
-            if (statefulSwipeToSlam.value) {
-                previousActionPerformAmount <= -1
-            } else {
-                previousActionPerformAmount <= 0.0
-            }
+            return true
         } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
             isKeyJustPressed(Keys.S) || isKeyJustPressed(Keys.DOWN)
         } else {
