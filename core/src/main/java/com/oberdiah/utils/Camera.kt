@@ -66,5 +66,5 @@ enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
 
 private var SCREEN_SHAKE = 0.0
 fun addScreenShake(amount: Number) {
-    SCREEN_SHAKE = max(SCREEN_SHAKE, amount.d * SCREEN_SHAKE_SETTING.shakeAmount)
+    SCREEN_SHAKE = max(SCREEN_SHAKE, amount.d * statefulScreenShakeSetting.value.shakeAmount)
 }

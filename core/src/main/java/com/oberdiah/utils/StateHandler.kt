@@ -73,3 +73,25 @@ class StatefulString(private val key: String, defaultValue: String) {
         value = prefs.getString(key, defaultValue)
     }
 }
+
+/**
+ * A wrapper around StatefulInt for enums.
+ * Coz' reasons, you've got to pass in the values.
+ */
+class StatefulEnum<T : Enum<T>>(
+    private val key: String,
+    defaultValue: T,
+    values: Array<T>
+) {
+    var value: T = defaultValue
+        set(value) {
+            if (field == value) return
+            field = value
+            prefs.putInteger(key, value.ordinal)
+            isDirty = true
+        }
+
+    init {
+        value = values[prefs.getInteger(key, defaultValue.ordinal)]
+    }
+}

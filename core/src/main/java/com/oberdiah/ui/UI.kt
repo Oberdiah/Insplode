@@ -6,16 +6,12 @@ import com.badlogic.gdx.utils.Align
 import com.oberdiah.DEBUG_STRING
 import com.oberdiah.DEPTH_UNITS
 import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
-import com.oberdiah.ENABLED_PARTICLES
 import com.oberdiah.HEIGHT
 import com.oberdiah.IS_DEBUG_ENABLED
-import com.oberdiah.JUMP_UI_FRACT
 import com.oberdiah.PAUSED
 import com.oberdiah.Point
-import com.oberdiah.RENDER_JUMP_BUTTON
 import com.oberdiah.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
-import com.oberdiah.SCREEN_SHAKE_SETTING
 import com.oberdiah.SHOW_FRAMERATE_DATA
 import com.oberdiah.Screen
 import com.oberdiah.Size
@@ -40,12 +36,13 @@ import com.oberdiah.playerScore
 import com.oberdiah.renderScoreSystem
 import com.oberdiah.restartGame
 import com.oberdiah.statefulHighScore
+import com.oberdiah.statefulRenderParticles
+import com.oberdiah.statefulScreenShakeSetting
 import com.oberdiah.withAlpha
 import java.util.*
 import kotlin.math.PI
 import kotlin.reflect.KMutableProperty0
 
-var jumpUIFadeOff = 0.0
 var pauseUIFadeOff = 0.0
 var pauseHovered = false
 
@@ -101,25 +98,6 @@ fun renderUI(r: Renderer) {
             HEIGHT * 0.9,
             Align.center
         )
-
-        jumpUIFadeOff *= 0.95
-        if (RENDER_JUMP_BUTTON) {
-//            if (player.canJump()) {
-//                r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.5))
-//            } else {
-//                r.color = Color.WHITE.withAlpha(max(jumpUIFadeOff, 0.2))
-//            }
-//            r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
-//
-//            val bigButton = "JUMP"
-//
-//            r.text(
-//                fontLarge, bigButton, WIDTH / 2, HEIGHT * JUMP_UI_FRACT / 2, Align.center
-//            )
-        } else {
-            r.color = Color.WHITE.withAlpha(jumpUIFadeOff)
-            r.rect(0, 0, WIDTH, HEIGHT * JUMP_UI_FRACT)
-        }
 
         renderScoreSystem(r)
         renderPauseButton(r)
@@ -182,19 +160,19 @@ val SUBTITLE_HEIGHT
     get() = HEIGHT * 3 / 4.3
 
 private fun settingsUI(r: Renderer) {
-    toggleButton(r, "Render Jump Button", ::RENDER_JUMP_BUTTON)
-    toggleButton(r, "Particles", ::ENABLED_PARTICLES)
+    toggleButton(r, "Particles", statefulRenderParticles::value)
 
-    settingButton(r, "Color Scheme", {
-        r.text(fontMedium, colorScheme.name, it, Align.right)
-    }, {
-        nextColorScheme()
-    })
+    // todo - re-enable this
+//    settingButton(r, "Color Scheme", {
+//        r.text(fontMedium, colorScheme.name, it, Align.right)
+//    }, {
+//        nextColorScheme()
+//    })
 
     settingButton(r, "Screen Shake", {
-        r.text(fontMedium, SCREEN_SHAKE_SETTING.text, it, Align.right)
+        r.text(fontMedium, statefulScreenShakeSetting.value.text, it, Align.right)
     }, {
-        SCREEN_SHAKE_SETTING = SCREEN_SHAKE_SETTING.next()
+        statefulScreenShakeSetting.value = statefulScreenShakeSetting.value.next()
     })
     button(r, "Controls") {
         switchScreen(Screen.Controls)

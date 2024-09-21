@@ -37,7 +37,7 @@ fun renderParticles(r: Renderer) {
 }
 
 fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: Boolean = true) {
-    if (!ENABLED_PARTICLES) return
+    if (!statefulRenderParticles.value) return
     if (tileType == TileType.Air) return
 
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
@@ -46,12 +46,13 @@ fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: 
 }
 
 fun spawnSmoke(p: Point, velocity: Velocity, color: Color = Color.DARK_GRAY.withAlpha(0.5)) {
-    if (!ENABLED_PARTICLES) return
+    if (!statefulRenderParticles.value) return
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
     allParticles.add(Smoke(p, velocity, radius, color))
 }
 
 fun spawnGlow(p: Point, radius: Number) {
+    if (!statefulRenderParticles.value) return
     glowLocations.add(Glow(p, radius))
 }
 

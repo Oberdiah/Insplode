@@ -23,11 +23,7 @@ const val TILES_PER_UNIT = 5
 const val TILES_EXTRA_FRACTION_STORED = 1.3
 
 var SHOW_FRAMERATE_DATA = false
-var ENABLED_PARTICLES = true
 var DO_PHYSICS_DEBUG_RENDER = false
-var JUMP_UI_FRACT = 0.15
-var SCREEN_SHAKE_SETTING = ScreenShakeSettings.Normal
-var RENDER_JUMP_BUTTON = true
 
 enum class Screen(val title: String) {
     Paused("Paused"),

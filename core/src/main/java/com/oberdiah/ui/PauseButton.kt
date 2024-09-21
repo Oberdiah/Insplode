@@ -13,9 +13,9 @@ import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.isKeyJustPressed
 import com.oberdiah.WIDTH
 import com.oberdiah.max
+import com.oberdiah.statefulPauseSide
 import com.oberdiah.withAlpha
 
-var PAUSE_SIDE = Align.right
 private val PAUSE_SIZE_FRACT = 0.12
 private val PAUSE_FROM_TOP_FRACT = 0.05
 private val PAUSE_FROM_EDGE_FRACT = 0.05
@@ -30,7 +30,7 @@ private val pauseRect = Rect()
 val PAUSE_RECT: Rect
     get() {
         pauseRect.p.x =
-            if (PAUSE_SIDE == Align.left) PAUSE_FROM_EDGE else WIDTH - PAUSE_SIZE - PAUSE_FROM_EDGE
+            if (statefulPauseSide.value == Align.left) PAUSE_FROM_EDGE else WIDTH - PAUSE_SIZE - PAUSE_FROM_EDGE
         pauseRect.p.y = HEIGHT - PAUSE_SIZE - PAUSE_FROM_TOP
         pauseRect.s.w = PAUSE_SIZE
         pauseRect.s.h = PAUSE_SIZE
