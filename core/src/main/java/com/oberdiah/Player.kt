@@ -128,18 +128,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         if (obj is Bomb) {
             if (isSlamming) {
                 finishSlamHitBomb(obj)
-            } else {
-                // jumping on bombs with a high enough velocity destroys them without an explosion
-//                if (body.velocity.y < -1) {
-//                    obj.destroy()
-//                    registerBombPopWithScoreSystem(obj)
-//                    boom(
-//                        obj.body.p, obj.radius,
-//                        affectsThePlayer = false,
-//                        affectsTheLandscape = false,
-//                        playSound = false
-//                    )
-//                }
             }
         }
         if (yourFixture == jumpBox && obj is Tile) {
@@ -260,7 +248,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         r.circle(body.p, PLAYER_SIZE.w / 2)
 
-        val desiredHeadOffset = getJumpPower() * 0.2
+        val desiredHeadOffset = -getJumpFraction() * 0.2
         renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 30.0)
 
         r.rect(
@@ -278,14 +266,22 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         )
     }
 
+    private fun getJumpFraction(): Double {
+        if (!isBuildingUpJump) {
+            return 0.0
+        }
+
+        val elapsed = RUN_TIME_ELAPSED - lastFingerTime
+        return saturate(elapsed / JUMP_BUILD_UP_TIME)
+    }
+
     /** Between 0 and 1 */
     private fun getJumpPower(): Double {
         if (!isBuildingUpJump) {
             return 0.0
         }
 
-        val elapsed = RUN_TIME_ELAPSED - lastFingerTime
-        return saturate(lerp(0.6, 1.0, elapsed / JUMP_BUILD_UP_TIME)) / JUMP_BUILD_UP_TIME
+        return saturate(lerp(0.6, 1.0, getJumpFraction())) / JUMP_BUILD_UP_TIME
     }
 
     private var isBuildingUpJump = false
