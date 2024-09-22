@@ -3,11 +3,9 @@ package com.oberdiah.player
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.Bomb
 import com.oberdiah.CAMERA_LOCKED
-import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.DELTA
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.PAUSED
@@ -17,7 +15,6 @@ import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
-import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.Screen
 import com.oberdiah.Size
 import com.oberdiah.TILE_SIZE_IN_UNITS
@@ -33,13 +30,11 @@ import com.oberdiah.compareTo
 import com.oberdiah.d
 import com.oberdiah.div
 import com.oberdiah.f
-import com.oberdiah.frameAccurateLerp
 import com.oberdiah.getTile
 import com.oberdiah.i
 import com.oberdiah.lerp
 import com.oberdiah.max
 import com.oberdiah.min
-import com.oberdiah.minus
 import com.oberdiah.plus
 import com.oberdiah.rectShape
 import com.oberdiah.registerBombSlamWithScoreSystem
@@ -55,27 +50,21 @@ import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.addScreenShake
-import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.isKeyJustPressed
 import com.oberdiah.utils.isKeyPressed
 import com.oberdiah.ui.switchScreen
 import com.oberdiah.unaryMinus
 import com.oberdiah.whatAmITouching
-import com.oberdiah.withAlpha
 import kotlin.math.pow
 import kotlin.random.Random
 
-val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
-
-/**
- * A duration in which the player cannot regain jump, to prevent them from regaining jump just after
- * a successful slam hit
- */
-private const val JUMP_PREVENTION_WINDOW = 0.3
-val player = Player(Point(5, PLAYER_SPAWN_Y))
-
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
-    private var renderer: PlayerRenderer = PlayerRenderer()
+    val renderer: PlayerRenderer = PlayerRenderer()
+    val stateTracker = PlayerStateTracker()
+    val actionPerformer = PlayerActionPerformer()
+    val infoBoard = PlayerInformationBoard()
+
+    var isSlamming = true
 
     /** What we use to determine if we're on the ground or not. Narrower than the player */
     lateinit var jumpBox: Fixture
@@ -90,7 +79,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     // If this is non-null, then it is a tile that exists.
     private var tileBelowMe: Tile? = null
-    var isSlamming = true
     private var timeSinceLastJumpOrSlam = 0.0
 
     private val inAir: Boolean
@@ -209,8 +197,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     private fun finishSlamHitGround() {
         isSlamming = false
         CAMERA_LOCKED = false
-
-//                spawnPointOrbs(body.p, 100)
 
         val vel = lastTickVelocity
         spawnParticlesAtMyFeet(
