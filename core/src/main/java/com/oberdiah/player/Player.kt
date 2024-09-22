@@ -8,6 +8,7 @@ import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.Screen
+import com.oberdiah.WORLD_PHYSICS_MASK
 import com.oberdiah.abs
 import com.oberdiah.circleShape
 import com.oberdiah.div
@@ -21,6 +22,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     lateinit var narrowFeetBox: Fixture
     lateinit var wideFeetBox: Fixture
     lateinit var bottomCircleFixture: Fixture
+    lateinit var midRectFixture: Fixture
     lateinit var topCircleFixture: Fixture
 
     init {
@@ -33,7 +35,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         rectShape(PLAYER_SIZE / Point(1.6, 2), Point(0, PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
-            addFixture(it)
+            midRectFixture = addFixture(it)
         }
 
         rectShape(PLAYER_SIZE / Point(1.25, 4), Point(0f, -PLAYER_SIZE.w / 2)) {
@@ -95,14 +97,14 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
 
         if (playerState.isSlamming) {
-            if (playerInfoBoard.isStandingOnNotBombExact) {
-                playerState.justSlammedIntoTheGround()
-            } else if (playerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
+            if (playerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
                 if (abs(playerInfoBoard.velocity.y) <= MINIMUM_SLAM_VELOCITY) {
                     playerState.justCasuallyLanded()
                 } else {
                     playerState.justSlammedIntoABomb(playerInfoBoard.bombsStandingOnGenerous.first())
                 }
+            } else if (playerInfoBoard.isStandingOnNotBombExact) {
+                playerState.justSlammedIntoTheGround()
             }
         } else if (playerState.isIntentionallyMovingUp) {
             if (playerInfoBoard.isStandingOnStandableExact) {
@@ -123,5 +125,24 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         if (playerState.isAlive) {
             playerInputs.tick()
         }
+    }
+
+    fun setGhosting(ghosting: Boolean) {
+        val filter = if (ghosting) {
+            Filter().apply {
+                categoryBits = PLAYER_PHYSICS_MASK
+                // Only collide with tiles
+                maskBits = WORLD_PHYSICS_MASK
+            }
+        } else {
+            Filter().apply {
+                categoryBits = PLAYER_PHYSICS_MASK
+                maskBits = 0xFFFF.toShort()
+            }
+        }
+
+        bottomCircleFixture.filterData = filter
+        midRectFixture.filterData = filter
+        topCircleFixture.filterData = filter
     }
 }

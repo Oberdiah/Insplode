@@ -1,6 +1,7 @@
 package com.oberdiah.player.player_state
 
 import com.oberdiah.DELTA
+import com.oberdiah.player.player
 
 /**
  * Holds internal classes the player state may need
@@ -40,6 +41,10 @@ open class PlayerStateClasses {
         }
 
         fun setState(newState: PlayerMode) {
+            if (newState != state) {
+                player.setGhosting(newState == PlayerMode.INTENTIONALLY_MOVING_UP)
+            }
+
             state = newState
             timeSinceWeEnteredThisState = 0.0
         }

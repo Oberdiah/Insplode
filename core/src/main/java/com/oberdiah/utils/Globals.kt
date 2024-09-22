@@ -50,6 +50,8 @@ var SIMULATED_REGION_NUM_TILES_HIGH = 0
 
 const val DEPTH_UNITS = " blocks"
 
+/** Anything that doesn't specify a mask ends up with 0x1 */
+const val WORLD_PHYSICS_MASK: Short = 0x1
 const val PLAYER_PHYSICS_MASK: Short = 0x2
 const val BOMB_PHYSICS_MASK: Short = 0x4
 const val PICKUP_PHYSICS_MASK: Short = 0x8

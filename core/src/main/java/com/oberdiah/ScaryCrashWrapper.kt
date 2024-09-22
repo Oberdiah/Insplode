@@ -40,21 +40,6 @@ fun createBody(def: BodyDef, shouldUpdate: Boolean = true): PhysBody {
     return physBody
 }
 
-fun whatAmITouching(body: PhysBody): Set<Any> {
-    val bodies = mutableListOf<Any?>()
-    for (contact in world.contactList) {
-        if (!contact.isTouching) continue
-        if (!contact.isEnabled) continue
-        if (contact.fixtureA.body == body.body) {
-            bodies.add(contact.fixtureB.body.userData)
-        } else if (contact.fixtureB.body == body.body) {
-            bodies.add(contact.fixtureA.body.userData)
-        }
-    }
-
-    return bodies.filterNotNull().toSet()
-}
-
 fun whatAmITouching(fixtures: List<Fixture>): Set<Any> {
     val bodies = mutableListOf<Any?>()
     for (contact in world.contactList) {
@@ -75,7 +60,7 @@ fun tickPhysicsWrapper() {
     allPhysBodies.forEach { it.updateInternals() }
 }
 
-class PhysBody(internal val body: Body, private val shouldUpdate: Boolean = true) {
+class PhysBody(private val body: Body, private val shouldUpdate: Boolean = true) {
     val p = Point()
         get() {
             require(exists)

@@ -57,7 +57,8 @@ class PlayerRenderer {
 
         r.circle(pos, PLAYER_SIZE.w / 2)
 
-        val desiredHeadOffset = 0.0 // Could do something here in future
+        val desiredHeadOffset =
+            0.0 // Could do something here in future - We could maybe also do skinnier on growing taller?
         renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 30.0)
 
         r.rect(
