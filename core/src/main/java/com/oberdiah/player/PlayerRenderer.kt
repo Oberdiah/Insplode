@@ -4,16 +4,21 @@ import com.badlogic.gdx.graphics.Color
 import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.PAUSED
+import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
+import com.oberdiah.Velocity
 import com.oberdiah.div
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.minus
 import com.oberdiah.plus
+import com.oberdiah.spawnFragment
 import com.oberdiah.utils.TOUCHES_DOWN
+import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.withAlpha
+import kotlin.random.Random
 
 class PlayerRenderer {
     private var renderedHeadOffset = 0.0
@@ -48,7 +53,7 @@ class PlayerRenderer {
 
         if (player.canJump()) {
             r.color = colorScheme.player
-        } else if (player.isSlamming) {
+        } else if (playerState.isSlamming()) {
             r.color = colorScheme.playerSlamming
         } else {
             r.color = colorScheme.playerNoJump
@@ -72,5 +77,24 @@ class PlayerRenderer {
             pos.y + 0.35 * GLOBAL_SCALE + renderedHeadOffset,
             PLAYER_SIZE.w / 2
         )
+    }
+
+    fun spawnParticlesAtMyFeet(
+        addedVelocity: Point = Point(0.0, 0.0),
+        number: Int = 5,
+        ferocity: Double = 2.0
+    ) {
+        val posToSpawn = player.body.p - Point(0.0, 0.15 * GLOBAL_SCALE)
+
+        for (i in 0 until number) {
+            spawnFragment(
+                posToSpawn.cpy,
+                addedVelocity + Velocity(
+                    ferocity * (Random.nextDouble() - 0.5),
+                    ferocity * Random.nextDouble()
+                ),
+                playerInfoBoard.tileBelowMe?.getTileType() ?: TileType.Air
+            )
+        }
     }
 }

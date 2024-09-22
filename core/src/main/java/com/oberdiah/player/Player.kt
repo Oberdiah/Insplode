@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.Bomb
-import com.oberdiah.CAMERA_LOCKED
 import com.oberdiah.DELTA
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.PAUSED
@@ -23,49 +22,31 @@ import com.oberdiah.UNITS_WIDE
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.Velocity
 import com.oberdiah.abs
-import com.oberdiah.boom
 import com.oberdiah.circleShape
-import com.oberdiah.clamp
 import com.oberdiah.compareTo
 import com.oberdiah.d
 import com.oberdiah.div
 import com.oberdiah.f
-import com.oberdiah.getTile
-import com.oberdiah.i
 import com.oberdiah.lerp
-import com.oberdiah.max
 import com.oberdiah.min
-import com.oberdiah.plus
 import com.oberdiah.rectShape
-import com.oberdiah.registerBombSlamWithScoreSystem
 import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.registerLandedOnGroundWithScoreSystem
 import com.oberdiah.saturate
-import com.oberdiah.spawnFragment
 import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulVibrationSetting
 import com.oberdiah.times
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
-import com.oberdiah.utils.TileType
-import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.isKeyJustPressed
 import com.oberdiah.utils.isKeyPressed
 import com.oberdiah.ui.switchScreen
 import com.oberdiah.unaryMinus
 import com.oberdiah.whatAmITouching
-import kotlin.math.pow
 import kotlin.random.Random
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
-    val renderer: PlayerRenderer = PlayerRenderer()
-    val stateTracker = PlayerStateTracker()
-    val actionPerformer = PlayerActionPerformer()
-    val infoBoard = PlayerInformationBoard()
-
-    var isSlamming = true
-
     /** What we use to determine if we're on the ground or not. Narrower than the player */
     lateinit var jumpBox: Fixture
 
@@ -77,8 +58,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     /** If this is non-null we're in the air. If it's null we're on the ground. */
     private var airTime: Double? = 0.0
 
-    // If this is non-null, then it is a tile that exists.
-    private var tileBelowMe: Tile? = null
     private var timeSinceLastJumpOrSlam = 0.0
 
     private val inAir: Boolean
@@ -95,13 +74,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     /** If this countdown exists, we're dead. When this countdown goes below 0, we end the game */
     private var deadEndingCountdown: Double? = null
-
-    private val feetPosition
-        get() = body.p - Point(0.0, PLAYER_SIZE.w / 2 * GLOBAL_SCALE)
-
-    /// We need these because sometimes on collide the velocity is already really small for some reason
-    private var tickVelocity = Point(0.0, 0.0)
-    private var lastTickVelocity = Point(0.0, 0.0)
 
     init {
         circleShape(PLAYER_SIZE.w / 2) {
@@ -151,12 +123,12 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         val obj = otherFixture.body.userData
 
         if (obj is Bomb) {
-            if (isSlamming) {
+            if (playerState.isSlamming()) {
                 finishSlamHitBomb(obj)
             }
         }
         if (yourFixture == jumpBox && obj is Tile) {
-            if (isSlamming) {
+            if (playerState.isSlamming()) {
                 finishSlamHitGround()
             }
         }
@@ -170,7 +142,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         // We can't 'land on ground' in the normal sense if we're slamming,
         // and we don't want to land if we've just slammed or jumped as we're clearly heading up and this
         // will be a mistake.
-        if (timeSinceLastJumpOrSlam > JUMP_PREVENTION_WINDOW && !isSlamming && inAir) {
+        if (timeSinceLastJumpOrSlam > JUMP_PREVENTION_WINDOW && !playerState.isSlamming() && inAir) {
             // You're back on the ground
             airTime = null
             registerLandedOnGroundWithScoreSystem()
@@ -178,50 +150,23 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     private fun finishSlamHitBomb(hitBomb: Bomb) {
-        isSlamming = false
-        CAMERA_LOCKED = false
-
-        if (abs(lastTickVelocity.y) > MINIMUM_SLAM_VELOCITY) {
-            boom(hitBomb.body.p, hitBomb.power, affectsThePlayer = false)
-            hitBomb.destroy()
-            val currentVel = body.velocity.y
-            val desiredVel =
-                clamp(abs(body.velocity.y).pow(0.75) + hitBomb.power * 2.0, 5.0, 15.0)
-            val impulse = body.mass * (desiredVel - currentVel)
-            body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
-            timeSinceLastJumpOrSlam = 0.0
-            registerBombSlamWithScoreSystem(hitBomb)
-        }
+        playerState.playerHasSlammedIntoABomb(hitBomb)
     }
 
     private fun finishSlamHitGround() {
-        isSlamming = false
-        CAMERA_LOCKED = false
-
-        val vel = lastTickVelocity
-        spawnParticlesAtMyFeet(
-            ferocity = vel.len.d * 0.2,
-            number = max((vel.len.d * 0.5).i, 2)
-        )
-
-        if (vel.len > 10) {
-            // Player landing deserves more than the normal amount of shake
-            addScreenShake(vel.len.d * 0.025)
-            boom(body.p, vel.len.d * 0.03, affectsThePlayer = false)
-        }
+        playerState.playerHasSlammedIntoTheGround()
     }
 
     override fun reset() {
+        playerInfoBoard.reset()
+        playerState.reset()
         body.setTransform(startingPoint, 0f)
         body.isFixedRotation = true
         body.gravityScale = PLAYER_GRAVITY_MODIFIER
         body.velocity = Point(0.0, 0.0)
         body.linearDamping = 0.0
-        tickVelocity = Point(0.0, 0.0)
-        lastTickVelocity = Point(0.0, 0.0)
         airTime = 0.0
         deadEndingCountdown = null
-        isSlamming = true
     }
 
     private fun addFixture(shape: Shape, isSensor: Boolean = false): Fixture {
@@ -236,7 +181,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun render(r: Renderer) {
-        renderer.render(r)
+        playerRenderer.render(r)
     }
 
     fun getJumpFraction(): Double {
@@ -269,15 +214,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun tick() {
-        lastTickVelocity = tickVelocity.cpy
-        tickVelocity = body.velocity.cpy
+        playerInfoBoard.tick()
 
-        tileBelowMe = getTileBelowMe()
         timeSinceLastJumpOrSlam += DELTA
 
         var amOnTopOfBomb = false
         whatAmITouching(listOf(slamBox)).forEach {
-            if (isSlamming) {
+            if (playerState.isSlamming()) {
                 if (it is Bomb) {
                     finishSlamHitBomb(it)
                 }
@@ -286,7 +229,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         whatAmITouching(listOf(jumpBox)).forEach {
             // We can land 'on ground' on bombs too.
             // No amount of slamming on a bomb should ever cause us to land though.
-            if (!isSlamming && it is Bomb) {
+            if (!playerState.isSlamming() && it is Bomb) {
                 landOnGround()
                 amOnTopOfBomb = true
             }
@@ -294,11 +237,11 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         // If we're on the ground but there's nothing below me, we shouldn't be on the ground
         // any longer. (Assuming we're not sitting on a bomb)
-        if (tileBelowMe == null && onGround && !amOnTopOfBomb) {
+        if (playerInfoBoard.tileBelowMe == null && onGround && !amOnTopOfBomb) {
             airTime = 0.0
         }
 
-        if (isSlamming && onGround) {
+        if (playerState.isSlamming() && onGround) {
             finishSlamHitGround()
         }
 
@@ -323,7 +266,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER
         }
 
-        if (isSlamming) {
+        if (playerState.isSlamming()) {
             // Slam into the ground
             body.applyImpulse(Point(0f, -body.mass) * GLOBAL_SCALE)
         }
@@ -340,7 +283,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         if (isJumpJustPressed() && canJump()) {
             doJump()
         } else if (isSlamJustPressed() && !canJump()) {
-            isSlamming = true
+            playerState.startSlam()
         }
 
         if (TOUCHES_DOWN.size == 1) {
@@ -392,31 +335,15 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         // If velChange is large enough, spawn particles to simulate kicked up dirt in the direction of movement
         if (!inAir) {
             if (abs(velChange) > 5.1) {
-                spawnParticlesAtMyFeet(number = 3, addedVelocity = Point(velChange * 0.5, 0.0))
+                playerRenderer.spawnParticlesAtMyFeet(
+                    number = 3,
+                    addedVelocity = Point(velChange * 0.5, 0.0)
+                )
             }
         }
 
         val impulse = body.mass * velChange
         body.applyImpulse(Point(impulse.f, 0))
-    }
-
-    private fun spawnParticlesAtMyFeet(
-        addedVelocity: Point = Point(0.0, 0.0),
-        number: Int = 5,
-        ferocity: Double = 2.0
-    ) {
-        val posToSpawn = body.p - Point(0.0, 0.15 * GLOBAL_SCALE)
-
-        for (i in 0 until number) {
-            spawnFragment(
-                posToSpawn.cpy,
-                addedVelocity + Velocity(
-                    ferocity * (Random.nextDouble() - 0.5),
-                    ferocity * Random.nextDouble()
-                ),
-                tileBelowMe?.getTileType() ?: TileType.Air
-            )
-        }
     }
 
     private fun doJump() {
@@ -429,7 +356,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
         isBuildingUpJump = false
 
-        spawnParticlesAtMyFeet(number = 2)
+        playerRenderer.spawnParticlesAtMyFeet(number = 2)
     }
 
     fun canJump(): Boolean {
@@ -454,29 +381,5 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         } else {
             false
         }
-    }
-
-
-    private fun getTileBelowMe(): Tile? {
-        // We effectively need to check in a 3x3 grid below the player
-
-        // Top middle of the search grid
-        val searchStartPos = feetPosition
-
-        for (x in intArrayOf(0, 1, -1)) {
-            for (y in 0 downTo -2) {
-                val pos = searchStartPos + Point(
-                    x * TILE_SIZE_IN_UNITS * 0.75,
-                    y * TILE_SIZE_IN_UNITS * 0.75
-                )
-
-                val newTile = getTile(pos)
-                if (newTile is Tile && newTile.doesExist()) {
-                    return newTile
-                }
-            }
-        }
-
-        return null
     }
 }
