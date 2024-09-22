@@ -40,7 +40,7 @@ fun createBody(def: BodyDef, shouldUpdate: Boolean = true): PhysBody {
     return physBody
 }
 
-fun whatAmITouching(body: PhysBody): Set<PhysicsObject> {
+fun whatAmITouching(body: PhysBody): Set<Any> {
     val bodies = mutableListOf<Any?>()
     for (contact in world.contactList) {
         if (!contact.isTouching) continue
@@ -52,10 +52,10 @@ fun whatAmITouching(body: PhysBody): Set<PhysicsObject> {
         }
     }
 
-    return bodies.filterIsInstance<PhysicsObject>().toSet()
+    return bodies.filterNotNull().toSet()
 }
 
-fun whatAmITouching(fixtures: List<Fixture>): Set<PhysicsObject> {
+fun whatAmITouching(fixtures: List<Fixture>): Set<Any> {
     val bodies = mutableListOf<Any?>()
     for (contact in world.contactList) {
         if (!contact.isTouching) continue
@@ -68,21 +68,7 @@ fun whatAmITouching(fixtures: List<Fixture>): Set<PhysicsObject> {
         }
     }
 
-    return bodies.filterIsInstance<PhysicsObject>().toSet()
-}
-
-fun amITouchingTheGround(body: PhysBody): Boolean {
-    for (contact in world.contactList) {
-        if (!contact.isTouching) continue
-        if (contact.fixtureA.body == body.body || contact.fixtureB.body == body.body) {
-            val userData1 = contact.fixtureA.body.userData
-            val userData2 = contact.fixtureB.body.userData
-            if (userData1 is Tile || userData2 is Tile) {
-                return true
-            }
-        }
-    }
-    return false
+    return bodies.filterNotNull().toSet()
 }
 
 fun tickPhysicsWrapper() {

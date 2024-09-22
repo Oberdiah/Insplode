@@ -4,57 +4,76 @@ package com.oberdiah.player.player_state
  * Has all of the player state accessors. I didn't want these mixed up as there's loads.
  */
 open class PlayerStateAccessors : PlayerStateClasses() {
-    protected var s = PlayerStateHandler()
-
-    fun isSlamming(): Boolean {
-        return s.state == PlayerMode.SLAMMING
+    fun reset() {
+        s.reset()
     }
 
-    fun timeSinceStartedSlamming(): Double {
-        if (!isSlamming()) {
-            return 0.0
+    fun tick() {
+        s.tick()
+    }
+
+
+    val isSlamming: Boolean
+        get() {
+            return s.state == PlayerMode.SLAMMING
         }
 
-        return s.timeSinceWeEnteredThisState
-    }
+    val timeSinceStartedSlamming: Double
+        get() {
+            if (!isSlamming) {
+                return 0.0
+            }
 
-    fun isDead(): Boolean {
-        return s.state == PlayerMode.DEAD
-    }
-
-    fun isAlive(): Boolean {
-        return !isDead()
-    }
-
-    fun timeSinceDied(): Double {
-        if (!isDead()) {
-            return 0.0
+            return s.timeSinceWeEnteredThisState
         }
 
-        return s.timeSinceWeEnteredThisState
-    }
-
-    fun isIntentionallyMovingUp(): Boolean {
-        return s.state == PlayerMode.INTENTIONALLY_MOVING_UP
-    }
-
-    fun timeSinceStartedIntentionallyMovingUp(): Double {
-        if (!isIntentionallyMovingUp()) {
-            return 0.0
+    val isDead: Boolean
+        get() {
+            return s.state == PlayerMode.DEAD
         }
 
-        return s.timeSinceWeEnteredThisState
-    }
-
-    fun isIdle(): Boolean {
-        return s.state == PlayerMode.IDLE
-    }
-
-    fun timeSinceStartedIdle(): Double {
-        if (!isIdle()) {
-            return 0.0
+    val isAlive: Boolean
+        get() {
+            return !isDead
         }
 
-        return s.timeSinceWeEnteredThisState
-    }
+    val timeSinceDied: Double
+        get() {
+            if (!isDead) {
+                return 0.0
+            }
+
+            return s.timeSinceWeEnteredThisState
+        }
+
+    /**
+     * Note: Not necessarily always up, just started that way.
+     */
+    val isIntentionallyMovingUp: Boolean
+        get() {
+            return s.state == PlayerMode.INTENTIONALLY_MOVING_UP
+        }
+
+    val timeSinceStartedIntentionallyMovingUp: Double
+        get() {
+            if (!isIntentionallyMovingUp) {
+                return 0.0
+            }
+
+            return s.timeSinceWeEnteredThisState
+        }
+
+    val isIdle: Boolean
+        get() {
+            return s.state == PlayerMode.IDLE
+        }
+
+    val timeSinceStartedIdle: Double
+        get() {
+            if (!isIdle) {
+                return 0.0
+            }
+
+            return s.timeSinceWeEnteredThisState
+        }
 }

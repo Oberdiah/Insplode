@@ -12,13 +12,13 @@ import com.oberdiah.d
 import com.oberdiah.i
 import com.oberdiah.max
 import com.oberdiah.min
-import com.oberdiah.player.MINIMUM_SLAM_VELOCITY
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.player.playerInfoBoard
 import com.oberdiah.player.playerRenderer
 import com.oberdiah.plus
 import com.oberdiah.registerBombSlamWithScoreSystem
+import com.oberdiah.registerLandedOnNotBombWithScoreSystem
 import com.oberdiah.spawnSmoke
 import com.oberdiah.times
 import com.oberdiah.utils.addScreenShake
@@ -31,48 +31,43 @@ import kotlin.random.Random
  * Only actions can modify player state.
  *
  * This is literally only an inheritance line so I could split these into multiple files.
+ *
+ * Imagine these function names all start with 'player has ...'
  */
 class PlayerStateImpl : PlayerStateAccessors() {
-    fun reset() {
-        s.reset()
-    }
-
-    fun tick() {
-        s.tick()
-    }
-
-    fun startSlam() {
+    fun justStartedASlam() {
         if (s.state != PlayerMode.INTENTIONALLY_MOVING_UP) {
             println("Player should be in the INTENTIONALLY_MOVING_UP state to start a slam, was in ${s.state}")
         }
         s.setState(PlayerMode.SLAMMING)
     }
 
-    fun playerHasSlammedIntoABomb(bomb: Bomb) {
+    fun justSlammedIntoABomb(bomb: Bomb) {
         if (s.state != PlayerMode.SLAMMING) {
             println("Player should be in the SLAMMING state to slam into a bomb, was in ${s.state}")
         }
+
         s.setState(PlayerMode.INTENTIONALLY_MOVING_UP)
 
-        if (abs(playerInfoBoard.lastTickVelocity.y) > MINIMUM_SLAM_VELOCITY) {
-            boom(bomb.body.p, bomb.power, affectsThePlayer = false)
-            bomb.destroy()
-            val currentVel = player.body.velocity.y
-            val desiredVel =
-                clamp(abs(player.body.velocity.y).pow(0.75) + bomb.power * 2.0, 5.0, 15.0)
-            val impulse = player.body.mass * (desiredVel - currentVel)
-            player.body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
-            registerBombSlamWithScoreSystem(bomb)
-        }
+        boom(bomb.body.p, bomb.power, affectsThePlayer = false)
+        bomb.destroy()
+        val currentVel = player.body.velocity.y
+        val desiredVel =
+            clamp(abs(player.body.velocity.y).pow(0.75) + bomb.power * 2.0, 5.0, 15.0)
+        val impulse = player.body.mass * (desiredVel - currentVel)
+        player.body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
+        registerBombSlamWithScoreSystem(bomb)
     }
 
-    fun playerHasSlammedIntoTheGround() {
+    fun justSlammedIntoTheGround() {
         if (s.state != PlayerMode.SLAMMING) {
             println("Player should be in the SLAMMING state to slam into the ground, was in ${s.state}")
         }
         s.setState(PlayerMode.IDLE)
 
-        val vel = playerInfoBoard.lastTickVelocity
+        registerLandedOnNotBombWithScoreSystem()
+
+        val vel = playerInfoBoard.velocity
         playerRenderer.spawnParticlesAtMyFeet(
             ferocity = vel.len.d * 0.2,
             number = max((vel.len.d * 0.5).i, 2)
@@ -85,7 +80,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
     }
 
-    fun killThePlayer() {
+    fun justDied() {
         s.setState(PlayerMode.DEAD)
 
         player.body.linearDamping = Float.MAX_VALUE
@@ -100,7 +95,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
     }
 
-    fun performJump() {
+    fun justPerformedAJump() {
         if (s.state != PlayerMode.IDLE) {
             println("Player should be in the IDLE state to jump, was in ${s.state}")
         }
@@ -112,5 +107,18 @@ class PlayerStateImpl : PlayerStateAccessors() {
         player.body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
 
         playerRenderer.spawnParticlesAtMyFeet(number = 2)
+    }
+
+    /**
+     * We can casually land in two different ways - either we don't slam at all, or we tried to
+     * slam but didn't build up enough speed.
+     */
+    fun justCasuallyLanded() {
+        if (!(s.state == PlayerMode.INTENTIONALLY_MOVING_UP || s.state == PlayerMode.SLAMMING)) {
+            println("Player should be in either int_mov_up or slamming states to land on the ground, was in ${s.state}")
+        }
+        s.setState(PlayerMode.IDLE)
+
+        registerLandedOnNotBombWithScoreSystem()
     }
 }

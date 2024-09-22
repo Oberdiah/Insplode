@@ -44,4 +44,6 @@ open class PlayerStateClasses {
             timeSinceWeEnteredThisState = 0.0
         }
     }
+
+    protected var s = PlayerStateHandler()
 }

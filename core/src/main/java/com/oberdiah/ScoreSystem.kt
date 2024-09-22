@@ -56,7 +56,7 @@ fun registerBombPopWithScoreSystem(bomb: Bomb) {
     spawnPointOrbs(bomb.body.p, 1)
 }
 
-fun registerLandedOnGroundWithScoreSystem() {
+fun registerLandedOnNotBombWithScoreSystem() {
     numConsecutiveBounces = 0
 }
 
@@ -99,7 +99,7 @@ fun tickScoreSystem() {
 const val HEIGHT_ABOVE_HEAD = 0.5
 
 fun renderScoreSystem(r: Renderer) {
-    if (playerState.isDead()) return
+    if (playerState.isDead) return
 
     if (numConsecutiveBounces > 0) {
         val textOffset = Point(0, PLAYER_SIZE.h)

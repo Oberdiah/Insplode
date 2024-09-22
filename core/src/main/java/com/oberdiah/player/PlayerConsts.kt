@@ -12,6 +12,7 @@ import com.oberdiah.times
 val playerRenderer = PlayerRenderer()
 val playerState = PlayerStateImpl()
 val playerInfoBoard = PlayerInformationBoard()
+val playerInputs = PlayerInputs()
 
 val playerFeetPosition
     get() = player.body.p - Point(0.0, PLAYER_SIZE.w / 2 * GLOBAL_SCALE)

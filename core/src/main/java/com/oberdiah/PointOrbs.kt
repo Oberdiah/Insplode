@@ -68,7 +68,7 @@ class PointOrb(
 
     override fun collided(obj: PhysicsObject) {
         super.collided(obj)
-        if (obj == player && timeAlive > 0.5 && playerState.isAlive()) {
+        if (obj == player && timeAlive > 0.5 && playerState.isAlive) {
             destroy()
 
             val strength = value.scoreGiven.d.pow(0.5)

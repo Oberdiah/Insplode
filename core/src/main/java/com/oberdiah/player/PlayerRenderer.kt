@@ -29,7 +29,7 @@ class PlayerRenderer {
         if (!PAUSED) {
             TOUCHES_DOWN.firstOrNull()?.let { touch ->
                 // If the player is within the uncertainty window, make the line green
-                val lineX = player.getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
+                val lineX = playerInputs.desiredXPos
 
                 if (lineX in (pos.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(pos.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
                     r.color = Color.WHITE.withAlpha(0.5)
@@ -47,9 +47,9 @@ class PlayerRenderer {
             }
         }
 
-        if (player.canJump()) {
+        if (playerInputs.canJump) {
             r.color = colorScheme.player
-        } else if (playerState.isSlamming()) {
+        } else if (playerState.isSlamming) {
             r.color = colorScheme.playerSlamming
         } else {
             r.color = colorScheme.playerNoJump
@@ -57,7 +57,7 @@ class PlayerRenderer {
 
         r.circle(pos, PLAYER_SIZE.w / 2)
 
-        val desiredHeadOffset = -player.getJumpFraction() * 0.2
+        val desiredHeadOffset = 0.0 // Could do something here in future
         renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 30.0)
 
         r.rect(

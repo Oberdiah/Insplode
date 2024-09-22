@@ -1,35 +1,94 @@
 package com.oberdiah.player
 
+import com.oberdiah.Bomb
 import com.oberdiah.Point
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
+import com.oberdiah.Velocity
 import com.oberdiah.getTile
+import com.oberdiah.whatAmITouching
 
 /**
  * Has lots of useful information about the player.
  * Ideally doesn't keep track of any state, and if it does it should be done silently
  */
 class PlayerInformationBoard {
-    /// We need these because sometimes on collide the velocity is already really small for some reason
-    var tickVelocity = Point(0.0, 0.0)
-        private set
+    /** Velocities further from 0 are older */
+    private val previousVelocities = mutableListOf<Velocity>()
 
-    var lastTickVelocity = Point(0.0, 0.0)
-        private set
+    val velocity
+        get() = previousVelocities.getOrNull(2) ?: Velocity()
 
     // If this is non-null, then it is a tile that exists.
     var tileBelowMe: Tile? = null
         private set
 
+    /**
+     * Our feet are vaguely near something we can stand on.
+     * Good for determining if we should be able to jump.
+     */
+    var isStandingOnStandableGenerous: Boolean = false
+        private set
+
+    /**
+     * Our feet are visually touching something we can stand on.
+     */
+    var isStandingOnStandableExact: Boolean = false
+        private set
+
+    /**
+     * Our feet are visually touching the ground. Explicitly not a bomb.
+     */
+    var isStandingOnNotBombExact: Boolean = false
+        private set
+
+    val bombsStandingOnGenerous = mutableListOf<Bomb>()
+
     fun reset() {
-        tickVelocity = Point(0.0, 0.0)
-        lastTickVelocity = Point(0.0, 0.0)
+        tileBelowMe = null
+
+        isStandingOnStandableGenerous = false
+        isStandingOnStandableExact = false
+        isStandingOnNotBombExact = false
+        bombsStandingOnGenerous.clear()
     }
 
     fun tick() {
-        lastTickVelocity = tickVelocity.cpy
-        tickVelocity = player.body.velocity.cpy
+        previousVelocities.add(0, player.body.velocity.cpy)
+        if (previousVelocities.size > 10) {
+            previousVelocities.removeLast()
+        }
+
         tileBelowMe = getTileBelowMe()
+
+        isStandingOnStandableGenerous = false
+        bombsStandingOnGenerous.clear()
+        isStandingOnStandableExact = false
+        isStandingOnNotBombExact = false
+
+        whatAmITouching(listOf(player.wideFeetBox)).forEach {
+            val isTile = it is Tile && it.doesExist()
+            val isBomb = it is Bomb
+
+            if (isTile || isBomb) {
+                isStandingOnStandableGenerous = true
+            }
+            if (it is Bomb) {
+                bombsStandingOnGenerous += it
+            }
+        }
+
+        whatAmITouching(listOf(player.narrowFeetBox)).forEach {
+            val isTile = it is Tile && it.doesExist()
+            val isBomb = it is Bomb
+
+            if (isTile || isBomb) {
+                isStandingOnStandableExact = true
+            }
+            if (it !is Bomb) {
+                isStandingOnNotBombExact = true
+            }
+        }
     }
 }
 
