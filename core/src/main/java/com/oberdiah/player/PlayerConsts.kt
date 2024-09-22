@@ -6,10 +6,11 @@ import com.oberdiah.Point
 import com.oberdiah.Size
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.div
+import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.times
 
 val playerRenderer = PlayerRenderer()
-val playerState = PlayerState()
+val playerState = PlayerStateImpl()
 val playerInfoBoard = PlayerInformationBoard()
 
 val playerFeetPosition

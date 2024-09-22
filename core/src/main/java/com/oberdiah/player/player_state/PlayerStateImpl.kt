@@ -1,7 +1,6 @@
-package com.oberdiah.player
+package com.oberdiah.player.player_state
 
 import com.oberdiah.Bomb
-import com.oberdiah.DELTA
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.Point
 import com.oberdiah.Velocity
@@ -12,6 +11,12 @@ import com.oberdiah.compareTo
 import com.oberdiah.d
 import com.oberdiah.i
 import com.oberdiah.max
+import com.oberdiah.min
+import com.oberdiah.player.MINIMUM_SLAM_VELOCITY
+import com.oberdiah.player.PLAYER_SIZE
+import com.oberdiah.player.player
+import com.oberdiah.player.playerInfoBoard
+import com.oberdiah.player.playerRenderer
 import com.oberdiah.plus
 import com.oberdiah.registerBombSlamWithScoreSystem
 import com.oberdiah.spawnSmoke
@@ -20,87 +25,20 @@ import com.oberdiah.utils.addScreenShake
 import kotlin.math.pow
 import kotlin.random.Random
 
-private enum class PlayerMode {
-    /**
-     * The player may or may not be on the ground.
-     * If they're in the air they're definitely not in the air due to a jump.
-     */
-    IDLE,
-
-    /** This could be either due to a jump or a slam bouncing. */
-    INTENTIONALLY_MOVING_UP,
-
-    /** The player is moving down at speed, slamming. */
-    SLAMMING,
-
-    /** The player is dead */
-    DEAD
-}
-
-private class PlayerStateHandler {
-    var state: PlayerMode = PlayerMode.SLAMMING
-        private set
-
-    var timeSinceWeEnteredThisState = 0.0
-        private set
-
-    fun tick() {
-        timeSinceWeEnteredThisState += DELTA
-    }
-
-    fun reset() {
-        timeSinceWeEnteredThisState = 0.0
-        setState(PlayerMode.SLAMMING)
-    }
-
-    fun setState(newState: PlayerMode) {
-        state = newState
-        timeSinceWeEnteredThisState = 0.0
-    }
-}
-
 /**
  * Actually performs actions on the player and keeps track of how long it has been since each action was performed.
  *
  * Only actions can modify player state.
+ *
+ * This is literally only an inheritance line so I could split these into multiple files.
  */
-class PlayerState {
-    private var s = PlayerStateHandler()
-
+class PlayerStateImpl : PlayerStateAccessors() {
     fun reset() {
         s.reset()
     }
 
     fun tick() {
         s.tick()
-    }
-
-    fun isSlamming(): Boolean {
-        return s.state == PlayerMode.SLAMMING
-    }
-
-    fun timeSinceStartedSlamming(): Double {
-        if (!isSlamming()) {
-            return 0.0
-        }
-
-        return s.timeSinceWeEnteredThisState
-    }
-
-    fun isDead(): Boolean {
-        return s.state == PlayerMode.DEAD
-    }
-
-    fun isAlive(): Boolean {
-        return !isDead()
-    }
-
-    fun timeSinceDied(): Double {
-        if (!isDead()) {
-            return 0.0
-        }
-
-        return s.timeSinceWeEnteredThisState
     }
 
     fun startSlam() {
@@ -148,6 +86,8 @@ class PlayerState {
     }
 
     fun killThePlayer() {
+        s.setState(PlayerMode.DEAD)
+
         player.body.linearDamping = Float.MAX_VALUE
         // Spawn a bunch of smoke in the shape of the player
         for (i in 0 until 100) {
@@ -158,5 +98,19 @@ class PlayerState {
             val vel = Velocity(Random.nextDouble(-0.5, 0.5), Random.nextDouble(-0.5, 0.5))
             spawnSmoke(pos, vel)
         }
+    }
+
+    fun performJump() {
+        if (s.state != PlayerMode.IDLE) {
+            println("Player should be in the IDLE state to jump, was in ${s.state}")
+        }
+        s.setState(PlayerMode.INTENTIONALLY_MOVING_UP)
+
+        val desiredUpVel = 9.0
+        val velChange = min(desiredUpVel - player.body.velocity.y, desiredUpVel)
+        val impulse = player.body.mass * velChange
+        player.body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
+
+        playerRenderer.spawnParticlesAtMyFeet(number = 2)
     }
 }

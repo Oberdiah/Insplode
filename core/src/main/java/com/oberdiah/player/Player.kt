@@ -68,9 +68,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             topCircleFixture = addFixture(it)
         }
 
-//        rectShape(PLAYER_SIZE / Point(1, 2), Point(0, PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
-//            addFixture(it)
-//        }
+        rectShape(PLAYER_SIZE / Point(1.6, 2), Point(0, PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
+            addFixture(it)
+        }
 
         rectShape(PLAYER_SIZE / Point(1.25, 4), Point(0f, -PLAYER_SIZE.w / 2)) {
             jumpBox = addFixture(it, true)
@@ -245,7 +245,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         val vel = body.velocity
 
         if (isJumpJustPressed() && canJump()) {
-            doJump()
+            playerState.performJump()
         } else if (isSlamJustPressed() && !canJump()) {
             playerState.startSlam()
         }
@@ -310,21 +310,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         body.applyImpulse(Point(impulse.f, 0))
     }
 
-    private fun doJump() {
-        // Prevent double jumping
-        airTime = COYOTE_TIME
-        timeSinceLastJumpOrSlam = 0.0
-        val desiredUpVel = 15.0 * getJumpPower()
-        val velChange = min(desiredUpVel - body.velocity.y, desiredUpVel)
-        val impulse = body.mass * velChange
-        body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
-        isBuildingUpJump = false
-
-        playerRenderer.spawnParticlesAtMyFeet(number = 2)
-    }
-
     fun canJump(): Boolean {
-        return (airTime ?: 0.0) < COYOTE_TIME
+        return (airTime ?: 0.0) < COYOTE_TIME && playerState.isIdle()
     }
 
     private fun isJumpJustPressed(): Boolean {
