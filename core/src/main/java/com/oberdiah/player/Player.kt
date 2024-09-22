@@ -66,18 +66,6 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
-private const val COYOTE_TIME = 0.15
-private const val PLAYER_GRAVITY_MODIFIER = 0.5
-private const val JUMP_BUILD_UP_TIME = 1.0
-
-/** The x-zone in which the player will no longer be moved closer to where they want to be */
-private const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS * 0.5
-
-/** Below this, slams don't happen */
-private const val MINIMUM_SLAM_VELOCITY = 5.0
-
-/** This is in units */
-private const val PLAYER_FINGER_DRAG_DISTANCE = 0.2
 
 /**
  * A duration in which the player cannot regain jump, to prevent them from regaining jump just after
@@ -87,6 +75,7 @@ private const val JUMP_PREVENTION_WINDOW = 0.3
 val player = Player(Point(5, PLAYER_SPAWN_Y))
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
+    private var renderer: PlayerRenderer = PlayerRenderer()
 
     /** What we use to determine if we're on the ground or not. Narrower than the player */
     lateinit var jumpBox: Fixture
@@ -101,7 +90,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     // If this is non-null, then it is a tile that exists.
     private var tileBelowMe: Tile? = null
-    private var isSlamming = true
+    var isSlamming = true
     private var timeSinceLastJumpOrSlam = 0.0
 
     private val inAir: Boolean
@@ -261,60 +250,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun render(r: Renderer) {
-        if (isDead) {
-            return
-        }
-
-        if (!PAUSED) {
-            TOUCHES_DOWN.firstOrNull()?.let { touch ->
-                // If the player is within the uncertainty window, make the line green
-                val lineX = getDesiredXPos(touch.x / UNIT_SIZE_IN_PIXELS)
-
-                if (lineX in (body.p.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(body.p.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
-                    r.color = Color.WHITE.withAlpha(0.5)
-                } else {
-                    r.color = Color.WHITE.withAlpha(0.25)
-                }
-                // For visual interest, draw two lines one thinner than the other
-                r.line(
-                    lineX,
-                    CAMERA_POS_Y,
-                    lineX,
-                    CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS,
-                    0.3,
-                )
-            }
-        }
-
-        if (canJump()) {
-            r.color = colorScheme.player
-        } else if (isSlamming) {
-            r.color = colorScheme.playerSlamming
-        } else {
-            r.color = colorScheme.playerNoJump
-        }
-
-        r.circle(body.p, PLAYER_SIZE.w / 2)
-
-        val desiredHeadOffset = -getJumpFraction() * 0.2
-        renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 30.0)
-
-        r.rect(
-            body.p.x - PLAYER_SIZE.w / 2,
-            body.p.y,
-            PLAYER_SIZE.w,
-            PLAYER_SIZE.h / 2 + renderedHeadOffset
-        )
-
-        // Move the player's head up and down based on the actionPerformAmount
-        r.circle(
-            body.p.x,
-            body.p.y + 0.35 * GLOBAL_SCALE + renderedHeadOffset,
-            PLAYER_SIZE.w / 2
-        )
+        renderer.render(r)
     }
 
-    private fun getJumpFraction(): Double {
+    fun getJumpFraction(): Double {
         if (!isBuildingUpJump) {
             return 0.0
         }
@@ -333,14 +272,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     private var isBuildingUpJump = false
-    private var renderedHeadOffset = 0.0
 
     /** The point where the player's finger last went down. */
     private var lastFingerPoint = Point()
     private var lastFingerTime = 0.0
 
     private var lastBodyXValue = 0.0
-    private fun getDesiredXPos(fingerX: Double): Double {
+    fun getDesiredXPos(fingerX: Double): Double {
         return lastBodyXValue + (fingerX - lastFingerPoint.x) * 1.8
     }
 
@@ -508,7 +446,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         spawnParticlesAtMyFeet(number = 2)
     }
 
-    private fun canJump(): Boolean {
+    fun canJump(): Boolean {
         return (airTime ?: 0.0) < COYOTE_TIME
     }
 
