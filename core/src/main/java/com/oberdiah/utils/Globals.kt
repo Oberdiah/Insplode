@@ -125,7 +125,6 @@ var PAUSED = !IS_DEBUG_ENABLED
  */
 val CAMERA_POS_Y: Double
     get() = camera.position.y.d - SCREEN_HEIGHT_IN_UNITS / 2
-var CAMERA_LOCKED = true
 
 var APP_FRAME = 0
 var APP_TIME = 0.0

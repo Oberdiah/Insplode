@@ -3,6 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
+import com.oberdiah.player.playerState
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.wToSSpace
 import kotlin.math.pow
@@ -98,7 +99,7 @@ fun tickScoreSystem() {
 const val HEIGHT_ABOVE_HEAD = 0.5
 
 fun renderScoreSystem(r: Renderer) {
-    if (player.isDead) return
+    if (playerState.isDead()) return
 
     if (numConsecutiveBounces > 0) {
         val textOffset = Point(0, PLAYER_SIZE.h)

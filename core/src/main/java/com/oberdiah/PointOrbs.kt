@@ -3,6 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.oberdiah.player.player
+import com.oberdiah.player.playerState
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
 import kotlin.random.Random
@@ -67,7 +68,7 @@ class PointOrb(
 
     override fun collided(obj: PhysicsObject) {
         super.collided(obj)
-        if (obj == player && timeAlive > 0.5 && !player.isDead) {
+        if (obj == player && timeAlive > 0.5 && playerState.isAlive()) {
             destroy()
 
             val strength = value.scoreGiven.d.pow(0.5)

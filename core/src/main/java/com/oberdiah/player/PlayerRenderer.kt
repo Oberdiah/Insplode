@@ -24,10 +24,6 @@ class PlayerRenderer {
     private var renderedHeadOffset = 0.0
 
     fun render(r: Renderer) {
-        if (player.isDead) {
-            return
-        }
-
         val pos = player.body.p
 
         if (!PAUSED) {

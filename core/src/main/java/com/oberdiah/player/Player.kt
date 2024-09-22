@@ -9,18 +9,14 @@ import com.oberdiah.DELTA
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.PAUSED
 import com.oberdiah.PLAYER_PHYSICS_MASK
-import com.oberdiah.PLAYER_SPAWN_Y
 import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
 import com.oberdiah.Screen
-import com.oberdiah.Size
-import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
 import com.oberdiah.UNITS_WIDE
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
-import com.oberdiah.Velocity
 import com.oberdiah.abs
 import com.oberdiah.circleShape
 import com.oberdiah.compareTo
@@ -33,9 +29,7 @@ import com.oberdiah.rectShape
 import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.registerLandedOnGroundWithScoreSystem
 import com.oberdiah.saturate
-import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulVibrationSetting
-import com.oberdiah.times
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
@@ -44,7 +38,6 @@ import com.oberdiah.utils.isKeyPressed
 import com.oberdiah.ui.switchScreen
 import com.oberdiah.unaryMinus
 import com.oberdiah.whatAmITouching
-import kotlin.random.Random
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     /** What we use to determine if we're on the ground or not. Narrower than the player */
@@ -65,15 +58,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     private val onGround: Boolean
         get() = airTime == null
-
-    val isDead: Boolean
-        get() = deadEndingCountdown != null
-
-    private val isAlive: Boolean
-        get() = !isDead
-
-    /** If this countdown exists, we're dead. When this countdown goes below 0, we end the game */
-    private var deadEndingCountdown: Double? = null
 
     init {
         circleShape(PLAYER_SIZE.w / 2) {
@@ -100,20 +84,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun hitByExplosion() {
-        if (isDead) {
-            return
-        }
-
-        deadEndingCountdown = 2.5
-        body.linearDamping = Float.MAX_VALUE
-        // Spawn a bunch of smoke in the shape of the player
-        for (i in 0 until 100) {
-            val pos = body.p + Point(
-                Random.nextDouble(-PLAYER_SIZE.x / 2, PLAYER_SIZE.x / 2),
-                Random.nextDouble(-PLAYER_SIZE.y / 2, PLAYER_SIZE.y / 2)
-            )
-            val vel = Velocity(Random.nextDouble(-0.5, 0.5), Random.nextDouble(-0.5, 0.5))
-            spawnSmoke(pos, vel)
+        if (!playerState.isDead()) {
+            playerState.killThePlayer()
         }
     }
 
@@ -129,7 +101,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
         if (yourFixture == jumpBox && obj is Tile) {
             if (playerState.isSlamming()) {
-                finishSlamHitGround()
+                playerState.playerHasSlammedIntoTheGround()
             }
         }
 
@@ -153,10 +125,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         playerState.playerHasSlammedIntoABomb(hitBomb)
     }
 
-    private fun finishSlamHitGround() {
-        playerState.playerHasSlammedIntoTheGround()
-    }
-
     override fun reset() {
         playerInfoBoard.reset()
         playerState.reset()
@@ -166,7 +134,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         body.velocity = Point(0.0, 0.0)
         body.linearDamping = 0.0
         airTime = 0.0
-        deadEndingCountdown = null
     }
 
     private fun addFixture(shape: Shape, isSensor: Boolean = false): Fixture {
@@ -181,7 +148,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun render(r: Renderer) {
-        playerRenderer.render(r)
+        if (playerState.isAlive()) {
+            playerRenderer.render(r)
+        }
     }
 
     fun getJumpFraction(): Double {
@@ -215,6 +184,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun tick() {
         playerInfoBoard.tick()
+        playerState.tick()
 
         timeSinceLastJumpOrSlam += DELTA
 
@@ -242,16 +212,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         if (playerState.isSlamming() && onGround) {
-            finishSlamHitGround()
+            playerState.playerHasSlammedIntoTheGround()
         }
 
-//        if (isKeyPressed(Keys.R)) {
-//            boom(body.p, 1.5, false)
-//        }
-
-        deadEndingCountdown = deadEndingCountdown?.minus(DELTA)
-
-        if ((deadEndingCountdown ?: 0.0) < 0.0) {
+        if (playerState.timeSinceDied() > 2.5) {
             PAUSED = true
             registerGameEndWithScoreSystem()
             switchScreen(Screen.EndGame)
@@ -271,7 +235,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             body.applyImpulse(Point(0f, -body.mass) * GLOBAL_SCALE)
         }
 
-        if (isAlive) {
+        if (playerState.isAlive()) {
             playerControl()
         }
     }

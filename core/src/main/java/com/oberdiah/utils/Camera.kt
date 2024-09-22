@@ -8,6 +8,7 @@ import kotlin.math.pow
 
 private var cameraY = 0.0
 var camera = OrthographicCamera()
+private var CAMERA_LOCKED = true
 
 fun resetCamera() {
     CAMERA_LOCKED = true
@@ -27,6 +28,10 @@ val TRANSITION_TO_LOWER_CAMERA_HEIGHT
 const val LOWER_CAMERA_HEIGHT_TRANSITION_RANGE = 8
 
 fun updateCamera() {
+    if (player.body.p.y < 0.0) {
+        CAMERA_LOCKED = false
+    }
+
     SCREEN_SHAKE -= 12 * DELTA
     SCREEN_SHAKE = max(SCREEN_SHAKE, 0)
 
