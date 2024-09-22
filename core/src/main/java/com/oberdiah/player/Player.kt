@@ -93,10 +93,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         playerInfoBoard.tick()
         playerState.tick()
 
-        if (playerState.isSlamming) {
-            // Head quickly toward the ground.
-            body.applyImpulse(Point(0f, -body.mass) * GLOBAL_SCALE)
 
+        if (playerState.isSlamming) {
             if (playerInfoBoard.isStandingOnNotBombExact) {
                 playerState.justSlammedIntoTheGround()
             } else if (playerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
@@ -116,6 +114,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         if (playerState.isIntentionallyMovingUp && body.velocity.y < 1.0 && body.velocity.y > 0.0) {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER * 0.5
+        } else if (playerState.isSlamming) {
+            body.gravityScale = PLAYER_GRAVITY_MODIFIER * 8.0
         } else {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER
         }

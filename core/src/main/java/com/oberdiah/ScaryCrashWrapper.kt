@@ -75,12 +75,28 @@ fun tickPhysicsWrapper() {
     allPhysBodies.forEach { it.updateInternals() }
 }
 
-class PhysBody(internal val body: Body, val shouldUpdate: Boolean = true) {
+class PhysBody(internal val body: Body, private val shouldUpdate: Boolean = true) {
     val p = Point()
+        get() {
+            require(exists)
+            val pos = body.position
+            field.x = pos.x.d
+            field.y = pos.y.d
+            return field
+        }
+
     var velocity: Point = Point()
+        get() {
+            require(exists)
+            val vel = body.linearVelocity
+            field.x = vel.x.d
+            field.y = vel.y.d
+            return field
+        }
         set(value) {
+            require(exists)
             body.linearVelocity = value.v2
-            field = value
+            field = value.cpy
         }
 
 
@@ -97,9 +113,9 @@ class PhysBody(internal val body: Body, val shouldUpdate: Boolean = true) {
             body.userData = value
         }
 
-    private var _angle = 0.0
     val angle
-        get() = _angle
+        get() = body.angle.d
+
 
     var isFixedRotation: Boolean
         get() = body.isFixedRotation
@@ -174,13 +190,6 @@ class PhysBody(internal val body: Body, val shouldUpdate: Boolean = true) {
             return
         }
         require(exists)
-        val pos = body.position
-        p.x = pos.x.d
-        p.y = pos.y.d
-        val vel = body.linearVelocity
-        velocity.x = vel.x.d
-        velocity.y = vel.y.d
-        _angle = body.angle.d
     }
 
     fun destroy() {
