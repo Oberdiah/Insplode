@@ -2,9 +2,8 @@ package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.FixtureDef
-import com.oberdiah.utils.addScreenShake
+import com.oberdiah.player.player
 import com.oberdiah.utils.colorScheme
-import kotlin.experimental.inv
 import kotlin.math.pow
 import kotlin.random.Random
 

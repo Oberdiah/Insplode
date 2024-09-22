@@ -3,6 +3,7 @@ package com.oberdiah.utils
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector3
 import com.oberdiah.*
+import com.oberdiah.player.player
 import kotlin.math.pow
 
 private var cameraY = 0.0

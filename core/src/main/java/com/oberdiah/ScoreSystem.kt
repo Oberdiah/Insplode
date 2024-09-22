@@ -1,6 +1,8 @@
 package com.oberdiah
 
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.player.PLAYER_SIZE
+import com.oberdiah.player.player
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.wToSSpace
 import kotlin.math.pow

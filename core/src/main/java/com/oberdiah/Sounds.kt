@@ -2,6 +2,7 @@ package com.oberdiah
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.oberdiah.player.Player
 import games.rednblack.miniaudio.MASound
 import games.rednblack.miniaudio.MiniAudio
 import games.rednblack.miniaudio.effect.MADelayNode
