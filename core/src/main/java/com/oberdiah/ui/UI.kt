@@ -32,6 +32,7 @@ import com.oberdiah.format
 import com.oberdiah.gameMessage
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
+import com.oberdiah.playGChordNote
 import com.oberdiah.playerScore
 import com.oberdiah.renderScoreSystem
 import com.oberdiah.restartGame
@@ -355,6 +356,7 @@ fun settingButton(
         }
         TOUCHES_WENT_UP.forEach {
             if (it.y > buttonBottom && it.y < buttonTop) {
+                playGChordNote()
                 callback()
             }
         }

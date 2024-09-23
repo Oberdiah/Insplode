@@ -42,7 +42,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             narrowFeetBox = addFixture(it, true)
         }
 
-        rectShape(PLAYER_SIZE / Point(0.6, 1.5), Point(0f, -PLAYER_SIZE.w / 2)) {
+        rectShape(PLAYER_SIZE / Point(0.5, 1.2), Point(0f, -PLAYER_SIZE.w / 2)) {
             wideFeetBox = addFixture(it, true)
         }
 

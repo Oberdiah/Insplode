@@ -9,6 +9,17 @@ Sounds/Ding 2.wav
 Sounds/Ding 3.wav
 Sounds/Ding 4.wav
 Sounds/Ding 5.wav
+Sounds/Power down.wav
+Sounds/Power up 1.wav
+Sounds/Power up 10.wav
+Sounds/Power up 2.wav
+Sounds/Power up 3.wav
+Sounds/Power up 4.wav
+Sounds/Power up 5.wav
+Sounds/Power up 6.wav
+Sounds/Power up 7.wav
+Sounds/Power up 8.wav
+Sounds/Power up 9.wav
 Sounds/Tap 1.wav
 Sounds/Tap 2.wav
 Sounds/Tap 3.wav
@@ -68,3 +79,8 @@ Sounds/trim_trim_bat hit 6.wav
 Sounds/trim_trim_bat hit 7.wav
 Sounds/trim_trim_bat hit 8.wav
 Sounds/trim_trim_bat hit 9.wav
+Sounds/Twang 1.wav
+Sounds/Twang G 1.wav
+Sounds/Twang G 2.wav
+Sounds/Twang G 3.wav
+Sounds/Twang G 4.wav

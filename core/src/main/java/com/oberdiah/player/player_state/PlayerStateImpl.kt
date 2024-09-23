@@ -52,7 +52,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
         boom(bomb.body.p, bomb.power, affectsThePlayer = false)
         bomb.destroy()
         val desiredVel =
-            clamp(abs(playerInfoBoard.velocity.y).pow(0.75) + bomb.power * 2.0, 5.0, 15.0)
+            clamp(abs(playerInfoBoard.velocity.y).pow(0.5) + bomb.power * 2.0 + 3.5, 5.0, 15.0)
 
         player.body.velocity = Point(player.body.velocity.x, desiredVel)
         registerBombSlamWithScoreSystem(bomb)

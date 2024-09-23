@@ -265,3 +265,27 @@ private fun playPickupSoundInternal(loopId: Int) {
         splitter = caveSplitter,
     )
 }
+
+fun playMultiplierSound(multiplier: Int) {
+    playSound(
+        "Power up ${clamp(multiplier, 1, 10).i}",
+        1.0,
+        0.5
+    )
+}
+
+fun playMultiplierLossSound() {
+    playSound(
+        "Power down",
+        1.0,
+        0.5
+    )
+}
+
+fun playGChordNote() {
+    playSound(
+        "Twang G ${Random.nextInt(1, 5)}",
+        Random.nextDouble(0.995, 1.005),
+        Random.nextDouble(0.45, 0.55)
+    )
+}

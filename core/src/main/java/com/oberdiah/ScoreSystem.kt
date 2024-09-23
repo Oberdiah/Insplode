@@ -28,7 +28,7 @@ private var scoreLeftToSound = 0
 private var lastTimeScoreSounded = 0.0
 
 fun multiplier(): Double {
-    return 1 + (numConsecutiveBounces.d * 0.1)
+    return clamp(1 + (numConsecutiveBounces.d * 0.1), 1.0, 2.0)
 }
 
 fun resetScoreSystem() {
@@ -45,6 +45,8 @@ fun registerBombSlamWithScoreSystem(bomb: Bomb) {
     val numToNormallySpawn = (bomb.power.d * 2.0).pow(2.0).i
     spawnPointOrbs(bomb.body.p, (numToNormallySpawn * multiplier()).i)
     numConsecutiveBounces++
+
+    playMultiplierSound(numConsecutiveBounces)
 }
 
 fun registerGameEndWithScoreSystem() {
@@ -57,6 +59,9 @@ fun registerBombPopWithScoreSystem(bomb: Bomb) {
 }
 
 fun registerCasuallyLandedWithScoreSystem() {
+    if (numConsecutiveBounces > 0) {
+        playMultiplierLossSound()
+    }
     numConsecutiveBounces = 0
 }
 
