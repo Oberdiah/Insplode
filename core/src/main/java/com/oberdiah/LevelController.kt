@@ -78,7 +78,6 @@ val phases = arrayOf(
         spawnBomb(BombType.SmallTimed, 0.25)
     },
     Phase(4.0, BombType.LargeTimed) {
-        stopAllBombs()
         spawnBomb(BombType.LargeTimed, 0.5)
         gameMessage = "Large Bomb"
     },
@@ -99,7 +98,6 @@ val phases = arrayOf(
         startRandomBombs(BombType.LargeTimed, 10.0)
     },
     Phase(4.0, BombType.MegaTimed) {
-        stopAllBombs()
         spawnBomb(BombType.MegaTimed, 0.75)
         gameMessage = "Mega Bomb"
     },
@@ -113,7 +111,6 @@ val phases = arrayOf(
         startRandomBombs(BombType.MegaTimed, 15.0)
     },
     Phase(4.0) {
-        stopAllBombs()
         spawnBomb(BombType.MegaTimed, 0.75)
         gameMessage = "Extreme Phase 1"
     },
@@ -127,7 +124,6 @@ val phases = arrayOf(
         startRandomBombs(BombType.MegaTimed, 10.0)
     },
     Phase(4.0) {
-        stopAllBombs()
         spawnBomb(BombType.MegaTimed, 0.75)
         gameMessage = "Extreme Phase 2"
     },
@@ -141,8 +137,7 @@ val phases = arrayOf(
         startRandomBombs(BombType.MegaTimed, 8.0)
     },
     Phase(4.0) {
-        stopAllBombs()
-        spawnBomb(BombType.MegaTimed, 0.75)
+        spawnBomb(BombType.MegaTimed, 0.25)
         gameMessage = "Final Phase"
     },
     Phase(15.0) {
@@ -216,8 +211,8 @@ data class BombData(var delay: Number) {
     }
 
     fun randomiseNextBombAt() {
-        val minTime = delay / 2.0
-        val maxTime = delay
+        val minTime = 0.0
+        val maxTime = delay * 2.0
         nextBombAt = RUN_TIME_ELAPSED + minTime + (maxTime - minTime) * Random.nextDouble()
     }
 }
