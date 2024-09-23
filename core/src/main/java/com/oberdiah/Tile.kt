@@ -64,6 +64,10 @@ value class TileId(val id: Int) {
         get() {
             return floor(id.d / NUM_TILES_ACROSS)
         }
+
+    override fun toString(): String {
+        return "($x, $y)"
+    }
 }
 
 /**
