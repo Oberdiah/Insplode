@@ -18,7 +18,7 @@ import com.oberdiah.player.playerInfoBoard
 import com.oberdiah.player.playerRenderer
 import com.oberdiah.plus
 import com.oberdiah.registerBombSlamWithScoreSystem
-import com.oberdiah.registerLandedOnNotBombWithScoreSystem
+import com.oberdiah.registerCasuallyLandedWithScoreSystem
 import com.oberdiah.spawnSmoke
 import com.oberdiah.times
 import com.oberdiah.utils.addScreenShake
@@ -64,7 +64,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
         s.setState(PlayerMode.IDLE)
 
-        registerLandedOnNotBombWithScoreSystem()
+        registerCasuallyLandedWithScoreSystem()
 
         val vel = playerInfoBoard.velocity
         playerRenderer.spawnParticlesAtMyFeet(
@@ -118,6 +118,6 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
         s.setState(PlayerMode.IDLE)
 
-        registerLandedOnNotBombWithScoreSystem()
+        registerCasuallyLandedWithScoreSystem()
     }
 }

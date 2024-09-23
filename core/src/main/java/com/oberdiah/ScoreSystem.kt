@@ -56,7 +56,7 @@ fun registerBombPopWithScoreSystem(bomb: Bomb) {
     spawnPointOrbs(bomb.body.p, 1)
 }
 
-fun registerLandedOnNotBombWithScoreSystem() {
+fun registerCasuallyLandedWithScoreSystem() {
     numConsecutiveBounces = 0
 }
 

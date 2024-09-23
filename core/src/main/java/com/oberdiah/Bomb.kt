@@ -31,6 +31,8 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
         get() = bombType.power
 
     protected var timeLeft = maxFuseLength
+    var standable = false
+        private set
 
     val size = Size(radius * 2, radius * 2)
 
@@ -44,11 +46,18 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
 
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
+        val hitObject = otherFixture.body.userData
+
         playBombBumpSound(
             yourFixture.body.linearVelocity.len().d,
             yourFixture.body.mass.d,
-            otherFixture.body.userData
+            hitObject
         )
+
+        // We become standable if we hit the ground or we hit a bomb that is also standable.
+        if (hitObject is Tile || (hitObject is Bomb && hitObject.standable)) {
+            standable = true
+        }
     }
 }
 

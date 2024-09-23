@@ -80,12 +80,15 @@ class PlayerInformationBoard {
 
         whatAmITouching(listOf(player.narrowFeetBox)).forEach {
             val isTile = it is Tile && it.doesExist()
-            val isBomb = it is Bomb
-
-            if (isTile || isBomb) {
+            if (isTile) {
                 isStandingOnStandableExact = true
             }
-            if (it !is Bomb) {
+
+            if (it is Bomb) {
+                if (it.standable) {
+                    isStandingOnStandableExact = true
+                }
+            } else {
                 isStandingOnNotBombExact = true
             }
         }
