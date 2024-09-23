@@ -3,10 +3,12 @@ package com.oberdiah.player
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
+import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.Point
 import com.oberdiah.UNITS_WIDE
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.abs
+import com.oberdiah.boom
 import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.saturate
@@ -53,6 +55,13 @@ class PlayerInputs {
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
             val fingerX = touch.x / UNIT_SIZE_IN_PIXELS
             desiredXPos = lastBodyXValue + (fingerX - lastFingerPoint.x) * 1.8
+        }
+
+        if (IS_DEBUG_ENABLED) {
+            if (isKeyPressed(Keys.R)) {
+                // Explode on the player
+                boom(player.body.p, 1.0, false)
+            }
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys
