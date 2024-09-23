@@ -14,7 +14,7 @@ fun tickPhysicsObjects() {
 
 fun resetPhysicsObjects() {
     allDynamicPhysicsObjects.forEach { it.reset() }
-    tickPhysicsObjects()
+    doPhysicsStep()
 }
 
 fun renderPhysicsObjects(r: Renderer) {
