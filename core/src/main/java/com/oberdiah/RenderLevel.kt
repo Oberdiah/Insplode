@@ -78,7 +78,7 @@ fun renderLevel() {
         }
     }
 
-    for (tileId in tileIdsChangedLastFrame) {
+    for (tileId in tileIdsChangedLastFrameMarchingCubes) {
         if (tileId.y in lowestTileOnScreen..highestTileOnScreen) {
             renderTile(getTile(tileId), tileId.x, tileId.y)
         }

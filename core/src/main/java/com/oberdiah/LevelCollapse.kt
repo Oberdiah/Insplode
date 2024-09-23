@@ -2,60 +2,42 @@ package com.oberdiah
 
 import kotlin.random.Random
 
-/**
- * We don't store tiles here as this array exists across frames and the tiles may not.
- *
- * This is a slightly confusing set - it not only contains all existing tiles known to be floating,
- * but also all non-existing tiles. We do it this way because we want to be able to avoid
- * triggering the collapse algorithm due to the floating tile collapse animation.
- *
- * We can't just filter out the non-existing tiles from the update list
- * because we need to know if they used to exist last frame.
- */
-private val allFloatingTileIds = mutableSetOf<TileId>()
+private val collapsingTileIds = mutableSetOf<TileId>()
 var CURRENT_HIGHEST_TILE_Y = 0.0
     private set
 
 fun tickCollapse() {
-    if ((tileIdsChangedLastFrame.filter { it.y != getLowestStoredTileYIdx() } - allFloatingTileIds).isNotEmpty()) {
-        val wavefront = mutableSetOf<Tile>()
-        val visited = mutableSetOf<Tile>()
+    // We don't want to collapse in the first frame, it's just a huge waste of everyone's time.
+    if (RUN_TIME_ELAPSED == 0.0) {
+        return
+    }
 
-        allFloatingTileIds.clear()
-        allFloatingTileIds.addAll(tilesStorage.map { it.getId() })
-
-        for (x in 0 until NUM_TILES_ACROSS) {
-            val tile = getTile(x, getLowestStoredTileYIdx())
-            if (tile is Tile && tile.doesExist()) {
-                wavefront.add(tile)
-            }
+    for (tileId in tileIdsChangedLastFrameAllNeighbors) {
+        val tile = getTile(tileId)
+        // Add one because sometimes the camera can move two tiles in a single frame.
+        if (tile !is Tile || tile.y <= getLowestStoredTileYIdx() + 1) {
+            continue
         }
 
-        CURRENT_HIGHEST_TILE_Y = -Double.MAX_VALUE
-        while (wavefront.size > 0) {
-            val tile = wavefront.elementAt(0)
-            allFloatingTileIds.remove(tile.getId())
-            wavefront.remove(tile)
-            visited.add(tile)
-
-            if (tile.coord.y > CURRENT_HIGHEST_TILE_Y) {
-                CURRENT_HIGHEST_TILE_Y = tile.coord.y
+        if (tile.doesExist()) {
+            if (!tile.data.bl.doesExist() && !tile.data.br.doesExist() && !tile.data.bm.doesExist()) {
+                collapsingTileIds.add(tile.getId())
             }
-
-            for (t in tile.allSurroundingTiles) {
-                if (t is Tile && !visited.contains(t) && t.doesExist()) {
-                    wavefront.add(t)
+        } else {
+            if (!tile.data.lm.doesExist() && !tile.data.rm.doesExist()) {
+                // Add the tile above us.
+                val tileAbove = tile.data.tm
+                if (tileAbove is Tile && tileAbove.doesExist()) {
+                    collapsingTileIds.add(tileAbove.getId())
                 }
             }
         }
     }
 
     val toRemove = mutableSetOf<Tile>()
-    val noLongerFloating = mutableSetOf<TileId>()
-    for (tileId in allFloatingTileIds) {
+    for (tileId in collapsingTileIds) {
         val tile = getTile(tileId)
         if (tile !is Tile) {
-            noLongerFloating.add(tileId)
             continue
         }
         if (!tile.doesExist()) {
@@ -70,11 +52,8 @@ fun tickCollapse() {
         }
     }
 
-    for (tileId in noLongerFloating) {
-        allFloatingTileIds.remove(tileId)
-    }
-
     for (tile in toRemove) {
+        collapsingTileIds.remove(tile.getId())
         tile.dematerialize()
         playRockCrumbleSound()
         spawnFragment(

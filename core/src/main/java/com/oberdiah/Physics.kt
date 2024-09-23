@@ -37,7 +37,7 @@ class ListenerClass : ContactListener {
 }
 
 fun updateTilePhysics() {
-    tileIdsChangedLastFrame.mapNotNull { getTile(it) as? Tile }
+    tileIdsChangedLastFrameMarchingCubes.mapNotNull { getTile(it) as? Tile }
         .forEach { it.recalculatePhysicsBody() }
 }
 

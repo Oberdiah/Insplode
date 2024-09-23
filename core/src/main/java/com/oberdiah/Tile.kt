@@ -18,6 +18,7 @@ class TileData(var tile: Tile) {
     val lm = getTile(x - 1, y)
 
     val allSurroundingTiles = listOf(bl, bm, br, rm, tr, tm, tl, lm)
+    val touchingNeighbors = listOf(bm, rm, tm, lm)
     val marchingCubeNeighbors = listOf(bl, bm, lm)
     val intCoordinateNeighbors = listOf(tr, tm, rm)
 }
@@ -72,25 +73,35 @@ value class TileId(val id: Int) {
 
 /**
  * This is the list of tiles that have changed in this frame, directly or indirectly
- * (a neighbour changed and we may have to recompute our shape).
+ * (Marching cubes changes are only bottom left, bottom middle, and left middle)
  */
-private var tileIdsChangedInThisFrame = mutableSetOf<TileId>()
+private var tileIdsChangedThisFrameMarchingCubes = mutableSetOf<TileId>()
+
+/**
+ * Same as above but for all direct neighbors
+ */
+private var tileIdsChangedThisFrameAllNeighbors = mutableSetOf<TileId>()
 
 /**
  * We keep this around so people can be sure they deal with a full frame's worth of changes,
  * no matter the order of things
  */
-var tileIdsChangedLastFrame = setOf<TileId>()
+var tileIdsChangedLastFrameMarchingCubes = setOf<TileId>()
+    private set
+var tileIdsChangedLastFrameAllNeighbors = setOf<TileId>()
     private set
 
 fun forceFullScreenRefresh() {
-    tileIdsChangedInThisFrame = tilesStorage.map(Tile::getId).toMutableSet()
+    tileIdsChangedThisFrameMarchingCubes = tilesStorage.map(Tile::getId).toMutableSet()
     updateTileChanges()
 }
 
 fun updateTileChanges() {
-    tileIdsChangedLastFrame = tileIdsChangedInThisFrame
-    tileIdsChangedInThisFrame = mutableSetOf()
+    tileIdsChangedLastFrameMarchingCubes = tileIdsChangedThisFrameMarchingCubes
+    tileIdsChangedThisFrameMarchingCubes = mutableSetOf()
+
+    tileIdsChangedLastFrameAllNeighbors = tileIdsChangedThisFrameAllNeighbors
+    tileIdsChangedThisFrameAllNeighbors = mutableSetOf()
 }
 
 /**
@@ -137,16 +148,23 @@ class Tile(private val id: TileId) : TileLike {
 
     /** Force a recalculate of this tile's physics body and render. */
     fun forceUpdate() {
-        tileIdsChangedInThisFrame.add(this.id)
+        tileIdsChangedThisFrameMarchingCubes.add(this.id)
+        tileIdsChangedThisFrameAllNeighbors.add(this.id)
     }
 
     private fun setExists(exists: Boolean) {
         if (this.doesExistPhysically != exists) {
-            tileIdsChangedInThisFrame.add(this.id)
+            tileIdsChangedThisFrameMarchingCubes.add(this.id)
+            tileIdsChangedThisFrameAllNeighbors.add(this.id)
 
             this.marchingCubeNeighbors.forEach {
                 if (it is Tile) {
-                    tileIdsChangedInThisFrame.add(it.id)
+                    tileIdsChangedThisFrameMarchingCubes.add(it.id)
+                }
+            }
+            this.data.touchingNeighbors.forEach {
+                if (it is Tile) {
+                    tileIdsChangedThisFrameAllNeighbors.add(it.id)
                 }
             }
         }
