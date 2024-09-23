@@ -83,8 +83,14 @@ const val UNITS_WIDE = 10
 /** The number of tiles across the world. */
 const val NUM_TILES_ACROSS = UNITS_WIDE * TILES_PER_UNIT + 1
 
+val WALL_HEIGHT
+    get() = SCREEN_HEIGHT_IN_UNITS * 4.0
+
 val SCREEN_HEIGHT_IN_UNITS: Double
     get() = HEIGHT / UNIT_SIZE_IN_PIXELS
+
+val SCREEN_WIDTH_IN_UNITS: Int
+    get() = UNITS_WIDE
 
 val SAFE_BOMB_SPAWN_HEIGHT
     // Add 5 to be super duper safe.

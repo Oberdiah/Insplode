@@ -22,8 +22,9 @@ fun restartGame() {
     resetScoreSystem()
 }
 
-lateinit var leftWall: PhysBody
-lateinit var rightWall: PhysBody
+private lateinit var leftWall: PhysBody
+private lateinit var rightWall: PhysBody
+private lateinit var ceiling: PhysBody
 
 class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
     init {
@@ -45,8 +46,9 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         loadFonts()
         loadSounds()
 
-        leftWall = createWall(Rect(Point(0, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 4)))
-        rightWall = createWall(Rect(Point(10, 0), Size(1, SCREEN_HEIGHT_IN_UNITS * 4)))
+        leftWall = createWall(Rect(Point(), Size(1, WALL_HEIGHT)))
+        rightWall = createWall(Rect(Point(), Size(1, WALL_HEIGHT)))
+        ceiling = createWall(Rect(Point(), Size(SCREEN_WIDTH_IN_UNITS, 1)))
 
         restartGame()
     }
@@ -72,8 +74,14 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Update tile changes") { updateTileChanges() }
 
             // 'Coz Box2d stupid, these are the centres of the positions.
-            leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS / 2), 0f)
-            rightWall.setTransform(Point(10.5, CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS / 2), 0f)
+            leftWall.setTransform(Point(-0.5, CAMERA_POS_Y + WALL_HEIGHT / 2), 0f)
+            rightWall.setTransform(Point(10.5, CAMERA_POS_Y + WALL_HEIGHT / 2), 0f)
+            ceiling.setTransform(
+                Point(
+                    SCREEN_WIDTH_IN_UNITS / 2.0,
+                    CAMERA_POS_Y + WALL_HEIGHT
+                ), 0f
+            )
 
             time("Tick level controller") { tickLevelController() }
             time("Tick Collapse") { tickCollapse() }
