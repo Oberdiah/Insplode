@@ -1,7 +1,6 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
-import com.oberdiah.utils.ScreenShakeSettings
 import com.oberdiah.utils.calculateInputGlobals
 import com.oberdiah.utils.camera
 
@@ -28,8 +27,6 @@ var DO_PHYSICS_DEBUG_RENDER = false
 enum class Screen(val title: String) {
     Paused("Paused"),
     Settings("Settings"),
-    EndGame("Game Over"),
-    MainMenu("Bomb Survival"),
     AdvancedSettings("Advanced\nSettings"),
     Controls("Controls"),
     Credits("Credits"),
@@ -83,7 +80,7 @@ const val UNITS_WIDE = 10
 const val NUM_TILES_ACROSS = UNITS_WIDE * TILES_PER_UNIT + 1
 
 val WALL_HEIGHT
-    get() = SCREEN_HEIGHT_IN_UNITS * 4.0
+    get() = SCREEN_HEIGHT_IN_UNITS * 50.0
 
 val SCREEN_HEIGHT_IN_UNITS: Double
     get() = HEIGHT / UNIT_SIZE_IN_PIXELS
@@ -103,9 +100,6 @@ const val GRAVITY = 20.0 * GLOBAL_SCALE
 val PLAYER_SPAWN_Y
     get() = SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT + 5
 
-val CAMERA_SPAWN_Y
-    get() = SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT - 10
-
 const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
 
 /** The player y fract most of the time */
@@ -123,7 +117,16 @@ var CURRENT_PLAYER_Y_FRACT = BASE_PLAYER_Y_FRACT
 var DEBUG_STRING = ""
 
 var DELTA = 0.016
-var PAUSED = true
+
+enum class GameState {
+    PausedPopup,
+    DiegeticMenu,
+    InGame,
+}
+
+var GAME_STATE = GameState.DiegeticMenu
+
+val IS_GAME_RUNNING get() = GAME_STATE == GameState.InGame
 
 /**
  * The camera Y position (bottom of the screen) in world coordinates.

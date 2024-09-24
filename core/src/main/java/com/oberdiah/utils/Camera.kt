@@ -3,16 +3,18 @@ package com.oberdiah.utils
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.oberdiah.*
 import com.oberdiah.player.player
+import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import kotlin.math.pow
 
 private var cameraY = 0.0
 var camera = OrthographicCamera()
-private var cameraIsFollowingPlayer = false
+var CAMERA_IS_FOLLOWING_THE_PLAYER = false
+    private set
 
 fun resetCamera() {
-    cameraIsFollowingPlayer = false
+    CAMERA_IS_FOLLOWING_THE_PLAYER = false
     camera.setToOrtho(false, UNITS_WIDE.f, SCREEN_HEIGHT_IN_UNITS.f)
-    camera.position.y = getDesiredCameraY(CAMERA_SPAWN_Y)
+    camera.position.y = MENU_ZONE_BOTTOM_Y.f + SCREEN_HEIGHT_IN_UNITS.f / 2
     cameraY = camera.position.y.d
     camera.update()
 }
@@ -32,8 +34,8 @@ fun setCameraY(y: Double) {
 }
 
 fun updateCamera() {
-    if (player.body.p.y < 0.0) {
-        cameraIsFollowingPlayer = true
+    if (getDesiredCameraY(player.body.p.y) < camera.position.y) {
+        CAMERA_IS_FOLLOWING_THE_PLAYER = true
     }
 
     SCREEN_SHAKE -= 12 * DELTA
@@ -44,7 +46,7 @@ fun updateCamera() {
     CURRENT_PLAYER_Y_FRACT =
         lerp(BASE_PLAYER_Y_FRACT, ELEVATED_PLAYER_Y_FRACT, saturate(transitionAmount))
 
-    if (cameraIsFollowingPlayer) {
+    if (CAMERA_IS_FOLLOWING_THE_PLAYER) {
         val cameraFocus = player.body.p.y
         val desiredCameraPos = getDesiredCameraY(cameraFocus)
         cameraY += (desiredCameraPos - camera.position.y) * 0.1

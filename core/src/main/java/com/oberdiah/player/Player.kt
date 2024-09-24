@@ -1,15 +1,15 @@
 package com.oberdiah.player
 
 import com.badlogic.gdx.physics.box2d.*
+import com.oberdiah.GAME_STATE
 import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.PAUSED
+import com.oberdiah.GameState
 import com.oberdiah.PLAYER_PHYSICS_MASK
 import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.Screen
 import com.oberdiah.WORLD_PHYSICS_MASK
-import com.oberdiah.abs
 import com.oberdiah.circleShape
 import com.oberdiah.div
 import com.oberdiah.rectShape
@@ -86,9 +86,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun tick() {
         if (playerState.timeSinceDied > 2.5) {
-            PAUSED = true
+            GAME_STATE = GameState.DiegeticMenu
             registerGameEndWithScoreSystem()
-            switchScreen(Screen.EndGame)
             return
         }
 

@@ -6,9 +6,10 @@ import com.badlogic.gdx.utils.Align
 import com.oberdiah.DEBUG_STRING
 import com.oberdiah.DEPTH_UNITS
 import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
+import com.oberdiah.GAME_STATE
+import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
 import com.oberdiah.IS_DEBUG_ENABLED
-import com.oberdiah.PAUSED
 import com.oberdiah.Point
 import com.oberdiah.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
@@ -61,50 +62,57 @@ fun renderUI(r: Renderer) {
         r.text(fontSmall, "$firstLine\n$secondLine\n$thirdLine", 10, HEIGHT * 0.6)
     }
 
-    if (PAUSED) {
-        r.color = Color.BLACK.withAlpha(0.5)
-        r.rect(0, 0, WIDTH, HEIGHT)
-
-
-        r.color = Color.WHITE
-        r.text(
-            fontLarge,
-            GAME_SCREEN.title.uppercase(Locale.ROOT),
-            WIDTH / 2,
-            HEIGHT * 3 / 4,
-            Align.center
-        )
-
-        startButtonsAt(HEIGHT / 2)
-        when (GAME_SCREEN) {
-            Screen.Paused -> pausedUI(r)
-            Screen.Settings -> settingsUI(r)
-            Screen.EndGame -> endGameUI(r)
-            Screen.MainMenu -> mainMenuUI(r)
-            Screen.AdvancedSettings -> advancedSettingsUI(r)
-            Screen.Controls -> controlsUI(r)
-            Screen.Credits -> creditsUI(r)
+    when (GAME_STATE) {
+        GameState.DiegeticMenu -> {
+            startButtonsAt(HEIGHT / 2)
+            renderDiegeticMenu(r)
         }
-    } else {
-        var text = "${RUN_TIME_ELAPSED.format(1)}s"
-        if (gameMessage != "") {
-            text = gameMessage
-        }
-        r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center)
-        r.text(
-            fontLarge,
-            "$playerScore",
-            WIDTH / 2,
-            HEIGHT * 0.9,
-            Align.center
-        )
 
-        renderScoreSystem(r)
-        renderPauseButton(r)
+        GameState.PausedPopup -> {
+            r.color = Color.BLACK.withAlpha(0.5)
+            r.rect(0, 0, WIDTH, HEIGHT)
+
+
+            r.color = Color.WHITE
+            r.text(
+                fontLarge,
+                GAME_SCREEN.title.uppercase(Locale.ROOT),
+                WIDTH / 2,
+                HEIGHT * 3 / 4,
+                Align.center
+            )
+
+            startButtonsAt(HEIGHT / 2)
+            when (GAME_SCREEN) {
+                Screen.Paused -> pausedUI(r)
+                Screen.Settings -> settingsUI(r)
+                Screen.AdvancedSettings -> advancedSettingsUI(r)
+                Screen.Controls -> controlsUI(r)
+                Screen.Credits -> creditsUI(r)
+            }
+        }
+
+        GameState.InGame -> {
+            var text = "${RUN_TIME_ELAPSED.format(1)}s"
+            if (gameMessage != "") {
+                text = gameMessage
+            }
+            r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center)
+            r.text(
+                fontLarge,
+                "$playerScore",
+                WIDTH / 2,
+                HEIGHT * 0.9,
+                Align.center
+            )
+
+            renderScoreSystem(r)
+            renderPauseButton(r)
+        }
     }
 }
 
-private var SCREEN_STACK = mutableListOf(Screen.MainMenu)
+private var SCREEN_STACK = mutableListOf(Screen.Paused)
 private val GAME_SCREEN: Screen
     get() = SCREEN_STACK.last()
 
@@ -191,67 +199,17 @@ private fun advancedSettingsUI(r: Renderer) {
     }
 }
 
-private fun mainMenuUI(r: Renderer) {
-    r.text(
-        fontSmallish,
-        "High Score: ${statefulHighScore.value}",
-        WIDTH / 2,
-        SUBTITLE_HEIGHT,
-        Align.center
-    )
-
-    button(r, "Start") {
-        PAUSED = false
-        restartGame()
-    }
-
-    button(r, "Settings") {
-        switchScreen(Screen.Settings)
-    }
-
-    button(r, "Credits") {
-        switchScreen(Screen.Credits)
-    }
-}
-
-private fun endGameUI(r: Renderer) {
-    r.text(
-        fontSmallish,
-        "Score: $playerScore",
-        WIDTH / 2,
-        HEIGHT * (3.0 / 4 - 1.0 / 16),
-        Align.center
-    )
-
-    button(r, "Try again") {
-        PAUSED = false
-        restartGame()
-    }
-
-    button(r, "Settings") {
-        switchScreen(Screen.Settings)
-    }
-
-    button(r, "Main Menu") {
-        switchScreen(Screen.MainMenu)
-    }
-}
-
 private fun pausedUI(r: Renderer) {
     button(r, "Continue") {
-        PAUSED = false
+        GAME_STATE = GameState.InGame
     }
     button(r, "Settings") {
         switchScreen(Screen.Settings)
     }
-    button(r, "Restart") {
-        restartGame()
-        PAUSED = false
-    }
     lineBreak()
     lineBreak()
-    button(r, "Main Menu") {
-        switchScreen(Screen.MainMenu)
+    button(r, "Quit") {
+        GAME_STATE = GameState.DiegeticMenu
     }
 }
 

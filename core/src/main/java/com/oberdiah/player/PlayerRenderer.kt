@@ -3,11 +3,10 @@ package com.oberdiah.player
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.PAUSED
+import com.oberdiah.IS_GAME_RUNNING
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
-import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.Velocity
 import com.oberdiah.div
 import com.oberdiah.frameAccurateLerp
@@ -26,7 +25,7 @@ class PlayerRenderer {
     fun render(r: Renderer) {
         val pos = player.body.p
 
-        if (!PAUSED) {
+        if (IS_GAME_RUNNING) {
             TOUCHES_DOWN.firstOrNull()?.let { touch ->
                 // If the player is within the uncertainty window, make the line green
                 val lineX = playerInputs.desiredXPos

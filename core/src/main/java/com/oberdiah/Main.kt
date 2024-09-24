@@ -70,24 +70,29 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Save State") { saveState() }
         time("Tick Sounds") { tickSounds() }
 
-        // DEBUG_STRING = "$LOWEST_TILE_Y_STORED"
-
         setCameraGlobalsThisFrame()
         time("Camera") { updateCamera() }
 
-        if (!PAUSED) {
+        if (IS_GAME_RUNNING) {
             time("Update level storage") { updateLevelStorage() }
             time("Update tile changes") { updateTileChanges() }
             // 'Coz Box2d stupid, these are the centres of the positions.
             leftWall.setTransform(Point(-0.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
             rightWall.setTransform(Point(10.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
-            ceiling.setTransform(
-                Point(
-                    SCREEN_WIDTH_IN_UNITS / 2.0,
-                    LOWEST_TILE_Y_UNITS + WALL_HEIGHT
-                ), 0f
-            )
-            floor.setTransform(Point(SCREEN_WIDTH_IN_UNITS / 2.0, LOWEST_TILE_Y_UNITS), 0f)
+
+            if (CAMERA_IS_FOLLOWING_THE_PLAYER) {
+                ceiling.setTransform(
+                    Point(
+                        SCREEN_WIDTH_IN_UNITS / 2.0,
+                        LOWEST_TILE_Y_UNITS + WALL_HEIGHT
+                    ), 0f
+                )
+                floor.setTransform(Point(SCREEN_WIDTH_IN_UNITS / 2.0, LOWEST_TILE_Y_UNITS), 0f)
+            } else {
+                ceiling.setTransform(Point(-5, 0), 0f)
+                floor.setTransform(Point(-5, 0), 0f)
+            }
+
 
             time("Tick level controller") { tickLevelController() }
             time("Tick Collapse") { tickCollapse() }

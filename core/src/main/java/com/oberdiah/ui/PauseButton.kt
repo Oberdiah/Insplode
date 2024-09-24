@@ -3,8 +3,9 @@ package com.oberdiah.ui
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.GAME_STATE
+import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
-import com.oberdiah.PAUSED
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.Screen
@@ -53,13 +54,13 @@ fun renderPauseButton(r: Renderer) {
     TOUCHES_WENT_UP.forEach {
         if (PAUSE_RECT.contains(it)) {
             pauseUIFadeOff = 1.0
-            PAUSED = true
+            GAME_STATE = GameState.PausedPopup
             switchScreen(Screen.Paused)
         }
     }
     // Escape key pauses the game.
     if (isKeyJustPressed(Keys.ESCAPE)) {
-        PAUSED = true
+        GAME_STATE = GameState.PausedPopup
         switchScreen(Screen.Paused)
     }
 
