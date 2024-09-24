@@ -5,7 +5,6 @@ import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.player.playerState
 import com.oberdiah.utils.colorScheme
-import com.oberdiah.utils.wToSSpace
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -113,7 +112,7 @@ fun renderScoreSystem(r: Renderer) {
         r.text(
             fontSmall,
             "x${multiplier().format(1)}",
-            wToSSpace(player.body.p + textOffset) + textOffset2,
+            toUISpace(player.body.p + textOffset) + textOffset2,
             Align.center
         )
     }
@@ -134,7 +133,7 @@ fun renderScoreSystem(r: Renderer) {
         r.text(
             fontSmall,
             "+$growingScore",
-            wToSSpace(player.body.p + textOffset) + textOffset2,
+            toUISpace(player.body.p + textOffset) + textOffset2,
             Align.center
         )
     }

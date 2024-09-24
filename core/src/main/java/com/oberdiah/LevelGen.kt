@@ -162,33 +162,7 @@ fun updateLevelStorage() {
             generateTile(tilesStorage[i])
         }
     } else if (diff > 0) { // Camera moved up
-        println("I didn't think this could actually happen?")
-
-        // Dispose of the ones at the bottom, we're about to get rid of them.
-        for (i in 0 until amountToMove) {
-            tilesStorage[i].dispose()
-        }
-
-        shiftTilesDown(abs(diff))
-
-        // Generate new ones at the top.
-        for (i in tilesStorage.size - amountToMove until tilesStorage.size) {
-            tilesStorage[i] = Tile(TileId(i + currentLowestTileY * NUM_TILES_ACROSS))
-        }
-
-        // Rebuild bottom row neighbours (i.e let them know they no longer have anyone below them)
-        for (i in 0 until NUM_TILES_ACROSS) {
-            tilesStorage[i].rebuildNeighbours()
-        }
-
-        // Rebuild the row that used to be at the top's neighbours, as they now have new neighbours above them.
-        for (i in tilesStorage.size - amountToMove until tilesStorage.size - amountToMove + NUM_TILES_ACROSS) {
-            tilesStorage[i].rebuildNeighbours()
-        }
-
-        for (i in tilesStorage.size - amountToMove until tilesStorage.size) {
-            tilesStorage[i].init()
-        }
+        require(false) { "I didn't think this could actually happen?" }
     }
 }
 

@@ -1,17 +1,16 @@
 package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.math.Vector3
 import com.oberdiah.*
 import com.oberdiah.player.player
 import kotlin.math.pow
 
 private var cameraY = 0.0
 var camera = OrthographicCamera()
-private var CAMERA_LOCKED = true
+private var cameraIsFollowingPlayer = false
 
 fun resetCamera() {
-    CAMERA_LOCKED = true
+    cameraIsFollowingPlayer = false
     camera.setToOrtho(false, UNITS_WIDE.f, SCREEN_HEIGHT_IN_UNITS.f)
     camera.position.y = getDesiredCameraY(CAMERA_SPAWN_Y)
     cameraY = camera.position.y.d
@@ -27,9 +26,14 @@ val TRANSITION_TO_LOWER_CAMERA_HEIGHT
 
 const val LOWER_CAMERA_HEIGHT_TRANSITION_RANGE = 8
 
+/** Set the camera Y (Bottom of the camera) in world coordinates */
+fun setCameraY(y: Double) {
+    cameraY = y + SCREEN_HEIGHT_IN_UNITS / 2
+}
+
 fun updateCamera() {
     if (player.body.p.y < 0.0) {
-        CAMERA_LOCKED = false
+        cameraIsFollowingPlayer = true
     }
 
     SCREEN_SHAKE -= 12 * DELTA
@@ -40,7 +44,7 @@ fun updateCamera() {
     CURRENT_PLAYER_Y_FRACT =
         lerp(BASE_PLAYER_Y_FRACT, ELEVATED_PLAYER_Y_FRACT, saturate(transitionAmount))
 
-    if (!CAMERA_LOCKED) {
+    if (cameraIsFollowingPlayer) {
         val cameraFocus = player.body.p.y
         val desiredCameraPos = getDesiredCameraY(cameraFocus)
         cameraY += (desiredCameraPos - camera.position.y) * 0.1
@@ -54,13 +58,6 @@ fun updateCamera() {
     camera.update()
 
     worldSpaceRenderer.renderer.projectionMatrix = camera.combined
-}
-
-/** World space to screen space */
-fun wToSSpace(p: Point): Point {
-    // Use the camera projection matrix. p is a 2d point in world space.
-    val vec = camera.project(Vector3(p.x.f, p.y.f, 0f))
-    return Point(vec.x.d, vec.y.d)
 }
 
 enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {

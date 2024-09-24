@@ -72,12 +72,12 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         // DEBUG_STRING = "$LOWEST_TILE_Y_STORED"
 
+        setCameraGlobalsThisFrame()
+        time("Camera") { updateCamera() }
+
         if (!PAUSED) {
-            time("Camera") { updateCamera() }
-            setCameraGlobalsThisFrame()
             time("Update level storage") { updateLevelStorage() }
             time("Update tile changes") { updateTileChanges() }
-
             // 'Coz Box2d stupid, these are the centres of the positions.
             leftWall.setTransform(Point(-0.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
             rightWall.setTransform(Point(10.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
