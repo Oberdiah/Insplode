@@ -108,6 +108,10 @@ fun requestNewLowestTileY(newLowest: Int) {
     requestedLowestTileY = min(currentLowestTileY, newLowest)
 }
 
+/** The Y position of the lowest tile we're storing. */
+val LOWEST_TILE_Y_UNITS: Double
+    get() = requestedLowestTileY.d / TILES_PER_UNIT
+
 // What's been asked of us by the camera this frame
 private var requestedLowestTileY = 0
 
@@ -158,6 +162,8 @@ fun updateLevelStorage() {
             generateTile(tilesStorage[i])
         }
     } else if (diff > 0) { // Camera moved up
+        println("I didn't think this could actually happen?")
+
         // Dispose of the ones at the bottom, we're about to get rid of them.
         for (i in 0 until amountToMove) {
             tilesStorage[i].dispose()

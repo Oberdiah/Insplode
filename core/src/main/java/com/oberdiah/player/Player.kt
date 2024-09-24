@@ -98,11 +98,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         if (playerState.isSlamming) {
             if (playerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
-                if (abs(playerInfoBoard.velocity.y) <= MINIMUM_SLAM_VELOCITY) {
-                    playerState.justCasuallyLanded()
-                } else {
-                    playerState.justSlammedIntoABomb(playerInfoBoard.bombsStandingOnGenerous.first())
-                }
+                playerState.justSlammedIntoABomb(playerInfoBoard.bombsStandingOnGenerous.first())
             } else if (playerInfoBoard.isStandingOnNotBombExact) {
                 playerState.justSlammedIntoTheGround()
             }

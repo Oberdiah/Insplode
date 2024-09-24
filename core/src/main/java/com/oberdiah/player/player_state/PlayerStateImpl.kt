@@ -72,6 +72,8 @@ class PlayerStateImpl : PlayerStateAccessors() {
             number = max((vel.len.d * 0.5).i, 2)
         )
 
+        player.body.velocity = Point(player.body.velocity.x, 0.0)
+
         if (vel.len > 10) {
             // Player landing deserves more than the normal amount of shake
             addScreenShake(vel.len.d * 0.025)

@@ -286,6 +286,6 @@ fun playGChordNote() {
     playSound(
         "Twang G ${Random.nextInt(1, 5)}",
         Random.nextDouble(0.995, 1.005),
-        Random.nextDouble(0.45, 0.55)
+        Random.nextDouble(0.75, 0.85)
     )
 }
