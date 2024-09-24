@@ -44,7 +44,7 @@ fun getTile(p: Point): TileLike {
 
 /** If null is returned you've requested a tile outside the bounds of the stored tiles. */
 fun getTile(x: Int, y: Int): TileLike {
-    if (x >= NUM_TILES_ACROSS || x < 0 || y >= currentLowestTileY + SIMULATED_REGION_NUM_TILES_HIGH || y < requestedLowestTileY) {
+    if (x >= NUM_TILES_ACROSS || x < 0 || y >= currentLowestTileY + SIMULATED_REGION_NUM_TILES_HIGH || y < currentLowestTileY) {
         return emptyTile
     }
     val tile = tilesStorage[x + (y - currentLowestTileY) * NUM_TILES_ACROSS]

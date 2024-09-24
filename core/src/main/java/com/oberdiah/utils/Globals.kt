@@ -30,7 +30,6 @@ enum class Screen(val title: String) {
     Settings("Settings"),
     EndGame("Game Over"),
     MainMenu("Bomb Survival"),
-    CustomGame("Custom Game"),
     AdvancedSettings("Advanced\nSettings"),
     Controls("Controls"),
     Credits("Credits"),
@@ -124,7 +123,7 @@ var CURRENT_PLAYER_Y_FRACT = BASE_PLAYER_Y_FRACT
 var DEBUG_STRING = ""
 
 var DELTA = 0.016
-var PAUSED = !IS_DEBUG_ENABLED
+var PAUSED = true
 
 /**
  * The camera Y position (bottom of the screen) in world coordinates.

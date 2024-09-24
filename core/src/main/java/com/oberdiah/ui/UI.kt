@@ -20,7 +20,6 @@ import com.oberdiah.TEXT_SIDE_OFFSET
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
-import com.oberdiah.utils.nextColorScheme
 import com.oberdiah.utils.timerString
 import com.oberdiah.WIDTH
 import com.oberdiah.d
@@ -82,7 +81,6 @@ fun renderUI(r: Renderer) {
             Screen.Settings -> settingsUI(r)
             Screen.EndGame -> endGameUI(r)
             Screen.MainMenu -> mainMenuUI(r)
-            Screen.CustomGame -> customGameUI(r)
             Screen.AdvancedSettings -> advancedSettingsUI(r)
             Screen.Controls -> controlsUI(r)
             Screen.Credits -> creditsUI(r)
@@ -148,16 +146,6 @@ private fun creditsUI(r: Renderer) {
     }
 }
 
-private fun customGameUI(r: Renderer) {
-    button(r, "Start game") {
-        PAUSED = false
-        restartGame()
-    }
-    button(r, "Back") {
-        backAScreen()
-    }
-}
-
 val SUBTITLE_HEIGHT
     get() = HEIGHT * 3 / 4.3
 
@@ -215,10 +203,6 @@ private fun mainMenuUI(r: Renderer) {
     button(r, "Start") {
         PAUSED = false
         restartGame()
-    }
-
-    button(r, "Custom Game") {
-        switchScreen(Screen.CustomGame)
     }
 
     button(r, "Settings") {
