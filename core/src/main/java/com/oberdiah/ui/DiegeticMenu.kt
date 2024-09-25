@@ -3,9 +3,9 @@ package com.oberdiah.ui
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.APP_TIME
+import com.oberdiah.DELTA
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
-import com.oberdiah.HEIGHT
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
@@ -21,6 +21,7 @@ import com.oberdiah.fontMedium
 import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.lastScore
+import com.oberdiah.lerp
 import com.oberdiah.playerScore
 import com.oberdiah.sin
 import com.oberdiah.statefulHighScore
@@ -44,9 +45,11 @@ fun goToDiegeticMenu() {
     cameraY = MENU_ZONE_BOTTOM_Y
 }
 
-var launchTextAlpha = 0.8f
+var delayedPreviousFingerY = 0.0
+var launchTextAlpha = 1.0f
 var lastFingerY = 0.0
 var isDragging = false
+var cameraVelocity = 0.0
 var cameraY = MENU_ZONE_BOTTOM_Y
 
 // The diegetic menu is always there and rendered using in-world coordinates.
@@ -103,10 +106,33 @@ fun renderDiegeticMenu(r: Renderer) {
             if (isInLaunchZone(it) && !isDragging) {
                 GAME_STATE = GameState.InGame
             }
-            isDragging = false
+            if (isDragging) {
+                cameraVelocity =
+                    ((delayedPreviousFingerY - it.y) / UNIT_SIZE_IN_PIXELS) / clamp(
+                        DELTA,
+                        0.005,
+                        0.020
+                    )
+                isDragging = false
+            }
         }
 
-        cameraY = clamp(cameraY, LOWEST_DIEGETIC_CAMERA_Y, MENU_ZONE_BOTTOM_Y)
+        delayedPreviousFingerY = lerp(delayedPreviousFingerY, lastFingerY, 0.5)
+        cameraY += cameraVelocity * DELTA
+        cameraVelocity *= 0.95
+        val lowestCameraY = LOWEST_DIEGETIC_CAMERA_Y
+        val highestCameraY = MENU_ZONE_BOTTOM_Y
+
+        // Soft clamp the camera y and make it bounce
+
+        if (cameraY < lowestCameraY) {
+            cameraY = lerp(cameraY, lowestCameraY, 0.1)
+            cameraVelocity = 0.0
+        } else if (cameraY > highestCameraY) {
+            cameraY = lerp(cameraY, highestCameraY, 0.1)
+            cameraVelocity = 0.0
+        }
+
         setCameraY(cameraY)
     }
 
@@ -117,7 +143,7 @@ fun renderDiegeticMenu(r: Renderer) {
     launchTextAlpha = if (GAME_STATE == GameState.InGame) {
         frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
     } else {
-        frameAccurateLerp(launchTextAlpha, 0.8f, 10.0).f
+        frameAccurateLerp(launchTextAlpha, 1.0f, 10.0).f
     }
 
     launchTextColor.a = launchTextAlpha
@@ -159,5 +185,8 @@ fun renderDiegeticMenu(r: Renderer) {
 
 private fun isInLaunchZone(screenSpaceTouch: Point): Boolean {
     val worldSpaceTouch = toWorldSpace(screenSpaceTouch)
-    return worldSpaceTouch.y < MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT && worldSpaceTouch.y > MENU_ZONE_BOTTOM_Y + 1.0
+    return worldSpaceTouch.y < MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT &&
+            worldSpaceTouch.y > MENU_ZONE_BOTTOM_Y + 1.0 &&
+            worldSpaceTouch.x > SCREEN_WIDTH_IN_UNITS * (1.0 / 4) &&
+            worldSpaceTouch.x < SCREEN_WIDTH_IN_UNITS * (3.0 / 4)
 }

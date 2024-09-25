@@ -217,7 +217,7 @@ private fun pausedUI(r: Renderer) {
     }
     lineBreak()
     lineBreak()
-    button(r, "Main Menu") {
+    button(r, "Quit Run") {
         goToDiegeticMenu()
     }
 }
