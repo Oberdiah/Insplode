@@ -70,8 +70,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Save State") { saveState() }
         time("Tick Sounds") { tickSounds() }
 
-        setCameraGlobalsThisFrame()
         time("Camera") { updateCamera() }
+        setCameraGlobalsThisFrame()
 
         time("Update level storage") { updateLevelStorage() }
         time("Update tile changes") { updateTileChanges() }
