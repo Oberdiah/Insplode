@@ -40,7 +40,7 @@ private fun getCameraYForPlayerFollow(): Float {
     return (player.body.p.y + SCREEN_HEIGHT_IN_UNITS / 2 - SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT).f
 }
 
-private fun getCameraYForMenu(): Float {
+fun getCameraYForMenu(): Float {
     return (MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS / 2).f
 }
 

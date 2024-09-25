@@ -14,6 +14,7 @@ import com.oberdiah.circleShape
 import com.oberdiah.div
 import com.oberdiah.rectShape
 import com.oberdiah.registerGameEndWithScoreSystem
+import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.ui.switchScreen
 import com.oberdiah.unaryMinus
 
@@ -86,7 +87,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun tick() {
         if (playerState.timeSinceDied > 2.5) {
-            GAME_STATE = GameState.DiegeticMenu
+            goToDiegeticMenu()
             registerGameEndWithScoreSystem()
             return
         }

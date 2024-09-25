@@ -73,9 +73,10 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         setCameraGlobalsThisFrame()
         time("Camera") { updateCamera() }
 
+        time("Update level storage") { updateLevelStorage() }
+        time("Update tile changes") { updateTileChanges() }
+
         if (GAME_IS_RUNNING) {
-            time("Update level storage") { updateLevelStorage() }
-            time("Update tile changes") { updateTileChanges() }
             // 'Coz Box2d stupid, these are the centres of the positions.
             leftWall.setTransform(Point(-0.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
             rightWall.setTransform(Point(10.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
@@ -102,9 +103,9 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Physics Objects") { tickPhysicsObjects() }
             time("Tick Point Orbs") { tickPointOrbs() }
             time("Tick Score System") { tickScoreSystem() }
-
-            // Should happen just before the world step
-            time("Update tile physics") { updateTilePhysics() }
+        }
+        time("Update tile physics") { updateTilePhysics() }
+        if (GAME_IS_RUNNING) {
             time("Do physics step") { doPhysicsStep() }
             time("Tick physics wrapper") { tickPhysicsWrapper() }
         }

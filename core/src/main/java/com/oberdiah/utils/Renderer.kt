@@ -14,9 +14,18 @@ import kotlin.math.PI
 
 
 private val Number.toDegrees: Number
-    get() { return this * 180/3.1415 }
+    get() {
+        return this * 180 / 3.1415
+    }
 
-class TextDraw(val color: Color, val font: BitmapFont, val text: String, val x: Number, val y: Number, val align: Int)
+class TextDraw(
+    val color: Color,
+    val font: BitmapFont,
+    val text: String,
+    val x: Number,
+    val y: Number,
+    val align: Int
+)
 
 val earClipper = EarClippingTriangulator()
 
@@ -37,10 +46,14 @@ class Renderer(val name: String) {
         if (textToDraw.size > 0) {
             textRenderer.begin()
             textToDraw.forEach {
+                if (it.y > HEIGHT * 1.2 || it.y < -HEIGHT * 0.2) {
+                    return@forEach
+                }
+
                 it.font.color = it.color
                 var y = it.y.f
                 if (it.align == Align.center || it.align == Align.left || it.align == Align.right) {
-                    y += it.font.capHeight/2
+                    y += it.font.capHeight / 2
                 }
                 if (it.align == Align.bottomLeft) {
                     y += it.font.capHeight
@@ -91,11 +104,31 @@ class Renderer(val name: String) {
     }
 
     fun centeredRect(mid: Point, w: Number, h: Number, a: Number) {
-        renderer.rect(mid.x.f - w.f / 2, mid.y.f - h.f / 2, w.f / 2, h.f / 2, w.f, h.f, 1f, 1f, a.toDegrees.f)
+        renderer.rect(
+            mid.x.f - w.f / 2,
+            mid.y.f - h.f / 2,
+            w.f / 2,
+            h.f / 2,
+            w.f,
+            h.f,
+            1f,
+            1f,
+            a.toDegrees.f
+        )
     }
 
     fun centeredRect(mid: Point, s: Size, a: Number) {
-        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f / 2, s.h.f / 2, s.w.f, s.h.f, 1f, 1f, a.toDegrees.f)
+        renderer.rect(
+            mid.x.f - s.w.f / 2,
+            mid.y.f - s.h.f / 2,
+            s.w.f / 2,
+            s.h.f / 2,
+            s.w.f,
+            s.h.f,
+            1f,
+            1f,
+            a.toDegrees.f
+        )
     }
 
     fun centeredRect(mid: Point, s: Size) {
@@ -175,11 +208,11 @@ class Renderer(val name: String) {
     }
 
     fun ngon(p: Point, radius: Number, angle: Number, sides: Int) {
-        var previousX = (cos(angle + 2 * 0 * PI/sides ) * radius) + p.x
-        var previousY = (sin(angle + 2 * 0 * PI/sides ) * radius) + p.y
+        var previousX = (cos(angle + 2 * 0 * PI / sides) * radius) + p.x
+        var previousY = (sin(angle + 2 * 0 * PI / sides) * radius) + p.y
         for (i in 1..sides) {
-            val x = (cos(angle + 2 * i * PI/sides ) * radius) + p.x
-            val y = (sin(angle + 2 * i * PI/sides ) * radius) + p.y
+            val x = (cos(angle + 2 * i * PI / sides) * radius) + p.x
+            val y = (sin(angle + 2 * i * PI / sides) * radius) + p.y
             renderer.triangle(p.x.f, p.y.f, previousX.f, previousY.f, x.f, y.f)
             previousX = x
             previousY = y
@@ -187,11 +220,11 @@ class Renderer(val name: String) {
     }
 
     fun ngonLine(p: Point, radius: Number, angle: Number, width: Number, sides: Int) {
-        var previousX = (cos(angle + 2 * 0 * PI/sides ) * radius) + p.x
-        var previousY = (sin(angle + 2 * 0 * PI/sides ) * radius) + p.y
+        var previousX = (cos(angle + 2 * 0 * PI / sides) * radius) + p.x
+        var previousY = (sin(angle + 2 * 0 * PI / sides) * radius) + p.y
         for (i in 1..sides) {
-            val x = (cos(angle + 2 * i * PI/sides ) * radius) + p.x
-            val y = (sin(angle + 2 * i * PI/sides ) * radius) + p.y
+            val x = (cos(angle + 2 * i * PI / sides) * radius) + p.x
+            val y = (sin(angle + 2 * i * PI / sides) * radius) + p.y
             line(previousX, previousY, x, y, width)
             previousX = x
             previousY = y

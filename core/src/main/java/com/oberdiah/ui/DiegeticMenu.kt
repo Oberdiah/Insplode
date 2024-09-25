@@ -5,36 +5,49 @@ import com.badlogic.gdx.utils.Align
 import com.oberdiah.APP_TIME
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
+import com.oberdiah.HEIGHT
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.Size
+import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
+import com.oberdiah.clamp
 import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
+import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
-import com.oberdiah.restartGame
+import com.oberdiah.lastScore
+import com.oberdiah.playerScore
 import com.oberdiah.sin
+import com.oberdiah.statefulHighScore
 import com.oberdiah.toUISpace
 import com.oberdiah.toWorldSpace
-import com.oberdiah.utils.ColorScheme
 import com.oberdiah.utils.TOUCHES_DOWN
+import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
+import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
 
-const val MENU_ZONE_BOTTOM_Y = 6
+const val LAUNCH_TEXT_HEIGHT = 4.5
+const val MENU_ZONE_BOTTOM_Y = 6.0
+const val LOWEST_DIEGETIC_CAMERA_Y = -5.0
 
 fun goToDiegeticMenu() {
     GAME_STATE = GameState.TransitioningToDiegeticMenu
     // On completion of the camera movement, we refresh the game.
     startCameraToDiegeticMenuTransition()
+    cameraY = MENU_ZONE_BOTTOM_Y
 }
 
 var launchTextAlpha = 0.8f
+var lastFingerY = 0.0
+var isDragging = false
+var cameraY = MENU_ZONE_BOTTOM_Y
 
 // The diegetic menu is always there and rendered using in-world coordinates.
 fun renderDiegeticMenu(r: Renderer) {
@@ -48,23 +61,53 @@ fun renderDiegeticMenu(r: Renderer) {
         Align.center
     )
 
+    if (statefulHighScore.value != 0) {
+        r.text(
+            fontSmallish,
+            "High Score: ${statefulHighScore.value}",
+            toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 2.0)),
+            Align.center
+        )
+    }
+
+    if (lastScore != null) {
+        r.text(
+            fontSmallish,
+            "Score: $lastScore",
+            toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 3.0)),
+            Align.center
+        )
+    }
+
     val launchTextColor = colorScheme.textColor.cpy()
-    val launchTextHeight = H * 3 / 16.0
 
     var isLaunchTapped = false
     if (GAME_STATE == GameState.DiegeticMenu) {
+        TOUCHES_WENT_DOWN.forEach {
+            if (!isInLaunchZone(it)) {
+                isDragging = true
+                lastFingerY = it.y
+            }
+        }
         TOUCHES_DOWN.forEach {
-            val worldSpaceTouch = toWorldSpace(it)
-            if (worldSpaceTouch.y < MENU_ZONE_BOTTOM_Y + launchTextHeight && it.y > MENU_ZONE_BOTTOM_Y) {
+            if (isDragging) {
+                val dragDelta = (lastFingerY - it.y) / UNIT_SIZE_IN_PIXELS
+                cameraY += dragDelta
+                lastFingerY = it.y
+            }
+            if (isInLaunchZone(it)) {
                 isLaunchTapped = true
             }
         }
         TOUCHES_WENT_UP.forEach {
-            val worldSpaceTouch = toWorldSpace(it)
-            if (worldSpaceTouch.y < MENU_ZONE_BOTTOM_Y + launchTextHeight && it.y > MENU_ZONE_BOTTOM_Y) {
+            if (isInLaunchZone(it) && !isDragging) {
                 GAME_STATE = GameState.InGame
             }
+            isDragging = false
         }
+
+        cameraY = clamp(cameraY, LOWEST_DIEGETIC_CAMERA_Y, MENU_ZONE_BOTTOM_Y)
+        setCameraY(cameraY)
     }
 
     if (isLaunchTapped || GAME_STATE == GameState.InGame) {
@@ -84,7 +127,7 @@ fun renderDiegeticMenu(r: Renderer) {
     r.text(
         fontMedium,
         "Launch!",
-        toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + launchTextHeight)),
+        toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT)),
         Align.center
     )
 
@@ -95,7 +138,7 @@ fun renderDiegeticMenu(r: Renderer) {
         toUISpace(
             Point(
                 W / 2 + W / 32,
-                MENU_ZONE_BOTTOM_Y + launchTextHeight - chevronDistanceBelow
+                MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT - chevronDistanceBelow
             )
         ),
         Size(WIDTH / 10, WIDTH / 75),
@@ -106,10 +149,15 @@ fun renderDiegeticMenu(r: Renderer) {
         toUISpace(
             Point(
                 W / 2 - W / 32,
-                MENU_ZONE_BOTTOM_Y + launchTextHeight - chevronDistanceBelow
+                MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT - chevronDistanceBelow
             )
         ),
         Size(WIDTH / 10, WIDTH / 75),
         -Math.PI / 4
     )
+}
+
+private fun isInLaunchZone(screenSpaceTouch: Point): Boolean {
+    val worldSpaceTouch = toWorldSpace(screenSpaceTouch)
+    return worldSpaceTouch.y < MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT && worldSpaceTouch.y > MENU_ZONE_BOTTOM_Y + 1.0
 }

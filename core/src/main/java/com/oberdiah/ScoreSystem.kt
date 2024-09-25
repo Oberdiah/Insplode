@@ -8,6 +8,9 @@ import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
 import kotlin.random.Random
 
+var lastScore: Int? = null
+    private set
+
 var playerScore = 0
     private set
 
@@ -49,7 +52,7 @@ fun registerBombSlamWithScoreSystem(bomb: Bomb) {
 }
 
 fun registerGameEndWithScoreSystem() {
-    // Nothing :)
+    lastScore = playerScore
 }
 
 /** A bomb pop is when you pop a bomb by jumping on it or it hitting your head too hard. */
