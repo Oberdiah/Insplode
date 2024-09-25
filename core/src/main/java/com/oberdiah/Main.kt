@@ -73,14 +73,14 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         setCameraGlobalsThisFrame()
         time("Camera") { updateCamera() }
 
-        if (IS_GAME_RUNNING) {
+        if (GAME_IS_RUNNING) {
             time("Update level storage") { updateLevelStorage() }
             time("Update tile changes") { updateTileChanges() }
             // 'Coz Box2d stupid, these are the centres of the positions.
             leftWall.setTransform(Point(-0.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
             rightWall.setTransform(Point(10.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
 
-            if (CAMERA_IS_FOLLOWING_THE_PLAYER) {
+            if (CAMERA_FOLLOWING == CameraFollowing.Player) {
                 ceiling.setTransform(
                     Point(
                         SCREEN_WIDTH_IN_UNITS / 2.0,
@@ -94,7 +94,9 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             }
 
 
-            time("Tick level controller") { tickLevelController() }
+            if (GAME_STATE == GameState.InGame) {
+                time("Tick level controller") { tickLevelController() }
+            }
             time("Tick Collapse") { tickCollapse() }
             time("Tick Particles") { tickParticles() }
             time("Tick Physics Objects") { tickPhysicsObjects() }

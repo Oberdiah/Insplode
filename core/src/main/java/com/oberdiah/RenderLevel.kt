@@ -1,6 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
@@ -160,11 +161,23 @@ fun renderBackground(r: Renderer) {
         for (y in 0 until numYSquares) {
             val ty = y + floor(CAMERA_POS_Y)
 
-            r.color = colorScheme.backgroundA
-
+            var thisColor = colorScheme.backgroundA
             if ((ty + tx) % 2 == 0) {
-                r.color = colorScheme.backgroundB
+                thisColor = colorScheme.backgroundB
             }
+
+            // Make thisColor darker as we go up (ty increases)
+//            if (ty > 0) {
+            thisColor = thisColor.cpy().add(
+                0.05f * (ty / 50f),
+                0.10f * (ty / 50f),
+                0.15f * (ty / 50f),
+                0.0f
+            )
+//            }
+
+
+            r.color = thisColor
 
             r.rect(tx, ty, 1, 1)
         }

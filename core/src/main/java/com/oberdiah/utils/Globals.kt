@@ -1,6 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
+import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import com.oberdiah.utils.calculateInputGlobals
 import com.oberdiah.utils.camera
 
@@ -98,7 +99,7 @@ val JUST_UP_OFF_SCREEN
 const val GRAVITY = 20.0 * GLOBAL_SCALE
 
 val PLAYER_SPAWN_Y
-    get() = SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT + 5
+    get() = MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT + 15
 
 const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
 
@@ -120,13 +121,14 @@ var DELTA = 0.016
 
 enum class GameState {
     PausedPopup,
+    TransitioningToDiegeticMenu,
     DiegeticMenu,
     InGame,
 }
 
 var GAME_STATE = GameState.DiegeticMenu
 
-val IS_GAME_RUNNING get() = GAME_STATE == GameState.InGame
+val GAME_IS_RUNNING get() = GAME_STATE == GameState.InGame || GAME_STATE == GameState.TransitioningToDiegeticMenu
 
 /**
  * The camera Y position (bottom of the screen) in world coordinates.

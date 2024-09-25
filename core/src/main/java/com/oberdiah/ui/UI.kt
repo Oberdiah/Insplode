@@ -1,8 +1,10 @@
 package com.oberdiah.ui
 
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.DEBUG_STRING
 import com.oberdiah.DEPTH_UNITS
 import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
@@ -35,7 +37,7 @@ import com.oberdiah.physicsDebugString
 import com.oberdiah.playGChordNote
 import com.oberdiah.playerScore
 import com.oberdiah.renderScoreSystem
-import com.oberdiah.restartGame
+import com.oberdiah.saturate
 import com.oberdiah.statefulHighScore
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
@@ -62,11 +64,14 @@ fun renderUI(r: Renderer) {
         r.text(fontSmall, "$firstLine\n$secondLine\n$thirdLine", 10, HEIGHT * 0.6)
     }
 
+    renderDiegeticMenu(r)
+
+    r.color = colorScheme.textColor
+
     when (GAME_STATE) {
-        GameState.DiegeticMenu -> {
-            startButtonsAt(HEIGHT / 2)
-            renderDiegeticMenu(r)
-        }
+        GameState.DiegeticMenu -> {}
+
+        GameState.TransitioningToDiegeticMenu -> {}
 
         GameState.PausedPopup -> {
             r.color = Color.BLACK.withAlpha(0.5)
@@ -93,6 +98,8 @@ fun renderUI(r: Renderer) {
         }
 
         GameState.InGame -> {
+            r.color = colorScheme.textColor.withAlpha(saturate(-CAMERA_POS_Y * 0.5))
+
             var text = "${RUN_TIME_ELAPSED.format(1)}s"
             if (gameMessage != "") {
                 text = gameMessage
@@ -105,6 +112,8 @@ fun renderUI(r: Renderer) {
                 HEIGHT * 0.9,
                 Align.center
             )
+
+            r.color = colorScheme.textColor
 
             renderScoreSystem(r)
             renderPauseButton(r)
@@ -208,8 +217,8 @@ private fun pausedUI(r: Renderer) {
     }
     lineBreak()
     lineBreak()
-    button(r, "Quit") {
-        GAME_STATE = GameState.DiegeticMenu
+    button(r, "Main Menu") {
+        goToDiegeticMenu()
     }
 }
 

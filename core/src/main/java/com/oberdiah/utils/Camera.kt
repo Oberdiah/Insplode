@@ -8,19 +8,40 @@ import kotlin.math.pow
 
 private var cameraY = 0.0
 var camera = OrthographicCamera()
-var CAMERA_IS_FOLLOWING_THE_PLAYER = false
+
+enum class CameraFollowing {
+    Player,
+    MenuStartPos,
+    Nothing,
+}
+
+var CAMERA_FOLLOWING = CameraFollowing.Nothing
     private set
 
+fun startCameraToDiegeticMenuTransition() {
+    CAMERA_FOLLOWING = CameraFollowing.MenuStartPos
+}
+
+private fun cameraHasReachedFinalDiegeticMenuPosition() {
+    CAMERA_FOLLOWING = CameraFollowing.Nothing
+    GAME_STATE = GameState.DiegeticMenu
+    restartGame()
+}
+
 fun resetCamera() {
-    CAMERA_IS_FOLLOWING_THE_PLAYER = false
+    CAMERA_FOLLOWING = CameraFollowing.Nothing
     camera.setToOrtho(false, UNITS_WIDE.f, SCREEN_HEIGHT_IN_UNITS.f)
-    camera.position.y = MENU_ZONE_BOTTOM_Y.f + SCREEN_HEIGHT_IN_UNITS.f / 2
+    camera.position.y = getCameraYForMenu()
     cameraY = camera.position.y.d
     camera.update()
 }
 
-private fun getDesiredCameraY(focusPoint: Double): Float {
-    return (focusPoint + SCREEN_HEIGHT_IN_UNITS / 2 - SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT).f
+private fun getCameraYForPlayerFollow(): Float {
+    return (player.body.p.y + SCREEN_HEIGHT_IN_UNITS / 2 - SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT).f
+}
+
+private fun getCameraYForMenu(): Float {
+    return (MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS / 2).f
 }
 
 val TRANSITION_TO_LOWER_CAMERA_HEIGHT
@@ -34,8 +55,8 @@ fun setCameraY(y: Double) {
 }
 
 fun updateCamera() {
-    if (getDesiredCameraY(player.body.p.y) < camera.position.y) {
-        CAMERA_IS_FOLLOWING_THE_PLAYER = true
+    if (getCameraYForPlayerFollow() < camera.position.y && GAME_STATE == GameState.InGame) {
+        CAMERA_FOLLOWING = CameraFollowing.Player
     }
 
     SCREEN_SHAKE -= 12 * DELTA
@@ -46,10 +67,24 @@ fun updateCamera() {
     CURRENT_PLAYER_Y_FRACT =
         lerp(BASE_PLAYER_Y_FRACT, ELEVATED_PLAYER_Y_FRACT, saturate(transitionAmount))
 
-    if (CAMERA_IS_FOLLOWING_THE_PLAYER) {
-        val cameraFocus = player.body.p.y
-        val desiredCameraPos = getDesiredCameraY(cameraFocus)
-        cameraY += (desiredCameraPos - camera.position.y) * 0.1
+    when (CAMERA_FOLLOWING) {
+        CameraFollowing.Player -> {
+            val desiredCameraPos = getCameraYForPlayerFollow()
+            cameraY += (desiredCameraPos - camera.position.y) * 0.1
+        }
+
+        CameraFollowing.MenuStartPos -> {
+            val desiredCameraPos = getCameraYForMenu()
+            val cameraDistToMove = (desiredCameraPos - camera.position.y) * 0.1
+            cameraY += clamp(cameraDistToMove, 0.1, 1.5)
+            if (abs(camera.position.y - desiredCameraPos) < 0.05) {
+                cameraHasReachedFinalDiegeticMenuPosition()
+            }
+        }
+
+        CameraFollowing.Nothing -> {
+            // Do nothing
+        }
     }
 
     val shake = (Perlin.fbm(APP_TIME * 200, 0, 3, 2.0) * SCREEN_SHAKE.pow(2) * 0.2).f
