@@ -55,6 +55,7 @@ class Grassy2 : ColorScheme("Grass Lands") {
         caveWall = colorFrom(0xFFEABF).withAlpha(0.5f)
         dirt = colorFrom(0x6a994e)
         grass = colorFrom(0xa7c957)
+        pickupColor = colorFrom(0x48f06f)
     }
 }
 
