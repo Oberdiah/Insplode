@@ -181,8 +181,7 @@ class Tile(private val id: TileId) : TileLike {
     }
 
     override fun getTileType(): TileType {
-        return tileType
-        // return if (exists) tileType else TileType.Air
+        return if (doesExistPhysically) tileType else TileType.Air
     }
 
     var destructionTime = 0.0
@@ -266,6 +265,10 @@ class Tile(private val id: TileId) : TileLike {
         }
 
     fun recalculatePhysicsBody() {
+        if (!tileType.collidable) {
+            return
+        }
+
         body.removeAllFixtures()
 
         val bottomLeft = this

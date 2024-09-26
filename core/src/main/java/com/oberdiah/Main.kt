@@ -112,11 +112,15 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         worldSpaceRenderer.begin()
         time("Render background") { renderBackground(worldSpaceRenderer) }
+        worldSpaceRenderer.end()
+
+        time("Render level") { renderLevel() }
+
+        worldSpaceRenderer.begin()
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
-        time("Render level") { renderLevel() }
 
         if (DO_PHYSICS_DEBUG_RENDER) {
             debugRenderWorld()

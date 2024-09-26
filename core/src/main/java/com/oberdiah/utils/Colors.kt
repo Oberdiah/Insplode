@@ -37,6 +37,7 @@ class Grassy : ColorScheme("Forest") {
         backgroundA = colorFrom(0xf2e8cf)
         backgroundB = colorFrom(0xf2e8cf).mul(1.03f)
         stone = colorFrom(0x303930)
+        caveWall = colorFrom(0x172117).withAlpha(0.25f)
         dirt = colorFrom(0x54793E)
         grass = colorFrom(0x103E1F)
         pickupColor = colorFrom(0x48f06f)
@@ -146,15 +147,17 @@ open class ColorScheme(val name: String) {
     lateinit var backgroundA: Color
     lateinit var backgroundB: Color
     lateinit var stone: Color
+    lateinit var caveWall: Color
     lateinit var dirt: Color
     lateinit var grass: Color
 }
 
 // https://coolors.co/6a994e-54793e-003e1f-f2e8cf-bc4648-404840-242423
 
-enum class TileType(var color: () -> Color) {
+enum class TileType(var color: () -> Color, val collidable: Boolean = true) {
     Stone({ colorScheme.stone }),
     Dirt({ colorScheme.dirt }),
     Grass({ colorScheme.grass }),
-    Air({ Colors.transparent })
+    CaveWall({ colorScheme.caveWall }, false),
+    Air({ Colors.transparent }, false)
 }

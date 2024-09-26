@@ -14,8 +14,8 @@ fun tickCollapse() {
 
     for (tileId in tileIdsChangedLastFrameAllNeighbors) {
         val tile = getTile(tileId)
-        // Add one because sometimes the camera can move two tiles in a single frame.
-        if (tile !is Tile || tile.y <= getLowestStoredTileYIdx() + 1) {
+
+        if (tile !is Tile || tile.y <= getLowestStoredTileYIdx() + abs(getLowestStoredTileYDiff())) {
             continue
         }
 
@@ -54,12 +54,12 @@ fun tickCollapse() {
 
     for (tile in toRemove) {
         collapsingTileIds.remove(tile.getId())
-        tile.dematerialize()
         playRockCrumbleSound()
         spawnFragment(
             tile.coord.cpy,
             Point(Random.nextDouble() - 0.5, -Random.nextDouble()),
             tile.getTileType()
         )
+        tile.dematerialize()
     }
 }

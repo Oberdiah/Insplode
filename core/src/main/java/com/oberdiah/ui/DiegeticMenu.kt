@@ -140,11 +140,12 @@ fun renderDiegeticMenu(r: Renderer) {
         launchTextColor.add(Color(0.4f, 0.4f, 0.4f, 0.0f))
     }
 
-    launchTextAlpha = if (GAME_STATE == GameState.InGame) {
-        frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
-    } else {
-        frameAccurateLerp(launchTextAlpha, 1.0f, 10.0).f
-    }
+    launchTextAlpha =
+        if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
+            frameAccurateLerp(launchTextAlpha, 1.0f, 10.0).f
+        } else {
+            frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
+        }
 
     launchTextColor.a = launchTextAlpha
 

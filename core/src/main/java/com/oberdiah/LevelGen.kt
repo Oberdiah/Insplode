@@ -125,9 +125,16 @@ fun getLowestStoredTileYIdx(): Int {
     return currentLowestTileY
 }
 
+/**
+ * diff > 0, camera gone up, diff < 0, camera gone down.
+ */
+fun getLowestStoredTileYDiff(): Int {
+    return requestedLowestTileY - currentLowestTileY
+}
+
 fun updateLevelStorage() {
-    // diff > 0, camera gone up, diff < 0, camera gone down.
-    val diff = requestedLowestTileY - currentLowestTileY
+
+    val diff = getLowestStoredTileYDiff()
     currentLowestTileY = requestedLowestTileY
 
     // We only generate on the way down - if stuff falls off the top it's gone for good.
@@ -194,7 +201,7 @@ fun generateTile(tile: Tile) {
             tile.setTileType(TileType.Dirt)
         }
         if (caveNoise < caveVal) {
-            tile.dematerialize()
+            tile.setTileType(TileType.CaveWall)
         }
     }
 }
