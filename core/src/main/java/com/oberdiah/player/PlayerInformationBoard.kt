@@ -82,14 +82,13 @@ class PlayerInformationBoard {
             val isTile = it is Tile && it.doesExist()
             if (isTile) {
                 isStandingOnStandableExact = true
+                isStandingOnNotBombExact = true
             }
 
             if (it is Bomb) {
                 if (it.standable) {
                     isStandingOnStandableExact = true
                 }
-            } else {
-                isStandingOnNotBombExact = true
             }
         }
     }
