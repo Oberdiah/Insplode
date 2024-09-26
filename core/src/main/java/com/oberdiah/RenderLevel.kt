@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -15,6 +16,7 @@ import com.oberdiah.utils.colorScheme
 private lateinit var fbo: FrameBuffer
 lateinit var levelShapeRenderer: ShapeRenderer
 lateinit var levelTexRenderer: SpriteBatch
+lateinit var levelOverlayRenderer: SpriteBatch
 val cam = OrthographicCamera()
 val cam2 = OrthographicCamera()
 val fboLoopSizeInUnits
@@ -33,6 +35,7 @@ fun initLevelRender() {
         )
     levelShapeRenderer = ShapeRenderer()
     levelTexRenderer = SpriteBatch()
+    levelOverlayRenderer = SpriteBatch()
 
     cam.setToOrtho(true, WIDTH.f, HEIGHT.f)
     cam2.setToOrtho(false, UNITS_WIDE.f, fboLoopSizeInUnits.f)
@@ -40,6 +43,8 @@ fun initLevelRender() {
     cam2.position.x = UNITS_WIDE.f / 2
     cam2.update()
     levelTexRenderer.projectionMatrix = cam.combined
+    levelOverlayRenderer.projectionMatrix = cam.combined
+    levelOverlayRenderer.enableBlending()
 }
 
 var fboBaseLocation = 0
@@ -87,29 +92,28 @@ fun renderLevel() {
     levelShapeRenderer.end()
     fbo.end()
 
-    val yOffset = -Point(0, 0).ui.y.f + HEIGHT.f - fbo.height.f
+    val yOffset = (-Point(0, 0).ui.y.f + HEIGHT.f - fbo.height.f).i
+    val topTexY = (yOffset + ((fboBaseLocation - 1) * fbo.height)).f
+    val bottomTexY = (yOffset + ((fboBaseLocation) * fbo.height)).f
     levelTexRenderer.begin()
-    levelTexRenderer.draw(
-        fbo.colorBufferTexture,
-        0f,
-        yOffset + ((fboBaseLocation - 1) * fbo.height.f),
-        WIDTH.f,
-        fbo.height.f
-    )
-    levelTexRenderer.draw(
-        fbo.colorBufferTexture,
-        0f,
-        yOffset + ((fboBaseLocation) * fbo.height.f),
-        WIDTH.f,
-        fbo.height.f
-    )
+    levelTexRenderer.draw(fbo.colorBufferTexture, 0f, topTexY, WIDTH.f, fbo.height.f)
+    levelTexRenderer.draw(fbo.colorBufferTexture, 0f, bottomTexY, WIDTH.f, fbo.height.f)
     levelTexRenderer.end()
 
+    val translateY = 5.0f
+    Gdx.gl.glBlendEquation(GL30.GL_FUNC_REVERSE_SUBTRACT)
+    levelOverlayRenderer.begin()
+    val worldSprite = Sprite(fbo.colorBufferTexture)
+    worldSprite.x = 0f
+    worldSprite.y = topTexY + translateY
+    worldSprite.color = Color(1f, 1f, 1f, 0.15f)
+    worldSprite.draw(levelOverlayRenderer)
+    worldSprite.y = bottomTexY + translateY
+    worldSprite.draw(levelOverlayRenderer)
+    levelOverlayRenderer.end()
+    Gdx.gl.glBlendEquation(GL30.GL_FUNC_ADD)
 
     previousLowestTile = lowestTileOnScreen
-//    levelShapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-//    renderLevelInFull(levelShapeRenderer)
-//    levelShapeRenderer.end()
 }
 
 private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {

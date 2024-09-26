@@ -194,10 +194,10 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
 
         val tx = tile.x
         val ty = tile.y
-        val bottomLeft = tile.doesExist()
-        val topLeft = getTile(tx, ty + 1).doesExist()
-        val bottomRight = getTile(tx + 1, ty).doesExist()
-        val topRight = getTile(tx + 1, ty + 1).doesExist()
+        val bottomLeft = tile.canCollide()
+        val topLeft = getTile(tx, ty + 1).canCollide()
+        val bottomRight = getTile(tx + 1, ty).canCollide()
+        val topRight = getTile(tx + 1, ty + 1).canCollide()
 
         if (bottomLeft || topLeft || bottomRight || topRight) {
             val polygon = marchingSquaresScaled(bottomLeft, bottomRight, topLeft, topRight)

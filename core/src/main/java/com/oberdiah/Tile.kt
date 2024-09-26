@@ -26,6 +26,7 @@ class TileData(var tile: Tile) {
 interface TileLike {
     /** Does this tile physically exist; can you collide with it and see it? */
     fun doesExist(): Boolean
+    fun canCollide(): Boolean
 
     /** What type of tile is this? If it doesn't exist this will always return air. */
     fun getTileType(): TileType
@@ -35,6 +36,10 @@ interface TileLike {
 // space outside the world.
 class EmptyTile : TileLike {
     override fun doesExist(): Boolean {
+        return false
+    }
+
+    override fun canCollide(): Boolean {
         return false
     }
 
@@ -175,6 +180,10 @@ class Tile(private val id: TileId) : TileLike {
         return doesExistPhysically
     }
 
+    override fun canCollide(): Boolean {
+        return doesExistPhysically && tileType.collidable
+    }
+
     fun setTileType(tileType: TileType) {
         require(tileType != TileType.Air) { "Cannot set a tile to air." }
         this.tileType = tileType
@@ -265,10 +274,6 @@ class Tile(private val id: TileId) : TileLike {
         }
 
     fun recalculatePhysicsBody() {
-        if (!tileType.collidable) {
-            return
-        }
-
         body.removeAllFixtures()
 
         val bottomLeft = this
@@ -276,10 +281,10 @@ class Tile(private val id: TileId) : TileLike {
         val bottomRight = data.rm
         val topRight = data.tr
 
-        val bl = bottomLeft.doesExist()
-        val tl = topLeft.doesExist()
-        val br = bottomRight.doesExist()
-        val tr = topRight.doesExist()
+        val bl = bottomLeft.canCollide()
+        val tl = topLeft.canCollide()
+        val br = bottomRight.canCollide()
+        val tr = topRight.canCollide()
         if (bl || br || tl || tr) {
             val fa = marchingSquaresFAScaled(bl, br, tl, tr)
             val groundBox = PolygonShape()

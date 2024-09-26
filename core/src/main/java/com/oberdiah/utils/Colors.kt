@@ -27,7 +27,7 @@ fun nextColorScheme() {
     forceFullScreenRefresh()
 }
 
-var colorScheme: ColorScheme = Grassy()
+var colorScheme: ColorScheme = Grassy2()
 
 class Grassy : ColorScheme("Forest") {
     init {
@@ -37,7 +37,7 @@ class Grassy : ColorScheme("Forest") {
         backgroundA = colorFrom(0xf2e8cf)
         backgroundB = colorFrom(0xf2e8cf).mul(1.03f)
         stone = colorFrom(0x303930)
-        caveWall = colorFrom(0x172117).withAlpha(0.25f)
+        caveWall = colorFrom(0x172117)
         dirt = colorFrom(0x54793E)
         grass = colorFrom(0x103E1F)
         pickupColor = colorFrom(0x48f06f)
@@ -52,6 +52,7 @@ class Grassy2 : ColorScheme("Grass Lands") {
         backgroundA = colorFrom(0xf2e8cf)
         backgroundB = colorFrom(0xf2e8cf).mul(1.03f)
         stone = colorFrom(0x386641)
+        caveWall = colorFrom(0xFFEABF).withAlpha(0.5f)
         dirt = colorFrom(0x6a994e)
         grass = colorFrom(0xa7c957)
     }
@@ -65,6 +66,7 @@ class Oceany : ColorScheme("Ocean") {
         backgroundA = colorFrom(0xf1faee)
         backgroundB = colorFrom(0xf1faee).mul(1.03f)
         stone = colorFrom(0x1d3557)
+        caveWall = colorFrom(0x172117)
         dirt = colorFrom(0x457b9d)
         grass = colorFrom(0xa8dadc)
     }
@@ -78,6 +80,7 @@ class Deserty : ColorScheme("Desert") {
         backgroundA = colorFrom(0x90AACB)
         backgroundB = colorFrom(0x90AACB).mul(1.03f)
         stone = colorFrom(0xFEF1E6)
+        caveWall = colorFrom(0x172117)
         dirt = colorFrom(0xF9D5A7)
         grass = colorFrom(0xFFB085)
     }
@@ -91,6 +94,7 @@ class Classic : ColorScheme("Classic") {
         backgroundA = colorFrom(0x9DCFEA)
         backgroundB = colorFrom(0x9DCFEA).mul(1.03f)
         stone = colorFrom(0x404040)
+        caveWall = colorFrom(0x172117)
         dirt = colorFrom(0xA07759)
         grass = colorFrom(0x439E57)
     }
@@ -104,6 +108,7 @@ class Castle : ColorScheme("Castle") {
         backgroundA = colorFrom(0xe0ac4a)
         backgroundB = colorFrom(0xe0ac4a).mul(1.03f)
         stone = colorFrom(0x2b2b2b)
+        caveWall = colorFrom(0x172117)
         dirt = colorFrom(0x666666)
         grass = colorFrom(0x910f11)
     }
@@ -117,6 +122,7 @@ class Canyon : ColorScheme("Canyon") {
         backgroundA = colorFrom(0x4e9fc2)
         backgroundB = colorFrom(0x4e9fc2).mul(1.03f)
         stone = colorFrom(0xad9311)
+        caveWall = colorFrom(0x172117)
         dirt = colorFrom(0x7a5828)
         grass = colorFrom(0xf7e672)
     }
@@ -130,6 +136,7 @@ class Princess : ColorScheme("Princess") {
         backgroundA = colorFrom(0x9DCFEA)
         backgroundB = colorFrom(0x9DCFEA).mul(1.03f)
         stone = colorFrom(0xb757d4)
+        caveWall = colorFrom(0x172117)
         dirt = colorFrom(0xf0b1ec)
         grass = colorFrom(0x57d4b9)
     }
