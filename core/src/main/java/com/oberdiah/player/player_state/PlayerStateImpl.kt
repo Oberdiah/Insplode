@@ -12,6 +12,7 @@ import com.oberdiah.d
 import com.oberdiah.i
 import com.oberdiah.max
 import com.oberdiah.min
+import com.oberdiah.multiplier
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.player.playerInfoBoard
@@ -64,6 +65,8 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
         s.setState(PlayerMode.IDLE)
 
+        val multiplier = multiplier()
+
         registerCasuallyLandedWithScoreSystem()
 
         val vel = playerInfoBoard.velocity
@@ -77,7 +80,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
         if (vel.len > 10) {
             // Player landing deserves more than the normal amount of shake
             addScreenShake(vel.len.d * 0.025)
-            boom(player.body.p, vel.len.d * 0.03, affectsThePlayer = false)
+            boom(player.body.p, vel.len.d * 0.03 * multiplier.pow(0.6), affectsThePlayer = false)
         }
     }
 

@@ -43,7 +43,7 @@ class PlayerInputs {
     fun render(r: Renderer) {
         val pos = player.body.p
         if (GAME_IS_RUNNING) {
-            TOUCHES_DOWN.firstOrNull()?.let { touch ->
+            TOUCHES_DOWN.firstOrNull()?.let { _ ->
                 val lineX = playerInputs.desiredXPos
 
                 if (lineX in (pos.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(pos.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
