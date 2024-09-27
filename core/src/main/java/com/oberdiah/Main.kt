@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
+import com.oberdiah.player.playerInputs
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUI
 
@@ -112,6 +113,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         worldSpaceRenderer.begin()
         time("Render background") { renderBackground(worldSpaceRenderer) }
+        playerInputs.render(worldSpaceRenderer)
         worldSpaceRenderer.end()
 
         time("Render level") { renderLevel() }

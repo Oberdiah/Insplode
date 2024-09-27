@@ -3,8 +3,13 @@ package com.oberdiah.player
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
+import com.badlogic.gdx.graphics.Color
+import com.oberdiah.CAMERA_POS_Y
+import com.oberdiah.GAME_IS_RUNNING
 import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.Point
+import com.oberdiah.Renderer
+import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.UNITS_WIDE
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.abs
@@ -17,6 +22,7 @@ import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.isKeyJustPressed
 import com.oberdiah.utils.isKeyPressed
+import com.oberdiah.withAlpha
 
 class PlayerInputs {
     /** The point where the player's finger last went down. */
@@ -32,6 +38,29 @@ class PlayerInputs {
     fun reset() {
         lastFingerPoint = Point()
         lastBodyXValue = 0.0
+    }
+
+    fun render(r: Renderer) {
+        val pos = player.body.p
+        if (GAME_IS_RUNNING) {
+            TOUCHES_DOWN.firstOrNull()?.let { touch ->
+                val lineX = playerInputs.desiredXPos
+
+                if (lineX in (pos.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(pos.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
+                    r.color = Color.WHITE.withAlpha(0.5)
+                } else {
+                    r.color = Color.WHITE.withAlpha(0.25)
+                }
+                // For visual interest, draw two lines one thinner than the other
+                r.line(
+                    lineX,
+                    CAMERA_POS_Y,
+                    lineX,
+                    CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS,
+                    0.3,
+                )
+            }
+        }
     }
 
     fun tick() {

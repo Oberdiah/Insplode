@@ -1,22 +1,16 @@
 package com.oberdiah.player
 
-import com.badlogic.gdx.graphics.Color
-import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.GAME_IS_RUNNING
 import com.oberdiah.Point
 import com.oberdiah.Renderer
-import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.Velocity
 import com.oberdiah.div
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.minus
 import com.oberdiah.plus
 import com.oberdiah.spawnFragment
-import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
-import com.oberdiah.withAlpha
 import kotlin.random.Random
 
 class PlayerRenderer {
@@ -24,27 +18,6 @@ class PlayerRenderer {
 
     fun render(r: Renderer) {
         val pos = player.body.p
-
-        if (GAME_IS_RUNNING) {
-            TOUCHES_DOWN.firstOrNull()?.let { touch ->
-                // If the player is within the uncertainty window, make the line green
-                val lineX = playerInputs.desiredXPos
-
-                if (lineX in (pos.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(pos.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
-                    r.color = Color.WHITE.withAlpha(0.5)
-                } else {
-                    r.color = Color.WHITE.withAlpha(0.25)
-                }
-                // For visual interest, draw two lines one thinner than the other
-                r.line(
-                    lineX,
-                    CAMERA_POS_Y,
-                    lineX,
-                    CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS,
-                    0.3,
-                )
-            }
-        }
 
         if (playerInputs.canJump) {
             r.color = colorScheme.player
