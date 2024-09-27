@@ -56,6 +56,14 @@ fun whatAmITouching(fixtures: List<Fixture>): Set<Any> {
     return bodies.filterNotNull().toSet()
 }
 
+fun forAllContacts(action: (Fixture, Fixture) -> Unit) {
+    for (contact in world.contactList) {
+        if (!contact.isTouching) continue
+        if (!contact.isEnabled) continue
+        action(contact.fixtureA, contact.fixtureB)
+    }
+}
+
 fun tickPhysicsWrapper() {
     allPhysBodies.forEach { it.updateInternals() }
 }

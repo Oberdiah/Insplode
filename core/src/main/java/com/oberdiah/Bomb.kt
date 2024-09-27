@@ -17,6 +17,24 @@ private fun bombFixtureDef(shape: Shape): FixtureDef {
     return fixtureDef
 }
 
+fun tickBombController() {
+    forAllContacts { fixture, fixture2 ->
+        val userData = fixture.body.userData
+        val userData2 = fixture2.body.userData
+        if (userData is Bomb && userData2 is Bomb) {
+            val maxCountdown = max(userData.standableCountdown, userData2.standableCountdown)
+            userData.standableCountdown = maxCountdown
+            userData2.standableCountdown = maxCountdown
+        }
+        if (userData is Bomb && userData2 is Tile) {
+            userData.standableCountdown = 0.1
+        }
+        if (userData2 is Bomb && userData is Tile) {
+            userData2.standableCountdown = 0.1
+        }
+    }
+}
+
 abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObject(startingPoint) {
     val maxFuseLength
         get() = bombType.fuseLength
@@ -31,13 +49,20 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
         get() = bombType.power
 
     protected var timeLeft = maxFuseLength
-    var standable = false
-        private set
+
+    /** If this is greater than 0 we can stand on it. */
+    var standableCountdown = 0.0
+    val isStandable
+        get() = standableCountdown > 0
 
     val size = Size(radius * 2, radius * 2)
 
     override fun hitByExplosion() {
         timeLeft = min(Random.nextDouble(0.4, 0.6), timeLeft)
+    }
+
+    override fun tick() {
+        standableCountdown -= DELTA
     }
 
     open fun explode() {
@@ -53,11 +78,6 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
             yourFixture.body.mass.d,
             hitObject
         )
-
-        // We become standable if we hit the ground or we hit a bomb that is also standable.
-        if (hitObject is Tile || (hitObject is Bomb && hitObject.standable)) {
-            standable = true
-        }
     }
 }
 
@@ -70,7 +90,7 @@ enum class BombType(
     SmallTimed(0.8, 0.2, 8.0, colorScheme.bombPrimary),
     MediumTimed(1.3, 0.3, 8.0, colorScheme.bombPrimary),
     LargeTimed(2.0, 0.4, 8.0, colorScheme.bombPrimary),
-    MegaTimed(3.0, 0.6, 8.0, colorScheme.bombPrimary),
+    MegaTimed(3.0, 0.6, 800.0, colorScheme.bombPrimary),
     LineBomb(0.3, 0.15, 7.0, colorScheme.bombPrimary),
     SpringBomb(1.0, 0.25, 12.0, colorScheme.bombPrimary),
     StickyBomb(1.3, 0.3, 6.0, colorScheme.bombPrimary),
@@ -183,6 +203,11 @@ class TimedBomb(startingPoint: Point, bombType: BombType) : Bomb(startingPoint, 
 
     override fun render(r: Renderer) {
         r.color = color
+
+        if (isStandable) {
+            r.color = Color.GRAY
+        }
+
         r.circle(body.p, radius)
         r.color = Color.WHITE.withAlpha(0.6)
         r.arcFrom0(body.p, radius * 0.8, timeLeft / maxFuseLength)

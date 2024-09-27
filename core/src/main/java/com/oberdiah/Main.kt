@@ -102,6 +102,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Collapse") { tickCollapse() }
             time("Tick Particles") { tickParticles() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
+            time("Tick Bombs") { tickBombController() }
             time("Tick Point Orbs") { tickPointOrbs() }
             time("Tick Score System") { tickScoreSystem() }
         }

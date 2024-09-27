@@ -86,7 +86,7 @@ class PlayerInformationBoard {
             }
 
             if (it is Bomb) {
-                if (it.standable) {
+                if (it.isStandable) {
                     isStandingOnStandableExact = true
                 }
             }
