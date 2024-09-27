@@ -204,10 +204,6 @@ class TimedBomb(startingPoint: Point, bombType: BombType) : Bomb(startingPoint, 
     override fun render(r: Renderer) {
         r.color = color
 
-        if (isStandable) {
-            r.color = Color.GRAY
-        }
-
         r.circle(body.p, radius)
         r.color = Color.WHITE.withAlpha(0.6)
         r.arcFrom0(body.p, radius * 0.8, timeLeft / maxFuseLength)
