@@ -135,6 +135,13 @@ class Renderer(val name: String) {
         renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, s.h.f)
     }
 
+    fun centeredHollowRect(mid: Point, s: Size, width: Number) {
+        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, width.f)
+        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f + s.h.f / 2 - width.f, s.w.f, width.f)
+        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, width.f, s.h.f)
+        renderer.rect(mid.x.f + s.w.f / 2 - width.f, mid.y.f - s.h.f / 2, width.f, s.h.f)
+    }
+
     fun polyLine(ps: List<Point>) {
         val arr = FloatArray(ps.size * 2)
         ps.forEachIndexed { index, point ->

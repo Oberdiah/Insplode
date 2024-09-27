@@ -242,13 +242,13 @@ class Size(w: Number, h: Number) : Point(w, h) {
         return Size(x * i, y * i)
     }
 
-    var w: Number
+    var w: Double
         get() = x
         set(value) {
             x = value.d
         }
 
-    var h: Number
+    var h: Double
         get() = y
         set(value) {
             y = value.d

@@ -2,10 +2,10 @@ package com.oberdiah.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.oberdiah.APP_TIME
 import com.oberdiah.DELTA
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
+import com.oberdiah.HEIGHT
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
@@ -22,11 +22,12 @@ import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.lastScore
 import com.oberdiah.lerp
-import com.oberdiah.playerScore
-import com.oberdiah.sin
 import com.oberdiah.statefulHighScore
 import com.oberdiah.toUISpace
-import com.oberdiah.toWorldSpace
+import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
+import com.oberdiah.upgrades.UPGRADES_SCREEN_HEIGHT_UNITS
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.playerHas
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
@@ -34,9 +35,9 @@ import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
 
-const val LAUNCH_TEXT_HEIGHT = 4.5
 const val MENU_ZONE_BOTTOM_Y = 6.0
-const val LOWEST_DIEGETIC_CAMERA_Y = -5.0
+val UPGRADES_SCREEN_BOTTOM_Y
+    get() = MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS
 
 fun goToDiegeticMenu() {
     GAME_STATE = GameState.TransitioningToDiegeticMenu
@@ -87,7 +88,7 @@ fun renderDiegeticMenu(r: Renderer) {
     var isLaunchTapped = false
     if (GAME_STATE == GameState.DiegeticMenu) {
         TOUCHES_WENT_DOWN.forEach {
-            if (!isInLaunchZone(it)) {
+            if (!isInLaunchButton(it)) {
                 isDragging = true
                 lastFingerY = it.y
             }
@@ -98,12 +99,12 @@ fun renderDiegeticMenu(r: Renderer) {
                 cameraY += dragDelta
                 lastFingerY = it.y
             }
-            if (isInLaunchZone(it)) {
+            if (isInLaunchButton(it)) {
                 isLaunchTapped = true
             }
         }
         TOUCHES_WENT_UP.forEach {
-            if (isInLaunchZone(it) && !isDragging) {
+            if (isInLaunchButton(it) && !isDragging) {
                 GAME_STATE = GameState.InGame
             }
             if (isDragging) {
@@ -120,8 +121,8 @@ fun renderDiegeticMenu(r: Renderer) {
         delayedPreviousFingerY = lerp(delayedPreviousFingerY, lastFingerY, 0.5)
         cameraY += cameraVelocity * DELTA
         cameraVelocity *= 0.95
-        val lowestCameraY = LOWEST_DIEGETIC_CAMERA_Y
-        val highestCameraY = MENU_ZONE_BOTTOM_Y
+        val lowestCameraY = MENU_ZONE_BOTTOM_Y
+        val highestCameraY = TOP_OF_UPGRADE_SCREEN_UNITS - SCREEN_HEIGHT_IN_UNITS
 
         // Soft clamp the camera y and make it bounce
 
@@ -149,45 +150,55 @@ fun renderDiegeticMenu(r: Renderer) {
 
     launchTextColor.a = launchTextAlpha
 
-    r.color = launchTextColor
+    if (launchTextAlpha > 0.001) {
+        r.color = launchTextColor
+        r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
+        if (playerHas(Upgrade.Slam)) {
+            r.text(fontMedium, "Launch!", launchButtonPos, Align.center)
+        } else {
+            r.text(fontMedium, "Drop!", launchButtonPos, Align.center)
+        }
+    }
 
-    r.text(
-        fontMedium,
-        "Launch!",
-        toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT)),
-        Align.center
-    )
+//    val chevronDistanceBelow = sin(APP_TIME) * 0.3
+//    drawChevron(r, chevronDistanceBelow)
+}
 
-    val chevronDistanceBelow = 2.0 + sin(APP_TIME) * 0.3
+private val launchButtonSize
+    get() = Size(WIDTH / 3, HEIGHT / 20)
+private val launchButtonPos
+    get() = Point(WIDTH / 2, HEIGHT / 10)
+
+private fun isInLaunchButton(touch: Point): Boolean {
+    return touch.x > launchButtonPos.x - launchButtonSize.w / 2 &&
+            touch.x < launchButtonPos.x + launchButtonSize.w / 2 &&
+            touch.y > launchButtonPos.y - launchButtonSize.h / 2 &&
+            touch.y < launchButtonPos.y + launchButtonSize.h / 2
+}
+
+private fun drawChevron(r: Renderer, chevronDistanceBelow: Double) {
+    val W = SCREEN_WIDTH_IN_UNITS.d
 
     // Left part of the arrow
     r.centeredRect(
         toUISpace(
             Point(
                 W / 2 + W / 32,
-                MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT - chevronDistanceBelow
+                MENU_ZONE_BOTTOM_Y - chevronDistanceBelow
             )
         ),
         Size(WIDTH / 10, WIDTH / 75),
-        Math.PI / 4
+        -Math.PI / 4
     )
 
     r.centeredRect(
         toUISpace(
             Point(
                 W / 2 - W / 32,
-                MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT - chevronDistanceBelow
+                MENU_ZONE_BOTTOM_Y - chevronDistanceBelow
             )
         ),
         Size(WIDTH / 10, WIDTH / 75),
-        -Math.PI / 4
+        Math.PI / 4
     )
-}
-
-private fun isInLaunchZone(screenSpaceTouch: Point): Boolean {
-    val worldSpaceTouch = toWorldSpace(screenSpaceTouch)
-    return worldSpaceTouch.y < MENU_ZONE_BOTTOM_Y + LAUNCH_TEXT_HEIGHT &&
-            worldSpaceTouch.y > MENU_ZONE_BOTTOM_Y + 1.0 &&
-            worldSpaceTouch.x > SCREEN_WIDTH_IN_UNITS * (1.0 / 4) &&
-            worldSpaceTouch.x < SCREEN_WIDTH_IN_UNITS * (3.0 / 4)
 }

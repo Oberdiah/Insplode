@@ -2,6 +2,7 @@ package com.oberdiah
 
 import com.badlogic.gdx.Gdx
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
+import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.utils.calculateInputGlobals
 import com.oberdiah.utils.camera
 
@@ -99,7 +100,7 @@ val JUST_UP_OFF_SCREEN
 const val GRAVITY = 20.0 * GLOBAL_SCALE
 
 val PLAYER_SPAWN_Y
-    get() = MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS * CURRENT_PLAYER_Y_FRACT + 15
+    get() = TOP_OF_UPGRADE_SCREEN_UNITS + 1.5
 
 const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
 
