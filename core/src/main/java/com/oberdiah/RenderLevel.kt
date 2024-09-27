@@ -100,7 +100,7 @@ fun renderLevel() {
     levelTexRenderer.draw(fbo.colorBufferTexture, 0f, bottomTexY, WIDTH.f, fbo.height.f)
     levelTexRenderer.end()
 
-    val translateY = 5.0f
+    val translateY = (UNIT_SIZE_IN_PIXELS * TILE_SIZE_IN_UNITS / 2).f
     Gdx.gl.glBlendEquation(GL30.GL_FUNC_REVERSE_SUBTRACT)
     levelOverlayRenderer.begin()
     val worldSprite = Sprite(fbo.colorBufferTexture)
@@ -171,59 +171,16 @@ fun renderBackground(r: Renderer) {
             }
 
             // Make thisColor darker as we go up (ty increases)
-//            if (ty > 0) {
             thisColor = thisColor.cpy().add(
                 0.05f * (ty / 50f),
                 0.10f * (ty / 50f),
                 0.15f * (ty / 50f),
                 0.0f
             )
-//            }
-
 
             r.color = thisColor
 
             r.rect(tx, ty, 1, 1)
-        }
-    }
-}
-
-
-fun renderLevelOld(r: Renderer) {
-    for (tileType in TileType.values()) {
-        for (bottomLeft in levelOnScreen) {
-            val x = bottomLeft.x
-            val y = bottomLeft.y
-
-            val topLeft = getTile(x, y + 1)
-            val bottomRight = getTile(x + 1, y)
-            val topRight = getTile(x + 1, y + 1)
-
-//            val tileType = bottomLeft.tileType
-
-            // Fun wee rendering hack to fill in holes
-            val bl = bottomLeft.doesExist() && bottomLeft.getTileType().ordinal >= tileType.ordinal
-            val tl = topLeft.doesExist() && topLeft.getTileType().ordinal >= tileType.ordinal
-            val br =
-                bottomRight.doesExist() && bottomRight.getTileType().ordinal >= tileType.ordinal
-            val tr = topRight.doesExist() && topRight.getTileType().ordinal >= tileType.ordinal
-
-            if (bl || br || tl || tr) {
-//                r.color = tileType.color().cpy().add(-0.3f, -0.3f, -0.3f, 0.0f)
-//                r.poly(
-//                    marchingSquaresFAScaled(bl, br, tl, tr),
-//                    1,
-//                    x * TILE_SIZE + 0.1,
-//                    y * TILE_SIZE + 0.1
-//                )
-                r.color = tileType.color()
-                r.poly(
-                    marchingSquaresFAScaled(bl, br, tl, tr),
-                    1,
-                    x * TILE_SIZE_IN_UNITS,
-                    y * TILE_SIZE_IN_UNITS
-                )
-            }
         }
     }
 }
