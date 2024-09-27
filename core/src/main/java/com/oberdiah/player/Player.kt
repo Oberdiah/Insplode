@@ -105,7 +105,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         } else if (playerState.isIntentionallyMovingUp) {
             if (playerInfoBoard.isStandingOnStandableExact) {
                 if (playerState.timeSinceStartedIntentionallyMovingUp > JUMP_PREVENTION_WINDOW) {
-                    playerState.justCasuallyLanded()
+                    // You cannot land if you're not moving down
+                    if (playerInfoBoard.velocity.y < 0) {
+                        playerState.justCasuallyLanded()
+                    }
                 }
             }
         }
