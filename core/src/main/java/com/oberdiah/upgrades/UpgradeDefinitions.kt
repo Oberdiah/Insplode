@@ -24,6 +24,7 @@ enum class Upgrade(
         "Combo Orbs",
         "When a bomb explodes another, orbs are spawned.",
         10,
+        listOf(Movement),
     ),
     BombMagician(
         "Bomb Magician",
@@ -34,6 +35,7 @@ enum class Upgrade(
         "Jump",
         "Tap to jump.",
         5,
+        listOf(ComboOrbs, MediumTimedBomb)
     ),
 
     // ################ JUMP UPGRADES ################

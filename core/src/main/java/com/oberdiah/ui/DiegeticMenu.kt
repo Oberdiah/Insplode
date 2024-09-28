@@ -2,6 +2,7 @@ package com.oberdiah.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.APP_TIME
 import com.oberdiah.DELTA
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
@@ -22,22 +23,27 @@ import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.lastScore
 import com.oberdiah.lerp
+import com.oberdiah.sin
 import com.oberdiah.statefulHighScore
 import com.oberdiah.toUISpace
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.upgrades.UPGRADES_SCREEN_HEIGHT_UNITS
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.playerHas
+import com.oberdiah.upgrades.renderUpgradeMenu
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
+import com.oberdiah.withAlpha
 
 const val MENU_ZONE_BOTTOM_Y = 6.0
 val UPGRADES_SCREEN_BOTTOM_Y
     get() = MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS
+val MENU_ZONE_TOP_Y
+    get() = UPGRADES_SCREEN_BOTTOM_Y
 
 fun goToDiegeticMenu() {
     GAME_STATE = GameState.TransitioningToDiegeticMenu
@@ -57,6 +63,8 @@ var cameraY = MENU_ZONE_BOTTOM_Y
 fun renderDiegeticMenu(r: Renderer) {
     val H = SCREEN_HEIGHT_IN_UNITS
     val W = SCREEN_WIDTH_IN_UNITS.d
+
+    renderUpgradeMenu(r)
 
     r.text(
         fontLarge,
@@ -160,8 +168,9 @@ fun renderDiegeticMenu(r: Renderer) {
         }
     }
 
-//    val chevronDistanceBelow = sin(APP_TIME) * 0.3
-//    drawChevron(r, chevronDistanceBelow)
+    val chevronDistanceBelow = H / 15 - sin(APP_TIME) * 0.15
+    r.color = Color.GRAY
+    drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
 }
 
 private val launchButtonSize
@@ -176,7 +185,7 @@ private fun isInLaunchButton(touch: Point): Boolean {
             touch.y < launchButtonPos.y + launchButtonSize.h / 2
 }
 
-private fun drawChevron(r: Renderer, chevronDistanceBelow: Double) {
+private fun drawChevron(r: Renderer, chevronUnitsY: Double) {
     val W = SCREEN_WIDTH_IN_UNITS.d
 
     // Left part of the arrow
@@ -184,7 +193,7 @@ private fun drawChevron(r: Renderer, chevronDistanceBelow: Double) {
         toUISpace(
             Point(
                 W / 2 + W / 32,
-                MENU_ZONE_BOTTOM_Y - chevronDistanceBelow
+                chevronUnitsY
             )
         ),
         Size(WIDTH / 10, WIDTH / 75),
@@ -195,7 +204,7 @@ private fun drawChevron(r: Renderer, chevronDistanceBelow: Double) {
         toUISpace(
             Point(
                 W / 2 - W / 32,
-                MENU_ZONE_BOTTOM_Y - chevronDistanceBelow
+                chevronUnitsY
             )
         ),
         Size(WIDTH / 10, WIDTH / 75),

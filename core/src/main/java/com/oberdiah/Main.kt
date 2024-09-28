@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.*
 import com.oberdiah.player.playerInputs
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUI
+import com.oberdiah.upgrades.initUpgradeController
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -41,6 +42,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         setGlobalsThisFrame()
         initMarchingSquares()
         initLevelRender()
+        initUpgradeController()
 
         worldSpaceRenderer = Renderer("World Space Renderer")
         uiRenderer = Renderer("UI Renderer")
