@@ -27,7 +27,6 @@ import com.oberdiah.sin
 import com.oberdiah.statefulHighScore
 import com.oberdiah.toUISpace
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
-import com.oberdiah.upgrades.UPGRADES_SCREEN_HEIGHT_UNITS
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.playerHas
 import com.oberdiah.upgrades.renderUpgradeMenu
@@ -37,7 +36,6 @@ import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
-import com.oberdiah.withAlpha
 
 const val MENU_ZONE_BOTTOM_Y = 6.0
 val UPGRADES_SCREEN_BOTTOM_Y
