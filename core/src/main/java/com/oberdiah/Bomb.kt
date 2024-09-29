@@ -90,7 +90,7 @@ enum class BombType(
     SmallTimed(0.8, 0.2, 8.0, colorScheme.bombPrimary),
     MediumTimed(1.3, 0.3, 8.0, colorScheme.bombPrimary),
     LargeTimed(2.0, 0.4, 8.0, colorScheme.bombPrimary),
-    MegaTimed(3.0, 0.6, 800.0, colorScheme.bombPrimary),
+    MegaTimed(3.0, 0.6, 8.0, colorScheme.bombPrimary),
     LineBomb(0.3, 0.15, 7.0, colorScheme.bombPrimary),
     SpringBomb(1.0, 0.25, 12.0, colorScheme.bombPrimary),
     StickyBomb(1.3, 0.3, 6.0, colorScheme.bombPrimary),
