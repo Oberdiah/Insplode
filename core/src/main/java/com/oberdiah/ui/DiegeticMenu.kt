@@ -165,7 +165,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     launchTextColor.a = launchTextAlpha
 
     val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 15 - sin(APP_TIME) * 0.15
-    r.color = Color.GRAY
+    r.color = colorScheme.textColor
     drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
 
     if (launchTextAlpha > 0.001) {
