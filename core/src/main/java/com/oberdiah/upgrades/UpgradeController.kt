@@ -2,19 +2,12 @@ package com.oberdiah.upgrades
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.Align
-import com.oberdiah.JUST_UP_OFF_SCREEN
+import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.Size
-import com.oberdiah.UNITS_WIDE
-import com.oberdiah.UNIT_SIZE_IN_PIXELS
-import com.oberdiah.WIDTH
 import com.oberdiah.f
-import com.oberdiah.fontSmall
 import com.oberdiah.max
-import com.oberdiah.toUISpace
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.utils.StatefulBoolean
 import com.oberdiah.utils.colorScheme
@@ -85,7 +78,7 @@ val TOP_OF_UPGRADE_SCREEN_UNITS
     get() = UPGRADES_SCREEN_BOTTOM_Y + UPGRADES_SCREEN_HEIGHT_UNITS
 
 fun renderUpgradeMenu(r: Renderer) {
-    if (JUST_UP_OFF_SCREEN < UPGRADES_SCREEN_BOTTOM_Y) {
+    if (JUST_UP_OFF_SCREEN_UNITS < UPGRADES_SCREEN_BOTTOM_Y) {
         return
     }
 

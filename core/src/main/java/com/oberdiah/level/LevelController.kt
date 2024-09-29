@@ -1,172 +1,59 @@
 package com.oberdiah.level
 
+import com.badlogic.gdx.graphics.Color
+import com.oberdiah.APP_TIME
 import com.oberdiah.BombType
 import com.oberdiah.ClusterBomb
 import com.oberdiah.DELTA
+import com.oberdiah.GAME_IS_RUNNING
+import com.oberdiah.GAME_STATE
+import com.oberdiah.GameState
 import com.oberdiah.ImpactBomb
+import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
+import com.oberdiah.LAST_APP_TIME_GAME_STATE_CHANGED
 import com.oberdiah.LineBomb
+import com.oberdiah.NUM_TILES_ACROSS
 import com.oberdiah.Point
+import com.oberdiah.Renderer
 import com.oberdiah.SAFE_BOMB_SPAWN_HEIGHT
+import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
+import com.oberdiah.Size
 import com.oberdiah.SpringBomb
 import com.oberdiah.StickyBomb
+import com.oberdiah.TILE_SIZE_IN_UNITS
+import com.oberdiah.Tile
 import com.oberdiah.TimedBomb
 import com.oberdiah.UNITS_WIDE
 import com.oberdiah.compareTo
+import com.oberdiah.createRandomFacingPoint
 import com.oberdiah.d
+import com.oberdiah.lerp
 import com.oberdiah.max
 import com.oberdiah.minus
+import com.oberdiah.player.DEAD_CONTEMPLATION_TIME
 import com.oberdiah.player.player
+import com.oberdiah.player.playerState
 import com.oberdiah.plus
+import com.oberdiah.saturate
+import com.oberdiah.sin
+import com.oberdiah.spawnSmoke
 import com.oberdiah.times
+import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
+import com.oberdiah.utils.TileType
+import com.oberdiah.utils.colorScheme
+import com.oberdiah.withAlpha
 import kotlin.random.Random
+
+val LASER_HEIGHT_IN_MENU: Double
+    get() {
+        return TOP_OF_UPGRADE_SCREEN_UNITS - 1.0
+    }
+
+val LASER_HEIGHT_START_IN_GAME = 10.0
 
 var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
 var currentPhase = 0
-
-class Phase(val d: Number, val callback: () -> Unit) {
-    var bombType: BombType? = null
-
-    constructor(d: Number, bomb: BombType, callback: () -> Unit) : this(d, callback) {
-        bombType = bomb
-    }
-}
-
-//val phases = arrayOf(
-//    Phase(5.0) {
-//        startRandomBombs(BombType.MegaTimed, 6.0)
-//    }
-//)
-
-//val phases = arrayOf(
-//    Phase(5.0) {
-//        startRandomBombs(BombType.StickyBomb, 6.0)
-//        startRandomBombs(BombType.ImpactBomb, 6.0)
-//        startRandomBombs(BombType.SpringBomb, 6.0)
-//        startRandomBombs(BombType.SmallTimed, 6.0)
-//        startRandomBombs(BombType.MediumTimed, 6.0)
-//        startRandomBombs(BombType.LargeTimed, 6.0)
-//        startRandomBombs(BombType.ClusterBomb, 6.0)
-//        startRandomBombs(BombType.LineBomb, 6.0)
-//    }
-//)
-
-// It's all going wrong in BombVille
-
-// The values in a phase are how long we wait on that phase before moving on.
-val phases = arrayOf(
-    Phase(2.0) {
-        // Drop pod from above.
-    },
-    Phase(7.0) {
-        spawnBomb(BombType.SmallTimed, 0.25)
-    },
-    Phase(2.0) {
-        spawnBomb(BombType.MediumTimed, 0.75)
-    },
-    Phase(2.5) {
-        spawnBomb(BombType.SmallTimed, 0.25)
-    },
-    Phase(2.0) {
-        spawnBomb(BombType.SmallTimed, 0.6)
-    },
-    Phase(2.0) {
-        spawnBomb(BombType.SmallTimed, 0.2)
-    },
-    Phase(1.75) {
-        startRandomBombs(BombType.SmallTimed, 5.0)
-        startRandomBombs(BombType.MediumTimed, 7.0)
-        spawnBomb(BombType.MediumTimed)
-    },
-    Phase(0.5, BombType.SpringBomb) {
-        stopAllBombs()
-        spawnBomb(BombType.SpringBomb, 0.25)
-        gameMessage = "Spring Bomb"
-    },
-    Phase(1.75) {
-        gameMessage = ""
-        spawnBomb(BombType.SmallTimed)
-        startRandomBombs(BombType.LineBomb, 7.0)
-        startRandomBombs(BombType.SmallTimed, 6.0)
-        startRandomBombs(BombType.MediumTimed, 7.0)
-        startRandomBombs(BombType.SpringBomb, 6.0)
-    },
-    Phase(2.0) {
-        spawnBomb(BombType.SmallTimed, 0.25)
-    },
-    Phase(4.0, BombType.LargeTimed) {
-        spawnBomb(BombType.LargeTimed, 0.5)
-        gameMessage = "Large Bomb"
-    },
-    Phase(15.0) {
-        gameMessage = ""
-        startRandomBombs(BombType.LineBomb, 7.0)
-        startRandomBombs(BombType.SmallTimed, 6.0)
-        startRandomBombs(BombType.MediumTimed, 7.0)
-        startRandomBombs(BombType.SpringBomb, 6.0)
-        startRandomBombs(BombType.LargeTimed, 10.0)
-    },
-    Phase(15.0) {
-        gameMessage = ""
-        startRandomBombs(BombType.LineBomb, 7.0)
-        startRandomBombs(BombType.SmallTimed, 6.0)
-        startRandomBombs(BombType.MediumTimed, 7.0)
-        startRandomBombs(BombType.SpringBomb, 6.0)
-        startRandomBombs(BombType.LargeTimed, 10.0)
-    },
-    Phase(4.0, BombType.MegaTimed) {
-        spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Mega Bomb"
-    },
-    Phase(15.0) {
-        gameMessage = ""
-        startRandomBombs(BombType.LineBomb, 7.0)
-        startRandomBombs(BombType.SmallTimed, 6.0)
-        startRandomBombs(BombType.MediumTimed, 7.0)
-        startRandomBombs(BombType.SpringBomb, 6.0)
-        startRandomBombs(BombType.LargeTimed, 10.0)
-        startRandomBombs(BombType.MegaTimed, 15.0)
-    },
-    Phase(4.0) {
-        spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Extreme Phase 1"
-    },
-    Phase(15.0) {
-        gameMessage = ""
-        startRandomBombs(BombType.LineBomb, 5.0)
-        startRandomBombs(BombType.SmallTimed, 4.0)
-        startRandomBombs(BombType.MediumTimed, 5.0)
-        startRandomBombs(BombType.SpringBomb, 4.0)
-        startRandomBombs(BombType.LargeTimed, 8.0)
-        startRandomBombs(BombType.MegaTimed, 10.0)
-    },
-    Phase(4.0) {
-        spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Extreme Phase 2"
-    },
-    Phase(15.0) {
-        gameMessage = ""
-        startRandomBombs(BombType.LineBomb, 4.0)
-        startRandomBombs(BombType.SmallTimed, 3.0)
-        startRandomBombs(BombType.MediumTimed, 4.0)
-        startRandomBombs(BombType.SpringBomb, 3.0)
-        startRandomBombs(BombType.LargeTimed, 6.0)
-        startRandomBombs(BombType.MegaTimed, 8.0)
-    },
-    Phase(4.0) {
-        spawnBomb(BombType.MegaTimed, 0.25)
-        gameMessage = "Final Phase"
-    },
-    Phase(15.0) {
-        gameMessage = ""
-        startRandomBombs(BombType.LineBomb, 3.0)
-        startRandomBombs(BombType.SmallTimed, 2.0)
-        startRandomBombs(BombType.MediumTimed, 3.0)
-        startRandomBombs(BombType.SpringBomb, 2.0)
-        startRandomBombs(BombType.LargeTimed, 4.0)
-        startRandomBombs(BombType.MegaTimed, 6.0)
-    },
-)
 
 fun resetLevelController() {
     currentPhase = 0
@@ -174,13 +61,91 @@ fun resetLevelController() {
     gameMessage = ""
     maxDepthThisRun = 0.0
     currentDepthThisRun = 0.0
+    laserIdealHeight = LASER_HEIGHT_START_IN_GAME
 }
 
 var currentDepthThisRun = 0.0
 var maxDepthThisRun = 0.0
+var laserIdealHeight = LASER_HEIGHT_START_IN_GAME
+val LASER_HEIGHT: Double
+    get() {
+        var transition = saturate((RUN_TIME_ELAPSED - LASER_DELAY))
+        if (playerState.isDead) {
+            transition = saturate(1.0 - playerState.timeSinceDied / (DEAD_CONTEMPLATION_TIME - 1.0))
+        } else if (GAME_STATE == GameState.TransitioningToDiegeticMenu) {
+            val timeSinceTransition = APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED
+            transition = saturate(1.0 - timeSinceTransition)
+        }
+
+        return lerp(LASER_HEIGHT_IN_MENU, laserIdealHeight, transition)
+    }
+const val LASER_SPEED = 0.3
+const val LASER_WIDTH = 0.15
+const val LASER_DELAY = 3.0
+
+fun renderLaser(r: Renderer) {
+    // We need a fairly good buffer because the particles take time to spawn
+    if (LASER_HEIGHT > JUST_UP_OFF_SCREEN_UNITS + 5) return
+
+    val startPoint = Point(0, LASER_HEIGHT)
+    val endPoint = Point(UNITS_WIDE, LASER_HEIGHT)
+
+    val width = lerp(1.0, 0.8, sin(RUN_TIME_ELAPSED * 8.241))
+    r.color = colorScheme.laserColor1
+    r.line(startPoint, endPoint, LASER_WIDTH * width)
+
+    val width2 = lerp(1.0, 0.8, sin(RUN_TIME_ELAPSED * 10.0))
+    r.color = Color.WHITE.withAlpha(0.5)
+    r.line(startPoint, endPoint, LASER_WIDTH * 0.75 * width2)
+
+    r.color = Color.BLACK.cpy().add(0.1f, 0.1f, 0.1f, 0.0f)
+    r.rect(
+        startPoint,
+        Size(endPoint.x - startPoint.x, SCREEN_HEIGHT_IN_UNITS),
+    )
+
+    for (i in 0 until 10) {
+        val particlePos = Point(Random.nextDouble(startPoint.x, endPoint.x), LASER_HEIGHT)
+        val destroyingTileType = getTile(particlePos).getTileType()
+
+        var color = colorScheme.laserParticleColors.random()
+        if (destroyingTileType != TileType.Air) {
+            color = destroyingTileType.color()
+        }
+
+        spawnSmoke(
+            particlePos,
+            createRandomFacingPoint() + Point(0.0, 0.5),
+            color = color.cpy(),
+            gravityScaling = 0.0,
+            canCollide = false
+        )
+    }
+}
 
 fun tickLevelController() {
     RUN_TIME_ELAPSED += DELTA
+
+    val lastLaserHeight = LASER_HEIGHT
+    if (RUN_TIME_ELAPSED > LASER_DELAY) {
+        laserIdealHeight -= DELTA * LASER_SPEED
+    }
+
+    if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
+        // Delete this entire row of tiles
+        for (x in 0 until NUM_TILES_ACROSS) {
+            val tile =
+                getTile(
+                    Point(
+                        (x.d + 0.5) * TILE_SIZE_IN_UNITS,
+                        LASER_HEIGHT + TILE_SIZE_IN_UNITS * 2.0
+                    )
+                )
+            if (tile is Tile && tile.doesExist()) {
+                tile.dematerialize()
+            }
+        }
+    }
 
     currentDepthThisRun = max(player.body.p.y, 0.0)
     maxDepthThisRun = max(currentDepthThisRun, maxDepthThisRun)

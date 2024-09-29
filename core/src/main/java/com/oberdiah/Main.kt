@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
 import com.oberdiah.level.LOWEST_TILE_Y_UNITS
 import com.oberdiah.level.initTiles
+import com.oberdiah.level.renderLaser
 import com.oberdiah.level.resetLevel
 import com.oberdiah.level.resetLevelController
 import com.oberdiah.level.tickCollapse
@@ -86,6 +87,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         time("Update level storage") { updateLevelStorage() }
         time("Update tile changes") { updateTileChanges() }
+        time("Tick Particles") { tickParticles() }
 
         if (GAME_IS_RUNNING) {
             // 'Coz Box2d stupid, these are the centres of the positions.
@@ -110,7 +112,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
                 time("Tick level controller") { tickLevelController() }
             }
             time("Tick Collapse") { tickCollapse() }
-            time("Tick Particles") { tickParticles() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
             time("Tick Bombs") { tickBombController() }
             time("Tick Point Orbs") { tickPointOrbs() }
@@ -124,13 +125,14 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         worldSpaceRenderer.begin()
         time("Render background") { renderBackground(worldSpaceRenderer) }
-        playerInputs.render(worldSpaceRenderer)
+        time("Render player inputs") { playerInputs.render(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
         time("Render level") { renderLevel() }
 
         worldSpaceRenderer.begin()
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
+        time("Render laser") { renderLaser(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
         time("Render world space UI") { renderUIWorldSpace(worldSpaceRenderer) }
         worldSpaceRenderer.end()

@@ -12,6 +12,8 @@ import com.oberdiah.Screen
 import com.oberdiah.WORLD_PHYSICS_MASK
 import com.oberdiah.circleShape
 import com.oberdiah.div
+import com.oberdiah.level.LASER_HEIGHT
+import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.rectShape
 import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.ui.goToDiegeticMenu
@@ -86,7 +88,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun tick() {
-        if (playerState.timeSinceDied > 2.5) {
+        if (playerState.timeSinceDied > DEAD_CONTEMPLATION_TIME) {
             goToDiegeticMenu()
             registerGameEndWithScoreSystem()
             return
@@ -95,6 +97,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         playerInfoBoard.tick()
         playerState.tick()
 
+        if (player.body.p.y > LASER_HEIGHT && RUN_TIME_ELAPSED > 5.0) {
+            playerState.justDied()
+        }
 
         if (playerState.isSlamming) {
             if (playerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {

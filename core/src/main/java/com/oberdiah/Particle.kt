@@ -46,10 +46,18 @@ fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: 
     allParticles.add(Fragment(p, v, radius, tileType, affectedByGravity))
 }
 
-fun spawnSmoke(p: Point, velocity: Velocity, color: Color = Color.DARK_GRAY.withAlpha(0.5)) {
+fun spawnSmoke(
+    p: Point,
+    velocity: Velocity,
+    color: Color = Color.DARK_GRAY.withAlpha(0.5),
+    gravityScaling: Double = 1.0,
+    canCollide: Boolean = true
+) {
     if (!statefulRenderParticles.value) return
+    // Don't spawn smoke on top of tiles
+    if (getTile(p).canCollide() && canCollide) return
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
-    allParticles.add(Smoke(p, velocity, radius, color))
+    allParticles.add(Smoke(p, velocity, radius, color, gravityScaling, canCollide))
 }
 
 fun spawnGlow(p: Point, radius: Number) {
@@ -76,8 +84,10 @@ class Smoke(
     startP: Point,
     startV: Velocity,
     var edgeLength: Number,
-    val color: Color = Color.DARK_GRAY.withAlpha(0.5)
-) : Particle(startP, startV) {
+    val color: Color = Color.DARK_GRAY.withAlpha(0.5),
+    val gravityScaling: Double = 1.0,
+    canCollide: Boolean = true
+) : Particle(startP, startV, canCollide) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
 
@@ -86,7 +96,7 @@ class Smoke(
     }
 
     override fun applyForces() {
-        v.y += GRAVITY * DELTA * 0.15
+        v.y += GRAVITY * DELTA * 0.15 * gravityScaling
     }
 
     override fun tick() {
@@ -151,7 +161,11 @@ class Fragment(
     }
 }
 
-abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
+abstract class Particle(
+    val p: Point,
+    val v: Velocity = Velocity(),
+    val canCollide: Boolean = true
+) {
     var insideLevel = false
     var bounciness = 0.6
     var stoppedMoving = false
@@ -191,7 +205,7 @@ abstract class Particle(val p: Point, val v: Velocity = Velocity()) {
     private fun bounce() {
         val tile = getTile(p)
         // if it's not a tile we can forget it.
-        if (tile !is Tile) return
+        if (tile !is Tile || !canCollide) return
 
         val tx = tile.x
         val ty = tile.y

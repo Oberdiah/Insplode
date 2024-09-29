@@ -158,6 +158,19 @@ open class ColorScheme(val name: String) {
     lateinit var caveWall: Color
     lateinit var dirt: Color
     lateinit var grass: Color
+
+    //    val laserColor1 = colorFrom(0xE85D6B)
+//    val laserColor2 = colorFrom(0xE85D6B).add(0.1f, 0.05f, 0.2f, 0f)
+//    val laserColor3 = Color.WHITE
+    val laserColor1 = colorFrom(0xf2e8cf)
+    val laserColor2 = colorFrom(0xf2e8cf).mul(1.03f)
+    val laserColor3 = Color.WHITE.withAlpha(0.5)
+
+    val laserParticleColors = listOf(
+        laserColor1.withAlpha(0.5),
+        laserColor2.withAlpha(0.5),
+        laserColor3.withAlpha(0.25),
+    )
 }
 
 // https://coolors.co/6a994e-54793e-003e1f-f2e8cf-bc4648-404840-242423

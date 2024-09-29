@@ -53,6 +53,12 @@ val levelOnScreen = sequence {
 val tilesStorage =
     MutableList(NUM_TILES_ACROSS * SIMULATED_REGION_NUM_TILES_HIGH) { Tile(TileId(it)) }
 
+fun getTileId(p: Point): TileId {
+    val x = floor(p.x * TILES_PER_UNIT)
+    val y = floor(p.y * TILES_PER_UNIT)
+    return TileId(x + y * NUM_TILES_ACROSS)
+}
+
 /** If null is returned you've requested a tile outside the bounds of the stored tiles. */
 fun getTile(p: Point): TileLike {
     return getTile(floor(p.x * TILES_PER_UNIT), floor(p.y * TILES_PER_UNIT))

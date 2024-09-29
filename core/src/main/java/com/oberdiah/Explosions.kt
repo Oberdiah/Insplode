@@ -43,11 +43,11 @@ fun boom(
                 val vy = (tileRadius - abs(dy)) * sign(dy) + Random.nextDouble()
                 val velocity =
                     Velocity(vx * 0.5 * Random.nextDouble(), (vy * 2.5 + 8) * Random.nextDouble())
-                spawnSmoke(tempPoint.cpy, velocity)
                 if (tile is Tile && tile.doesExist() && affectsTheLandscape) {
                     tile.dematerialize()
                     spawnFragment(tempPoint.cpy, velocity, tile.getTileType())
                 }
+                spawnSmoke(tempPoint.cpy, velocity)
             }
         }
     }

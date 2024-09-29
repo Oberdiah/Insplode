@@ -1,6 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
+import com.oberdiah.level.laserIdealHeight
 import com.oberdiah.level.requestNewLowestTileY
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.utils.calculateInputGlobals
@@ -92,9 +93,9 @@ val SCREEN_WIDTH_IN_UNITS: Int
 
 val SAFE_BOMB_SPAWN_HEIGHT
     // Add 5 to be super duper safe.
-    get() = CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS * TILES_EXTRA_FRACTION_STORED + 5
+    get() = laserIdealHeight + 5
 
-val JUST_UP_OFF_SCREEN
+val JUST_UP_OFF_SCREEN_UNITS
     get() = CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS
 
 const val GRAVITY = 20.0 * GLOBAL_SCALE
@@ -127,7 +128,15 @@ enum class GameState {
     InGame,
 }
 
+var LAST_APP_TIME_GAME_STATE_CHANGED = 0.0
+
 var GAME_STATE = GameState.DiegeticMenu
+    set(value) {
+        if (field != value) {
+            LAST_APP_TIME_GAME_STATE_CHANGED = APP_TIME
+        }
+        field = value
+    }
 
 val GAME_IS_RUNNING get() = GAME_STATE == GameState.InGame || GAME_STATE == GameState.TransitioningToDiegeticMenu
 
