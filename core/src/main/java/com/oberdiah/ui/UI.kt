@@ -73,10 +73,10 @@ fun renderUIScreenSpace(r: Renderer) {
 
     r.color = colorScheme.textColor
 
+    renderDiegeticMenuScreenSpace(r)
+
     when (GAME_STATE) {
-        GameState.DiegeticMenu -> {
-            renderDiegeticMenuScreenSpace(r)
-        }
+        GameState.DiegeticMenu -> {}
 
         GameState.TransitioningToDiegeticMenu -> {}
 

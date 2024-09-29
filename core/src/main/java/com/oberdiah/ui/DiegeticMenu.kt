@@ -169,7 +169,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
 
     if (launchTextAlpha > 0.001) {
-        r.color = Color.WHITE.withAlpha(launchTextAlpha * 0.5)
+        r.color = colorScheme.backgroundA.withAlpha(launchTextAlpha * 0.75)
         r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
         r.color = launchTextColor
         r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
