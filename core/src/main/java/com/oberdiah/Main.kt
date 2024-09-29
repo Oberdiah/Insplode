@@ -13,6 +13,7 @@ import com.oberdiah.level.tickCollapse
 import com.oberdiah.level.tickLevelController
 import com.oberdiah.level.updateLevelStorage
 import com.oberdiah.player.playerInputs
+import com.oberdiah.player.playerState
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.renderUIWorldSpace
@@ -108,7 +109,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             }
 
 
-            if (GAME_STATE == GameState.InGame) {
+            if (GAME_STATE == GameState.InGame && !playerState.isDead) {
                 time("Tick level controller") { tickLevelController() }
             }
             time("Tick Collapse") { tickCollapse() }
