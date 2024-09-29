@@ -104,6 +104,20 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
     }
 
+    fun justStartedPreparingAJump() {
+        if (s.state != PlayerMode.IDLE) {
+            println("Player should be in the IDLE state to prepare to jump, was in ${s.state}")
+        }
+        s.setState(PlayerMode.PREPARING_TO_JUMP)
+    }
+
+    fun justCancelledPreparingAJump() {
+        if (s.state != PlayerMode.PREPARING_TO_JUMP) {
+            println("Player should be in the PREPARING_TO_JUMP state to cancel preparing to jump, was in ${s.state}")
+        }
+        s.setState(PlayerMode.IDLE)
+    }
+
     fun justPerformedAJump() {
         if (s.state != PlayerMode.IDLE) {
             println("Player should be in the IDLE state to jump, was in ${s.state}")

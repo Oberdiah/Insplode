@@ -33,7 +33,7 @@ class PlayerInputs {
         private set
 
     val canJump
-        get() = playerState.isIdle && playerInfoBoard.isStandingOnStandableGenerous
+        get() = (playerState.isPreparingToJump || playerState.isIdle) && playerInfoBoard.isStandingOnStandableGenerous
 
     fun reset() {
         lastFingerPoint = Point()
@@ -76,14 +76,24 @@ class PlayerInputs {
             TOUCHES_WENT_DOWN.forEach {
                 lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
                 lastBodyXValue = player.body.p.x
+
+                if (playerState.isIdle) {
+                    playerState.justStartedPreparingAJump()
+                }
             }
         }
 
         desiredXPos = player.body.p.x
 
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
-            val fingerX = touch.x / UNIT_SIZE_IN_PIXELS
-            desiredXPos = lastBodyXValue + (fingerX - lastFingerPoint.x) * 1.8
+            val finger = touch / UNIT_SIZE_IN_PIXELS
+            desiredXPos = lastBodyXValue + (finger.x - lastFingerPoint.x) * 1.8
+
+            if (playerState.isPreparingToJump) {
+                if (finger.distTo(lastFingerPoint) > 0.1) {
+                    playerState.justCancelledPreparingAJump()
+                }
+            }
         }
 
         if (IS_DEBUG_ENABLED) {
@@ -126,8 +136,12 @@ class PlayerInputs {
     }
 
     private fun isJumpJustPressed(): Boolean {
+        if (!playerState.isPreparingToJump) {
+            return false
+        }
+
         return TOUCHES_WENT_UP.firstOrNull()?.let {
-            return true
+            true
         } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
             isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
         } else {
@@ -137,7 +151,7 @@ class PlayerInputs {
 
     private fun isSlamJustPressed(): Boolean {
         return TOUCHES_WENT_UP.firstOrNull()?.let {
-            return true
+            true
         } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
             isKeyJustPressed(Keys.S) || isKeyJustPressed(Keys.DOWN)
         } else {

@@ -14,6 +14,11 @@ open class PlayerStateClasses {
          */
         IDLE,
 
+        /**
+         * The player is actively holding down tap, preparing to jump.
+         */
+        PREPARING_TO_JUMP,
+
         /** This could be either due to a jump or a slam bouncing. */
         INTENTIONALLY_MOVING_UP,
 

@@ -46,6 +46,20 @@ open class PlayerStateAccessors : PlayerStateClasses() {
             return s.timeSinceWeEnteredThisState
         }
 
+    val isPreparingToJump: Boolean
+        get() {
+            return s.state == PlayerMode.PREPARING_TO_JUMP
+        }
+
+    val timeSinceStartedPreparingToJump: Double
+        get() {
+            if (!isPreparingToJump) {
+                return 0.0
+            }
+
+            return s.timeSinceWeEnteredThisState
+        }
+
     /**
      * Note: Not necessarily always up, just started that way.
      */

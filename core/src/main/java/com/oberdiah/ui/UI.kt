@@ -37,6 +37,7 @@ import com.oberdiah.playGChordNote
 import com.oberdiah.playerScore
 import com.oberdiah.renderScoreSystemWorldSpace
 import com.oberdiah.saturate
+import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulHighScore
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
@@ -178,6 +179,8 @@ private fun settingsUI(r: Renderer) {
 //    }, {
 //        nextColorScheme()
 //    })
+
+    toggleButton(r, "Easy Mode", statefulEasyMode::value)
 
     settingButton(r, "Screen Shake", {
         r.text(fontMedium, statefulScreenShakeSetting.value.text, it, Align.right)

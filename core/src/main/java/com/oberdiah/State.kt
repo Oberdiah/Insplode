@@ -13,3 +13,4 @@ val statefulPauseSide = StatefulInt("pauseSide", Align.right)
 val statefulScreenShakeSetting =
     StatefulEnum("screenShakeSetting", ScreenShakeSettings.Normal, ScreenShakeSettings.values())
 val statefulVibrationSetting = StatefulBoolean("doVibration", true)
+val statefulEasyMode = StatefulBoolean("easyMode", false)

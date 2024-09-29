@@ -27,16 +27,24 @@ class PlayerRenderer {
             r.color = colorScheme.playerNoJump
         }
 
-        r.circle(pos, PLAYER_SIZE.w / 2)
+        val desiredHeadOffset = if (playerState.isPreparingToJump) {
+            -0.2
+        } else if (playerState.isSlamming) {
+            0.2
+        } else {
+            0.0
+        }
 
-        val desiredHeadOffset =
-            0.0 // Could do something here in future - We could maybe also do skinnier on growing taller?
-        renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 30.0)
+        renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 20.0)
+
+        val radius = (1 - renderedHeadOffset * 0.5) * PLAYER_SIZE.w / 2
+
+        r.circle(pos, radius)
 
         r.rect(
-            pos.x - PLAYER_SIZE.w / 2,
+            pos.x - radius,
             pos.y,
-            PLAYER_SIZE.w,
+            radius * 2,
             PLAYER_SIZE.h / 2 + renderedHeadOffset
         )
 
@@ -44,7 +52,7 @@ class PlayerRenderer {
         r.circle(
             pos.x,
             pos.y + 0.35 * GLOBAL_SCALE + renderedHeadOffset,
-            PLAYER_SIZE.w / 2
+            radius
         )
     }
 

@@ -37,6 +37,7 @@ import com.oberdiah.plus
 import com.oberdiah.saturate
 import com.oberdiah.sin
 import com.oberdiah.spawnSmoke
+import com.oberdiah.statefulEasyMode
 import com.oberdiah.times
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.utils.TileType
@@ -104,31 +105,39 @@ fun renderLaser(r: Renderer) {
         Size(endPoint.x - startPoint.x, SCREEN_HEIGHT_IN_UNITS),
     )
 
-    for (i in 0 until 10) {
-        val particlePos = Point(Random.nextDouble(startPoint.x, endPoint.x), LASER_HEIGHT)
-        val destroyingTileType = getTile(particlePos).getTileType()
+    if (GAME_STATE != GameState.PausedPopup) {
+        for (i in 0 until 10) {
+            val particlePos = Point(Random.nextDouble(startPoint.x, endPoint.x), LASER_HEIGHT)
+            val destroyingTileType = getTile(particlePos).getTileType()
 
-        var color = colorScheme.laserParticleColors.random()
-        if (destroyingTileType != TileType.Air) {
-            color = destroyingTileType.color()
+            var color = colorScheme.laserParticleColors.random()
+            if (destroyingTileType != TileType.Air) {
+                color = destroyingTileType.color()
+            }
+
+            spawnSmoke(
+                particlePos,
+                createRandomFacingPoint() + Point(0.0, 0.5),
+                color = color.cpy(),
+                gravityScaling = 0.0,
+                canCollide = false
+            )
         }
-
-        spawnSmoke(
-            particlePos,
-            createRandomFacingPoint() + Point(0.0, 0.5),
-            color = color.cpy(),
-            gravityScaling = 0.0,
-            canCollide = false
-        )
     }
 }
 
 fun tickLevelController() {
-    RUN_TIME_ELAPSED += DELTA
+    val deltaScaling = if (statefulEasyMode.value) {
+        0.5
+    } else {
+        1.0
+    }
+
+    RUN_TIME_ELAPSED += DELTA * deltaScaling
 
     val lastLaserHeight = LASER_HEIGHT
     if (RUN_TIME_ELAPSED > LASER_DELAY) {
-        laserIdealHeight -= DELTA * LASER_SPEED
+        laserIdealHeight -= DELTA * LASER_SPEED * deltaScaling
     }
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
