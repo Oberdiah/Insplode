@@ -14,6 +14,7 @@ import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
+import com.oberdiah.abs
 import com.oberdiah.clamp
 import com.oberdiah.d
 import com.oberdiah.f
@@ -26,10 +27,11 @@ import com.oberdiah.lerp
 import com.oberdiah.sin
 import com.oberdiah.statefulHighScore
 import com.oberdiah.toUISpace
+import com.oberdiah.upgrades.EAT_ALL_OTHER_INPUTS
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.playerHas
-import com.oberdiah.upgrades.renderUpgradeMenu
+import com.oberdiah.upgrades.renderUpgradeMenuWorldSpace
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
@@ -63,7 +65,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
     val H = SCREEN_HEIGHT_IN_UNITS
     val W = SCREEN_WIDTH_IN_UNITS.d
 
-    renderUpgradeMenu(r)
+    renderUpgradeMenuWorldSpace(r)
 
     r.color = colorScheme.textColor
 
@@ -97,7 +99,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val launchTextColor = colorScheme.textColor.cpy()
 
     var isLaunchTapped = false
-    if (GAME_STATE == GameState.DiegeticMenu) {
+    if (GAME_STATE == GameState.DiegeticMenu && !EAT_ALL_OTHER_INPUTS) {
         TOUCHES_WENT_DOWN.forEach {
             if (!isInLaunchButton(it)) {
                 cameraVelocity = 0.0
@@ -122,12 +124,16 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
                 GAME_STATE = GameState.InGame
             }
             if (isDragging) {
-                cameraVelocity =
-                    ((delayedPreviousFingerY - it.y) / UNIT_SIZE_IN_PIXELS) / clamp(
-                        DELTA,
-                        0.005,
-                        0.020
-                    )
+                val fingerDist = delayedPreviousFingerY - it.y
+                if (fingerDist.abs > 5.0) {
+                    cameraVelocity =
+                        (fingerDist / UNIT_SIZE_IN_PIXELS) / clamp(
+                            DELTA,
+                            0.005,
+                            0.020
+                        )
+                }
+
                 isDragging = false
             }
         }

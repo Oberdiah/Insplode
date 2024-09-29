@@ -18,6 +18,8 @@ import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.renderUIWorldSpace
 import com.oberdiah.upgrades.initUpgradeController
+import com.oberdiah.upgrades.renderUpgradeMenuScreenSpace
+import com.oberdiah.upgrades.tickUpgradeController
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -119,7 +121,10 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Bombs") { tickBombController() }
             time("Tick Point Orbs") { tickPointOrbs() }
             time("Tick Score System") { tickScoreSystem() }
+        } else {
+            time("Tick Upgrade Controller") { tickUpgradeController() }
         }
+
         time("Update tile physics") { updateTilePhysics() }
         if (GAME_IS_RUNNING) {
             time("Do physics step") { doPhysicsStep() }
@@ -148,6 +153,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render UI") {
             uiRenderer.begin()
             renderUIScreenSpace(uiRenderer)
+            renderUpgradeMenuScreenSpace(uiRenderer)
             uiRenderer.end()
         }
 

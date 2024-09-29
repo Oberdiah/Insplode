@@ -24,7 +24,8 @@ abstract class Drawable {
     abstract fun draw(renderer: SpriteBatch, camera: Camera)
 }
 
-class SpriteDraw(val tex: Texture, val p: Point, val s: Size) : Drawable() {
+class SpriteDraw(val sprite: Sprite, val p: Point, val s: Size, val color: Color = Color.WHITE) :
+    Drawable() {
     override fun draw(renderer: SpriteBatch, camera: Camera) {
         // The sprite renderer isn't projected to make the text look correct
         // So we need to do it manually
@@ -35,7 +36,11 @@ class SpriteDraw(val tex: Texture, val p: Point, val s: Size) : Drawable() {
         }
 
         val s = s * SCREEN_SIZE / Size(camera.viewportWidth, camera.viewportHeight)
-        renderer.draw(tex, p.x.f, p.y.f, s.x.f, s.y.f)
+        sprite.x = p.x.f
+        sprite.y = p.y.f
+        sprite.setSize(s.x.f, s.y.f)
+        sprite.color = color
+        sprite.draw(renderer)
     }
 }
 
@@ -100,12 +105,12 @@ class Renderer(val name: String, val camera: Camera) {
             renderer.color = c
         }
 
-    fun image(tex: Texture, p: Point, s: Size) {
-        spritesToDraw.add(SpriteDraw(tex, p, s))
+    fun sprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE) {
+        spritesToDraw.add(SpriteDraw(sprite, p, s, color))
     }
 
-    fun centeredImage(tex: Texture, p: Point, s: Size) {
-        image(tex, p - s / 2, s)
+    fun centeredSprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE) {
+        sprite(sprite, p - s / 2, s, color)
     }
 
     fun text(font: BitmapFont, text: String, p: Point, align: Int = Align.bottomLeft) {
@@ -178,7 +183,7 @@ class Renderer(val name: String, val camera: Camera) {
         renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, width.f, s.h.f)
         renderer.rect(mid.x.f + s.w.f / 2 - width.f, mid.y.f - s.h.f / 2, width.f, s.h.f)
     }
-    
+
     fun polyLine(ps: List<Point>) {
         val arr = FloatArray(ps.size * 2)
         ps.forEachIndexed { index, point ->
