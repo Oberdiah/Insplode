@@ -127,11 +127,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
                 val fingerDist = delayedPreviousFingerY - it.y
                 if (fingerDist.abs > 5.0) {
                     cameraVelocity =
-                        (fingerDist / UNIT_SIZE_IN_PIXELS) / clamp(
-                            DELTA,
-                            0.005,
-                            0.020
-                        )
+                        1.25 * (fingerDist / UNIT_SIZE_IN_PIXELS) / clamp(DELTA, 0.005, 0.020)
                 }
 
                 isDragging = false

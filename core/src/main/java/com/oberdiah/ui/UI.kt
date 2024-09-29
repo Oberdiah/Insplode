@@ -140,30 +140,26 @@ fun switchScreen(screen: Screen) {
 }
 
 private fun creditsUI(r: Renderer) {
-    r.text(fontMedium, "Game Design", WIDTH / 2, HEIGHT / 2, Align.center)
-    r.text(
-        fontSmallish,
-        "Richard Mullender",
-        WIDTH / 2,
-        HEIGHT / 2 - DIST_BETWEEN_WORDS,
-        Align.center
-    )
-    r.text(fontMedium, "Testing/QA", WIDTH / 2, HEIGHT / 2 - DIST_BETWEEN_WORDS * 3, Align.center)
-    r.text(
-        fontSmallish,
-        "David Mullender",
-        WIDTH / 2,
-        HEIGHT / 2 - DIST_BETWEEN_WORDS * 4,
-        Align.center
-    )
-    r.text(
-        fontSmallish,
-        "Peter Nisbet",
-        WIDTH / 2,
-        HEIGHT / 2 - DIST_BETWEEN_WORDS * 5,
-        Align.center
-    )
-    uiCurrentHeight = HEIGHT / 2 - DIST_BETWEEN_WORDS * 7
+    val titleSpacing = DIST_BETWEEN_WORDS * 1.1
+    val titleGap = DIST_BETWEEN_WORDS * 1.5
+    val textSpacing = DIST_BETWEEN_WORDS * 0.9
+    var creditsHeight = HEIGHT / 2 + DIST_BETWEEN_WORDS * 2
+
+    r.text(fontMedium, "Programming", WIDTH / 2, creditsHeight, Align.center)
+    creditsHeight -= titleSpacing
+    r.text(fontSmallish, "Richard Mullender", WIDTH / 2, creditsHeight, Align.center)
+    creditsHeight -= titleGap
+    r.text(fontMedium, "Game Design", WIDTH / 2, creditsHeight, Align.center)
+    creditsHeight -= titleSpacing
+    r.text(fontSmallish, "David Mullender", WIDTH / 2, creditsHeight, Align.center)
+    creditsHeight -= titleGap
+    r.text(fontMedium, "Testing", WIDTH / 2, creditsHeight, Align.center)
+    creditsHeight -= titleSpacing
+    r.text(fontSmallish, "Peter Nisbet", WIDTH / 2, creditsHeight, Align.center)
+    creditsHeight -= textSpacing
+    r.text(fontSmallish, "Marion Nisbet", WIDTH / 2, creditsHeight, Align.center)
+    creditsHeight -= titleGap
+    uiCurrentHeight = creditsHeight
     button(r, "Back") {
         backAScreen()
     }
@@ -220,6 +216,9 @@ private fun pausedUI(r: Renderer) {
     }
     button(r, "Settings") {
         switchScreen(Screen.Settings)
+    }
+    button(r, "Credits") {
+        switchScreen(Screen.Credits)
     }
     lineBreak()
     lineBreak()
