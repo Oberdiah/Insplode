@@ -163,7 +163,7 @@ fun renderUpgradeMenuScreenSpace(r: Renderer) {
         r.text(
             fontMedium,
             openUpgrade.title,
-            Point(5.0, 5.0),
+            Point(WIDTH / 2, HEIGHT / 2 + windowSize.h / 2 - 5.0),
             Align.center
         )
     }
@@ -174,6 +174,11 @@ var currentlyTappingOnUpgrade: Upgrade? = null
 var downPoint = Point(0.0, 0.0)
 
 fun tickUpgradeController() {
+    if (true) {
+        // For now, to stop people getting stuck
+        return
+    }
+
     if (cameraVelocity < 0.1 && !EAT_ALL_OTHER_INPUTS) {
         TOUCHES_WENT_DOWN.forEach { touch ->
             allUpgradePucks.forEach { upgradePuck ->
