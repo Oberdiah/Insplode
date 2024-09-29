@@ -1,6 +1,7 @@
 package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.math.Vector3
 import com.oberdiah.*
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
@@ -94,7 +95,12 @@ fun updateCamera() {
     camera.position.x = UNITS_WIDE.f / 2
     camera.update()
 
-    worldSpaceRenderer.renderer.projectionMatrix = camera.combined
+    worldSpaceRenderer.updateProjectionMatrix(camera.combined) { p ->
+        // It's not the neatest, but camera project isn't a trivial operation we can
+        // just figure out from the projection matrix it gives us for some reason.
+        val v3 = camera.project(Vector3(p.x.f, p.y.f, 0f))
+        Point(v3.x, v3.y)
+    }
 }
 
 enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {

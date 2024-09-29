@@ -36,6 +36,7 @@ import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
+import com.oberdiah.withAlpha
 
 const val MENU_ZONE_BOTTOM_Y = 6.0
 val UPGRADES_SCREEN_BOTTOM_Y
@@ -58,7 +59,7 @@ var cameraVelocity = 0.0
 var cameraY = MENU_ZONE_BOTTOM_Y
 
 // The diegetic menu is always there and rendered using in-world coordinates.
-fun renderDiegeticMenu(r: Renderer) {
+fun renderDiegeticMenuWorldSpace(r: Renderer) {
     val H = SCREEN_HEIGHT_IN_UNITS
     val W = SCREEN_WIDTH_IN_UNITS.d
 
@@ -69,7 +70,7 @@ fun renderDiegeticMenu(r: Renderer) {
     r.text(
         fontLarge,
         "BombVille",
-        toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4)),
+        Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4),
         Align.center
     )
 
@@ -77,7 +78,7 @@ fun renderDiegeticMenu(r: Renderer) {
         r.text(
             fontSmallish,
             "High Score: ${statefulHighScore.value}",
-            toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 2.0)),
+            Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 2.0),
             Align.center
         )
     }
@@ -86,11 +87,13 @@ fun renderDiegeticMenu(r: Renderer) {
         r.text(
             fontSmallish,
             "Score: $lastScore",
-            toUISpace(Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 3.0)),
+            Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 3.0),
             Align.center
         )
     }
+}
 
+fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val launchTextColor = colorScheme.textColor.cpy()
 
     var isLaunchTapped = false
@@ -158,7 +161,13 @@ fun renderDiegeticMenu(r: Renderer) {
 
     launchTextColor.a = launchTextAlpha
 
+    val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 15 - sin(APP_TIME) * 0.15
+    r.color = Color.GRAY
+    drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
+
     if (launchTextAlpha > 0.001) {
+        r.color = Color.WHITE.withAlpha(launchTextAlpha * 0.5)
+        r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
         r.color = launchTextColor
         r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
         if (playerHas(Upgrade.Slam)) {
@@ -167,10 +176,6 @@ fun renderDiegeticMenu(r: Renderer) {
             r.text(fontMedium, "Drop!", launchButtonPos, Align.center)
         }
     }
-
-    val chevronDistanceBelow = H / 15 - sin(APP_TIME) * 0.15
-    r.color = Color.GRAY
-    drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
 }
 
 private val launchButtonSize

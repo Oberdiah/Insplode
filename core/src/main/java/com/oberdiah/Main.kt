@@ -6,7 +6,9 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
 import com.oberdiah.player.playerInputs
 import com.oberdiah.utils.*
-import com.oberdiah.ui.renderUI
+import com.oberdiah.ui.renderUIScreenSpace
+import com.oberdiah.ui.renderDiegeticMenuWorldSpace
+import com.oberdiah.ui.renderUIWorldSpace
 import com.oberdiah.upgrades.initUpgradeController
 import com.oberdiah.upgrades.renderUpgradeIcons
 
@@ -125,6 +127,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         worldSpaceRenderer.begin()
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
+        time("Render world space UI") { renderUIWorldSpace(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
 
@@ -134,7 +137,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         time("Render UI") {
             uiRenderer.begin()
-            renderUI(uiRenderer)
+            renderUIScreenSpace(uiRenderer)
             uiRenderer.end()
         }
 

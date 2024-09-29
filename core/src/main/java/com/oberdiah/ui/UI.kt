@@ -1,6 +1,5 @@
 package com.oberdiah.ui
 
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
@@ -36,7 +35,7 @@ import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playGChordNote
 import com.oberdiah.playerScore
-import com.oberdiah.renderScoreSystem
+import com.oberdiah.renderScoreSystemWorldSpace
 import com.oberdiah.saturate
 import com.oberdiah.statefulHighScore
 import com.oberdiah.statefulRenderParticles
@@ -54,7 +53,15 @@ private fun formatDepth(depth: Number): String {
     return "${depth.format(1)}$DEPTH_UNITS"
 }
 
-fun renderUI(r: Renderer) {
+fun renderUIWorldSpace(r: Renderer) {
+    renderDiegeticMenuWorldSpace(r)
+
+    if (GAME_STATE == GameState.InGame) {
+        renderScoreSystemWorldSpace(r)
+    }
+}
+
+fun renderUIScreenSpace(r: Renderer) {
     r.color = colorScheme.textColor
 
     if (SHOW_FRAMERATE_DATA) {
@@ -64,12 +71,12 @@ fun renderUI(r: Renderer) {
         r.text(fontSmall, "$firstLine\n$secondLine\n$thirdLine", 10, HEIGHT * 0.6)
     }
 
-    renderDiegeticMenu(r)
-
     r.color = colorScheme.textColor
 
     when (GAME_STATE) {
-        GameState.DiegeticMenu -> {}
+        GameState.DiegeticMenu -> {
+            renderDiegeticMenuScreenSpace(r)
+        }
 
         GameState.TransitioningToDiegeticMenu -> {}
 
@@ -115,7 +122,6 @@ fun renderUI(r: Renderer) {
 
             r.color = colorScheme.textColor
 
-            renderScoreSystem(r)
             renderPauseButton(r)
         }
     }

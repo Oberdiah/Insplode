@@ -105,17 +105,21 @@ fun tickScoreSystem() {
 
 const val HEIGHT_ABOVE_HEAD = 0.5
 
-fun renderScoreSystem(r: Renderer) {
+// Uses the in-world renderer
+fun renderScoreSystemWorldSpace(r: Renderer) {
     if (playerState.isDead) return
 
     if (numConsecutiveBounces > 0) {
-        val textOffset = Point(0, PLAYER_SIZE.h)
-        val textOffset2 = Point(0, fontSmall.lineHeight * HEIGHT_ABOVE_HEAD)
+        val textOffset = Point(
+            0,
+            PLAYER_SIZE.h +
+                    fontSmall.lineHeight * HEIGHT_ABOVE_HEAD / UNIT_SIZE_IN_PIXELS
+        )
         r.color = colorScheme.textColor
         r.text(
             fontSmall,
             "x${multiplier().format(1)}",
-            toUISpace(player.body.p + textOffset) + textOffset2,
+            player.body.p + textOffset,
             Align.center
         )
     }
@@ -129,14 +133,18 @@ fun renderScoreSystem(r: Renderer) {
         val pickupMotion =
             1 - saturate((RUN_TIME_ELAPSED - lastScoreCollectionTime) / FADE_OUT_TIME)
 
-        val textOffset = Point(0, PLAYER_SIZE.h + pickupMotion * 0.15)
-        val textOffset2 = Point(0, fontSmall.lineHeight * (1 + HEIGHT_ABOVE_HEAD))
+        val textOffset = Point(
+            0,
+            PLAYER_SIZE.h +
+                    pickupMotion * 0.15 +
+                    fontSmall.lineHeight * (1 + HEIGHT_ABOVE_HEAD) / UNIT_SIZE_IN_PIXELS
+        )
 
         r.color = colorScheme.textColor.withAlpha(alpha)
         r.text(
             fontSmall,
             "+$growingScore",
-            toUISpace(player.body.p + textOffset) + textOffset2,
+            player.body.p + textOffset,
             Align.center
         )
     }

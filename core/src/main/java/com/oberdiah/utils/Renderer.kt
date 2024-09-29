@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.EarClippingTriangulator
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.ShortArray
 import kotlin.math.PI
@@ -30,9 +31,15 @@ class TextDraw(
 val earClipper = EarClippingTriangulator()
 
 class Renderer(val name: String) {
-    val renderer = ShapeRenderer()
-    val textRenderer = SpriteBatch()
-    val textToDraw = mutableListOf<TextDraw>()
+    private val renderer = ShapeRenderer()
+    private val textRenderer = SpriteBatch()
+    private val textToDraw = mutableListOf<TextDraw>()
+    private var projLambda = { p: Point -> p }
+
+    fun updateProjectionMatrix(mat4: Matrix4, projLambda: (Point) -> Point) {
+        this.projLambda = projLambda
+        renderer.projectionMatrix = mat4
+    }
 
     fun begin() {
         Gdx.gl.glEnable(GL30.GL_BLEND)
@@ -46,19 +53,21 @@ class Renderer(val name: String) {
         if (textToDraw.size > 0) {
             textRenderer.begin()
             textToDraw.forEach {
-                if (it.y > HEIGHT * 1.2 || it.y < -HEIGHT * 0.2) {
+                val pos = projLambda(Point(it.x, it.y))
+
+                if (pos.y > HEIGHT * 1.2 || pos.y < -HEIGHT * 0.2) {
                     return@forEach
                 }
 
                 it.font.color = it.color
-                var y = it.y.f
+                var y = pos.y.f
                 if (it.align == Align.center || it.align == Align.left || it.align == Align.right) {
                     y += it.font.capHeight / 2
                 }
                 if (it.align == Align.bottomLeft) {
                     y += it.font.capHeight
                 }
-                it.font.draw(textRenderer, it.text, it.x.f, y, 0f, it.align, false)
+                it.font.draw(textRenderer, it.text, pos.x.f, y, 0f, it.align, false)
             }
             textToDraw.clear()
             textRenderer.end()
