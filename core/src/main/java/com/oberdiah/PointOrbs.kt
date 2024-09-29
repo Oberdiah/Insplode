@@ -96,14 +96,16 @@ class PointOrb(
     }
 
     override fun render(r: Renderer) {
+        val radius = saturate(timeAlive * 2.5 + 0.5) * value.radius
+
         r.color = colorScheme.pickupColor.cpy().lerp(Color.BLACK, 0.75f).withAlpha(0.5)
-        r.circle(body.p, value.radius * 1.15)
+        r.circle(body.p, radius * 1.15)
 
         r.color = colorScheme.pickupColor
-        r.circle(body.p, value.radius)
+        r.circle(body.p, radius)
 
         // render a second white circle on top, pulsing in size
         r.color = Color.WHITE.withAlpha(0.4)
-        r.circle(body.p, value.radius * (0.6 + sin(timeAlive * 5) * 0.2))
+        r.circle(body.p, radius * (0.6 + sin(timeAlive * 5) * 0.2))
     }
 }
