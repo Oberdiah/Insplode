@@ -64,6 +64,8 @@ fun renderDiegeticMenu(r: Renderer) {
 
     renderUpgradeMenu(r)
 
+    r.color = colorScheme.textColor
+
     r.text(
         fontLarge,
         "BombVille",
