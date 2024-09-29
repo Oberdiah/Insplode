@@ -89,14 +89,14 @@ fun initTiles() {
 }
 
 fun resetLevel() {
-    requestedLowestTileY = 0
-    currentLowestTileY = 0
+    requestedLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 1
+    currentLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 1
 
     for (tile in tilesStorage) {
         tile.dispose()
     }
     for (i in tilesStorage.indices) {
-        tilesStorage[i] = Tile(TileId(i))
+        tilesStorage[i] = Tile(TileId(i + currentLowestTileY * NUM_TILES_ACROSS))
     }
     for (tile in tilesStorage) {
         tile.init()
