@@ -23,6 +23,7 @@ import com.oberdiah.registerCasuallyLandedWithScoreSystem
 import com.oberdiah.spawnSmoke
 import com.oberdiah.times
 import com.oberdiah.utils.addScreenShake
+import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -95,7 +96,11 @@ class PlayerStateImpl : PlayerStateAccessors() {
                 Random.nextDouble(-PLAYER_SIZE.y / 2, PLAYER_SIZE.y / 2)
             )
             val vel = Velocity(Random.nextDouble(-0.5, 0.5), Random.nextDouble(-0.5, 0.5))
-            spawnSmoke(pos, vel)
+            if (i % 2 == 0) {
+                spawnSmoke(pos, vel)
+            } else {
+                spawnSmoke(pos, vel, color = colorScheme.player)
+            }
         }
     }
 

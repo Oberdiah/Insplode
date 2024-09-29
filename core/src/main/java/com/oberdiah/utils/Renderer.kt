@@ -178,7 +178,7 @@ class Renderer(val name: String, val camera: Camera) {
         renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, width.f, s.h.f)
         renderer.rect(mid.x.f + s.w.f / 2 - width.f, mid.y.f - s.h.f / 2, width.f, s.h.f)
     }
-
+    
     fun polyLine(ps: List<Point>) {
         val arr = FloatArray(ps.size * 2)
         ps.forEachIndexed { index, point ->

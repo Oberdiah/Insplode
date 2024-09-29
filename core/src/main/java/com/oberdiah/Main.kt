@@ -88,7 +88,9 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         time("Update level storage") { updateLevelStorage() }
         time("Update tile changes") { updateTileChanges() }
-        time("Tick Particles") { tickParticles() }
+        if (GAME_STATE != GameState.PausedPopup) {
+            time("Tick Particles") { tickParticles() }
+        }
 
         if (GAME_IS_RUNNING) {
             // 'Coz Box2d stupid, these are the centres of the positions.

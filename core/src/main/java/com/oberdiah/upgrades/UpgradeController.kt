@@ -102,12 +102,19 @@ fun renderUpgradePuck(r: Renderer, upgradePuck: UpgradePuck) {
 //        r.line(it.first, it.second, UNITS_WIDE / 150.0)
 //    }
 
-    r.color = Color.GRAY.withAlpha(0.5)
+    r.color = colorScheme.textColor.withAlpha(0.5)
     r.centeredRect(
         upgradePuck.position,
-        Size(upgradePuck.size, upgradePuck.size),
+        Size(upgradePuck.size),
         PI / 4
     )
+    r.color = Color.WHITE.withAlpha(0.5)
+    r.centeredRect(
+        upgradePuck.position,
+        Size(upgradePuck.size * 0.9),
+        PI / 4
+    )
+
 
     val texture = allUpgradeTextures[upgradePuck.upgrade] ?: return
     val p = upgradePuck.position

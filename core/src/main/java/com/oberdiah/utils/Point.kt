@@ -225,6 +225,7 @@ typealias Velocity = Point
 
 class Size(w: Number, h: Number) : Point(w, h) {
     constructor() : this(0, 0)
+    constructor(s: Number) : this(s, s)
 
     override operator fun plus(p: Point): Size {
         return Size(x + p.x, y + p.y)
