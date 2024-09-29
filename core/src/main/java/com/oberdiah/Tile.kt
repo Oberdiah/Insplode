@@ -2,6 +2,8 @@ package com.oberdiah
 
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
+import com.oberdiah.level.getTile
+import com.oberdiah.level.tilesStorage
 import com.oberdiah.utils.TileType
 
 class TileData(var tile: Tile) {

@@ -8,6 +8,7 @@ import com.oberdiah.JUST_UP_OFF_SCREEN
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.Size
+import com.oberdiah.UNITS_WIDE
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
 import com.oberdiah.f
@@ -98,14 +99,14 @@ fun renderUpgradePuck(r: Renderer, upgradePuck: UpgradePuck) {
     r.color = colorScheme.textColor
 //    r.text(
 //        fontSmall,
-//        upgradePuck.upgrade.name,
-//        toUISpace(upgradePuck.position),
+//        upgradePuck.upgrade.title,
+//        upgradePuck.position + Point(0.0, upgradePuck.size / 2 + 0.2),
 //        Align.center
 //    )
 
     // Draw lines to the upgrades this one depends on.
 //    upgradePuck.linesPointBackTo.forEach {
-//        r.line(toUISpace(it.first), toUISpace(it.second), WIDTH / 150)
+//        r.line(it.first, it.second, UNITS_WIDE / 150.0)
 //    }
 
     r.color = Color.GRAY.withAlpha(0.5)

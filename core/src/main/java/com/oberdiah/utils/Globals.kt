@@ -1,7 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
-import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
+import com.oberdiah.level.requestNewLowestTileY
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.utils.calculateInputGlobals
 import com.oberdiah.utils.camera

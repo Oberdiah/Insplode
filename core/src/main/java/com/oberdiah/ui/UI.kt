@@ -12,7 +12,7 @@ import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
 import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.Point
-import com.oberdiah.RUN_TIME_ELAPSED
+import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
 import com.oberdiah.SHOW_FRAMERATE_DATA
 import com.oberdiah.Screen
@@ -30,7 +30,7 @@ import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
 import com.oberdiah.fontSmallish
 import com.oberdiah.format
-import com.oberdiah.gameMessage
+import com.oberdiah.level.gameMessage
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playGChordNote

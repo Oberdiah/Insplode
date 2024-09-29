@@ -5,7 +5,7 @@ import com.oberdiah.Point
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
 import com.oberdiah.Velocity
-import com.oberdiah.getTile
+import com.oberdiah.level.getTile
 import com.oberdiah.whatAmITouching
 
 /**

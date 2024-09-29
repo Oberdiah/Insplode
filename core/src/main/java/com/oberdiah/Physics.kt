@@ -1,6 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.physics.box2d.*
+import com.oberdiah.level.getTile
 
 val collisionListener = ListenerClass()
 

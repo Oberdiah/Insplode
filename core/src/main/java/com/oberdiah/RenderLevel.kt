@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.oberdiah.level.getTile
 import com.oberdiah.utils.Colors
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
