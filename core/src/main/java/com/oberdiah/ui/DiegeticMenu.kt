@@ -100,12 +100,15 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     if (GAME_STATE == GameState.DiegeticMenu) {
         TOUCHES_WENT_DOWN.forEach {
             if (!isInLaunchButton(it)) {
+                cameraVelocity = 0.0
                 isDragging = true
                 lastFingerY = it.y
             }
         }
         TOUCHES_DOWN.forEach {
             if (isDragging) {
+                cameraVelocity = 0.0
+
                 val dragDelta = (lastFingerY - it.y) / UNIT_SIZE_IN_PIXELS
                 cameraY += dragDelta
                 lastFingerY = it.y
