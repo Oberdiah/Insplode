@@ -8,6 +8,7 @@ import com.oberdiah.player.playerInputs
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUI
 import com.oberdiah.upgrades.initUpgradeController
+import com.oberdiah.upgrades.renderUpgradeIcons
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -136,6 +137,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             renderUI(uiRenderer)
             uiRenderer.end()
         }
+
+        renderUpgradeIcons()
 
         timerEnd()
     }

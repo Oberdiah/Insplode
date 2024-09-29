@@ -1,22 +1,29 @@
 package com.oberdiah.upgrades
 
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.JUST_UP_OFF_SCREEN
 import com.oberdiah.Point
 import com.oberdiah.Renderer
-import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
+import com.oberdiah.f
 import com.oberdiah.fontSmall
 import com.oberdiah.max
 import com.oberdiah.toUISpace
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.utils.StatefulBoolean
+import com.oberdiah.utils.colorScheme
+import com.oberdiah.withAlpha
+import kotlin.math.PI
 
 private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
 private val allUpgradePucks = mutableListOf<UpgradePuck>()
 var UPGRADES_SCREEN_HEIGHT_UNITS = 0.0 // Gets updated on init
+private val allUpgradeTextures = mutableMapOf<Upgrade, Texture>()
 
 const val UPGRADE_SCREEN_BORDER = 3.0
 
@@ -31,6 +38,7 @@ fun initUpgradeController() {
     playerUpgradeStates.clear()
     Upgrade.values().forEach {
         playerUpgradeStates[it] = StatefulBoolean(it.name, false)
+        allUpgradeTextures[it] = Texture("Icons/${it.name}.png")
     }
     // Eventually we can do something like filling in any gaps that have been
     // added by updates here. For now we'll keep it simple.
@@ -58,7 +66,14 @@ fun initUpgradeController() {
             val to = position - Point(0.0, size / 2)
             Pair(from, to)
         }
-        allUpgradePucks.add(UpgradePuck(upgrade, position, size, linesPointBackTo))
+        allUpgradePucks.add(
+            UpgradePuck(
+                upgrade,
+                position,
+                size,
+                linesPointBackTo
+            )
+        )
     }
 
     UPGRADES_SCREEN_HEIGHT_UNITS += UPGRADE_SCREEN_BORDER
@@ -78,22 +93,53 @@ fun renderUpgradeMenu(r: Renderer) {
     }
 }
 
+val spriteRenderer = SpriteBatch()
+
+fun renderUpgradeIcons() {
+    if (JUST_UP_OFF_SCREEN < UPGRADES_SCREEN_BOTTOM_Y) {
+        return
+    }
+
+    spriteRenderer.begin()
+    allUpgradePucks.forEach {
+        val texture = allUpgradeTextures[it.upgrade] ?: return@forEach
+        val p = toUISpace(it.position)
+        val s = UNIT_SIZE_IN_PIXELS.f * it.size.f
+        // Draw the texture centered on the position, scaled as much as it can be without warping.
+        val textureSize = Size(texture.width.f, texture.height.f)
+        val scale = s / max(textureSize.w, textureSize.h).f
+
+        spriteRenderer.draw(
+            texture,
+            p.x.f - textureSize.w.f * scale / 2,
+            p.y.f - textureSize.h.f * scale / 2,
+            textureSize.w.f * scale,
+            textureSize.h.f * scale
+        )
+    }
+    spriteRenderer.end()
+}
+
 fun renderUpgradePuck(r: Renderer, upgradePuck: UpgradePuck) {
-    r.text(
-        fontSmall,
-        upgradePuck.upgrade.name,
-        toUISpace(upgradePuck.position),
-        Align.center
-    )
-    r.centeredHollowRect(
+    r.color = colorScheme.textColor
+//    r.text(
+//        fontSmall,
+//        upgradePuck.upgrade.name,
+//        toUISpace(upgradePuck.position),
+//        Align.center
+//    )
+
+    // Draw lines to the upgrades this one depends on.
+//    upgradePuck.linesPointBackTo.forEach {
+//        r.line(toUISpace(it.first), toUISpace(it.second), WIDTH / 150)
+//    }
+
+    r.color = Color.GRAY.withAlpha(0.5)
+    r.centeredRect(
         toUISpace(upgradePuck.position),
         Size(UNIT_SIZE_IN_PIXELS * upgradePuck.size, UNIT_SIZE_IN_PIXELS * upgradePuck.size),
-        WIDTH / 150
+        PI / 4
     )
-    // Draw lines to the upgrades this one depends on.
-    upgradePuck.linesPointBackTo.forEach {
-        r.line(toUISpace(it.first), toUISpace(it.second), WIDTH / 150)
-    }
 }
 
 fun playerHas(upgrade: Upgrade): Boolean {

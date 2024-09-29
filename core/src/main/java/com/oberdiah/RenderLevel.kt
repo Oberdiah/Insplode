@@ -172,9 +172,9 @@ fun renderBackground(r: Renderer) {
 
             // Make thisColor darker as we go up (ty increases)
             thisColor = thisColor.cpy().add(
-                0.05f * (ty / 50f),
-                0.10f * (ty / 50f),
-                0.15f * (ty / 50f),
+                min(0.05f * (ty / 50f), 0.1f).f,
+                min(0.10f * (ty / 50f), 0.1f).f,
+                min(0.15f * (ty / 50f), 0.1f).f,
                 0.0f
             )
 

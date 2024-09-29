@@ -1,4 +1,27 @@
+Icons/ApexWings.png
+Icons/BombMagician.png
+Icons/BombSlam.png
+Icons/ComboOrbs.png
+Icons/EvenFasterMovement.png
+Icons/FasterMovement.png
+Icons/GhostMode.png
+Icons/Jump.png
+Icons/LargeTimedBomb.png
+Icons/LineBomb.png
+Icons/Magnet.png
+Icons/MediumTimedBomb.png
+Icons/MegaMagnet.png
+Icons/MoreSkyOrbs.png
 Icons/Movement.png
+Icons/Multiplier.png
+Icons/ParticleBlackHole.png
+Icons/RainbowPlayer.png
+Icons/SingularityMagnet.png
+Icons/Slam.png
+Icons/SlamAssist.png
+Icons/SlamOrbs.png
+Icons/SmallTimedBomb.png
+Icons/SneakySlam.png
 Lato-Medium.ttf
 Sounds/Crunch 1.wav
 Sounds/Crunch 2.wav
@@ -53,12 +76,8 @@ Sounds/trim_orange hit hard 6.wav
 Sounds/trim_orange hit hard 7.wav
 Sounds/trim_orange hit hard 8.wav
 Sounds/trim_orange hit hard 9.wav
-Sounds/trim_orange hit soft 1.wav
-Sounds/trim_orange hit soft 10.wav
 Sounds/trim_orange hit soft 2.wav
 Sounds/trim_orange hit soft 3.wav
-Sounds/trim_orange hit soft 4.wav
-Sounds/trim_orange hit soft 5.wav
 Sounds/trim_orange hit soft 6.wav
 Sounds/trim_orange hit soft 7.wav
 Sounds/trim_orange hit soft 8.wav
