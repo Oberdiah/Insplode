@@ -136,8 +136,8 @@ fun renderUpgradePuck(r: Renderer, upgradePuck: UpgradePuck) {
 
     r.color = Color.GRAY.withAlpha(0.5)
     r.centeredRect(
-        toUISpace(upgradePuck.position),
-        Size(UNIT_SIZE_IN_PIXELS * upgradePuck.size, UNIT_SIZE_IN_PIXELS * upgradePuck.size),
+        upgradePuck.position,
+        Size(upgradePuck.size, upgradePuck.size),
         PI / 4
     )
 }
