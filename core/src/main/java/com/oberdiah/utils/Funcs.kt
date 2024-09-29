@@ -1,5 +1,6 @@
 package com.oberdiah
 
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
@@ -11,14 +12,22 @@ import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.random.Random
 
-fun toUISpace(p: Point): Point {
+fun project(p: Point, camera: Camera): Point {
     val coords = camera.project(Vector3(p.x.f, p.y.f, 0F))
     return Point(coords.x, coords.y)
 }
 
-fun toWorldSpace(p: Point): Point {
+fun unproject(p: Point, camera: Camera): Point {
     val coords = camera.unproject(Vector3(p.x.f, HEIGHT.f - p.y.f, 0F))
     return Point(coords.x, coords.y)
+}
+
+fun toUISpace(p: Point): Point {
+    return project(p, camera)
+}
+
+fun toWorldSpace(p: Point): Point {
+    return unproject(p, camera)
 }
 
 fun createRandomPoint(): Point {

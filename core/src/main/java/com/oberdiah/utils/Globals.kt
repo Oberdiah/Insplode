@@ -143,7 +143,7 @@ var APP_FRAME = 0
 var APP_TIME = 0.0
 
 private val screenSize: Size = Size()
-val SIZE: Size
+val SCREEN_SIZE: Size
     get() {
         screenSize.h = HEIGHT
         screenSize.w = WIDTH

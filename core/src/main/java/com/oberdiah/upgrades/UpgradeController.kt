@@ -93,32 +93,6 @@ fun renderUpgradeMenu(r: Renderer) {
     }
 }
 
-val spriteRenderer = SpriteBatch()
-
-fun renderUpgradeIcons() {
-    if (JUST_UP_OFF_SCREEN < UPGRADES_SCREEN_BOTTOM_Y) {
-        return
-    }
-
-    spriteRenderer.begin()
-    allUpgradePucks.forEach {
-        val texture = allUpgradeTextures[it.upgrade] ?: return@forEach
-        val p = toUISpace(it.position)
-        val s = UNIT_SIZE_IN_PIXELS.f * it.size.f
-        // Draw the texture centered on the position, scaled as much as it can be without warping.
-        val textureSize = Size(texture.width.f, texture.height.f)
-        val scale = s / max(textureSize.w, textureSize.h).f
-
-        spriteRenderer.draw(
-            texture,
-            p.x.f - textureSize.w.f * scale / 2,
-            p.y.f - textureSize.h.f * scale / 2,
-            textureSize.w.f * scale,
-            textureSize.h.f * scale
-        )
-    }
-    spriteRenderer.end()
-}
 
 fun renderUpgradePuck(r: Renderer, upgradePuck: UpgradePuck) {
     r.color = colorScheme.textColor
@@ -140,6 +114,15 @@ fun renderUpgradePuck(r: Renderer, upgradePuck: UpgradePuck) {
         Size(upgradePuck.size, upgradePuck.size),
         PI / 4
     )
+
+    val texture = allUpgradeTextures[upgradePuck.upgrade] ?: return
+    val p = upgradePuck.position
+    val s = upgradePuck.size.f
+    // Draw the texture centered on the position, scaled as much as it can be without warping.
+    val textureSize = Size(texture.width.f, texture.height.f)
+    val scale = s / max(textureSize.w, textureSize.h).f
+
+    r.centeredImage(texture, p, Size(textureSize.w * scale, textureSize.h * scale))
 }
 
 fun playerHas(upgrade: Upgrade): Boolean {

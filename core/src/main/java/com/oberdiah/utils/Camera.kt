@@ -9,6 +9,7 @@ import kotlin.math.pow
 
 private var cameraY = 0.0
 var camera = OrthographicCamera()
+var screenCamera = OrthographicCamera()
 
 enum class CameraFollowing {
     Player,
@@ -31,6 +32,7 @@ private fun cameraHasReachedFinalDiegeticMenuPosition() {
 
 fun resetCamera() {
     CAMERA_FOLLOWING = CameraFollowing.Nothing
+    screenCamera.setToOrtho(false, WIDTH.f, HEIGHT.f)
     camera.setToOrtho(false, UNITS_WIDE.f, SCREEN_HEIGHT_IN_UNITS.f)
     camera.position.y = getCameraYForMenu()
     cameraY = camera.position.y.d
@@ -94,13 +96,6 @@ fun updateCamera() {
 
     camera.position.x = UNITS_WIDE.f / 2
     camera.update()
-
-    worldSpaceRenderer.updateProjectionMatrix(camera.combined) { p ->
-        // It's not the neatest, but camera project isn't a trivial operation we can
-        // just figure out from the projection matrix it gives us for some reason.
-        val v3 = camera.project(Vector3(p.x.f, p.y.f, 0f))
-        Point(v3.x, v3.y)
-    }
 }
 
 enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {

@@ -7,10 +7,8 @@ import com.badlogic.gdx.graphics.*
 import com.oberdiah.player.playerInputs
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
-import com.oberdiah.ui.renderDiegeticMenuWorldSpace
 import com.oberdiah.ui.renderUIWorldSpace
 import com.oberdiah.upgrades.initUpgradeController
-import com.oberdiah.upgrades.renderUpgradeIcons
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -47,8 +45,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         initLevelRender()
         initUpgradeController()
 
-        worldSpaceRenderer = Renderer("World Space Renderer")
-        uiRenderer = Renderer("UI Renderer")
+        worldSpaceRenderer = Renderer("World Space Renderer", camera)
+        uiRenderer = Renderer("UI Renderer", screenCamera)
         initWorld()
         initTiles()
 
@@ -140,8 +138,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             renderUIScreenSpace(uiRenderer)
             uiRenderer.end()
         }
-
-        renderUpgradeIcons()
 
         timerEnd()
     }

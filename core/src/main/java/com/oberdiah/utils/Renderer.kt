@@ -1,14 +1,15 @@
 package com.oberdiah
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.EarClippingTriangulator
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.ShortArray
 import kotlin.math.PI
@@ -19,58 +20,77 @@ private val Number.toDegrees: Number
         return this * 180 / 3.1415
     }
 
+abstract class Drawable {
+    abstract fun draw(renderer: SpriteBatch, camera: Camera)
+}
+
+class SpriteDraw(val tex: Texture, val p: Point, val s: Size) : Drawable() {
+    override fun draw(renderer: SpriteBatch, camera: Camera) {
+        // The sprite renderer isn't projected to make the text look correct
+        // So we need to do it manually
+        val p = project(p, camera)
+
+        if (p.y > HEIGHT * 1.2 || p.y < -HEIGHT * 0.2) {
+            return
+        }
+
+        val s = s * SCREEN_SIZE / Size(camera.viewportWidth, camera.viewportHeight)
+        renderer.draw(tex, p.x.f, p.y.f, s.x.f, s.y.f)
+    }
+}
+
 class TextDraw(
     val color: Color,
     val font: BitmapFont,
     val text: String,
-    val x: Number,
-    val y: Number,
+    val p: Point,
     val align: Int
-)
+) : Drawable() {
+    override fun draw(renderer: SpriteBatch, camera: Camera) {
+        // The sprite renderer isn't projected to make the text look correct
+        // So we need to compensate for that
+        val pos = project(p, camera)
+
+        if (pos.y > HEIGHT * 1.2 || pos.y < -HEIGHT * 0.2) {
+            return
+        }
+
+        font.color = color
+        var y = pos.y.f
+        if (align == Align.center || align == Align.left || align == Align.right) {
+            y += font.capHeight / 2
+        }
+        if (align == Align.bottomLeft) {
+            y += font.capHeight
+        }
+        font.draw(renderer, text, pos.x.f, y, 0f, align, false)
+    }
+}
 
 val earClipper = EarClippingTriangulator()
 
-class Renderer(val name: String) {
+class Renderer(val name: String, val camera: Camera) {
     private val renderer = ShapeRenderer()
-    private val textRenderer = SpriteBatch()
-    private val textToDraw = mutableListOf<TextDraw>()
-    private var projLambda = { p: Point -> p }
-
-    fun updateProjectionMatrix(mat4: Matrix4, projLambda: (Point) -> Point) {
-        this.projLambda = projLambda
-        renderer.projectionMatrix = mat4
-    }
+    private val spriteRenderer = SpriteBatch()
+    private val spritesToDraw = mutableListOf<Drawable>()
 
     fun begin() {
         Gdx.gl.glEnable(GL30.GL_BLEND)
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
+        renderer.projectionMatrix = camera.combined
         renderer.begin(ShapeType.Filled)
         Gdx.gl.glLineWidth(10f)
     }
 
     fun end() {
         renderer.end()
-        if (textToDraw.size > 0) {
-            textRenderer.begin()
-            textToDraw.forEach {
-                val pos = projLambda(Point(it.x, it.y))
-
-                if (pos.y > HEIGHT * 1.2 || pos.y < -HEIGHT * 0.2) {
-                    return@forEach
-                }
-
-                it.font.color = it.color
-                var y = pos.y.f
-                if (it.align == Align.center || it.align == Align.left || it.align == Align.right) {
-                    y += it.font.capHeight / 2
-                }
-                if (it.align == Align.bottomLeft) {
-                    y += it.font.capHeight
-                }
-                it.font.draw(textRenderer, it.text, pos.x.f, y, 0f, it.align, false)
+        if (spritesToDraw.size > 0) {
+            spriteRenderer.begin()
+            spritesToDraw.forEach {
+                it.draw(spriteRenderer, camera)
             }
-            textToDraw.clear()
-            textRenderer.end()
+            spritesToDraw.clear()
+            spriteRenderer.end()
         }
     }
 
@@ -80,12 +100,20 @@ class Renderer(val name: String) {
             renderer.color = c
         }
 
+    fun image(tex: Texture, p: Point, s: Size) {
+        spritesToDraw.add(SpriteDraw(tex, p, s))
+    }
+
+    fun centeredImage(tex: Texture, p: Point, s: Size) {
+        image(tex, p - s / 2, s)
+    }
+
     fun text(font: BitmapFont, text: String, p: Point, align: Int = Align.bottomLeft) {
-        textToDraw.add(TextDraw(renderer.color.cpy(), font, text, p.x, p.y, align))
+        spritesToDraw.add(TextDraw(renderer.color.cpy(), font, text, p, align))
     }
 
     fun text(font: BitmapFont, text: String, x: Number, y: Number, align: Int = Align.bottomLeft) {
-        textToDraw.add(TextDraw(renderer.color.cpy(), font, text, x, y, align))
+        text(font, text, Point(x, y), align)
     }
 
     fun rect(rect: Rect) {
