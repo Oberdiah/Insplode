@@ -136,17 +136,19 @@ class PlayerInputs {
     }
 
     private fun isJumpJustPressed(): Boolean {
-        if (!playerState.isPreparingToJump) {
-            return false
+        val onDesktop = Gdx.app.type == Application.ApplicationType.Desktop
+
+        if (playerState.isPreparingToJump || onDesktop) {
+            return TOUCHES_WENT_UP.firstOrNull()?.let {
+                true
+            } ?: if (onDesktop) {
+                isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
+            } else {
+                false
+            }
         }
 
-        return TOUCHES_WENT_UP.firstOrNull()?.let {
-            true
-        } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
-        } else {
-            false
-        }
+        return false
     }
 
     private fun isSlamJustPressed(): Boolean {
