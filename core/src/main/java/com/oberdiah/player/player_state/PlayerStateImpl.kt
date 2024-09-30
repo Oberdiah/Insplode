@@ -81,7 +81,12 @@ class PlayerStateImpl : PlayerStateAccessors() {
         if (vel.len > 10) {
             // Player landing deserves more than the normal amount of shake
             addScreenShake(vel.len.d * 0.025)
-            boom(player.body.p, vel.len.d * 0.03 * multiplier.pow(0.6), affectsThePlayer = false)
+            boom(
+                player.body.p,
+                vel.len.d * 0.03 * multiplier.pow(0.6),
+                affectsThePlayer = false,
+                affectsTheLandscape = false
+            )
         }
     }
 

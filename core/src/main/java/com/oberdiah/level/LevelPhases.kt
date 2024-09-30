@@ -37,15 +37,6 @@ val phases = arrayOf(
     Phase(2.0) {
         // Drop pod from above.
     },
-    Phase(7.0) {
-        spawnBomb(BombType.SmallTimed, 0.25)
-    },
-    Phase(2.0) {
-        spawnBomb(BombType.MediumTimed, 0.75)
-    },
-    Phase(2.5) {
-        spawnBomb(BombType.SmallTimed, 0.25)
-    },
     Phase(2.0) {
         spawnBomb(BombType.SmallTimed, 0.6)
     },
@@ -73,7 +64,7 @@ val phases = arrayOf(
     Phase(2.0) {
         spawnBomb(BombType.SmallTimed, 0.25)
     },
-    Phase(4.0, BombType.LargeTimed) {
+    Phase(1.5, BombType.LargeTimed) {
         spawnBomb(BombType.LargeTimed, 0.5)
         gameMessage = "Large Bomb"
     },
@@ -93,7 +84,7 @@ val phases = arrayOf(
         startRandomBombs(BombType.SpringBomb, 6.0)
         startRandomBombs(BombType.LargeTimed, 10.0)
     },
-    Phase(4.0, BombType.MegaTimed) {
+    Phase(2.0, BombType.MegaTimed) {
         spawnBomb(BombType.MegaTimed, 0.75)
         gameMessage = "Mega Bomb"
     },
@@ -106,9 +97,9 @@ val phases = arrayOf(
         startRandomBombs(BombType.LargeTimed, 10.0)
         startRandomBombs(BombType.MegaTimed, 15.0)
     },
-    Phase(4.0) {
+    Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Extreme Phase 1"
+        gameMessage = "Hard Phase"
     },
     Phase(15.0) {
         gameMessage = ""
@@ -119,9 +110,9 @@ val phases = arrayOf(
         startRandomBombs(BombType.LargeTimed, 8.0)
         startRandomBombs(BombType.MegaTimed, 10.0)
     },
-    Phase(4.0) {
+    Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Extreme Phase 2"
+        gameMessage = "Very Hard Phase"
     },
     Phase(15.0) {
         gameMessage = ""
@@ -132,9 +123,9 @@ val phases = arrayOf(
         startRandomBombs(BombType.LargeTimed, 6.0)
         startRandomBombs(BombType.MegaTimed, 8.0)
     },
-    Phase(4.0) {
+    Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.25)
-        gameMessage = "Final Phase"
+        gameMessage = "Extreme Phase"
     },
     Phase(15.0) {
         gameMessage = ""
@@ -144,5 +135,18 @@ val phases = arrayOf(
         startRandomBombs(BombType.SpringBomb, 2.0)
         startRandomBombs(BombType.LargeTimed, 4.0)
         startRandomBombs(BombType.MegaTimed, 6.0)
+    },
+    Phase(2.0) {
+        spawnBomb(BombType.MegaTimed, 0.25)
+        gameMessage = "Final Phase"
+    },
+    Phase(15.0) {
+        gameMessage = ""
+        startRandomBombs(BombType.LineBomb, 2.0)
+        startRandomBombs(BombType.SmallTimed, 1.3)
+        startRandomBombs(BombType.MediumTimed, 2.0)
+        startRandomBombs(BombType.SpringBomb, 1.5)
+        startRandomBombs(BombType.LargeTimed, 3.0)
+        startRandomBombs(BombType.MegaTimed, 4.0)
     },
 )

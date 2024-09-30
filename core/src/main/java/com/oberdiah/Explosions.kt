@@ -23,7 +23,10 @@ fun boom(
     val tileRadius = (radius * TILES_PER_UNIT).i
     val tempPoint = Point()
 
-    spawnGlow(point, radius)
+    if (affectsTheLandscape) {
+        // It looks weird rendered over the landscape
+        spawnGlow(point, radius)
+    }
 
     addScreenShake(radius.d.pow(0.5) * 0.5)
 

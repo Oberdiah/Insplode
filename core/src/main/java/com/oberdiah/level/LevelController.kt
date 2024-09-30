@@ -50,7 +50,7 @@ val LASER_HEIGHT_IN_MENU: Double
         return TOP_OF_UPGRADE_SCREEN_UNITS - 1.0
     }
 
-val LASER_HEIGHT_START_IN_GAME = 10.0
+val LASER_HEIGHT_START_IN_GAME = 20.0
 
 var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
@@ -204,14 +204,18 @@ data class BombData(var delay: Number) {
     fun randomiseNextBombAt() {
         val minTime = 0.0
         val maxTime = delay * 2.0
-        nextBombAt = RUN_TIME_ELAPSED + minTime + (maxTime - minTime) * Random.nextDouble()
+        nextBombAt = RUN_TIME_ELAPSED + lerp(minTime, maxTime, Random.nextDouble())
     }
 }
 
 val bombDropData = mutableMapOf<BombType, BombData>()
 
 fun startRandomBombs(type: BombType, delay: Number) {
-    bombDropData[type] = BombData(delay)
+    bombDropData[type]?.let {
+        it.delay = delay
+    } ?: run {
+        bombDropData[type] = BombData(delay)
+    }
 }
 
 fun stopAllBombs() {
