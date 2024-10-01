@@ -9,13 +9,9 @@ import com.oberdiah.utils.time
 private lateinit var world: World
 private lateinit var debugRenderer: Box2DDebugRenderer
 
-private var accumulator = 0f
-
 fun doPhysicsStep() {
-    val frameTime = min(DELTA, 0.25f).f
-    accumulator += frameTime
-
-    world.step(min(AVERAGE_DELTA, 1 / 60.0).f, 6, 2)
+    val delta = min(AVERAGE_DELTA, 1 / 60.0) * GAME_SPEED
+    world.step(delta.f, 6, 2)
 }
 
 fun initWorld() {

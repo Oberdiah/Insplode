@@ -35,6 +35,8 @@ enum class Screen(val title: String) {
     Credits("Credits"),
 }
 
+var GAME_SPEED = 1.0
+
 /// Size of the screen in pixels
 var WIDTH = 0.0
 

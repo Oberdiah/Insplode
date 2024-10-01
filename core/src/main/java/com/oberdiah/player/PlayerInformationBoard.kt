@@ -20,6 +20,10 @@ class PlayerInformationBoard {
     val velocity
         get() = previousVelocities.getOrNull(2) ?: Velocity()
 
+    /** The fastest downward-Y velocity in the last 10 ticks. Used for slamming */
+    val slammingVelocity
+        get() = previousVelocities.minOfOrNull { it.y } ?: 0.0
+
     val playerFeetPosition
         get() = player.body.p - Point(0.0, PLAYER_SIZE.w / 2 * GLOBAL_SCALE)
 

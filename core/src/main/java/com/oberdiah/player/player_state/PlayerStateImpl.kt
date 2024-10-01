@@ -17,11 +17,8 @@ import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.player.playerInfoBoard
 import com.oberdiah.player.playerRenderer
-import com.oberdiah.plus
-import com.oberdiah.registerBombSlamWithScoreSystem
 import com.oberdiah.registerCasuallyLandedWithScoreSystem
 import com.oberdiah.spawnSmoke
-import com.oberdiah.times
 import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
@@ -53,7 +50,11 @@ class PlayerStateImpl : PlayerStateAccessors() {
         bomb.gotSlammed()
 
         val desiredVel =
-            clamp(abs(playerInfoBoard.velocity.y).pow(0.5) + bomb.power * 2.0 + 3.5, 5.0, 15.0)
+            clamp(
+                abs(playerInfoBoard.slammingVelocity).pow(0.5) + bomb.power * 2.0 + 3.5,
+                5.0,
+                15.0
+            )
         player.body.velocity = Point(player.body.velocity.x, desiredVel)
     }
 
@@ -67,20 +68,20 @@ class PlayerStateImpl : PlayerStateAccessors() {
 
         registerCasuallyLandedWithScoreSystem()
 
-        val vel = playerInfoBoard.velocity
+        val vel = abs(playerInfoBoard.slammingVelocity)
         playerRenderer.spawnParticlesAtMyFeet(
-            ferocity = vel.len.d * 0.2,
-            number = max((vel.len.d * 0.5).i, 2)
+            ferocity = vel * 0.2,
+            number = max((vel * 0.5).i, 2)
         )
 
         player.body.velocity = Point(player.body.velocity.x, 0.0)
 
-        if (vel.len > 10) {
+        if (vel > 10) {
             // Player landing deserves more than the normal amount of shake
-            addScreenShake(vel.len.d * 0.025)
+            addScreenShake(vel * 0.025)
             boom(
                 player.body.p,
-                vel.len.d * 0.03 * multiplier.pow(0.6),
+                vel * 0.03 * multiplier.pow(0.6),
                 affectsThePlayer = false,
                 affectsTheLandscape = false
             )
