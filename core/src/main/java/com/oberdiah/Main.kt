@@ -28,6 +28,8 @@ lateinit var uiRenderer: Renderer
 lateinit var platformInterface: PlatformInterface
 
 fun restartGame() {
+    Perlin.randomize()
+    
     resetParticles()
     resetPhysicsObjects()
     resetLevel()
