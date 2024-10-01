@@ -13,7 +13,7 @@ class Phase(val d: Number, val callback: () -> Unit) {
 
 //val phases = arrayOf(
 //    Phase(5.0) {
-//        startRandomBombs(BombType.MegaTimed, 6.0)
+//        startRandomBombs(BombType.UltraTimed, 6.0)
 //    }
 //)
 
@@ -148,5 +148,6 @@ val phases = arrayOf(
         startRandomBombs(BombType.SpringBomb, 1.5)
         startRandomBombs(BombType.LargeTimed, 3.0)
         startRandomBombs(BombType.MegaTimed, 4.0)
+        startRandomBombs(BombType.UltraTimed, 4.0)
     },
 )
