@@ -45,7 +45,7 @@ fun resetScoreSystem() {
 }
 
 fun registerBombSlamWithScoreSystem(bomb: Bomb) {
-    val numToNormallySpawn = (bomb.power.d * 2.0).pow(2.0).i
+    val numToNormallySpawn = bomb.getPointsWorth()
     spawnPointOrbs(bomb.body.p, (numToNormallySpawn * multiplier()).i)
     numConsecutiveBounces++
 

@@ -2,22 +2,25 @@ package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.FixtureDef
+import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
 import com.oberdiah.player.playerState
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
 import kotlin.random.Random
 
-var orbsToSpawn = mutableListOf<Pair<Point, Int>>()
+private data class OrbToBe(val p: Point, val points: Int, val startVel: Velocity = Velocity())
+
+private var orbsToSpawn = mutableListOf<OrbToBe>()
 
 fun tickPointOrbs() {
     orbsToSpawn.forEach { orbToSpawn ->
-        val (p, points) = orbToSpawn
+        val (p, points, startVel) = orbToSpawn
         // greedy algorithm to spawn point orbs
         var pointsLeft = points
         while (pointsLeft > 0) {
             val orbScore = pointOrbValues.first { it.scoreGiven <= pointsLeft }
-            PointOrb(p, orbScore, createRandomFacingPoint() * 5.0)
+            PointOrb(p, orbScore, createRandomFacingPoint() * 5.0 + startVel)
             pointsLeft -= orbScore.scoreGiven
         }
     }
@@ -27,8 +30,9 @@ fun tickPointOrbs() {
 /**
  * Spawns a point orb at the given point worth the given number of points.
  */
-fun spawnPointOrbs(p: Point, scoreGiven: Int) {
-    orbsToSpawn.add(p to scoreGiven)
+fun spawnPointOrbs(p: Point, scoreGiven: Int, startVel: Velocity = Velocity()) {
+    // We need to delay spawning because otherwise the physics system doesn't like it much.
+    orbsToSpawn.add(OrbToBe(p, scoreGiven, startVel))
 }
 
 private val pointOrbValues = PointOrbValue.values().sortedByDescending { it.scoreGiven }
@@ -98,14 +102,18 @@ class PointOrb(
     override fun render(r: Renderer) {
         val radius = saturate(timeAlive * 2.5 + 0.5) * value.radius
 
-        r.color = colorScheme.pickupColor.cpy().lerp(Color.BLACK, 0.75f).withAlpha(0.5)
-        r.circle(body.p, radius * 1.15)
-
-        r.color = colorScheme.pickupColor
-        r.circle(body.p, radius)
-
-        // render a second white circle on top, pulsing in size
-        r.color = Color.WHITE.withAlpha(0.4)
-        r.circle(body.p, radius * (0.6 + sin(timeAlive * 5) * 0.2))
+        renderPointOrb(r, body.p, radius)
     }
+}
+
+fun renderPointOrb(r: Renderer, p: Point, radius: Double) {
+    r.color = colorScheme.pickupColor.cpy().lerp(Color.BLACK, 0.75f).withAlpha(0.5)
+    r.circle(p, radius * 1.15)
+
+    r.color = colorScheme.pickupColor
+    r.circle(p, radius)
+
+    // render a second white circle on top, pulsing in size
+    r.color = Color.WHITE.withAlpha(0.4)
+    r.circle(p, radius * (0.6 + sin(RUN_TIME_ELAPSED * 5) * 0.2))
 }

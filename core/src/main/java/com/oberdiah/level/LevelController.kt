@@ -13,6 +13,7 @@ import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.LAST_APP_TIME_GAME_STATE_CHANGED
 import com.oberdiah.LineBomb
 import com.oberdiah.NUM_TILES_ACROSS
+import com.oberdiah.OrbRock
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SAFE_BOMB_SPAWN_HEIGHT
@@ -190,6 +191,7 @@ fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble(0.05, 0.95)) 
         BombType.StickyBomb -> StickyBomb(pos)
         BombType.ImpactBomb -> ImpactBomb(pos)
         BombType.SpringBomb -> SpringBomb(pos)
+        BombType.OrbRock -> OrbRock(pos)
         else -> throw Exception()
     }
 }
