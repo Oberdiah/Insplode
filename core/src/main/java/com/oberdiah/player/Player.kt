@@ -103,7 +103,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         if (playerState.isSlamming) {
             if (playerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
-                playerState.justSlammedIntoABomb(playerInfoBoard.bombsStandingOnGenerous.first())
+                val bomb = playerInfoBoard.bombsStandingOnGenerous.minByOrNull {
+                    it.body.p.distTo(playerInfoBoard.playerFeetPosition)
+                }!!
+                playerState.justSlammedIntoABomb(bomb)
             } else if (playerInfoBoard.isStandingOnNotBombExact) {
                 playerState.justSlammedIntoTheGround()
             }

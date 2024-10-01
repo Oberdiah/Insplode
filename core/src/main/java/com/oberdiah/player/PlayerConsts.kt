@@ -12,9 +12,6 @@ val playerState = PlayerStateImpl()
 val playerInfoBoard = PlayerInformationBoard()
 val playerInputs = PlayerInputs()
 
-val playerFeetPosition
-    get() = player.body.p - Point(0.0, PLAYER_SIZE.w / 2 * GLOBAL_SCALE)
-
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 
 const val PLAYER_GRAVITY_MODIFIER = 0.5
