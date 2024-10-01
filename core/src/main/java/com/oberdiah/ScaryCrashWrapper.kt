@@ -13,7 +13,9 @@ private lateinit var debugRenderer: Box2DDebugRenderer
 fun doPhysicsStep() {
     // The average is calculated before the game speed is applied, so there's
     // no weird smoothing to worry about.
-    val delta = min(GameTime.AVERAGE_GAMEPLAY_DELTA, 1 / 60.0)
+    // We do the whole min thing so we can deal with lag spikes sorta-nicely even if it's
+    // not technically correct.
+    val delta = min(GameTime.AVERAGE_GAMEPLAY_DELTA, GameTime.GAME_SPEED / 60.0)
     world.step(delta.f, 6, 2)
 }
 

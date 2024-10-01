@@ -1,11 +1,11 @@
 package com.oberdiah.player
 
 import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.PLAYER_SPAWN_Y
 import com.oberdiah.Point
 import com.oberdiah.Size
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.player.player_state.PlayerStateImpl
+import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 
 val playerRenderer = PlayerRenderer()
 val playerState = PlayerStateImpl()
@@ -28,3 +28,6 @@ const val PLAYER_UNCERTAINTY_WINDOW = TILE_SIZE_IN_UNITS * 0.5
 const val JUMP_PREVENTION_WINDOW = 0.3
 
 val player = Player(Point(5, PLAYER_SPAWN_Y))
+
+val PLAYER_SPAWN_Y
+    get() = UPGRADES_SCREEN_BOTTOM_Y + 1.5

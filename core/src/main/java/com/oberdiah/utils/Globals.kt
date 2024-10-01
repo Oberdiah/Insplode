@@ -101,9 +101,6 @@ val JUST_UP_OFF_SCREEN_UNITS
 
 const val GRAVITY = 20.0 * GLOBAL_SCALE
 
-val PLAYER_SPAWN_Y
-    get() = TOP_OF_UPGRADE_SCREEN_UNITS + 1.5
-
 const val TILE_SIZE_IN_UNITS = 1.0 / TILES_PER_UNIT
 
 /** The player y fract most of the time */
