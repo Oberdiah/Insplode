@@ -64,6 +64,7 @@ fun resetLevelController() {
     maxDepthThisRun = 0.0
     currentDepthThisRun = 0.0
     laserIdealHeight = LASER_HEIGHT_START_IN_GAME
+    bombDropData.clear()
 }
 
 var currentDepthThisRun = 0.0
