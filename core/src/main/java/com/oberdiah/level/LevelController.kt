@@ -30,6 +30,7 @@ import com.oberdiah.createRandomFacingPoint
 import com.oberdiah.d
 import com.oberdiah.lerp
 import com.oberdiah.max
+import com.oberdiah.min
 import com.oberdiah.minus
 import com.oberdiah.player.DEAD_CONTEMPLATION_TIME
 import com.oberdiah.player.player
@@ -74,10 +75,16 @@ val LASER_HEIGHT: Double
     get() {
         var transition = saturate((RUN_TIME_ELAPSED - LASER_DELAY))
         if (playerState.isDead) {
-            transition = saturate(1.0 - playerState.timeSinceDied / (DEAD_CONTEMPLATION_TIME - 1.0))
+            transition = min(
+                transition,
+                saturate(1.0 - playerState.timeSinceDied / (DEAD_CONTEMPLATION_TIME - 1.0))
+            )
         } else if (GAME_STATE == GameState.TransitioningToDiegeticMenu) {
             val timeSinceTransition = APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED
-            transition = saturate(1.0 - timeSinceTransition)
+            transition = min(
+                transition,
+                saturate(1.0 - timeSinceTransition)
+            )
         }
 
         return lerp(LASER_HEIGHT_IN_MENU, laserIdealHeight, transition)
