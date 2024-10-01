@@ -1,6 +1,5 @@
 package com.oberdiah.level
 
-import com.oberdiah.DELTA
 import com.oberdiah.NUM_TILES_ACROSS
 import com.oberdiah.Point
 import com.oberdiah.TILE_SIZE_IN_UNITS
@@ -10,6 +9,7 @@ import com.oberdiah.abs
 import com.oberdiah.playRockCrumbleSound
 import com.oberdiah.spawnFragment
 import com.oberdiah.tileIdsChangedLastFrameAllNeighbors
+import com.oberdiah.utils.GameTime
 import kotlin.random.Random
 
 private val collapsingTileIds = mutableSetOf<TileId>()
@@ -70,7 +70,7 @@ fun tickCollapse() {
         }
 
         if (!tile.data.bl.doesExist() && !tile.data.br.doesExist() && !tile.data.bm.doesExist()) {
-            tile.destructionTime += DELTA
+            tile.destructionTime += GameTime.GAMEPLAY_DELTA
         }
         if (tile.destructionTime > Random.nextDouble()) {
             toRemove.add(tile)

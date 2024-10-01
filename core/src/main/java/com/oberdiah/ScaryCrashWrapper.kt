@@ -2,6 +2,7 @@ package com.oberdiah
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.MyBox2DDebugRenderer
 import com.oberdiah.utils.camera
 import com.oberdiah.utils.time
@@ -10,7 +11,9 @@ private lateinit var world: World
 private lateinit var debugRenderer: Box2DDebugRenderer
 
 fun doPhysicsStep() {
-    val delta = min(AVERAGE_DELTA, 1 / 60.0) * GAME_SPEED
+    // The average is calculated before the game speed is applied, so there's
+    // no weird smoothing to worry about.
+    val delta = min(GameTime.AVERAGE_GAMEPLAY_DELTA, 1 / 60.0)
     world.step(delta.f, 6, 2)
 }
 

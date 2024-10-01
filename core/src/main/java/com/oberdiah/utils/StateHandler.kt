@@ -2,7 +2,6 @@ package com.oberdiah.utils
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
-import com.oberdiah.APP_TIME
 import com.oberdiah.d
 import com.oberdiah.f
 
@@ -11,10 +10,10 @@ private var isDirty = false
 private var lastSavedOn = 0.0
 
 fun saveState() {
-    if (isDirty && APP_TIME - lastSavedOn > 5.0) {
+    if (isDirty && GameTime.APP_TIME - lastSavedOn > 5.0) {
         prefs.flush()
         isDirty = false
-        lastSavedOn = APP_TIME
+        lastSavedOn = GameTime.APP_TIME
     }
 }
 

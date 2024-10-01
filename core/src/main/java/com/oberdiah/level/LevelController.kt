@@ -1,11 +1,8 @@
 package com.oberdiah.level
 
 import com.badlogic.gdx.graphics.Color
-import com.oberdiah.APP_TIME
 import com.oberdiah.BombType
 import com.oberdiah.ClusterBomb
-import com.oberdiah.DELTA
-import com.oberdiah.GAME_IS_RUNNING
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.ImpactBomb
@@ -42,6 +39,7 @@ import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.times
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
+import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.withAlpha
@@ -80,7 +78,10 @@ val LASER_HEIGHT: Double
                 saturate(1.0 - playerState.timeSinceDied / (DEAD_CONTEMPLATION_TIME - 1.0))
             )
         } else if (GAME_STATE == GameState.TransitioningToDiegeticMenu) {
-            val timeSinceTransition = APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED
+            // Yes, this touches gameplay.
+            // Yes, this uses standard non-warped game time.
+            // I'm fine with it. It's practically an animation anyway.
+            val timeSinceTransition = GameTime.APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED
             transition = min(
                 transition,
                 saturate(1.0 - timeSinceTransition)
@@ -142,11 +143,11 @@ fun tickLevelController() {
         1.0
     }
 
-    RUN_TIME_ELAPSED += DELTA * deltaScaling
+    RUN_TIME_ELAPSED += GameTime.GAMEPLAY_DELTA * deltaScaling
 
     val lastLaserHeight = LASER_HEIGHT
     if (RUN_TIME_ELAPSED > LASER_DELAY) {
-        laserIdealHeight -= DELTA * LASER_SPEED * deltaScaling
+        laserIdealHeight -= GameTime.GAMEPLAY_DELTA * LASER_SPEED * deltaScaling
     }
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {

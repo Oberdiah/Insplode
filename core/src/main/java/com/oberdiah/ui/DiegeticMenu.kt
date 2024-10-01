@@ -2,8 +2,6 @@ package com.oberdiah.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.oberdiah.APP_TIME
-import com.oberdiah.DELTA
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
@@ -32,6 +30,7 @@ import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.playerHas
 import com.oberdiah.upgrades.renderUpgradeMenuWorldSpace
+import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
@@ -127,7 +126,11 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
                 val fingerDist = delayedPreviousFingerY - it.y
                 if (fingerDist.abs > 5.0) {
                     cameraVelocity =
-                        1.25 * (fingerDist / UNIT_SIZE_IN_PIXELS) / clamp(DELTA, 0.005, 0.020)
+                        1.25 * (fingerDist / UNIT_SIZE_IN_PIXELS) / clamp(
+                            GameTime.GRAPHICS_DELTA,
+                            0.005,
+                            0.020
+                        )
                 }
 
                 isDragging = false
@@ -135,7 +138,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         }
 
         delayedPreviousFingerY = lerp(delayedPreviousFingerY, lastFingerY, 0.5)
-        cameraY += cameraVelocity * DELTA
+        cameraY += cameraVelocity * GameTime.GAMEPLAY_DELTA
         cameraVelocity *= 0.95
         val lowestCameraY = MENU_ZONE_BOTTOM_Y
         val highestCameraY = TOP_OF_UPGRADE_SCREEN_UNITS - SCREEN_HEIGHT_IN_UNITS
@@ -166,7 +169,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
 
     launchTextColor.a = launchTextAlpha
 
-    val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 15 - sin(APP_TIME) * 0.15
+    val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 15 - sin(GameTime.APP_TIME) * 0.15
     r.color = colorScheme.textColor
     drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
 

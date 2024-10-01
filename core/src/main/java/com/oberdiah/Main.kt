@@ -29,7 +29,7 @@ lateinit var platformInterface: PlatformInterface
 
 fun restartGame() {
     Perlin.randomize()
-    
+
     resetParticles()
     resetPhysicsObjects()
     resetLevel()
@@ -85,7 +85,11 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         timerStart()
 
         time("Set globals this frame") { setGlobalsThisFrame() }
-        time("Calculate globals") { calculateGlobals() }
+        time("Tick game time") { GameTime.tick() }
+        time("Collect input events") { calculateInputGlobals() }
+
+        // All the above stuff has to happen *really* early.
+
         time("Save State") { saveState() }
         time("Tick Sounds") { tickSounds() }
 

@@ -1,7 +1,5 @@
 package com.oberdiah.utils
 
-import com.oberdiah.AVERAGE_DELTA
-import com.oberdiah.DELTA
 import com.oberdiah.format
 import com.oberdiah.max
 
@@ -31,11 +29,9 @@ class TimedInstance(val name: String, initialTime: Double) {
 }
 
 val frameTimes = mutableMapOf<String, TimedInstance>()
-var timeSinceLastResetMs = 0.0
+private var lastTimeReset = 0.0
 
 fun timerEnd() {
-    timeSinceLastResetMs += DELTA
-
     lastFrameTime = (System.nanoTime() - frameStart) / 1000000.0
     fpsQueue.add(lastFrameTime)
     if (fpsQueue.size > 100) {
@@ -48,15 +44,15 @@ fun timerEnd() {
     timerString = "Last frame: ${lastFrameTime.format(3)} avg: ${avg.format(3)} (${
         (avg / (10 / 120.0)).format(1)
     }%)\n"
-    timerString += "Average delta: ${AVERAGE_DELTA.format(3)}\n"
+    timerString += "Average delta: ${GameTime.AVERAGE_GRAPHICS_DELTA.format(3)}\n"
     for (t in times) {
         if (t.second.heldPeak > 0.2) {
             timerString += "${t.second}\n"
         }
     }
 
-    if (timeSinceLastResetMs > 1.0) {
-        timeSinceLastResetMs = 0.0
+    if (GameTime.APP_TIME > lastTimeReset + 1.0) {
+        lastTimeReset = GameTime.APP_TIME
         for (t in frameTimes.values) {
             t.heldPeak = t.peak
             t.peak = 0.0

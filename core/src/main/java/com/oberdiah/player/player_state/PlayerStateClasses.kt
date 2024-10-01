@@ -1,7 +1,7 @@
 package com.oberdiah.player.player_state
 
-import com.oberdiah.DELTA
 import com.oberdiah.player.player
+import com.oberdiah.utils.GameTime
 
 /**
  * Holds internal classes the player state may need
@@ -37,7 +37,7 @@ open class PlayerStateClasses {
             private set
 
         fun tick() {
-            timeSinceWeEnteredThisState += DELTA
+            timeSinceWeEnteredThisState += GameTime.GAMEPLAY_DELTA
         }
 
         fun reset() {

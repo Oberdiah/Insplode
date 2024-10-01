@@ -18,8 +18,8 @@ val Vector2.p: Point
     get() = Point(this.x, this.y)
 
 class TouchPoint(val index: Int) : Point() {
-    var frameUp: Int = -1
-    var frameDown: Int = -1
+    var timeUp: Double = -1.0
+    var timeDown: Double = -1.0
 }
 
 open class Point {

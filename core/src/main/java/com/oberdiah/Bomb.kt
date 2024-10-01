@@ -3,6 +3,8 @@ package com.oberdiah
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.utils.GameTime
+import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.colorScheme
 import kotlin.math.PI
 import kotlin.math.pow
@@ -74,7 +76,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     }
 
     override fun tick() {
-        standableCountdown -= DELTA
+        standableCountdown -= GAMEPLAY_DELTA
     }
 
     open fun explode() {
@@ -146,7 +148,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
     override fun tick() {
         super.tick()
         if (canBlow) {
-            timeLeft -= DELTA
+            timeLeft -= GAMEPLAY_DELTA
             if (timeLeft <= 0.0) {
                 explode()
             }
@@ -209,7 +211,7 @@ class TimedBomb(startingPoint: Point, bombType: BombType) : Bomb(startingPoint, 
 
     override fun tick() {
         super.tick()
-        timeLeft -= DELTA
+        timeLeft -= GAMEPLAY_DELTA
         if (timeLeft <= 0.0) {
             explode()
         }
@@ -243,7 +245,7 @@ class ClusterBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ClusterBo
 
     override fun tick() {
         super.tick()
-        timeLeft -= DELTA
+        timeLeft -= GAMEPLAY_DELTA
         if (timeLeft <= 0.0) {
             explode()
         }
@@ -284,7 +286,7 @@ class ClusterParticle(startingPoint: Point, fuseLength: Double) :
 
     override fun tick() {
         super.tick()
-        timeLeft -= DELTA
+        timeLeft -= GAMEPLAY_DELTA
         if (timeLeft <= 0.0) {
             explode()
         }
@@ -363,7 +365,7 @@ class StickyBomb(startingPoint: Point) : Bomb(startingPoint, BombType.StickyBomb
         }
 
         if (body.type == BodyDef.BodyType.StaticBody) {
-            timeLeft -= DELTA
+            timeLeft -= GAMEPLAY_DELTA
         }
 
         if (timeLeft <= 0) {
@@ -472,8 +474,8 @@ class SpringBomb(startingPoint: Point) : Bomb(startingPoint, BombType.SpringBomb
 
     override fun tick() {
         super.tick()
-        timeLeft -= DELTA
-        timeTillSpring -= DELTA
+        timeLeft -= GAMEPLAY_DELTA
+        timeTillSpring -= GAMEPLAY_DELTA
         if (timeLeft <= 0.0) {
             explode()
         }

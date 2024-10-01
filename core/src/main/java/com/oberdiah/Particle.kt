@@ -2,6 +2,8 @@ package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.level.getTile
+import com.oberdiah.utils.GameTime
+import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.TileType
 import kotlin.random.Random
 
@@ -11,11 +13,6 @@ val glowLocations = mutableListOf<Glow>()
 val glowsToDestroy = mutableListOf<Glow>()
 
 fun tickParticles() {
-    if (APP_FRAME % 20 == 0) {
-//        allParticles.add(Fragment(Point(5, 15), Velocity(Random.nextDouble() - 0.5, -Random.nextDouble()) * 5, 0.5, TileType.Stone))
-//        allParticles.add(Fragment(Point(5, -15), Velocity(0.2, -1) * 5, 0.125, TileType.Stone))
-    }
-
     allParticles.forEach { it.tick() }
     allParticles.removeAll(particlesToDestroy)
     particlesToDestroy.clear()
@@ -68,7 +65,7 @@ fun spawnGlow(p: Point, radius: Number) {
 class Glow(val p: Point, var radius: Number) {
     var life = 0.05
     fun tick() {
-        life -= DELTA
+        life -= GAMEPLAY_DELTA
         if (life <= 0) {
             glowsToDestroy.add(this)
         }
@@ -96,14 +93,14 @@ class Smoke(
     }
 
     override fun applyForces() {
-        v.y += GRAVITY * DELTA * 0.15 * gravityScaling
+        v.y += GRAVITY * GAMEPLAY_DELTA * 0.15 * gravityScaling
     }
 
     override fun tick() {
         super.tick()
-        edgeLength -= DELTA / 16
+        edgeLength -= GAMEPLAY_DELTA / 16
         if (stoppedMoving) {
-            edgeLength -= DELTA
+            edgeLength -= GAMEPLAY_DELTA
         }
         angle += angleRate / 5
 
@@ -132,15 +129,15 @@ class Fragment(
 
     override fun applyForces() {
         if (affectedByGravity) {
-            v.y -= GRAVITY * DELTA * 0.5
+            v.y -= GRAVITY * GAMEPLAY_DELTA * 0.5
         }
     }
 
     override fun tick() {
         super.tick()
-        edgeLength -= DELTA / 32
+        edgeLength -= GAMEPLAY_DELTA / 32
         if (stoppedMoving) {
-            edgeLength -= DELTA / 2
+            edgeLength -= GAMEPLAY_DELTA / 2
         }
         angle += angleRate / 5
 
@@ -190,8 +187,8 @@ abstract class Particle(
         if (!stoppedMoving) {
             applyForces()
         }
-        p.x += v.x * DELTA
-        p.y += v.y * DELTA
+        p.x += v.x * GAMEPLAY_DELTA
+        p.y += v.y * GAMEPLAY_DELTA
 
         if (p.x < 0) {
             v.x *= -1

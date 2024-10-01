@@ -3,6 +3,7 @@ package com.oberdiah.utils
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.oberdiah.*
 import com.oberdiah.level.CURRENT_HIGHEST_TILE_Y
+import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import kotlin.math.pow
@@ -62,7 +63,7 @@ fun updateCamera() {
         CAMERA_FOLLOWING = CameraFollowing.Player
     }
 
-    SCREEN_SHAKE -= 12 * DELTA
+    SCREEN_SHAKE -= 12 * GameTime.GAMEPLAY_DELTA
     SCREEN_SHAKE = max(SCREEN_SHAKE, 0)
 
     val diff = player.body.p.y - TRANSITION_TO_LOWER_CAMERA_HEIGHT
@@ -94,7 +95,7 @@ fun updateCamera() {
         }
     }
 
-    val shake = (Perlin.fbm(APP_TIME * 200, 0, 3, 2.0) * SCREEN_SHAKE.pow(2) * 0.2).f
+    val shake = (Perlin.fbm(RUN_TIME_ELAPSED * 200, 0, 3, 2.0) * SCREEN_SHAKE.pow(2) * 0.2).f
 
     camera.position.y = cameraY.f + shake
 

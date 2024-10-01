@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.CircleShape
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.Shape
+import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.camera
 import kotlin.math.PI
 import kotlin.math.pow
@@ -271,6 +272,6 @@ fun lerp(a: Number, b: Number, t: Number): Double {
  */
 fun frameAccurateLerp(a: Number, b: Number, speed: Number): Double {
     // https://youtu.be/yGhfUcPjXuE?t=1155
-    val blend = 0.5.pow(DELTA * speed.d)
+    val blend = 0.5.pow(GameTime.GRAPHICS_DELTA * speed.d)
     return lerp(b, a, blend)
 }

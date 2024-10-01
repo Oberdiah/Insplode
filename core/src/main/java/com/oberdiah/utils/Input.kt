@@ -1,7 +1,6 @@
 package com.oberdiah.utils
 
 import com.badlogic.gdx.Gdx
-import com.oberdiah.APP_FRAME
 import com.oberdiah.HEIGHT
 import com.oberdiah.TouchPoint
 import com.oberdiah.d
@@ -50,15 +49,15 @@ fun calculateInputGlobals() {
     TOUCHES_DOWN.forEach { thisFrame ->
         if (TOUCHES_DOWN_LAST_FRAME.none { it.index == thisFrame.index }) {
             TOUCHES_WENT_DOWN.add(thisFrame)
-            thisFrame.frameDown = APP_FRAME
+            thisFrame.timeDown = GameTime.APP_TIME
         }
     }
     TOUCHES_UP.forEach { thisFrame ->
         if (TOUCHES_UP_LAST_FRAME.none { it.index == thisFrame.index }) {
             TOUCHES_WENT_UP.add(thisFrame)
-            thisFrame.frameUp = APP_FRAME
+            thisFrame.timeUp = GameTime.APP_TIME
         }
     }
-    TOUCHES_DOWN.sortBy { it.frameDown }
-    TOUCHES_UP.sortBy { it.frameUp }
+    TOUCHES_DOWN.sortBy { it.timeDown }
+    TOUCHES_UP.sortBy { it.timeUp }
 }

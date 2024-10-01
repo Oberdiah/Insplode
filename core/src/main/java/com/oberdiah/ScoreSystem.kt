@@ -5,6 +5,7 @@ import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.player.playerState
+import com.oberdiah.utils.GameTime.updateGameSpeed
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
 import kotlin.random.Random
@@ -48,6 +49,8 @@ fun registerBombSlamWithScoreSystem(bomb: Bomb) {
     val numToNormallySpawn = bomb.getPointsWorth()
     spawnPointOrbs(bomb.body.p, (numToNormallySpawn * multiplier()).i)
     numConsecutiveBounces++
+
+//    updateGameSpeed(1 + numConsecutiveBounces * 0.1)
 
     playMultiplierSound(numConsecutiveBounces)
 }

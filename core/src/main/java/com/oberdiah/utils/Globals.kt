@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.oberdiah.level.laserIdealHeight
 import com.oberdiah.level.requestNewLowestTileY
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
+import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.calculateInputGlobals
 import com.oberdiah.utils.camera
 
@@ -34,8 +35,6 @@ enum class Screen(val title: String) {
     Controls("Controls"),
     Credits("Credits"),
 }
-
-var GAME_SPEED = 1.0
 
 /// Size of the screen in pixels
 var WIDTH = 0.0
@@ -121,8 +120,6 @@ var CURRENT_PLAYER_Y_FRACT = BASE_PLAYER_Y_FRACT
 
 var DEBUG_STRING = ""
 
-var DELTA = 0.016
-
 enum class GameState {
     PausedPopup,
     TransitioningToDiegeticMenu,
@@ -131,11 +128,12 @@ enum class GameState {
 }
 
 var LAST_APP_TIME_GAME_STATE_CHANGED = 0.0
+    private set
 
 var GAME_STATE = GameState.DiegeticMenu
     set(value) {
         if (field != value) {
-            LAST_APP_TIME_GAME_STATE_CHANGED = APP_TIME
+            LAST_APP_TIME_GAME_STATE_CHANGED = GameTime.APP_TIME
         }
         field = value
     }
@@ -150,9 +148,6 @@ val GAME_IS_RUNNING get() = GAME_STATE == GameState.InGame || GAME_STATE == Game
 val CAMERA_POS_Y: Double
     get() = camera.position.y.d - SCREEN_HEIGHT_IN_UNITS / 2
 
-var APP_FRAME = 0
-var APP_TIME = 0.0
-
 private val screenSize: Size = Size()
 val SCREEN_SIZE: Size
     get() {
@@ -160,19 +155,3 @@ val SCREEN_SIZE: Size
         screenSize.w = WIDTH
         return screenSize
     }
-
-private val LAST_HUNDRED_DELTAS = mutableListOf<Double>()
-val AVERAGE_DELTA: Double
-    get() = LAST_HUNDRED_DELTAS.average()
-
-fun calculateGlobals() {
-    DELTA = Gdx.graphics.deltaTime.d
-    LAST_HUNDRED_DELTAS.add(DELTA)
-    if (LAST_HUNDRED_DELTAS.size > 100) {
-        LAST_HUNDRED_DELTAS.removeAt(0)
-    }
-    APP_FRAME++
-    APP_TIME += DELTA
-
-    calculateInputGlobals()
-}
