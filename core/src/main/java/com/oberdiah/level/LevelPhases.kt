@@ -50,7 +50,6 @@ val phases = arrayOf(
         spawnBomb(BombType.MediumTimed)
     },
     Phase(0.5, BombType.SpringBomb) {
-        stopAllBombs()
         spawnBomb(BombType.SpringBomb, 0.25)
         gameMessage = "Spring Bomb"
     },
