@@ -8,6 +8,7 @@ import com.oberdiah.level.LOWEST_TILE_Y_UNITS
 import com.oberdiah.level.initTiles
 import com.oberdiah.level.renderLaser
 import com.oberdiah.level.resetLevel
+import com.oberdiah.level.resetLevelCollapse
 import com.oberdiah.level.resetLevelController
 import com.oberdiah.level.tickCollapse
 import com.oberdiah.level.tickLevelController
@@ -31,6 +32,7 @@ fun restartGame() {
     resetPhysicsObjects()
     resetLevel()
     resetLevelController()
+    resetLevelCollapse()
     updateTilePhysics()
     resetCamera()
     resetScoreSystem()
