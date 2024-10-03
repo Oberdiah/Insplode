@@ -17,6 +17,7 @@ import com.oberdiah.boom
 import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.saturate
+import com.oberdiah.ui.pauseHovered
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
@@ -42,7 +43,7 @@ class PlayerInputs {
 
     fun render(r: Renderer) {
         val pos = player.body.p
-        if (GAME_IS_RUNNING) {
+        if (GAME_IS_RUNNING && !pauseHovered) {
             TOUCHES_DOWN.firstOrNull()?.let { _ ->
                 val lineX = playerInputs.desiredXPos
 

@@ -46,9 +46,6 @@ import java.util.*
 import kotlin.math.PI
 import kotlin.reflect.KMutableProperty0
 
-var pauseUIFadeOff = 0.0
-var pauseHovered = false
-
 private fun formatDepth(depth: Number): String {
     return "${depth.format(1)}$DEPTH_UNITS"
 }

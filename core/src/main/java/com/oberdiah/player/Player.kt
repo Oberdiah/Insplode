@@ -1,24 +1,19 @@
 package com.oberdiah.player
 
 import com.badlogic.gdx.physics.box2d.*
-import com.oberdiah.GAME_STATE
 import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.GameState
 import com.oberdiah.PLAYER_PHYSICS_MASK
 import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.Renderer
-import com.oberdiah.Screen
 import com.oberdiah.WORLD_PHYSICS_MASK
 import com.oberdiah.circleShape
-import com.oberdiah.div
 import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.rectShape
 import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.ui.goToDiegeticMenu
-import com.oberdiah.ui.switchScreen
-import com.oberdiah.unaryMinus
+import com.oberdiah.ui.pauseHovered
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     /** Narrower than the player */
@@ -129,7 +124,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER
         }
 
-        if (playerState.isAlive) {
+        println("Ticked! ${playerState.isAlive} $pauseHovered")
+
+        if (playerState.isAlive && !pauseHovered) {
             playerInputs.tick()
         }
     }

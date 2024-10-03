@@ -38,13 +38,11 @@ val PAUSE_RECT: Rect
         return pauseRect
     }
 
-fun renderPauseButton(r: Renderer) {
-    pauseUIFadeOff *= 0.95
-    if (pauseHovered) {
-        r.color = Color.WHITE.withAlpha(max(pauseUIFadeOff, 0.9))
-    } else {
-        r.color = Color.WHITE.withAlpha(max(pauseUIFadeOff, 0.5))
-    }
+var pauseUIFadeOff = 0.0
+var pauseHovered = false
+    private set
+
+fun tickPauseButton() {
     pauseHovered = false
     TOUCHES_DOWN.forEach {
         if (PAUSE_RECT.contains(it)) {
@@ -53,11 +51,22 @@ fun renderPauseButton(r: Renderer) {
     }
     TOUCHES_WENT_UP.forEach {
         if (PAUSE_RECT.contains(it)) {
+            pauseHovered = true
             pauseUIFadeOff = 1.0
             GAME_STATE = GameState.PausedPopup
             switchScreen(Screen.Paused)
         }
     }
+}
+
+fun renderPauseButton(r: Renderer) {
+    pauseUIFadeOff *= 0.95
+    if (pauseHovered) {
+        r.color = Color.WHITE.withAlpha(max(pauseUIFadeOff, 0.9))
+    } else {
+        r.color = Color.WHITE.withAlpha(max(pauseUIFadeOff, 0.5))
+    }
+
     // Escape key pauses the game.
     if (isKeyJustPressed(Keys.ESCAPE)) {
         GAME_STATE = GameState.PausedPopup
