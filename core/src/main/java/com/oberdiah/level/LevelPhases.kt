@@ -46,7 +46,7 @@ val phases = arrayOf(
     Phase(1.75) {
         startRandomBombs(BombType.SmallTimed, 5.0)
         startRandomBombs(BombType.MediumTimed, 7.0)
-        startRandomBombs(BombType.OrbRock, 7.0)
+//        startRandomBombs(BombType.OrbRock, 7.0)
         spawnBomb(BombType.MediumTimed)
     },
     Phase(0.5, BombType.SpringBomb) {
@@ -134,7 +134,7 @@ val phases = arrayOf(
         startRandomBombs(BombType.MediumTimed, 3.0)
         startRandomBombs(BombType.SpringBomb, 2.0)
         startRandomBombs(BombType.LargeTimed, 4.0)
-        startRandomBombs(BombType.MegaTimed, 6.0)
+        startRandomBombs(BombType.MegaTimed, 8.0)
     },
     Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.25)
@@ -147,7 +147,7 @@ val phases = arrayOf(
         startRandomBombs(BombType.MediumTimed, 2.0)
         startRandomBombs(BombType.SpringBomb, 1.5)
         startRandomBombs(BombType.LargeTimed, 3.0)
-        startRandomBombs(BombType.MegaTimed, 4.0)
-        startRandomBombs(BombType.UltraTimed, 4.0)
+        startRandomBombs(BombType.MegaTimed, 6.0)
+        startRandomBombs(BombType.UltraTimed, 10.0)
     },
 )

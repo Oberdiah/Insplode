@@ -194,7 +194,7 @@ class Renderer(val name: String, val camera: Camera) {
     }
 
     fun arcFrom0(p: Point, radius: Number, fraction: Number, segments: Int = 20) {
-        arc(p, radius, 0, fraction * Math.PI * 2, segments)
+        arc(p, radius, 0, clamp(fraction * Math.PI * 2, 0.0, Math.PI * 2), segments)
     }
 
     fun arc(p: Point, radius: Number, start: Number, end: Number, segments: Int = 20) {

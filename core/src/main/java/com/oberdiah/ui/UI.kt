@@ -35,7 +35,6 @@ import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playGChordNote
 import com.oberdiah.playerScore
-import com.oberdiah.renderScoreSystemWorldSpace
 import com.oberdiah.saturate
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulHighScore
@@ -56,10 +55,6 @@ private fun formatDepth(depth: Number): String {
 
 fun renderUIWorldSpace(r: Renderer) {
     renderDiegeticMenuWorldSpace(r)
-
-    if (GAME_STATE == GameState.InGame) {
-        renderScoreSystemWorldSpace(r)
-    }
 }
 
 fun renderUIScreenSpace(r: Renderer) {

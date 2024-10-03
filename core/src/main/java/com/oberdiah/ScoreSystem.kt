@@ -1,12 +1,8 @@
 package com.oberdiah
 
-import com.badlogic.gdx.utils.Align
 import com.oberdiah.level.RUN_TIME_ELAPSED
-import com.oberdiah.player.PLAYER_SIZE
-import com.oberdiah.player.player
-import com.oberdiah.player.playerState
+import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.GameTime.updateGameSpeed
-import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -19,20 +15,39 @@ var playerScore = 0
 var growingScore = 0
     private set
 
-private var numConsecutiveBounces = 0
-private var lastScoreCollectionTime = RUN_TIME_ELAPSED
-private var growingScoreStartedOn = RUN_TIME_ELAPSED
+var bounceDecayAccumulator = 0.0
+    private set
 
-private const val FADE_IN_TIME = 0.05
-private const val FADE_OUT_TIME = 0.3
-private const val GROWING_SCORE_TIME = 1.5
+var lastScoreCollectionTime = RUN_TIME_ELAPSED
+    private set
+
+var growingScoreStartedOn = RUN_TIME_ELAPSED
+    private set
+
+const val GROWING_SCORE_REFRESH_COUNTDOWN = 1.5
+
+private var numConsecutiveBounces = 0
 
 /** The near-instant delay that causes the score to come in in small bits */
 private var scoreLeftToSound = 0
 private var lastTimeScoreSounded = 0.0
 
 fun multiplier(): Double {
-    return clamp(1 + (numConsecutiveBounces.d * 0.1), 1.0, 2.0)
+    return if (numConsecutiveBounces < 15) {
+        1 + (numConsecutiveBounces * 0.1)
+    } else {
+        1 + numConsecutiveBounces * 0.1 + ((numConsecutiveBounces - 15.0) * 0.1).pow(1.5)
+    }
+}
+
+/** The amount we multiply time by to speed up the game */
+fun timeWarp(): Double {
+    return 1 + max((numConsecutiveBounces - 15) * 0.05, 0)
+}
+
+/** Per game-second. */
+fun bounceDecayRate(): Double {
+    return clamp((numConsecutiveBounces - 10) * 0.1, 0.0, 0.5)
 }
 
 fun resetScoreSystem() {
@@ -48,9 +63,11 @@ fun resetScoreSystem() {
 fun registerBombSlamWithScoreSystem(bomb: Bomb) {
     val numToNormallySpawn = bomb.getPointsWorth()
     spawnPointOrbs(bomb.body.p, (numToNormallySpawn * multiplier()).i)
-    numConsecutiveBounces++
+    updateGameSpeed(timeWarp())
 
-//    updateGameSpeed(1 + numConsecutiveBounces * 0.1)
+    bounceDecayAccumulator = 0.0
+
+    numConsecutiveBounces++
 
     playMultiplierSound(numConsecutiveBounces)
 }
@@ -68,7 +85,9 @@ fun registerCasuallyLandedWithScoreSystem() {
     if (numConsecutiveBounces > 0) {
         playMultiplierLossSound()
     }
+    bounceDecayAccumulator = 0.0
     numConsecutiveBounces = 0
+    updateGameSpeed(1.0)
 }
 
 fun givePlayerScore(score: Int) {
@@ -92,6 +111,14 @@ private fun givePlayerScoreInternal(score: Int) {
 }
 
 fun tickScoreSystem() {
+    bounceDecayAccumulator += bounceDecayRate() * GAMEPLAY_DELTA
+
+    while (bounceDecayAccumulator >= 1) {
+        bounceDecayAccumulator -= 1
+        numConsecutiveBounces = max(numConsecutiveBounces - 1, 0)
+        updateGameSpeed(timeWarp())
+    }
+
     if (scoreLeftToSound > 0) {
         val timeToNext = Random.nextDouble(0.1, 0.12) * 0.98.pow(scoreLeftToSound)
         if (lastTimeScoreSounded + timeToNext < RUN_TIME_ELAPSED) {
@@ -102,54 +129,7 @@ fun tickScoreSystem() {
         }
     }
 
-    if (RUN_TIME_ELAPSED - lastScoreCollectionTime > GROWING_SCORE_TIME) {
+    if (RUN_TIME_ELAPSED - lastScoreCollectionTime > GROWING_SCORE_REFRESH_COUNTDOWN) {
         growingScore = 0
-    }
-}
-
-const val HEIGHT_ABOVE_HEAD = 0.5
-
-// Uses the in-world renderer
-fun renderScoreSystemWorldSpace(r: Renderer) {
-    if (playerState.isDead) return
-
-    if (numConsecutiveBounces > 0) {
-        val textOffset = Point(
-            0,
-            PLAYER_SIZE.h +
-                    fontSmall.lineHeight * HEIGHT_ABOVE_HEAD / UNIT_SIZE_IN_PIXELS
-        )
-        r.color = colorScheme.textColor
-        r.text(
-            fontSmall,
-            "x${multiplier().format(1)}",
-            player.body.p + textOffset,
-            Align.center
-        )
-    }
-
-    if (growingScore > 0) {
-        val fadeInAlpha = (RUN_TIME_ELAPSED - growingScoreStartedOn) / FADE_IN_TIME
-        val fadeOutAlpha =
-            ((lastScoreCollectionTime + GROWING_SCORE_TIME) - RUN_TIME_ELAPSED) / FADE_OUT_TIME
-        val alpha = saturate(min(fadeInAlpha, fadeOutAlpha))
-
-        val pickupMotion =
-            1 - saturate((RUN_TIME_ELAPSED - lastScoreCollectionTime) / FADE_OUT_TIME)
-
-        val textOffset = Point(
-            0,
-            PLAYER_SIZE.h +
-                    pickupMotion * 0.15 +
-                    fontSmall.lineHeight * (1 + HEIGHT_ABOVE_HEAD) / UNIT_SIZE_IN_PIXELS
-        )
-
-        r.color = colorScheme.textColor.withAlpha(alpha)
-        r.text(
-            fontSmall,
-            "+$growingScore",
-            player.body.p + textOffset,
-            Align.center
-        )
     }
 }
