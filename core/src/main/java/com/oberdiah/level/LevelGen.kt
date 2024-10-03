@@ -111,8 +111,8 @@ fun initTiles() {
 }
 
 fun resetLevel() {
-    requestedLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 1
-    currentLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 1
+    requestedLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 10
+    currentLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 10
 
     for (tile in tilesStorage) {
         tile.dispose()
