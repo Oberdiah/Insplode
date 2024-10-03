@@ -13,13 +13,8 @@ import com.oberdiah.utils.GameTime
 import kotlin.random.Random
 
 private val collapsingTileIds = mutableSetOf<TileId>()
-val CURRENT_HIGHEST_TILE_Y
-    get() = CURRENT_HIGHEST_TILE_Y_IDX * TILE_SIZE_IN_UNITS
-
-private var CURRENT_HIGHEST_TILE_Y_IDX = 0
 
 fun resetLevelCollapse() {
-    CURRENT_HIGHEST_TILE_Y_IDX = 0
     collapsingTileIds.clear()
 }
 
@@ -27,14 +22,6 @@ fun tickCollapse() {
     // We don't want to collapse in the first frame, it's just a huge waste of everyone's time.
     if (RUN_TIME_ELAPSED == 0.0) {
         return
-    }
-
-    if (tileIdsChangedLastFrameAllNeighbors.isNotEmpty()) {
-        if ((0 until NUM_TILES_ACROSS).none { x ->
-                getTile(x, CURRENT_HIGHEST_TILE_Y_IDX).doesExist()
-            }) {
-            CURRENT_HIGHEST_TILE_Y_IDX--
-        }
     }
 
     for (tileId in tileIdsChangedLastFrameAllNeighbors) {

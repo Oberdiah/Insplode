@@ -2,7 +2,6 @@ package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.oberdiah.*
-import com.oberdiah.level.CURRENT_HIGHEST_TILE_Y
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
@@ -38,6 +37,7 @@ fun resetCamera() {
     camera.position.y = getCameraYForMenu()
     cameraY = camera.position.y.d
     camera.update()
+    LOWEST_CAMERA_Y_THIS_RUN = 0.0
 }
 
 private fun getCameraYForPlayerFollow(): Float {
@@ -48,10 +48,13 @@ fun getCameraYForMenu(): Float {
     return (MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS / 2).f
 }
 
-val TRANSITION_TO_LOWER_CAMERA_HEIGHT
-    get() = CURRENT_HIGHEST_TILE_Y + 3
+var LOWEST_CAMERA_Y_THIS_RUN = 0.0
+    private set
 
-const val LOWER_CAMERA_HEIGHT_TRANSITION_RANGE = 8
+val TRANSITION_TO_LOWER_CAMERA_HEIGHT
+    get() = LOWEST_CAMERA_Y_THIS_RUN + SCREEN_HEIGHT_IN_UNITS * 0.75
+
+const val LOWER_CAMERA_HEIGHT_TRANSITION_RANGE = 12
 
 /** Set the camera Y (Bottom of the camera) in world coordinates */
 fun setCameraY(y: Double) {
@@ -63,13 +66,20 @@ fun updateCamera() {
         CAMERA_FOLLOWING = CameraFollowing.Player
     }
 
+    LOWEST_CAMERA_Y_THIS_RUN = min(LOWEST_CAMERA_Y_THIS_RUN, CAMERA_POS_Y)
+
     SCREEN_SHAKE -= 12 * GameTime.GAMEPLAY_DELTA
     SCREEN_SHAKE = max(SCREEN_SHAKE, 0)
 
     val diff = player.body.p.y - TRANSITION_TO_LOWER_CAMERA_HEIGHT
     val transitionAmount = diff / LOWER_CAMERA_HEIGHT_TRANSITION_RANGE
+
     CURRENT_PLAYER_Y_FRACT =
-        lerp(BASE_PLAYER_Y_FRACT, ELEVATED_PLAYER_Y_FRACT, saturate(transitionAmount))
+        lerp(
+            BASE_PLAYER_Y_FRACT,
+            ELEVATED_PLAYER_Y_FRACT,
+            easeInOutSine(saturate(transitionAmount))
+        )
 
     when (CAMERA_FOLLOWING) {
         CameraFollowing.Player -> {

@@ -275,3 +275,7 @@ fun frameAccurateLerp(a: Number, b: Number, speed: Number): Double {
     val blend = 0.5.pow(GameTime.GRAPHICS_DELTA * speed.d)
     return lerp(b, a, blend)
 }
+
+fun easeInOutSine(x: Double): Double {
+    return -(cos(Math.PI * x) - 1) / 2;
+}

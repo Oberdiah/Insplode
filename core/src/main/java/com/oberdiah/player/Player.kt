@@ -124,8 +124,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER
         }
 
-        println("Ticked! ${playerState.isAlive} $pauseHovered")
-
         if (playerState.isAlive && !pauseHovered) {
             playerInputs.tick()
         }
