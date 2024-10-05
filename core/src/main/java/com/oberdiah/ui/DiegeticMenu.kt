@@ -104,6 +104,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
                 cameraVelocity = 0.0
                 isDragging = true
                 lastFingerY = it.y
+                delayedPreviousFingerY = it.y
             }
         }
         TOUCHES_DOWN.forEach {
