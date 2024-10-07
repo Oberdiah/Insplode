@@ -3,7 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.GlyphLayout
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 
@@ -11,6 +11,7 @@ lateinit var fontSmall: BitmapFont
 lateinit var fontSmallish: BitmapFont
 lateinit var fontMedium: BitmapFont
 lateinit var fontLarge: BitmapFont
+private var fontCache = mutableMapOf<String, BitmapFontCache>()
 
 fun loadFonts() {
     val g = FreeTypeFontGenerator(Gdx.files.internal("Lato-Medium.ttf"))
@@ -21,6 +22,26 @@ fun loadFonts() {
     fontLarge = createFont(g, HEIGHT / 20)
 
     g.dispose()
+}
+
+fun getFontCache(font: BitmapFont, align: Int, text: String): BitmapFontCache {
+    val cacheKey = "$font || $align || $text"
+
+    if (fontCache[cacheKey] == null) {
+        fontCache[cacheKey] = BitmapFontCache(font)
+        fontCache[cacheKey]!!.addText(text, 0f, 0f, 0f, align, false)
+    }
+
+    // Warn if the cache is too big
+    if (fontCache.size > 100) {
+        println("Warning: font cache is getting large!")
+        println("Strings cached (font || align || key):")
+        fontCache.keys.forEach {
+            println(" - `$it`")
+        }
+    }
+
+    return fontCache[cacheKey]!!
 }
 
 fun createFont(g: FreeTypeFontGenerator, size: Number): BitmapFont {

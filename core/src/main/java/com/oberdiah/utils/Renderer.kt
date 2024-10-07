@@ -60,7 +60,15 @@ class TextDraw(
             return
         }
 
-        font.color = color
+        val fontCache = getFontCache(font, align, text)
+        if (fontCache.color != color) {
+            fontCache.color = color
+
+            // This is quite an expensive operation, but I don't think we can really avoid it
+            // as we need to be able to do alpha fades. We at least skip it
+            // as much as we possibly can.
+            fontCache.setColors(color)
+        }
         var y = pos.y.f
         if (align == Align.center || align == Align.left || align == Align.right) {
             y += font.capHeight / 2
@@ -68,7 +76,8 @@ class TextDraw(
         if (align == Align.bottomLeft) {
             y += font.capHeight
         }
-        font.draw(renderer, text, pos.x.f, y, 0f, align, false)
+        fontCache.setPosition(pos.x.f, y)
+        fontCache.draw(renderer)
     }
 }
 
