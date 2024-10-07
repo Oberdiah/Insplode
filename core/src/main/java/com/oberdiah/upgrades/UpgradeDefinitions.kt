@@ -203,6 +203,6 @@ enum class Upgrade(
     val center
         get() = position + Point(
             SCREEN_WIDTH_IN_UNITS / 2.0,
-            UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_SCREEN_BORDER
+            UPGRADES_SCREEN_BOTTOM_Y + UpgradeController.UPGRADE_SCREEN_BORDER
         )
 }

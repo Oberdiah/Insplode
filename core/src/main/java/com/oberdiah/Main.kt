@@ -19,9 +19,7 @@ import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.renderUIWorldSpace
 import com.oberdiah.ui.tickPauseButton
-import com.oberdiah.upgrades.initUpgradeController
-import com.oberdiah.upgrades.renderUpgradeMenuScreenSpace
-import com.oberdiah.upgrades.tickUpgradeController
+import com.oberdiah.upgrades.UpgradeController
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -59,7 +57,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         setGlobalsThisFrame()
         initMarchingSquares()
         initLevelRender()
-        initUpgradeController()
+        UpgradeController.init()
 
         worldSpaceRenderer = Renderer("World Space Renderer", camera)
         uiRenderer = Renderer("UI Renderer", screenCamera)
@@ -132,7 +130,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Point Orbs") { tickPointOrbs() }
             time("Tick Score System") { tickScoreSystem() }
         } else {
-            time("Tick Upgrade Controller") { tickUpgradeController() }
+            time("Tick Upgrade Controller") { UpgradeController.tick() }
         }
 
         time("Update tile physics") { updateTilePhysics() }
@@ -163,7 +161,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render UI") {
             uiRenderer.begin()
             renderUIScreenSpace(uiRenderer)
-            renderUpgradeMenuScreenSpace(uiRenderer)
             uiRenderer.end()
         }
 

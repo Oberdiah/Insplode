@@ -28,17 +28,15 @@ import com.oberdiah.d
 import com.oberdiah.lerp
 import com.oberdiah.max
 import com.oberdiah.min
-import com.oberdiah.minus
 import com.oberdiah.player.DEAD_CONTEMPLATION_TIME
 import com.oberdiah.player.player
 import com.oberdiah.player.playerState
-import com.oberdiah.plus
 import com.oberdiah.saturate
 import com.oberdiah.sin
 import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.times
-import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
@@ -47,7 +45,7 @@ import kotlin.random.Random
 
 val LASER_HEIGHT_IN_MENU: Double
     get() {
-        return TOP_OF_UPGRADE_SCREEN_UNITS - 1.0
+        return UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS - 1.0
     }
 
 val LASER_HEIGHT_START_IN_GAME = 20.0

@@ -26,10 +26,8 @@ import com.oberdiah.lerp
 import com.oberdiah.sin
 import com.oberdiah.statefulHighScore
 import com.oberdiah.toUISpace
-import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.upgrades.Upgrade
-import com.oberdiah.upgrades.playerHas
-import com.oberdiah.upgrades.renderUpgradeMenuWorldSpace
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
@@ -64,7 +62,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
     val H = SCREEN_HEIGHT_IN_UNITS
     val W = SCREEN_WIDTH_IN_UNITS.d
 
-    renderUpgradeMenuWorldSpace(r)
+    UpgradeController.renderUpgradeMenuWorldSpace(r)
 
     r.color = colorScheme.textColor
 
@@ -99,6 +97,8 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
 
     var isLaunchTapped = false
     if (GAME_STATE == GameState.DiegeticMenu) {
+        var newCameraY = cameraY
+
         TOUCHES_WENT_DOWN.forEach {
             if (!isInLaunchButton(it)) {
                 cameraVelocity = 0.0
@@ -112,7 +112,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
                 cameraVelocity = 0.0
 
                 val dragDelta = (lastFingerY - it.y) / UNIT_SIZE_IN_PIXELS
-                cameraY += dragDelta
+                newCameraY += dragDelta
                 lastFingerY = it.y
             }
             if (isInLaunchButton(it)) {
@@ -139,21 +139,25 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         }
 
         delayedPreviousFingerY = lerp(delayedPreviousFingerY, lastFingerY, 0.5)
-        cameraY += cameraVelocity * GameTime.GAMEPLAY_DELTA
+        newCameraY += cameraVelocity * GameTime.GAMEPLAY_DELTA
         cameraVelocity *= 0.95
         val lowestCameraY = MENU_ZONE_BOTTOM_Y
-        val highestCameraY = TOP_OF_UPGRADE_SCREEN_UNITS - SCREEN_HEIGHT_IN_UNITS
+        val highestCameraY = UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS - SCREEN_HEIGHT_IN_UNITS
 
         // Soft clamp the camera y and make it bounce
 
-        if (cameraY < lowestCameraY) {
-            cameraY = lerp(cameraY, lowestCameraY, 0.1)
+        if (newCameraY < lowestCameraY) {
+            newCameraY = lerp(newCameraY, lowestCameraY, 0.1)
             cameraVelocity = 0.0
-        } else if (cameraY > highestCameraY) {
-            cameraY = lerp(cameraY, highestCameraY, 0.1)
+        } else if (newCameraY > highestCameraY) {
+            newCameraY = lerp(newCameraY, highestCameraY, 0.1)
             cameraVelocity = 0.0
         }
 
+        val cameraYDelta = newCameraY - cameraY
+        UpgradeController.cameraHasMoved(cameraYDelta)
+
+        cameraY = newCameraY
         setCameraY(cameraY)
     }
 
@@ -179,7 +183,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
         r.color = launchTextColor
         r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
-        if (playerHas(Upgrade.Slam)) {
+        if (UpgradeController.playerHas(Upgrade.Slam)) {
             r.text(fontMedium, "Launch!", launchButtonPos, Align.center)
         } else {
             r.text(fontMedium, "Drop!", launchButtonPos, Align.center)

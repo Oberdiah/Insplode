@@ -3,9 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.Gdx
 import com.oberdiah.level.laserIdealHeight
 import com.oberdiah.level.requestNewLowestTileY
-import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.utils.GameTime
-import com.oberdiah.utils.calculateInputGlobals
 import com.oberdiah.utils.camera
 
 /** If this is true we add all the debug ui stuff, and also boot straight into the game. */
