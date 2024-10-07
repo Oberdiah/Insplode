@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFontCache
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 
+lateinit var fontTiny: BitmapFont
 lateinit var fontSmall: BitmapFont
 lateinit var fontSmallish: BitmapFont
 lateinit var fontMedium: BitmapFont
@@ -16,6 +17,7 @@ private var fontCache = mutableMapOf<String, BitmapFontCache>()
 fun loadFonts() {
     val g = FreeTypeFontGenerator(Gdx.files.internal("Lato-Medium.ttf"))
 
+    fontTiny = createFont(g, HEIGHT / 60)
     fontSmall = createFont(g, HEIGHT / 50)
     fontSmallish = createFont(g, HEIGHT / 40)
     fontMedium = createFont(g, HEIGHT / 30)

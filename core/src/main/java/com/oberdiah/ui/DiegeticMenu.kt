@@ -13,6 +13,7 @@ import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
 import com.oberdiah.abs
+import com.oberdiah.ceil
 import com.oberdiah.clamp
 import com.oberdiah.d
 import com.oberdiah.f
@@ -25,7 +26,6 @@ import com.oberdiah.lerp
 import com.oberdiah.sin
 import com.oberdiah.statefulHighScore
 import com.oberdiah.toUISpace
-import com.oberdiah.upgrades.EAT_ALL_OTHER_INPUTS
 import com.oberdiah.upgrades.TOP_OF_UPGRADE_SCREEN_UNITS
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.playerHas
@@ -41,7 +41,7 @@ import com.oberdiah.withAlpha
 
 const val MENU_ZONE_BOTTOM_Y = 6.0
 val UPGRADES_SCREEN_BOTTOM_Y
-    get() = MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS
+    get() = ceil(MENU_ZONE_BOTTOM_Y) + ceil(SCREEN_HEIGHT_IN_UNITS)
 val MENU_ZONE_TOP_Y
     get() = UPGRADES_SCREEN_BOTTOM_Y
 
@@ -98,7 +98,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val launchTextColor = colorScheme.textColor.cpy()
 
     var isLaunchTapped = false
-    if (GAME_STATE == GameState.DiegeticMenu && !EAT_ALL_OTHER_INPUTS) {
+    if (GAME_STATE == GameState.DiegeticMenu) {
         TOUCHES_WENT_DOWN.forEach {
             if (!isInLaunchButton(it)) {
                 cameraVelocity = 0.0

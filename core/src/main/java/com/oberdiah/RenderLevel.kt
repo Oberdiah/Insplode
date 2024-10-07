@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.oberdiah.level.getTile
+import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.utils.Colors
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
@@ -171,11 +172,22 @@ fun renderBackground(r: Renderer) {
                 thisColor = colorScheme.backgroundB
             }
 
+            val redMaker = if (ty > UPGRADES_SCREEN_BOTTOM_Y) {
+                -0.015f * tx
+            } else {
+                0.0f
+            }
+
             // Make thisColor darker as we go up (ty increases)
             thisColor = thisColor.cpy().add(
                 min(0.05f * (ty / 50f), 0.05f).f,
                 min(0.10f * (ty / 50f), 0.05f).f,
                 min(0.15f * (ty / 50f), 0.05f).f,
+                0.0f
+            ).add(
+                0.0f,
+                redMaker,
+                redMaker,
                 0.0f
             )
 

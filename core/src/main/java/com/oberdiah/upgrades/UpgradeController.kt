@@ -4,14 +4,18 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.HEIGHT
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
 import com.oberdiah.Renderer
+import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.Size
 import com.oberdiah.WIDTH
 import com.oberdiah.f
 import com.oberdiah.fontMedium
+import com.oberdiah.fontSmallish
+import com.oberdiah.fontTiny
 import com.oberdiah.max
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
@@ -23,22 +27,12 @@ import com.oberdiah.withAlpha
 import kotlin.math.PI
 
 private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
-private val allUpgradePucks = mutableListOf<UpgradePuck>()
 var UPGRADES_SCREEN_HEIGHT_UNITS = 0.0 // Gets updated on init
 private val allUpgradeTextures = mutableMapOf<Upgrade, Sprite>()
 
-const val UPGRADE_SCREEN_BORDER = 3.0
-val EAT_ALL_OTHER_INPUTS: Boolean
-    get() {
-        return currentlyOpenUpgrade != null
-    }
-
-data class UpgradePuck(
-    val upgrade: Upgrade,
-    val position: Point,
-    val size: Double,
-    val linesPointBackTo: List<Pair<Point, Point>> = listOf()
-)
+const val UPGRADE_ENTRY_HEIGHT = 4.0
+const val ICON_SIZE = 3.0
+const val UPGRADE_SCREEN_BORDER = 1.0
 
 fun initUpgradeController() {
     playerUpgradeStates.clear()
@@ -49,40 +43,8 @@ fun initUpgradeController() {
     // Eventually we can do something like filling in any gaps that have been
     // added by updates here. For now we'll keep it simple.
 
-    val upgradesWithDependencies = mutableMapOf<Upgrade, List<Upgrade>>()
-    Upgrade.values().forEachIndexed { index, upgrade ->
-        if (upgrade.dependsOn.isEmpty() && index > 0) {
-            upgradesWithDependencies[upgrade] = listOf(Upgrade.values()[index - 1])
-        } else {
-            upgradesWithDependencies[upgrade] = upgrade.dependsOn
-        }
-    }
-
-    allUpgradePucks.clear()
-    UPGRADES_SCREEN_HEIGHT_UNITS = 0.0
-
-    for ((upgrade, dependsOn) in upgradesWithDependencies) {
-        val position = upgrade.center
-        UPGRADES_SCREEN_HEIGHT_UNITS =
-            max(UPGRADES_SCREEN_HEIGHT_UNITS, position.y - UPGRADES_SCREEN_BOTTOM_Y)
-
-        val size = upgrade.size
-        val linesPointBackTo = dependsOn.map {
-            val from = it.center + Point(0.0, it.size / 2)
-            val to = position - Point(0.0, size / 2)
-            Pair(from, to)
-        }
-        allUpgradePucks.add(
-            UpgradePuck(
-                upgrade,
-                position,
-                size,
-                linesPointBackTo
-            )
-        )
-    }
-
-    UPGRADES_SCREEN_HEIGHT_UNITS += UPGRADE_SCREEN_BORDER
+    UPGRADES_SCREEN_HEIGHT_UNITS =
+        UPGRADE_ENTRY_HEIGHT * Upgrade.values().size + UPGRADE_SCREEN_BORDER * 2
 }
 
 
@@ -94,54 +56,68 @@ fun renderUpgradeMenuWorldSpace(r: Renderer) {
         return
     }
 
-    allUpgradePucks.forEach {
-        renderUpgradePuck(r, it)
+    val iconXPos = 2.5
+    var sectionYPos = UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_SCREEN_BORDER
+
+    var drawInBlue = false
+
+    for (upgrade in Upgrade.values()) {
+        drawInBlue = !drawInBlue
+        r.color = (if (drawInBlue) Color.CYAN else Color.YELLOW).withAlpha(0.11)
+        r.rect(
+            Point(0.0, sectionYPos),
+            Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
+        )
+
+        // Separating line
+        r.color = Color.BLACK.withAlpha(0.2)
+        r.rect(
+            Point(0.0, sectionYPos),
+            Size(SCREEN_WIDTH_IN_UNITS, 0.05),
+        )
+
+        r.color = colorScheme.textColor
+        r.text(
+            fontSmallish,
+            upgrade.title,
+            Point(4.75, sectionYPos + UPGRADE_ENTRY_HEIGHT * 0.7),
+            Align.left
+        )
+
+        r.text(
+            fontTiny,
+            upgrade.description,
+            Point(4.75, sectionYPos + UPGRADE_ENTRY_HEIGHT * 0.375),
+            Align.left
+        )
+
+        // Small line
+        r.color = Color.BLACK.withAlpha(0.5)
+        r.rect(
+            Point(4.8, sectionYPos + UPGRADE_ENTRY_HEIGHT * 0.5),
+            Size(4.0, 0.05),
+        )
+
+        val sprite = allUpgradeTextures[upgrade] ?: break
+        val p = Point(iconXPos, sectionYPos + UPGRADE_ENTRY_HEIGHT / 2)
+        // Draw the texture centered on the position, scaled as much as it can be without warping.
+        val textureSize = Size(sprite.width.f, sprite.height.f)
+        val scale = ICON_SIZE / max(textureSize.w, textureSize.h).f
+
+        val shadowDirection = Point(0.1, -0.1)
+
+        // Shadow
+        r.centeredSprite(
+            sprite,
+            p + shadowDirection,
+            Size(textureSize.w * scale, textureSize.h * scale),
+            color = Color.BLACK.withAlpha(0.5)
+        )
+        // Main sprite
+        r.centeredSprite(sprite, p, Size(textureSize.w * scale, textureSize.h * scale))
+
+        sectionYPos += UPGRADE_ENTRY_HEIGHT
     }
-}
-
-fun renderUpgradePuck(r: Renderer, upgradePuck: UpgradePuck) {
-    r.color = colorScheme.textColor
-//    r.text(
-//        fontSmall,
-//        upgradePuck.upgrade.title,
-//        upgradePuck.position + Point(0.0, upgradePuck.size / 2 + 0.2),
-//        Align.center
-//    )
-
-    // Draw lines to the upgrades this one depends on.
-//    upgradePuck.linesPointBackTo.forEach {
-//        r.line(it.first, it.second, UNITS_WIDE / 150.0)
-//    }
-
-    r.color = colorScheme.textColor.withAlpha(0.45)
-    r.centeredRect(
-        upgradePuck.position,
-        Size(upgradePuck.size),
-        PI / 4
-    )
-    r.color = Color.WHITE.withAlpha(0.15)
-    r.centeredRect(
-        upgradePuck.position,
-        Size(upgradePuck.size * 0.95),
-        PI / 4
-    )
-
-    val sprite = allUpgradeTextures[upgradePuck.upgrade] ?: return
-    val p = upgradePuck.position
-    val s = upgradePuck.size.f
-    // Draw the texture centered on the position, scaled as much as it can be without warping.
-    val textureSize = Size(sprite.width.f, sprite.height.f)
-    val scale = s / max(textureSize.w, textureSize.h).f
-
-    // Shadow
-//    r.centeredSprite(
-//        sprite,
-//        p + Point(0.1, -0.1),
-//        Size(textureSize.w * scale, textureSize.h * scale),
-//        color = Color.BLACK.withAlpha(0.5)
-//    )
-    // Main sprite
-    r.centeredSprite(sprite, p, Size(textureSize.w * scale, textureSize.h * scale))
 }
 
 fun renderUpgradeMenuScreenSpace(r: Renderer) {
@@ -179,28 +155,28 @@ fun tickUpgradeController() {
         return
     }
 
-    if (cameraVelocity < 0.1 && !EAT_ALL_OTHER_INPUTS) {
-        TOUCHES_WENT_DOWN.forEach { touch ->
-            allUpgradePucks.forEach { upgradePuck ->
-                if (upgradePuck.position.distTo(touch.wo) < upgradePuck.size / 2) {
-                    currentlyTappingOnUpgrade = upgradePuck.upgrade
-                    downPoint = touch
-                }
-            }
-        }
-
-        TOUCHES_WENT_UP.forEach { touch ->
-            val touchPoint = touch.wo
-            allUpgradePucks.forEach { upgradePuck ->
-                if (upgradePuck.position.distTo(touchPoint) < upgradePuck.size / 2) {
-                    if (currentlyTappingOnUpgrade == upgradePuck.upgrade && touch.distTo(downPoint) < 3.0) {
-                        currentlyOpenUpgrade = upgradePuck.upgrade
-                    } else {
-                        currentlyTappingOnUpgrade = null
-                    }
-                }
-            }
-        }
+    if (cameraVelocity < 0.1) {
+//        TOUCHES_WENT_DOWN.forEach { touch ->
+//            allUpgradePucks.forEach { upgradePuck ->
+//                if (upgradePuck.position.distTo(touch.wo) < upgradePuck.size / 2) {
+//                    currentlyTappingOnUpgrade = upgradePuck.upgrade
+//                    downPoint = touch
+//                }
+//            }
+//        }
+//
+//        TOUCHES_WENT_UP.forEach { touch ->
+//            val touchPoint = touch.wo
+//            allUpgradePucks.forEach { upgradePuck ->
+//                if (upgradePuck.position.distTo(touchPoint) < upgradePuck.size / 2) {
+//                    if (currentlyTappingOnUpgrade == upgradePuck.upgrade && touch.distTo(downPoint) < 3.0) {
+//                        currentlyOpenUpgrade = upgradePuck.upgrade
+//                    } else {
+//                        currentlyTappingOnUpgrade = null
+//                    }
+//                }
+//            }
+//        }
     } else {
         currentlyTappingOnUpgrade = null
     }

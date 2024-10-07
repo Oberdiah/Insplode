@@ -22,7 +22,7 @@ enum class Upgrade(
 ) {
     Movement(
         "Movement",
-        "Tap anywhere on the screen and drag left and right to move.",
+        "Tap anywhere on the screen\nand drag left and right\nto move.",
         1,
         Point(0, 0),
         MAIN_UPGRADE_SIZE
@@ -31,21 +31,21 @@ enum class Upgrade(
     // ################ EARLY-GAME UPGRADES ################
     MediumTimedBomb(
         "Timed Bomb",
-        "Occasionally drop a bomb that explodes after a short delay.",
+        "Occasionally drop a bomb\nthat explodes after a short\ndelay.",
         5,
         Point(0, 1 * P),
         MAIN_UPGRADE_SIZE,
     ),
     ComboOrbs(
         "Combo Orbs",
-        "When a bomb explodes another, orbs are spawned.",
+        "When a bomb explodes\nanother, orbs are spawned.",
         10,
         Point(1, 2 * P),
         MAIN_UPGRADE_SIZE,
     ),
     BombMagician(
         "Bomb Magician",
-        "Touching a bomb while its fuse is in the last quarter of its life replenishes it.",
+        "Touching a bomb while its\nfuse is in the last quarter of\nits life replenishes it.",
         5,
         Point(-1, 3 * P),
         MAIN_UPGRADE_SIZE,
@@ -86,14 +86,14 @@ enum class Upgrade(
     ),
     LineBomb(
         "Line Bomb",
-        "A harmless bomb that explodes in a line, collapsing large swathes of terrain.",
+        "A harmless bomb that\nexplodes in a straight line.",
         10,
         Point(0, 8 * P),
         MAIN_UPGRADE_SIZE,
     ),
     Slam(
         "Slam",
-        "Slam down to the ground to create an explosion.",
+        "Slam down to the ground to\ncreate an explosion.",
         15,
         Point(0, 9 * P),
         MAIN_UPGRADE_SIZE,
@@ -103,21 +103,21 @@ enum class Upgrade(
 
     BombSlam(
         "Bomb Slam",
-        "Get propelled into the air after slamming into a bomb.",
+        "Get propelled into the air\nafter slamming into a bomb.",
         10,
         Point(0, 10 * P),
         MAIN_UPGRADE_SIZE,
     ),
     SlamOrbs(
         "Slam Orbs",
-        "Orbs are spawned for each successful bomb slam.",
+        "Orbs are spawned for each\nsuccessful bomb slam.",
         10,
         Point(0, 11 * P),
         MAIN_UPGRADE_SIZE,
     ),
     ApexWings(
         "Apex Wings",
-        "Hover slightly at the apex of your jump",
+        "Hover slightly at the apex of\nyour jump",
         15,
         Point(0, 12 * P),
         MAIN_UPGRADE_SIZE,
@@ -125,14 +125,14 @@ enum class Upgrade(
     ),
     SneakySlam(
         "Sneaky Slam",
-        "Slam when a fuse is half-depleted to get double-orbs without creating any explosion.",
+        "When fuse is half-depleted\nslam to get double orbs\nand no explosion.",
         10,
         Point(0, 13 * P),
         MAIN_UPGRADE_SIZE,
     ),
     SlamAssist(
         "Slam Assist",
-        "A line that indicates where the player is moving to and lights up when they reach it.",
+        "A line that indicates where\nthe player is moving to and\nlights up when they reach it.",
         10,
         Point(0, 14 * P),
         MAIN_UPGRADE_SIZE,
@@ -147,14 +147,14 @@ enum class Upgrade(
     ),
     GhostMode(
         "Ghost Mode",
-        "While you're in the air bombs will phase through you harmlessly.",
+        "While you're in the air bombs\njust phase through you\nharmlessly.",
         20,
         Point(0, 16 * P),
         MAIN_UPGRADE_SIZE,
     ),
     Multiplier(
         "Multiplier",
-        "Get a multiplier after each successful bomb slam. Multiplies the number of slam orbs spawned.",
+        "Gain multiplier for every\nsuccessive bomb slam. Grows\nthe number of orbs spawned.",
         10,
         Point(0, 17 * P),
         MAIN_UPGRADE_SIZE,
@@ -170,7 +170,7 @@ enum class Upgrade(
     // ################ POST-GAME UPGRADES ################
 
     EvenFasterMovement(
-        "Even Faster Movement",
+        "Fastest Movement",
         "Move ridiculously fast.",
         25,
         Point(0, 19 * P),
@@ -178,7 +178,7 @@ enum class Upgrade(
     ),
     SingularityMagnet(
         "Singularity Magnet",
-        "The orbs simply cannot get away.",
+        "The orbs simply cannot\nget away.",
         25,
         Point(0, 20 * P),
         MAIN_UPGRADE_SIZE,
@@ -193,7 +193,7 @@ enum class Upgrade(
     ),
     ParticleBlackHole(
         "Particle Black Hole",
-        "All particles are attracted to you.",
+        "All particles are\nattracted to you.",
         25,
         Point(0, 22 * P),
         MAIN_UPGRADE_SIZE,
