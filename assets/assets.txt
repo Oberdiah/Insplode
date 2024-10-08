@@ -1,10 +1,11 @@
 Icons/ApexWings.png
-Icons/BombMagician.png
 Icons/BombSlam.png
+Icons/BombWizard.png
 Icons/ComboOrbs.png
 Icons/EvenFasterMovement.png
 Icons/FasterMovement.png
 Icons/GhostMode.png
+Icons/GlobalMagnet.png
 Icons/Jump.png
 Icons/LargeTimedBomb.png
 Icons/LineBomb.png
@@ -16,7 +17,6 @@ Icons/Movement.png
 Icons/Multiplier.png
 Icons/ParticleBlackHole.png
 Icons/RainbowPlayer.png
-Icons/SingularityMagnet.png
 Icons/Slam.png
 Icons/SlamAssist.png
 Icons/SlamOrbs.png

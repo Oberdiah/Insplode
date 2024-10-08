@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 
 fun List<Point>.toV2Array(): Array<Vector2> {
     return Array(this.size) { this[it].v2 }
@@ -276,6 +277,10 @@ class Rect(var p: Point, var s: Size) {
                 p.x + s.w > rect.p.x &&
                 p.y + s.h > rect.p.y
 
+    }
+
+    fun randomPointInside(): Point {
+        return Point(Random.nextDouble(p.x, p.x + s.w), Random.nextDouble(p.y, p.y + s.h))
     }
 
     constructor() : this(Point(), Size())

@@ -6,34 +6,36 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
+import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.Size
 import com.oberdiah.abs
+import com.oberdiah.createRandomFacingPoint
+import com.oberdiah.d
 import com.oberdiah.easeInOutSine
 import com.oberdiah.f
 import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
-import com.oberdiah.lerp
+import com.oberdiah.get2DShake
 import com.oberdiah.max
 import com.oberdiah.saturate
+import com.oberdiah.spawnSmoke
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.StatefulBoolean
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
+import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.withAlpha
 
 object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
-    var UPGRADES_SCREEN_HEIGHT_UNITS = 0.0 // Gets updated on init
     private val allUpgradeTextures = mutableMapOf<Upgrade, Sprite>()
 
     const val UPGRADE_ENTRY_HEIGHT = 4.0
-    const val ICON_SIZE = 3.0
-    const val UPGRADE_SCREEN_BORDER = 1.0
 
     fun init() {
         playerUpgradeStates.clear()
@@ -43,22 +45,50 @@ object UpgradeController {
         }
         // Eventually we can do something like filling in any gaps that have been
         // added by updates here. For now we'll keep it simple.
-
-        UPGRADES_SCREEN_HEIGHT_UNITS =
-            UPGRADE_ENTRY_HEIGHT * Upgrade.values().size + UPGRADE_SCREEN_BORDER * 2
     }
 
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
-        get() = UPGRADES_SCREEN_BOTTOM_Y + UPGRADES_SCREEN_HEIGHT_UNITS
+        get() = UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * Upgrade.values().size
 
     /**
      * An iterator of upgrade and its Y-position in the upgrade menu.
      */
     fun upgradesIterator(): Iterator<Pair<Upgrade, Double>> {
         return Upgrade.values().mapIndexed { index, upgrade ->
-            upgrade to UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_SCREEN_BORDER + UPGRADE_ENTRY_HEIGHT * index
+            upgrade to UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * index
         }.iterator()
+    }
+
+    fun getUpgradeYPos(upgrade: Upgrade?): Double {
+        return Upgrade.values()
+            .indexOf(upgrade) * UPGRADE_ENTRY_HEIGHT + UPGRADES_SCREEN_BOTTOM_Y
+    }
+
+    /**
+     * A value from 0 to 1 representing how close we are to buying this upgrade.
+     *
+     * For animation.
+     */
+    fun purchasingFraction(): Double {
+        if (currentlyPurchasingUpgrade == null) {
+            return 0.0
+        }
+
+        val timeToPurchase = 1.5
+
+        return easeInOutSine(saturate((GameTime.APP_TIME - timePurchasingUpgradeStarted) / timeToPurchase))
+    }
+
+    fun currentUpgradeYRange(): ClosedFloatingPointRange<Double> {
+        val upgradeYPos = getUpgradeYPos(currentlyPurchasingUpgrade)
+        return upgradeYPos..(upgradeYPos + UPGRADE_ENTRY_HEIGHT)
+    }
+
+    fun getRedBackgroundRange(): ClosedFloatingPointRange<Double> {
+        return UPGRADES_SCREEN_BOTTOM_Y.d..getUpgradeYPos(
+            highestUpgradeUnlockedSoFar()
+        ) + UPGRADE_ENTRY_HEIGHT
     }
 
     fun renderUpgradeMenuWorldSpace(r: Renderer) {
@@ -66,20 +96,62 @@ object UpgradeController {
             return
         }
 
-        val iconXPos = 2.5
+        val textXPos = 4.5
+        val costTextXPos = 9.5
+        val iconXPos = 2.25
+        val iconSize = 3.0
+        val iconSizeBeforePurchase = 2.0
+
         var drawInBlue = false
-        val transition =
-            easeInOutSine(saturate((GameTime.APP_TIME - timeLastUpgradeSwitchOccurred) * 10.0))
 
         for ((upgrade, yPos) in upgradesIterator()) {
+            val hasUpgrade = playerHas(upgrade)
+            val isPurchasable = upgradeIsPurchasable(upgrade)
+            val isAbleToSee = isPurchasable || hasUpgrade
+
             drawInBlue = !drawInBlue
 
-            val alphaForColor = if (currentlyTappingOnUpgrade == upgrade) 0.2 else 0.11
+            var alphaForColor = if (currentlyPurchasingUpgrade == upgrade) 0.2 else 0.11
 
-            r.color = (if (drawInBlue) Color.CYAN else Color.YELLOW).withAlpha(alphaForColor)
+            val purchaseFract = if (currentlyPurchasingUpgrade == upgrade) {
+                purchasingFraction()
+            } else {
+                0.0
+            }
+
+            if (!hasUpgrade) {
+                alphaForColor = if (purchaseFract == 0.0) {
+                    0.025
+                } else {
+                    0.05
+                }
+            }
+
+            val transCutoff = 0.85
+            val lateT = saturate((purchaseFract - transCutoff) / (1.0 - transCutoff))
+
+            val backgroundColor =
+                (if (drawInBlue) Color.CYAN else Color.YELLOW).withAlpha(alphaForColor)
+
+            r.color = backgroundColor
+
             r.rect(
                 Point(0.0, yPos),
                 Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
+            )
+
+            r.color = backgroundColor.add(-0.3f, -0.3f, -0.3f, 0.0f)
+
+            r.rect(
+                Point(0.0, yPos),
+                Size(SCREEN_WIDTH_IN_UNITS * purchaseFract, UPGRADE_ENTRY_HEIGHT),
+            )
+
+            r.color = backgroundColor.add(1f, 1f, 1f, lateT.f * 0.5f)
+
+            r.rect(
+                Point(0.0, yPos),
+                Size(SCREEN_WIDTH_IN_UNITS * lateT, UPGRADE_ENTRY_HEIGHT),
             )
 
             // Separating line
@@ -89,44 +161,76 @@ object UpgradeController {
                 Size(SCREEN_WIDTH_IN_UNITS, 0.05),
             )
 
-            val textXPosNotSelected = 4.75
-            val textXPosSelected = 10.75
+            r.color = colorScheme.textColor
 
-            val textXPos = if (currentlyOpenUpgrade == upgrade) {
-                lerp(textXPosNotSelected, textXPosSelected, transition)
-            } else if (lastOpenUpgrade == upgrade) {
-                lerp(textXPosSelected, textXPosNotSelected, transition)
-            } else {
-                textXPosNotSelected
+            if (!hasUpgrade) {
+                if (isPurchasable) {
+                    r.color = r.color.withAlpha(0.75)
+                } else {
+                    r.color = r.color.withAlpha(0.3)
+                }
             }
 
-            r.color = colorScheme.textColor
             r.text(
                 fontSmallish,
-                upgrade.title,
-                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7),
+                if (isAbleToSee) {
+                    upgrade.title
+                } else {
+                    upgrade.obfuscatedTitle
+                },
+                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + get2DShake(purchaseFract, 1),
                 Align.left
             )
 
+            // Price
+            if (isPurchasable) {
+                r.text(
+                    fontSmallish,
+                    "${upgrade.price}g",
+                    Point(costTextXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + get2DShake(
+                        purchaseFract,
+                        2
+                    ),
+                    Align.right
+                )
+            }
+
             r.text(
                 fontTiny,
-                upgrade.description,
-                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.375),
+                if (isAbleToSee) {
+                    upgrade.description
+                } else {
+                    upgrade.obfuscatedDescription
+                },
+                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.375) + get2DShake(
+                    purchaseFract,
+                    3
+                ),
                 Align.left
             )
 
             // Small line
             r.color = Color.BLACK.withAlpha(0.5)
             r.rect(
-                Point(textXPos + 0.05, yPos + UPGRADE_ENTRY_HEIGHT * 0.5),
+                Point(textXPos + 0.05, yPos + UPGRADE_ENTRY_HEIGHT * 0.5) + get2DShake(
+                    purchaseFract, 4
+                ),
                 Size(4.0, 0.05),
             )
 
             val sprite = allUpgradeTextures[upgrade] ?: break
-            val p = Point(iconXPos, yPos + UPGRADE_ENTRY_HEIGHT / 2)
+            val p =
+                Point(iconXPos, yPos + UPGRADE_ENTRY_HEIGHT / 2) + get2DShake(purchaseFract, 5)
             // Draw the texture centered on the position, scaled as much as it can be without warping.
             val textureSize = Size(sprite.width.f, sprite.height.f)
-            val scale = ICON_SIZE / max(textureSize.w, textureSize.h).f
+
+            val iconScale = if (hasUpgrade) {
+                iconSize
+            } else {
+                iconSizeBeforePurchase - purchaseFract * 0.5
+            }
+
+            val scale = iconScale / max(textureSize.w, textureSize.h).f
 
             val shadowDirection = Point(0.1, -0.1)
 
@@ -137,24 +241,30 @@ object UpgradeController {
                 Size(textureSize.w * scale, textureSize.h * scale),
                 color = Color.BLACK.withAlpha(0.5)
             )
-            // Main sprite
-            r.centeredSprite(sprite, p, Size(textureSize.w * scale, textureSize.h * scale))
+
+            if (isAbleToSee) {
+                // Main sprite
+                r.centeredSprite(sprite, p, Size(textureSize.w * scale, textureSize.h * scale))
+            }
         }
+
+        // Separating line
+        r.color = Color.GOLD.withAlpha(0.8)
+        r.rect(
+            Point(0.0, getUpgradeYPos(highestUpgradeUnlockedSoFar()) + UPGRADE_ENTRY_HEIGHT),
+            Size(SCREEN_WIDTH_IN_UNITS, 0.1),
+        )
     }
 
-    private var currentlyOpenUpgrade: Upgrade? = null
-    private var lastOpenUpgrade: Upgrade? = null
-    private var currentlyTappingOnUpgrade: Upgrade? = null
-    private var timeLastUpgradeSwitchOccurred = 0.0
-    private var timeLastUpgradeFingerDownOccurred = 0.0
-    private var downPoint = Point(0.0, 0.0)
+    private var currentlyPurchasingUpgrade: Upgrade? = null
+    private var timePurchasingUpgradeStarted = 0.0
 
     /**
      * The amount it's moved in units this frame, on the Y-axis.
      */
     fun cameraHasMoved(deltaUnits: Double) {
         if (deltaUnits.abs > 0.01) {
-            currentlyTappingOnUpgrade = null
+            currentlyPurchasingUpgrade = null
         }
     }
 
@@ -163,36 +273,55 @@ object UpgradeController {
             TOUCHES_WENT_DOWN.forEach { touch ->
                 upgradesIterator().forEach { (upgrade, yPos) ->
                     if ((yPos + UPGRADE_ENTRY_HEIGHT / 2 - touch.wo.y).abs < UPGRADE_ENTRY_HEIGHT / 2) {
-                        timeLastUpgradeFingerDownOccurred = GameTime.APP_TIME
-
-                        currentlyTappingOnUpgrade = upgrade
-                        downPoint = touch
-                    }
-                }
-            }
-
-            TOUCHES_WENT_UP.forEach { touch ->
-                upgradesIterator().forEach { (upgrade, yPos) ->
-                    if ((yPos + UPGRADE_ENTRY_HEIGHT / 2 - touch.wo.y).abs < UPGRADE_ENTRY_HEIGHT / 2) {
-                        if (currentlyTappingOnUpgrade == upgrade &&
-                            touch.distTo(downPoint) < 3.0 &&
-                            currentlyOpenUpgrade != upgrade
-                        ) {
-                            timeLastUpgradeSwitchOccurred = GameTime.APP_TIME
-
-                            lastOpenUpgrade = currentlyOpenUpgrade
-                            currentlyOpenUpgrade = upgrade
+                        if (upgradeIsPurchasable(upgrade)) {
+                            timePurchasingUpgradeStarted = GameTime.APP_TIME
+                            currentlyPurchasingUpgrade = upgrade
                         }
                     }
                 }
-                currentlyTappingOnUpgrade = null
+            }
+
+            if (purchasingFraction() >= 1.0) {
+                addScreenShake(0.4)
+                // Spawn a pile of particles
+                val upgradeYPos = getUpgradeYPos(currentlyPurchasingUpgrade)
+                for (i in 0..1000) {
+                    spawnSmoke(
+                        Rect(
+                            Point(0.0, upgradeYPos),
+                            Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
+                        ).randomPointInside(),
+                        createRandomFacingPoint(),
+                        color = Color.WHITE
+                    )
+                }
+
+                playerUpgradeStates[currentlyPurchasingUpgrade!!]?.value = true
+                currentlyPurchasingUpgrade = null
+            }
+
+            TOUCHES_WENT_UP.forEach { _ ->
+                currentlyPurchasingUpgrade = null
             }
         } else {
-            currentlyTappingOnUpgrade = null
+            currentlyPurchasingUpgrade = null
         }
     }
 
     fun playerHas(upgrade: Upgrade): Boolean {
         return playerUpgradeStates[upgrade]?.value ?: false
+    }
+
+    private fun highestIndexUnlockedSoFar(): Int {
+        return Upgrade.values().indexOfLast { playerHas(it) }
+    }
+
+    private fun highestUpgradeUnlockedSoFar(): Upgrade? {
+        return Upgrade.values().lastOrNull { playerHas(it) }
+    }
+
+    private fun upgradeIsPurchasable(upgrade: Upgrade): Boolean {
+        val index = Upgrade.values().indexOf(upgrade)
+        return (index <= highestIndexUnlockedSoFar() + 1) && !playerHas(upgrade)
     }
 }

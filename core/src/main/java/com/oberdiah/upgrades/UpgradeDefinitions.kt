@@ -16,8 +16,6 @@ enum class Upgrade(
     // 0 x for these positions is the center of the screen
     private val position: Point,
     val size: Double,
-    // If dependsOn is empty, then this upgrade depends on the one above it and nothing else.
-    val dependsOn: List<Upgrade> = listOf(),
     val toggleable: Boolean = false,
 ) {
     Movement(
@@ -43,13 +41,12 @@ enum class Upgrade(
         Point(1, 2 * P),
         MAIN_UPGRADE_SIZE,
     ),
-    BombMagician(
-        "Bomb Magician",
+    BombWizard(
+        "Bomb Wizard",
         "Touching a bomb while its\nfuse is in the last quarter of\nits life replenishes it.",
         5,
         Point(-1, 3 * P),
         MAIN_UPGRADE_SIZE,
-        listOf(MediumTimedBomb)
     ),
     Jump(
         "Jump",
@@ -57,14 +54,13 @@ enum class Upgrade(
         5,
         Point(0, 4 * P),
         MAIN_UPGRADE_SIZE,
-        listOf(ComboOrbs, BombMagician)
     ),
 
     // ################ JUMP UPGRADES ################
 
 
     FasterMovement(
-        "Faster Movement",
+        "Greater Speed",
         "Move faster.",
         15,
         Point(0, 5 * P),
@@ -78,7 +74,7 @@ enum class Upgrade(
         MAIN_UPGRADE_SIZE,
     ),
     SmallTimedBomb(
-        "Small Timed Bomb",
+        "Small Bomb",
         "Extra tiny for easier combos",
         5,
         Point(0, 7 * P),
@@ -170,14 +166,14 @@ enum class Upgrade(
     // ################ POST-GAME UPGRADES ################
 
     EvenFasterMovement(
-        "Fastest Movement",
+        "Lightning Fast",
         "Move ridiculously fast.",
         25,
         Point(0, 19 * P),
         MAIN_UPGRADE_SIZE,
     ),
-    SingularityMagnet(
-        "Singularity Magnet",
+    GlobalMagnet(
+        "Global Magnet",
         "The orbs simply cannot\nget away.",
         25,
         Point(0, 20 * P),
@@ -192,8 +188,8 @@ enum class Upgrade(
         toggleable = true,
     ),
     ParticleBlackHole(
-        "Particle Black Hole",
-        "All particles are\nattracted to you.",
+        "Black Hole",
+        "Everything is attracted\nto you.",
         25,
         Point(0, 22 * P),
         MAIN_UPGRADE_SIZE,
@@ -203,6 +199,9 @@ enum class Upgrade(
     val center
         get() = position + Point(
             SCREEN_WIDTH_IN_UNITS / 2.0,
-            UPGRADES_SCREEN_BOTTOM_Y + UpgradeController.UPGRADE_SCREEN_BORDER
+            UPGRADES_SCREEN_BOTTOM_Y
         )
+
+    val obfuscatedTitle = title.replace(Regex("[A-Za-z]")) { "?" }
+    val obfuscatedDescription = description.replace(Regex("[A-Za-z]")) { "?" }
 }

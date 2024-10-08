@@ -77,7 +77,9 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
     }
 
     override fun render() {
-        Gdx.gl.glClearColor(0.0f, 0.2f, 0.3f, 1f)
+        val clearColor = colorScheme.backgroundA
+
+        Gdx.gl.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a)
         // When the software delay happens - let's do calculations after that.
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 

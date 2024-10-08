@@ -142,7 +142,8 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         newCameraY += cameraVelocity * GameTime.GAMEPLAY_DELTA
         cameraVelocity *= 0.95
         val lowestCameraY = MENU_ZONE_BOTTOM_Y
-        val highestCameraY = UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS - SCREEN_HEIGHT_IN_UNITS
+        val highestCameraY =
+            UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS + 1 - SCREEN_HEIGHT_IN_UNITS
 
         // Soft clamp the camera y and make it bounce
 

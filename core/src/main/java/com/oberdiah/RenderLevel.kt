@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.oberdiah.level.getTile
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.Colors
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
@@ -162,6 +163,9 @@ private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {
 }
 
 fun renderBackground(r: Renderer) {
+    val wobbleRange = UpgradeController.currentUpgradeYRange()
+    val redMakerRange = UpgradeController.getRedBackgroundRange()
+
     for (tx in 0 until UNITS_WIDE) {
         val numYSquares = (SCREEN_HEIGHT_IN_UNITS + 2).i
         for (y in 0 until numYSquares) {
@@ -172,10 +176,17 @@ fun renderBackground(r: Renderer) {
                 thisColor = colorScheme.backgroundB
             }
 
-            val redMaker = if (ty > UPGRADES_SCREEN_BOTTOM_Y) {
+            val redMaker = if ((ty.d + 0.5) in redMakerRange) {
                 -0.015f * tx
             } else {
                 0.0f
+            }
+
+            var pos = Point(tx, ty)
+
+            val purchasingFract = UpgradeController.purchasingFraction()
+            if (purchasingFract > 0.0 && (ty.d + 0.5) in wobbleRange) {
+                pos += get2DShake(purchasingFract, tx * UNITS_WIDE + y)
             }
 
             // Make thisColor darker as we go up (ty increases)
@@ -193,7 +204,7 @@ fun renderBackground(r: Renderer) {
 
             r.color = thisColor
 
-            r.rect(tx, ty, 1, 1)
+            r.rect(pos, 1, 1)
         }
     }
 }

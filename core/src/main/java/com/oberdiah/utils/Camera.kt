@@ -105,9 +105,8 @@ fun updateCamera() {
         }
     }
 
-    val shake = (Perlin.fbm(RUN_TIME_ELAPSED * 200, 0, 3, 2.0) * SCREEN_SHAKE.pow(2) * 0.2).f
-
-    camera.position.y = cameraY.f + shake
+    val shake = getShake(SCREEN_SHAKE.pow(2))
+    camera.position.y = cameraY.f + shake.f
 
     camera.position.x = UNITS_WIDE.f / 2
     camera.update()

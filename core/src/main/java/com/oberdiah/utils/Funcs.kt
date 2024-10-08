@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.Shape
 import com.oberdiah.utils.GameTime
+import com.oberdiah.utils.Perlin
 import com.oberdiah.utils.camera
 import kotlin.math.PI
 import kotlin.math.pow
@@ -278,4 +279,30 @@ fun frameAccurateLerp(a: Number, b: Number, speed: Number): Double {
 
 fun easeInOutSine(x: Double): Double {
     return -(cos(Math.PI * x) - 1) / 2;
+}
+
+fun transitionOver(
+    fraction: Double,
+    isActive: Boolean,
+    wasActive: Boolean,
+    distance: Double
+): Double {
+    return if (isActive) {
+        lerp(0.0, distance, saturate(fraction))
+    } else if (wasActive) {
+        lerp(distance, 0.0, saturate(fraction))
+    } else {
+        0.0
+    }
+}
+
+fun getShake(power: Double, ferocity: Double = 200.0, seed: Int = 1): Double {
+    return (Perlin.fbm(GameTime.APP_TIME * ferocity + seed * 200.0, 0, 3, 2.0) * power * 0.2)
+}
+
+fun get2DShake(power: Double, seed: Int = 1): Point {
+    return Point(
+        getShake(power, seed = seed),
+        getShake(power, seed = seed + 2)
+    )
 }
