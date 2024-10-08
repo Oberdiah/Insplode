@@ -47,6 +47,9 @@ object UpgradeController {
         // added by updates here. For now we'll keep it simple.
     }
 
+    fun resetAllUpgrades() {
+        playerUpgradeStates.values.forEach { it.value = false }
+    }
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
         get() = UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * Upgrade.values().size

@@ -177,7 +177,7 @@ fun renderBackground(r: Renderer) {
             }
 
             val redMaker = if ((ty.d + 0.5) in redMakerRange) {
-                -0.015f * tx
+                -0.01f * tx
             } else {
                 0.0f
             }

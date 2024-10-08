@@ -41,6 +41,7 @@ import com.oberdiah.statefulHighScore
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
 import com.oberdiah.statefulVibrationSetting
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.withAlpha
 import java.util.*
 import kotlin.math.PI
@@ -199,6 +200,9 @@ private fun advancedSettingsUI(r: Renderer) {
     }
     button(r, "Reset High Score") {
         statefulHighScore.value = 0
+    }
+    button(r, "Reset All Upgrades") {
+        UpgradeController.resetAllUpgrades()
     }
     button(r, "Back") {
         backAScreen()
