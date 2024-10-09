@@ -49,7 +49,8 @@ class TextDraw(
     val font: BitmapFont,
     val text: String,
     val p: Point,
-    val align: Int
+    val align: Int,
+    val shouldCache: Boolean = true
 ) : Drawable() {
     override fun draw(renderer: SpriteBatch, camera: Camera) {
         // The sprite renderer isn't projected to make the text look correct
@@ -60,15 +61,6 @@ class TextDraw(
             return
         }
 
-        val fontCache = getFontCache(font, align, text)
-        if (fontCache.color != color) {
-            fontCache.color = color
-
-            // This is quite an expensive operation, but I don't think we can really avoid it
-            // as we need to be able to do alpha fades. We at least skip it
-            // as much as we possibly can.
-            fontCache.setColors(color)
-        }
         var y = pos.y.f
         if (align == Align.center || align == Align.left || align == Align.right) {
             y += font.capHeight / 2
@@ -76,8 +68,24 @@ class TextDraw(
         if (align == Align.bottomLeft) {
             y += font.capHeight
         }
-        fontCache.setPosition(pos.x.f, y)
-        fontCache.draw(renderer)
+
+        if (shouldCache) {
+            val fontCache = getFontCache(font, align, text)
+            if (fontCache.color != color) {
+                fontCache.color = color
+
+                // This is quite an expensive operation, but I don't think we can really avoid it
+                // as we need to be able to do alpha fades. We at least skip it
+                // as much as we possibly can.
+                fontCache.setColors(color)
+            }
+            fontCache.setPosition(pos.x.f, y)
+            fontCache.draw(renderer)
+        } else {
+            font.color = color
+            font.draw(renderer, text, pos.x.f, y, 0f, align, false)
+        }
+
     }
 }
 
@@ -122,12 +130,25 @@ class Renderer(val name: String, val camera: Camera) {
         sprite(sprite, p - s / 2, s, color)
     }
 
-    fun text(font: BitmapFont, text: String, p: Point, align: Int = Align.bottomLeft) {
-        spritesToDraw.add(TextDraw(renderer.color.cpy(), font, text, p, align))
+    fun text(
+        font: BitmapFont,
+        text: String,
+        p: Point,
+        align: Int = Align.bottomLeft,
+        shouldCache: Boolean = true
+    ) {
+        spritesToDraw.add(TextDraw(renderer.color.cpy(), font, text, p, align, shouldCache))
     }
 
-    fun text(font: BitmapFont, text: String, x: Number, y: Number, align: Int = Align.bottomLeft) {
-        text(font, text, Point(x, y), align)
+    fun text(
+        font: BitmapFont,
+        text: String,
+        x: Number,
+        y: Number,
+        align: Int = Align.bottomLeft,
+        shouldCache: Boolean = true
+    ) {
+        text(font, text, Point(x, y), align, shouldCache)
     }
 
     fun rect(rect: Rect) {

@@ -100,7 +100,8 @@ class PlayerRenderer {
                 fontSmall,
                 "x${multiplier().format(1)}",
                 player.body.p + textOffset,
-                Align.center
+                Align.center,
+                shouldCache = false
             )
         }
 
@@ -125,7 +126,8 @@ class PlayerRenderer {
                 fontSmall,
                 "+$growingScore",
                 player.body.p + textOffset,
-                Align.center
+                Align.center,
+                shouldCache = false
             )
         }
     }

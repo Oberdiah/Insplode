@@ -62,7 +62,13 @@ fun renderUIScreenSpace(r: Renderer) {
         val firstLine = "FPS: ${Gdx.graphics.framesPerSecond} ${physicsDebugString()}"
         val secondLine = DEBUG_STRING
         val thirdLine = timerString
-        r.text(fontSmall, "$firstLine\n$secondLine\n$thirdLine", 10, HEIGHT * 0.6)
+        r.text(
+            fontSmall,
+            "$firstLine\n$secondLine\n$thirdLine",
+            10,
+            HEIGHT * 0.6,
+            shouldCache = false
+        )
     }
 
     r.color = colorScheme.textColor
@@ -105,13 +111,14 @@ fun renderUIScreenSpace(r: Renderer) {
             if (gameMessage != "") {
                 text = gameMessage
             }
-            r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center)
+            r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center, shouldCache = false)
             r.text(
                 fontLarge,
                 "$playerScore",
                 WIDTH / 2,
                 HEIGHT * 0.9,
-                Align.center
+                Align.center,
+                shouldCache = false
             )
 
             r.color = colorScheme.textColor
