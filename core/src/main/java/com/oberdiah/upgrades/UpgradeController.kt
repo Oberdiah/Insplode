@@ -298,7 +298,8 @@ object UpgradeController {
                             Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
                         ).randomPointInside(),
                         createRandomFacingPoint(),
-                        color = Color.WHITE
+                        color = Color.WHITE,
+                        canCollide = false
                     )
                 }
 

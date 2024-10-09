@@ -2,7 +2,6 @@ package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.level.getTile
-import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.TileType
 import kotlin.random.Random

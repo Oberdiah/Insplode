@@ -35,7 +35,7 @@ fun getFontCache(font: BitmapFont, align: Int, text: String): BitmapFontCache {
     }
 
     // Warn if the cache is too big
-    if (fontCache.size > 100) {
+    if (fontCache.size > 200) {
         println("Warning: font cache is getting large!")
         println("Strings cached (font || align || key):")
         fontCache.keys.forEach {

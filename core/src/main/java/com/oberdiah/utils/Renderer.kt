@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
@@ -92,20 +91,20 @@ class TextDraw(
 val earClipper = EarClippingTriangulator()
 
 class Renderer(val name: String, val camera: Camera) {
-    private val renderer = ShapeRenderer()
+    private val shapeRenderer = ShapeRenderer()
     private val spriteRenderer = SpriteBatch()
     private val spritesToDraw = mutableListOf<Drawable>()
 
     fun begin() {
         Gdx.gl.glEnable(GL30.GL_BLEND)
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
-        renderer.projectionMatrix = camera.combined
-        renderer.begin(ShapeType.Filled)
+        shapeRenderer.projectionMatrix = camera.combined
+        shapeRenderer.begin(ShapeType.Filled)
         Gdx.gl.glLineWidth(10f)
     }
 
     fun end() {
-        renderer.end()
+        shapeRenderer.end()
         if (spritesToDraw.size > 0) {
             spriteRenderer.begin()
             spritesToDraw.forEach {
@@ -117,9 +116,9 @@ class Renderer(val name: String, val camera: Camera) {
     }
 
     var color: Color
-        get() = renderer.color
+        get() = shapeRenderer.color
         set(c) {
-            renderer.color = c
+            shapeRenderer.color = c
         }
 
     fun sprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE) {
@@ -137,7 +136,7 @@ class Renderer(val name: String, val camera: Camera) {
         align: Int = Align.bottomLeft,
         shouldCache: Boolean = true
     ) {
-        spritesToDraw.add(TextDraw(renderer.color.cpy(), font, text, p, align, shouldCache))
+        spritesToDraw.add(TextDraw(shapeRenderer.color.cpy(), font, text, p, align, shouldCache))
     }
 
     fun text(
@@ -152,31 +151,31 @@ class Renderer(val name: String, val camera: Camera) {
     }
 
     fun rect(rect: Rect) {
-        renderer.rect(rect.p.x.f, rect.p.y.f, rect.s.w.f, rect.s.h.f)
+        shapeRenderer.rect(rect.p.x.f, rect.p.y.f, rect.s.w.f, rect.s.h.f)
     }
 
     fun rect(x: Number, y: Number, w: Number, h: Number) {
-        renderer.rect(x.f, y.f, w.f, h.f)
+        shapeRenderer.rect(x.f, y.f, w.f, h.f)
     }
 
     fun rect(p: Point, s: Size) {
-        renderer.rect(p.x.f, p.y.f, s.w.f, s.h.f)
+        shapeRenderer.rect(p.x.f, p.y.f, s.w.f, s.h.f)
     }
 
     fun rect(p: Point, w: Number, h: Number) {
-        renderer.rect(p.x.f, p.y.f, w.f, h.f)
+        shapeRenderer.rect(p.x.f, p.y.f, w.f, h.f)
     }
 
     fun rect(p: Point, w: Number, h: Number, a: Number) {
-        renderer.rect(p.x.f, p.y.f, w.f / 2, h.f / 2, w.f, h.f, 1f, 1f, a.toDegrees.f)
+        shapeRenderer.rect(p.x.f, p.y.f, w.f / 2, h.f / 2, w.f, h.f, 1f, 1f, a.toDegrees.f)
     }
 
     fun rect(p: Point, s: Size, a: Number) {
-        renderer.rect(p.x.f, p.y.f, s.w.f / 2, s.h.f / 2, s.w.f, s.h.f, 1f, 1f, a.toDegrees.f)
+        shapeRenderer.rect(p.x.f, p.y.f, s.w.f / 2, s.h.f / 2, s.w.f, s.h.f, 1f, 1f, a.toDegrees.f)
     }
 
     fun centeredRect(mid: Point, w: Number, h: Number, a: Number) {
-        renderer.rect(
+        shapeRenderer.rect(
             mid.x.f - w.f / 2,
             mid.y.f - h.f / 2,
             w.f / 2,
@@ -190,7 +189,7 @@ class Renderer(val name: String, val camera: Camera) {
     }
 
     fun centeredRect(mid: Point, s: Size, a: Number) {
-        renderer.rect(
+        shapeRenderer.rect(
             mid.x.f - s.w.f / 2,
             mid.y.f - s.h.f / 2,
             s.w.f / 2,
@@ -204,14 +203,14 @@ class Renderer(val name: String, val camera: Camera) {
     }
 
     fun centeredRect(mid: Point, s: Size) {
-        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, s.h.f)
+        shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, s.h.f)
     }
 
     fun centeredHollowRect(mid: Point, s: Size, width: Number) {
-        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, width.f)
-        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f + s.h.f / 2 - width.f, s.w.f, width.f)
-        renderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, width.f, s.h.f)
-        renderer.rect(mid.x.f + s.w.f / 2 - width.f, mid.y.f - s.h.f / 2, width.f, s.h.f)
+        shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, width.f)
+        shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f + s.h.f / 2 - width.f, s.w.f, width.f)
+        shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, width.f, s.h.f)
+        shapeRenderer.rect(mid.x.f + s.w.f / 2 - width.f, mid.y.f - s.h.f / 2, width.f, s.h.f)
     }
 
     fun polyLine(ps: List<Point>) {
@@ -220,7 +219,7 @@ class Renderer(val name: String, val camera: Camera) {
             arr[index * 2] = point.x.f
             arr[index * 2 + 1] = point.y.f
         }
-        renderer.polygon(arr)
+        shapeRenderer.polygon(arr)
     }
 
     fun arcFrom0(p: Point, radius: Number, fraction: Number, segments: Int = 20) {
@@ -228,7 +227,7 @@ class Renderer(val name: String, val camera: Camera) {
     }
 
     fun arc(p: Point, radius: Number, start: Number, end: Number, segments: Int = 20) {
-        renderer.arc(p.x.f, p.y.f, radius.f, start.toDegrees.f, end.toDegrees.f, segments)
+        shapeRenderer.arc(p.x.f, p.y.f, radius.f, start.toDegrees.f, end.toDegrees.f, segments)
     }
 
     fun poly(points: Collection<Point>, offset: Point, angle: Number) {
@@ -257,17 +256,17 @@ class Renderer(val name: String, val camera: Camera) {
             val y2 = vertices[arrRes[i + 1] * 2 + 1] * scale + offsetY
             val x3 = vertices[arrRes[i + 2] * 2] * scale + offsetX
             val y3 = vertices[arrRes[i + 2] * 2 + 1] * scale + offsetY
-            renderer.triangle(x1, y1, x2, y2, x3, y3)
+            shapeRenderer.triangle(x1, y1, x2, y2, x3, y3)
             i += 3
         }
     }
 
     fun circle(p: Point, rad: Number, segments: Int = 20) {
-        renderer.circle(p.x.f, p.y.f, rad.f, segments)
+        shapeRenderer.circle(p.x.f, p.y.f, rad.f, segments)
     }
 
     fun circle(x: Number, y: Number, rad: Number, segments: Int = 20) {
-        renderer.circle(x.f, y.f, rad.f, segments)
+        shapeRenderer.circle(x.f, y.f, rad.f, segments)
     }
 
     fun lineCircle(p: Point, radius: Number, width: Number, segments: Int = 20) {
@@ -283,7 +282,7 @@ class Renderer(val name: String, val camera: Camera) {
     }
 
     fun line(x1: Number, y1: Number, x2: Number, y2: Number, width: Number) {
-        renderer.rectLine(x1.f, y1.f, x2.f, y2.f, width.f)
+        shapeRenderer.rectLine(x1.f, y1.f, x2.f, y2.f, width.f)
     }
 
     fun ngon(p: Point, radius: Number, angle: Number, sides: Int) {
@@ -292,7 +291,7 @@ class Renderer(val name: String, val camera: Camera) {
         for (i in 1..sides) {
             val x = (cos(angle + 2 * i * PI / sides) * radius) + p.x
             val y = (sin(angle + 2 * i * PI / sides) * radius) + p.y
-            renderer.triangle(p.x.f, p.y.f, previousX.f, previousY.f, x.f, y.f)
+            shapeRenderer.triangle(p.x.f, p.y.f, previousX.f, previousY.f, x.f, y.f)
             previousX = x
             previousY = y
         }

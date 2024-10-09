@@ -78,7 +78,8 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
             fontSmallish,
             "High Score: ${statefulHighScore.value}",
             W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 2.0,
-            Align.center
+            Align.center,
+            shouldCache = false
         )
     }
 
@@ -87,7 +88,8 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
             fontSmallish,
             "Score: $lastScore",
             W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 3.0,
-            Align.center
+            Align.center,
+            shouldCache = false
         )
     }
 }
