@@ -306,7 +306,6 @@ object UpgradeController {
             }
 
             if (purchasingFract >= 1.0) {
-                addScreenShake(0.5)
                 val upgradePurchased = currentlyPurchasingUpgrade!!
 
                 // Spawn a pile of particles

@@ -55,8 +55,6 @@ fun renderUIWorldSpace(r: Renderer) {
     renderDiegeticMenuWorldSpace(r)
 }
 
-private var noteToPlay = 'C'
-
 fun renderUIScreenSpace(r: Renderer) {
     r.color = colorScheme.textColor
 
