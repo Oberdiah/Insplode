@@ -189,9 +189,7 @@ abstract class Particle(
         p.x += v.x * GAMEPLAY_DELTA
         p.y += v.y * GAMEPLAY_DELTA
 
-        if (p.x < 0) {
-            v.x *= -1
-        } else if (p.x > UNITS_WIDE) {
+        if (p.x < 0 || p.x > UNITS_WIDE) {
             v.x *= -1
         }
 
@@ -199,9 +197,11 @@ abstract class Particle(
     }
 
     private fun bounce() {
+        if (!canCollide) return
+
         val tile = getTile(p)
         // if it's not a tile we can forget it.
-        if (tile !is Tile || !canCollide) return
+        if (tile !is Tile) return
 
         val tx = tile.x
         val ty = tile.y
