@@ -296,11 +296,3 @@ fun playChordNote(note: Char) {
         Random.nextDouble(0.75, 0.85)
     )
 }
-
-fun playUpgradePurchaseSound() {
-    playSound(
-        "Upgrade Purchase",
-        1.0,
-        0.5
-    )
-}

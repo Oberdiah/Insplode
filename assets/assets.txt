@@ -54,19 +54,11 @@ Sounds/trim_glass clink 2.wav
 Sounds/trim_glass clink 3.wav
 Sounds/trim_glass clink 4.wav
 Sounds/trim_glass clink 5.wav
-Sounds/trim_glass ding 1.wav
-Sounds/trim_glass ding 2.wav
-Sounds/trim_glass ding 3.wav
-Sounds/trim_metal hit 6.wav
 Sounds/trim_metal hit with hammer 2.wav
 Sounds/trim_metal hit with hammer 3.wav
 Sounds/trim_metal hit with hammer 4.wav
 Sounds/trim_metal hit with hammer 5.wav
 Sounds/trim_metal hit with hammer 6.wav
-Sounds/trim_metal hits metal 5.wav
-Sounds/trim_metal hits metal 6.wav
-Sounds/trim_metal hits metal 7.wav
-Sounds/trim_metal hits metal 8.wav
 Sounds/trim_orange hit hard 1.wav
 Sounds/trim_orange hit hard 2.wav
 Sounds/trim_orange hit hard 3.wav
@@ -82,16 +74,6 @@ Sounds/trim_orange hit soft 6.wav
 Sounds/trim_orange hit soft 7.wav
 Sounds/trim_orange hit soft 8.wav
 Sounds/trim_orange hit soft 9.wav
-Sounds/trim_rock 12 low.wav
-Sounds/trim_rock 13 low.wav
-Sounds/trim_rock 14 low.wav
-Sounds/trim_rock 15 low.wav
-Sounds/trim_rock 16 low.wav
-Sounds/trim_rock 17 low.wav
-Sounds/trim_rocks handle 13 low.wav
-Sounds/trim_rocks handle 14 low.wav
-Sounds/trim_rocks handle 15 low.wav
-Sounds/trim_rocks handle 16 low.wav
 Sounds/trim_trim_bat hit 3.wav
 Sounds/trim_trim_bat hit 4.wav
 Sounds/trim_trim_bat hit 5.wav
