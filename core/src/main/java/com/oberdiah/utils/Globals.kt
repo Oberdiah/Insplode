@@ -26,12 +26,12 @@ const val TILES_EXTRA_FRACTION_STORED = 1.3
 var SHOW_FRAMERATE_DATA = false
 var DO_PHYSICS_DEBUG_RENDER = false
 
-enum class Screen(val title: String) {
-    Paused("Paused"),
-    Settings("Settings"),
-    AdvancedSettings("Advanced\nSettings"),
-    Controls("Controls"),
-    Credits("Credits"),
+enum class Screen(val title: String, val note: Char) {
+    Paused("Paused", 'C'),
+    Settings("Settings", 'G'),
+    AdvancedSettings("Advanced\nSettings", 'C'),
+    Controls("Controls", 'C'),
+    Credits("Credits", 'G'),
 }
 
 /// Size of the screen in pixels

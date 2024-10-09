@@ -33,7 +33,7 @@ import com.oberdiah.format
 import com.oberdiah.level.gameMessage
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
-import com.oberdiah.playGChordNote
+import com.oberdiah.playChordNote
 import com.oberdiah.playerScore
 import com.oberdiah.saturate
 import com.oberdiah.statefulEasyMode
@@ -54,6 +54,8 @@ private fun formatDepth(depth: Number): String {
 fun renderUIWorldSpace(r: Renderer) {
     renderDiegeticMenuWorldSpace(r)
 }
+
+private var noteToPlay = 'C'
 
 fun renderUIScreenSpace(r: Renderer) {
     r.color = colorScheme.textColor
@@ -165,9 +167,6 @@ private fun creditsUI(r: Renderer) {
         backAScreen()
     }
 }
-
-val SUBTITLE_HEIGHT
-    get() = HEIGHT * 3 / 4.3
 
 private fun settingsUI(r: Renderer) {
     toggleButton(r, "Particles", statefulRenderParticles::value)
@@ -318,7 +317,7 @@ fun settingButton(
         }
         TOUCHES_WENT_UP.forEach {
             if (it.y > buttonBottom && it.y < buttonTop) {
-                playGChordNote()
+                playChordNote(GAME_SCREEN.note)
                 callback()
             }
         }

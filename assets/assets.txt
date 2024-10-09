@@ -99,7 +99,10 @@ Sounds/trim_trim_bat hit 6.wav
 Sounds/trim_trim_bat hit 7.wav
 Sounds/trim_trim_bat hit 8.wav
 Sounds/trim_trim_bat hit 9.wav
-Sounds/Twang 1.wav
+Sounds/Twang C 1.wav
+Sounds/Twang C 2.wav
+Sounds/Twang C 3.wav
+Sounds/Twang C 4.wav
 Sounds/Twang G 1.wav
 Sounds/Twang G 2.wav
 Sounds/Twang G 3.wav

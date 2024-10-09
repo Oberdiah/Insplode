@@ -121,7 +121,7 @@ enum class Upgrade(
     ),
     SneakySlam(
         "Sneaky Slam",
-        "When fuse is half-depleted\nslam to get double orbs\nand no explosion.",
+        "When fuse is half-depleted,\nslam to get double orbs\nand no explosion.",
         10,
         Point(0, 13 * P),
         MAIN_UPGRADE_SIZE,

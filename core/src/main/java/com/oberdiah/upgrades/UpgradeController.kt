@@ -20,6 +20,7 @@ import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
 import com.oberdiah.get2DShake
 import com.oberdiah.max
+import com.oberdiah.playMultiplierSound
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
@@ -36,7 +37,7 @@ object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
     private val allUpgradeTextures = mutableMapOf<Upgrade, Sprite>()
 
-    const val UPGRADE_ENTRY_HEIGHT = 4.0
+    private const val UPGRADE_ENTRY_HEIGHT = 4.0
 
     fun init() {
         playerUpgradeStates.clear()
@@ -94,6 +95,10 @@ object UpgradeController {
         ) + UPGRADE_ENTRY_HEIGHT
     }
 
+    private fun getUpgradeSectionColor(upgrade: Upgrade): Color {
+        return if (upgrade.ordinal % 2 == 0) Color.CYAN else Color.YELLOW
+    }
+
     fun renderUpgradeMenuWorldSpace(r: Renderer) {
         if (JUST_UP_OFF_SCREEN_UNITS < UPGRADES_SCREEN_BOTTOM_Y) {
             return
@@ -136,8 +141,7 @@ object UpgradeController {
             val transCutoff = 0.85
             val lateT = saturate((purchaseFract - transCutoff) / (1.0 - transCutoff))
 
-            val backgroundColor =
-                (if (upgrade.ordinal % 2 == 0) Color.CYAN else Color.YELLOW).withAlpha(alphaForColor)
+            val backgroundColor = getUpgradeSectionColor(upgrade).withAlpha(alphaForColor)
 
             r.color = backgroundColor
 
@@ -264,18 +268,32 @@ object UpgradeController {
 
     private var currentlyPurchasingUpgrade: Upgrade? = null
     private var timePurchasingUpgradeStarted = 0.0
+    private var currentUpgradePurchaseSoundsPlayed = -1
+
+    private fun cancelUpgradePurchase() {
+        currentlyPurchasingUpgrade = null
+        currentUpgradePurchaseSoundsPlayed = -1
+    }
 
     /**
      * The amount it's moved in units this frame, on the Y-axis.
      */
     fun cameraHasMoved(deltaUnits: Double) {
-        if (deltaUnits.abs > 0.01) {
-            currentlyPurchasingUpgrade = null
+        if (deltaUnits.abs > 0.05) {
+            cancelUpgradePurchase()
         }
     }
 
     fun tick() {
         if (cameraVelocity.abs < 0.1) {
+            val purchasingFract = purchasingFraction()
+
+            val soundToPlay = purchasingFract * 8
+            if (soundToPlay.toInt() > currentUpgradePurchaseSoundsPlayed && purchasingFract > 0.1) {
+                playMultiplierSound(soundToPlay.toInt())
+                currentUpgradePurchaseSoundsPlayed++
+            }
+
             TOUCHES_WENT_DOWN.forEach { touch ->
                 upgradesIterator().forEach { (upgrade, yPos) ->
                     if ((yPos + UPGRADE_ENTRY_HEIGHT / 2 - touch.wo.y).abs < UPGRADE_ENTRY_HEIGHT / 2) {
@@ -287,10 +305,14 @@ object UpgradeController {
                 }
             }
 
-            if (purchasingFraction() >= 1.0) {
-                addScreenShake(0.4)
+            if (purchasingFract >= 1.0) {
+                addScreenShake(0.5)
+                val upgradePurchased = currentlyPurchasingUpgrade!!
+
                 // Spawn a pile of particles
-                val upgradeYPos = getUpgradeYPos(currentlyPurchasingUpgrade)
+                val upgradeYPos = getUpgradeYPos(upgradePurchased)
+                val color =
+                    getUpgradeSectionColor(upgradePurchased).cpy().add(0.9f, 0.9f, 0.9f, -0.1f)
                 for (i in 0..1000) {
                     spawnSmoke(
                         Rect(
@@ -298,20 +320,20 @@ object UpgradeController {
                             Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
                         ).randomPointInside(),
                         createRandomFacingPoint(),
-                        color = Color.WHITE,
+                        color = color,
                         canCollide = false
                     )
                 }
 
-                playerUpgradeStates[currentlyPurchasingUpgrade!!]?.value = true
-                currentlyPurchasingUpgrade = null
+                playerUpgradeStates[upgradePurchased]?.value = true
+                cancelUpgradePurchase()
             }
 
             TOUCHES_WENT_UP.forEach { _ ->
-                currentlyPurchasingUpgrade = null
+                cancelUpgradePurchase()
             }
         } else {
-            currentlyPurchasingUpgrade = null
+            cancelUpgradePurchase()
         }
     }
 

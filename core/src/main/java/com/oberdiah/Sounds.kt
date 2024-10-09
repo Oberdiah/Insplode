@@ -283,10 +283,24 @@ fun playMultiplierLossSound() {
     )
 }
 
-fun playGChordNote() {
+var lastNotePlayed = mutableMapOf('C' to 0, 'G' to 0)
+fun playChordNote(note: Char) {
+    var noteToPlay = Random.nextInt(1, 5)
+    while (noteToPlay == lastNotePlayed[note]) {
+        noteToPlay = Random.nextInt(1, 5)
+    }
+    lastNotePlayed[note] = noteToPlay
     playSound(
-        "Twang G ${Random.nextInt(1, 5)}",
+        "Twang $note $noteToPlay",
         Random.nextDouble(0.995, 1.005),
         Random.nextDouble(0.75, 0.85)
+    )
+}
+
+fun playUpgradePurchaseSound() {
+    playSound(
+        "Upgrade Purchase",
+        1.0,
+        0.5
     )
 }
