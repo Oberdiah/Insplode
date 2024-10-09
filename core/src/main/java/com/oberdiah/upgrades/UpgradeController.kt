@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
 import com.oberdiah.Rect
@@ -64,8 +65,7 @@ object UpgradeController {
     }
 
     fun getUpgradeYPos(upgrade: Upgrade?): Double {
-        return Upgrade.values()
-            .indexOf(upgrade) * UPGRADE_ENTRY_HEIGHT + UPGRADES_SCREEN_BOTTOM_Y
+        return (upgrade?.ordinal ?: 0) * UPGRADE_ENTRY_HEIGHT + UPGRADES_SCREEN_BOTTOM_Y
     }
 
     /**
@@ -105,14 +105,17 @@ object UpgradeController {
         val iconSize = 3.0
         val iconSizeBeforePurchase = 2.0
 
-        var drawInBlue = false
-
         for ((upgrade, yPos) in upgradesIterator()) {
+            if (yPos > JUST_UP_OFF_SCREEN_UNITS) {
+                break
+            }
+            if (yPos < CAMERA_POS_Y - UPGRADE_ENTRY_HEIGHT) {
+                continue
+            }
+
             val hasUpgrade = playerHas(upgrade)
             val isPurchasable = upgradeIsPurchasable(upgrade)
             val isAbleToSee = isPurchasable || hasUpgrade
-
-            drawInBlue = !drawInBlue
 
             var alphaForColor = if (currentlyPurchasingUpgrade == upgrade) 0.2 else 0.11
 
@@ -134,7 +137,7 @@ object UpgradeController {
             val lateT = saturate((purchaseFract - transCutoff) / (1.0 - transCutoff))
 
             val backgroundColor =
-                (if (drawInBlue) Color.CYAN else Color.YELLOW).withAlpha(alphaForColor)
+                (if (upgrade.ordinal % 2 == 0) Color.CYAN else Color.YELLOW).withAlpha(alphaForColor)
 
             r.color = backgroundColor
 
@@ -324,7 +327,7 @@ object UpgradeController {
     }
 
     private fun upgradeIsPurchasable(upgrade: Upgrade): Boolean {
-        val index = Upgrade.values().indexOf(upgrade)
+        val index = upgrade.ordinal
         return (index <= highestIndexUnlockedSoFar() + 1) && !playerHas(upgrade)
     }
 }

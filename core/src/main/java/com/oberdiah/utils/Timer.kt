@@ -17,14 +17,27 @@ class TimedInstance(val name: String, initialTime: Double) {
     var timeMS: Double = initialTime
         set(value) {
             peak = max(peak, value)
+            numAvgEntries++
+            currentAvg = (currentAvg * (numAvgEntries - 1) + value) / numAvgEntries
             field = value
         }
 
+    var currentAvg = 0.0
+    var numAvgEntries = 0
     var peak: Double = 0.0
     var heldPeak: Double = 0.0
+    var heldAvg: Double = 0.0
+
+    fun tickOver() {
+        heldPeak = peak
+        heldAvg = currentAvg
+        peak = 0.0
+        currentAvg = 0.0
+        numAvgEntries = 0
+    }
 
     override fun toString(): String {
-        return "$name: ${heldPeak.format(2)}ms"
+        return "${name.padEnd(25, ' ')} Avg: ${heldAvg.format(2)}ms, Peak: ${heldPeak.format(2)}ms"
     }
 }
 
@@ -39,23 +52,25 @@ fun timerEnd() {
     }
     val avg = fpsQueue.average()
 
-    val times = frameTimes.toList().sortedBy { it.second.heldPeak }.reversed()
+    val times = frameTimes.toList().sortedBy { it.second.heldAvg }.reversed()
 
     timerString = "Last frame: ${lastFrameTime.format(3)} avg: ${avg.format(3)} (${
         (avg / (10 / 120.0)).format(1)
     }%)\n"
     timerString += "Average delta: ${GameTime.AVERAGE_GRAPHICS_DELTA.format(3)}\n"
     for (t in times) {
-        if (t.second.heldPeak > 0.2) {
+        if (t.second.heldPeak > 0.2 || t.second.heldAvg > 0.2) {
             timerString += "${t.second}\n"
         }
     }
 
     if (GameTime.APP_TIME > lastTimeReset + 1.0) {
+        if (GameTime.APP_TIME % 10.0 < 1.0) {
+            println(timerString)
+        }
         lastTimeReset = GameTime.APP_TIME
         for (t in frameTimes.values) {
-            t.heldPeak = t.peak
-            t.peak = 0.0
+            t.tickOver()
         }
     }
 }

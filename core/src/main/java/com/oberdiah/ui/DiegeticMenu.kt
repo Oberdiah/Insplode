@@ -69,7 +69,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
     r.text(
         fontLarge,
         "BombVille",
-        Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4),
+        W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4,
         Align.center
     )
 
@@ -77,7 +77,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         r.text(
             fontSmallish,
             "High Score: ${statefulHighScore.value}",
-            Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 2.0),
+            W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 2.0,
             Align.center
         )
     }
@@ -86,16 +86,48 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         r.text(
             fontSmallish,
             "Score: $lastScore",
-            Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 3.0),
+            W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 3.0,
             Align.center
         )
     }
 }
 
+private var isLaunchTapped = false
+
 fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val launchTextColor = colorScheme.textColor.cpy()
 
-    var isLaunchTapped = false
+    if (isLaunchTapped || GAME_STATE == GameState.InGame) {
+        launchTextColor.add(Color(0.4f, 0.4f, 0.4f, 0.0f))
+    }
+
+    launchTextAlpha =
+        if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
+            frameAccurateLerp(launchTextAlpha, 1.0f, 10.0).f
+        } else {
+            frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
+        }
+
+    launchTextColor.a = launchTextAlpha
+
+    val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 15 - sin(GameTime.APP_TIME) * 0.15
+    r.color = colorScheme.textColor
+    drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
+
+    if (launchTextAlpha > 0.001) {
+        r.color = colorScheme.backgroundA.withAlpha(launchTextAlpha * 0.75)
+        r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
+        r.color = launchTextColor
+        r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
+        if (UpgradeController.playerHas(Upgrade.Slam)) {
+            r.text(fontMedium, "Launch!", launchButtonPos, Align.center)
+        } else {
+            r.text(fontMedium, "Drop!", launchButtonPos, Align.center)
+        }
+    }
+}
+
+fun tickDiegeticMenu() {
     if (GAME_STATE == GameState.DiegeticMenu) {
         var newCameraY = cameraY
 
@@ -161,35 +193,6 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         cameraY = newCameraY
         setCameraY(cameraY)
     }
-
-    if (isLaunchTapped || GAME_STATE == GameState.InGame) {
-        launchTextColor.add(Color(0.4f, 0.4f, 0.4f, 0.0f))
-    }
-
-    launchTextAlpha =
-        if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
-            frameAccurateLerp(launchTextAlpha, 1.0f, 10.0).f
-        } else {
-            frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
-        }
-
-    launchTextColor.a = launchTextAlpha
-
-    val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 15 - sin(GameTime.APP_TIME) * 0.15
-    r.color = colorScheme.textColor
-    drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
-
-    if (launchTextAlpha > 0.001) {
-        r.color = colorScheme.backgroundA.withAlpha(launchTextAlpha * 0.75)
-        r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
-        r.color = launchTextColor
-        r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
-        if (UpgradeController.playerHas(Upgrade.Slam)) {
-            r.text(fontMedium, "Launch!", launchButtonPos, Align.center)
-        } else {
-            r.text(fontMedium, "Drop!", launchButtonPos, Align.center)
-        }
-    }
 }
 
 private val launchButtonSize
@@ -209,23 +212,19 @@ private fun drawChevron(r: Renderer, chevronUnitsY: Double) {
 
     // Left part of the arrow
     r.centeredRect(
-        toUISpace(
-            Point(
-                W / 2 + W / 32,
-                chevronUnitsY
-            )
-        ),
+        Point(
+            W / 2 + W / 32,
+            chevronUnitsY
+        ).ui,
         Size(WIDTH / 10, WIDTH / 75),
         -Math.PI / 4
     )
 
     r.centeredRect(
-        toUISpace(
-            Point(
-                W / 2 - W / 32,
-                chevronUnitsY
-            )
-        ),
+        Point(
+            W / 2 - W / 32,
+            chevronUnitsY
+        ).ui,
         Size(WIDTH / 10, WIDTH / 75),
         Math.PI / 4
     )

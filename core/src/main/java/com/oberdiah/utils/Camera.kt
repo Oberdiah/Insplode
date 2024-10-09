@@ -90,10 +90,10 @@ fun updateCamera() {
         CameraFollowing.MenuStartPos -> {
             val desiredCameraPos = getCameraYForMenu()
             val cameraDistToMove = (desiredCameraPos - camera.position.y) * 0.1
-            if (cameraDistToMove > 0) {
-                cameraY += clamp(cameraDistToMove, 0.05, 1.5)
+            cameraY += if (cameraDistToMove > 0) {
+                clamp(cameraDistToMove, 0.05, 1.5)
             } else {
-                cameraY += clamp(cameraDistToMove, -1.5, -0.05)
+                clamp(cameraDistToMove, -1.5, -0.05)
             }
             if (abs(camera.position.y - desiredCameraPos) < 0.05) {
                 cameraHasReachedFinalDiegeticMenuPosition()
@@ -105,7 +105,10 @@ fun updateCamera() {
         }
     }
 
-    val shake = getShake(SCREEN_SHAKE.pow(2))
+    var shake = 0.0
+    if (SCREEN_SHAKE > 0) {
+        shake = getShake(SCREEN_SHAKE.pow(2))
+    }
     camera.position.y = cameraY.f + shake.f
 
     camera.position.x = UNITS_WIDE.f / 2

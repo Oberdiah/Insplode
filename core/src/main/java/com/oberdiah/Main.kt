@@ -18,6 +18,7 @@ import com.oberdiah.player.playerState
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.renderUIWorldSpace
+import com.oberdiah.ui.tickDiegeticMenu
 import com.oberdiah.ui.tickPauseButton
 import com.oberdiah.upgrades.UpgradeController
 
@@ -132,6 +133,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Point Orbs") { tickPointOrbs() }
             time("Tick Score System") { tickScoreSystem() }
         } else {
+            time("Tick Diegetic Menu") { tickDiegeticMenu() }
             time("Tick Upgrade Controller") { UpgradeController.tick() }
         }
 
