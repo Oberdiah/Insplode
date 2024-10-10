@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.ShortArray
 import kotlin.math.PI
+import kotlin.math.atan2
 
 
 private val Number.toDegrees: Number
@@ -158,6 +159,10 @@ class Renderer(val name: String, val camera: Camera) {
         shapeRenderer.rect(x.f, y.f, w.f, h.f)
     }
 
+    fun rect(x: Number, y: Number, w: Number, h: Number, a: Number) {
+        shapeRenderer.rect(x.f, y.f, w.f / 2, h.f / 2, w.f, h.f, 1f, 1f, a.toDegrees.f)
+    }
+
     fun rect(p: Point, s: Size) {
         shapeRenderer.rect(p.x.f, p.y.f, s.w.f, s.h.f)
     }
@@ -213,13 +218,26 @@ class Renderer(val name: String, val camera: Camera) {
         shapeRenderer.rect(mid.x.f + s.w.f / 2 - width.f, mid.y.f - s.h.f / 2, width.f, s.h.f)
     }
 
-    fun polyLine(ps: List<Point>) {
-        val arr = FloatArray(ps.size * 2)
-        ps.forEachIndexed { index, point ->
-            arr[index * 2] = point.x.f
-            arr[index * 2 + 1] = point.y.f
+    fun polyLine(ps: List<Point>, offset: Point = Point(), width: Number = 1.0) {
+        for (i in 0 until ps.size - 1) {
+            val x1 = ps[i].x + offset.x
+            val y1 = ps[i].y + offset.y
+            val x2 = ps[i + 1].x + offset.x
+            val y2 = ps[i + 1].y + offset.y
+
+            // Extend the line slightly to hide the gap between lines
+            val angle = atan2(y2 - y1, x2 - x1)
+
+            // This is a magic number that seems to work well
+            val widthScaling = 3.0
+
+            val x1e = x1 - cos(angle) * width / widthScaling
+            val y1e = y1 - sin(angle) * width / widthScaling
+            val x2e = x2 + cos(angle) * width / widthScaling
+            val y2e = y2 + sin(angle) * width / widthScaling
+
+            line(x1e, y1e, x2e, y2e, width)
         }
-        shapeRenderer.polygon(arr)
     }
 
     fun arcFrom0(p: Point, radius: Number, fraction: Number, segments: Int = 20) {

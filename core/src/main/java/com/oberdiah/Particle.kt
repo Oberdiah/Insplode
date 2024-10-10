@@ -55,12 +55,13 @@ fun spawnSmoke(
     velocity: Velocity,
     color: Color = Color.DARK_GRAY.withAlpha(0.5),
     gravityScaling: Double = 1.0,
-    canCollide: Boolean = true
+    canCollide: Boolean = true,
+    radiusScaling: Double = 1.0,
 ) {
     if (!statefulRenderParticles.value) return
     // Don't spawn smoke on top of tiles
     if (getTile(p).canCollide() && canCollide) return
-    val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
+    val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2) * radiusScaling
     Smoke(p, velocity, radius, color, gravityScaling, canCollide).registerWithSimulation()
 }
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.CAMERA_POS_Y
+import com.oberdiah.CURRENCY_DENOMINATION
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
 import com.oberdiah.Rect
@@ -23,13 +24,13 @@ import com.oberdiah.max
 import com.oberdiah.playMultiplierSound
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
+import com.oberdiah.statefulCoinBalance
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.StatefulBoolean
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
-import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.withAlpha
 
@@ -196,7 +197,7 @@ object UpgradeController {
             if (isPurchasable) {
                 r.text(
                     fontSmallish,
-                    "${upgrade.price}g",
+                    "${upgrade.price}${CURRENCY_DENOMINATION}",
                     Point(costTextXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + get2DShake(
                         purchaseFract,
                         2
@@ -325,6 +326,7 @@ object UpgradeController {
                 }
 
                 playerUpgradeStates[upgradePurchased]?.value = true
+                statefulCoinBalance.value -= upgradePurchased.price
                 cancelUpgradePurchase()
             }
 
@@ -350,6 +352,6 @@ object UpgradeController {
 
     private fun upgradeIsPurchasable(upgrade: Upgrade): Boolean {
         val index = upgrade.ordinal
-        return (index <= highestIndexUnlockedSoFar() + 1) && !playerHas(upgrade)
+        return (index <= highestIndexUnlockedSoFar() + 1) && !playerHas(upgrade) && statefulCoinBalance.value >= upgrade.price
     }
 }

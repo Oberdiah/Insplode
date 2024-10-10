@@ -131,11 +131,11 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Physics Objects") { tickPhysicsObjects() }
             time("Tick Bombs") { tickBombController() }
             time("Tick Point Orbs") { tickPointOrbs() }
-            time("Tick Score System") { tickScoreSystem() }
         } else {
             time("Tick Diegetic Menu") { tickDiegeticMenu() }
             time("Tick Upgrade Controller") { UpgradeController.tick() }
         }
+        time("Tick Score System") { tickScoreSystem() }
 
         time("Update tile physics") { updateTilePhysics() }
         if (GAME_IS_RUNNING) {

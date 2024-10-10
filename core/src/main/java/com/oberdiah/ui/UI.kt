@@ -35,6 +35,7 @@ import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playChordNote
 import com.oberdiah.playerScore
+import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.saturate
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulHighScore
@@ -77,9 +78,7 @@ fun renderUIScreenSpace(r: Renderer) {
 
     when (GAME_STATE) {
         GameState.DiegeticMenu -> {}
-
         GameState.TransitioningToDiegeticMenu -> {}
-
         GameState.PausedPopup -> {
             r.color = Color.BLACK.withAlpha(0.5)
             r.rect(0, 0, WIDTH, HEIGHT)
@@ -112,16 +111,8 @@ fun renderUIScreenSpace(r: Renderer) {
                 text = gameMessage
             }
             r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center, shouldCache = false)
-            r.text(
-                fontLarge,
-                "$playerScore",
-                WIDTH / 2,
-                HEIGHT * 0.9,
-                Align.center,
-                shouldCache = false
-            )
 
-            r.color = colorScheme.textColor
+            // The score itself is rendered by the score system in renderScores(r)
 
             renderPauseButton(r)
         }
@@ -133,7 +124,7 @@ private val GAME_SCREEN: Screen
     get() = SCREEN_STACK.last()
 
 fun backAScreen() {
-    SCREEN_STACK.removeLast()
+    SCREEN_STACK.removeLastOrNull()
 }
 
 fun switchScreen(screen: Screen) {
@@ -227,6 +218,7 @@ private fun pausedUI(r: Renderer) {
     lineBreak()
     button(r, "Quit Run") {
         goToDiegeticMenu()
+        registerGameEndWithScoreSystem()
     }
 }
 

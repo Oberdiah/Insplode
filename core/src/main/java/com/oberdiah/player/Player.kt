@@ -1,7 +1,9 @@
 package com.oberdiah.player
 
 import com.badlogic.gdx.physics.box2d.*
+import com.oberdiah.GAME_STATE
 import com.oberdiah.GLOBAL_SCALE
+import com.oberdiah.GameState
 import com.oberdiah.PLAYER_PHYSICS_MASK
 import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
@@ -83,7 +85,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun tick() {
-        if (playerState.timeSinceDied > DEAD_CONTEMPLATION_TIME) {
+        if (playerState.timeSinceDied > DEAD_CONTEMPLATION_TIME && GAME_STATE == GameState.InGame) {
             goToDiegeticMenu()
             registerGameEndWithScoreSystem()
             return

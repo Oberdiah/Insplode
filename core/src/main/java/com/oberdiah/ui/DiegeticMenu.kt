@@ -2,6 +2,7 @@ package com.oberdiah.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.CURRENCY_DENOMINATION
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
@@ -23,11 +24,13 @@ import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.lastScore
 import com.oberdiah.lerp
+import com.oberdiah.renderScores
 import com.oberdiah.sin
+import com.oberdiah.statefulCoinBalance
 import com.oberdiah.statefulHighScore
-import com.oberdiah.toUISpace
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
+import com.oberdiah.utils.ColorScheme
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
@@ -73,28 +76,38 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         Align.center
     )
 
-    if (statefulHighScore.value != 0) {
-        r.text(
-            fontSmallish,
-            "High Score: ${statefulHighScore.value}",
-            W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 2.0,
-            Align.center,
-            shouldCache = false
-        )
-    }
-
-    if (lastScore != null) {
-        r.text(
-            fontSmallish,
-            "Score: $lastScore",
-            W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4 - 3.0,
-            Align.center,
-            shouldCache = false
-        )
-    }
+    renderScores(r)
 }
 
 private var isLaunchTapped = false
+private val launchButtonPos
+    get() = Point(WIDTH / 2, HEIGHT / 10)
+private val launchButtonSize
+    get() = Size(WIDTH / 3, HEIGHT / 20)
+
+private fun isInLaunchButton(touch: Point): Boolean {
+    return touch.x > launchButtonPos.x - launchButtonSize.w / 2 &&
+            touch.x < launchButtonPos.x + launchButtonSize.w / 2 &&
+            touch.y > launchButtonPos.y - launchButtonSize.h / 2 &&
+            touch.y < launchButtonPos.y + launchButtonSize.h / 2
+}
+
+private val coinAreaWidth
+    get() = WIDTH / 4
+private val coinAreaHeight
+    get() = HEIGHT / 25
+private val coinAreaTriangleWidth
+    get() = WIDTH / 20
+private val coinAreaPoints
+    get() = listOf(
+        Point(-coinAreaWidth / 2 - coinAreaTriangleWidth, 0),
+        Point(-coinAreaWidth / 2, -coinAreaHeight),
+        Point(coinAreaWidth / 2, -coinAreaHeight),
+        Point(coinAreaWidth / 2 + coinAreaTriangleWidth, 0)
+    )
+val coinAreaPosition
+    get() =
+        Point(WIDTH / 4, HEIGHT + (1 - launchTextAlpha) * coinAreaHeight * 1.4)
 
 fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val launchTextColor = colorScheme.textColor.cpy()
@@ -112,21 +125,40 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
 
     launchTextColor.a = launchTextAlpha
 
-    val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 15 - sin(GameTime.APP_TIME) * 0.15
+    val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 10 - sin(GameTime.APP_TIME) * 0.15
     r.color = colorScheme.textColor
     drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
 
     if (launchTextAlpha > 0.001) {
-        r.color = colorScheme.backgroundA.withAlpha(launchTextAlpha * 0.75)
-        r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
-        r.color = launchTextColor
+        val diegeticBackColor = colorScheme.backgroundA.withAlpha(launchTextAlpha * 0.75)
 
+        r.color = diegeticBackColor
+        r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
+
+        r.color = launchTextColor
         r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
-        if (UpgradeController.playerHas(Upgrade.Slam)) {
-            r.text(fontMedium, "Launch!", launchButtonPos, Align.center)
+
+        val dropText = if (UpgradeController.playerHas(Upgrade.Slam)) {
+            "Launch!"
         } else {
-            r.text(fontMedium, "Drop!", launchButtonPos, Align.center)
+            "Drop!"
         }
+        r.text(fontMedium, dropText, launchButtonPos, Align.center)
+
+        r.color = Color.DARK_GRAY.withAlpha(0.9)
+        r.poly(coinAreaPoints, coinAreaPosition, 0.0)
+
+        r.color = Color.DARK_GRAY
+        r.polyLine(coinAreaPoints, coinAreaPosition, WIDTH / 150)
+
+        r.color = Color.WHITE
+        r.text(
+            fontMedium,
+            "${statefulCoinBalance.value}$CURRENCY_DENOMINATION",
+            coinAreaPosition.x - coinAreaWidth * 0.4, coinAreaPosition.y - coinAreaHeight / 2,
+            Align.left,
+            shouldCache = false
+        )
     }
 }
 
@@ -198,18 +230,6 @@ fun tickDiegeticMenu() {
         cameraY = newCameraY
         setCameraY(cameraY)
     }
-}
-
-private val launchButtonSize
-    get() = Size(WIDTH / 3, HEIGHT / 20)
-private val launchButtonPos
-    get() = Point(WIDTH / 2, HEIGHT / 10)
-
-private fun isInLaunchButton(touch: Point): Boolean {
-    return touch.x > launchButtonPos.x - launchButtonSize.w / 2 &&
-            touch.x < launchButtonPos.x + launchButtonSize.w / 2 &&
-            touch.y > launchButtonPos.y - launchButtonSize.h / 2 &&
-            touch.y < launchButtonPos.y + launchButtonSize.h / 2
 }
 
 private fun drawChevron(r: Renderer, chevronUnitsY: Double) {

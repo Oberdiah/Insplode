@@ -3,8 +3,6 @@ package com.oberdiah
 import com.badlogic.gdx.math.MathUtils.clamp
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.random.Random
 
 fun List<Point>.toV2Array(): Array<Vector2> {
@@ -259,6 +257,12 @@ class Size(w: Number, h: Number) : Point(w, h) {
 }
 
 class Rect(var p: Point, var s: Size) {
+    companion object {
+        fun centered(center: Point, size: Size): Rect {
+            return Rect(center - size / 2, size)
+        }
+    }
+
     fun enlargen(buffer: Number): Rect {
         return Rect(p - Point(buffer, buffer), s + Point(buffer, buffer) * 2)
     }
