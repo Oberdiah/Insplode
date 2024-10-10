@@ -120,6 +120,9 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         r.color = colorScheme.backgroundA.withAlpha(launchTextAlpha * 0.75)
         r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
         r.color = launchTextColor
+
+        println(r.color)
+
         r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
         if (UpgradeController.playerHas(Upgrade.Slam)) {
             r.text(fontMedium, "Launch!", launchButtonPos, Align.center)
@@ -132,6 +135,8 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
 fun tickDiegeticMenu() {
     if (GAME_STATE == GameState.DiegeticMenu) {
         var newCameraY = cameraY
+
+        isLaunchTapped = false
 
         TOUCHES_WENT_DOWN.forEach {
             if (!isInLaunchButton(it)) {
