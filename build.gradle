@@ -38,7 +38,7 @@ allprojects {
 configure(subprojects - project(':android')) {
     apply plugin: 'java-library'
     apply plugin: 'kotlin'
-    sourceCompatibility = 8.0
+    sourceCompatibility = 11.0
     compileJava {
         options.incremental = true
     }

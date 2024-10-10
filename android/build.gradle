@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 34
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -32,14 +32,14 @@ android {
     defaultConfig {
         applicationId 'com.oberdiah'
         minSdkVersion 28
-        targetSdkVersion 30
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
     }
     compileOptions {
-        sourceCompatibility "8.0"
-        targetCompatibility "8.0"
+        sourceCompatibility "11.0"
+        targetCompatibility "11.0"
         coreLibraryDesugaringEnabled true
     }
     kotlinOptions.jvmTarget = "1.8"
