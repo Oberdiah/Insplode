@@ -130,8 +130,8 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         }
     }
 
-    var lineLength = 10 * GLOBAL_SCALE
-    val canBlow: Boolean
+    private val lineLength = 14 * GLOBAL_SCALE
+    private val canBlow: Boolean
         get() {
             val angle = (body.angle % (PI * 2) + PI * 2) % (PI * 2)
             val down = PI / 2
