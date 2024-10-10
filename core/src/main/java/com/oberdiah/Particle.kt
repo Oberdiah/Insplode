@@ -7,13 +7,22 @@ import com.oberdiah.utils.TileType
 import kotlin.random.Random
 
 private val allParticles = mutableListOf<Particle>()
-val particlesToDestroy = mutableListOf<Particle>()
-val glowLocations = mutableListOf<Glow>()
-val glowsToDestroy = mutableListOf<Glow>()
+private val particlesToDestroy = mutableListOf<Int>()
+private val glowLocations = mutableListOf<Glow>()
+private val glowsToDestroy = mutableListOf<Glow>()
+
+private var particleDestroyThreshold = 0.0
 
 fun tickParticles() {
+    particleDestroyThreshold = max(0, (allParticles.size - 1000) / 20000.0)
     allParticles.forEach { it.tick() }
-    allParticles.removeAll(particlesToDestroy)
+    particlesToDestroy.sortDescending()
+    for (i in particlesToDestroy) {
+        // Remove the particle at the end and move the last particle to the removed particle's position
+        allParticles[i] = allParticles.last()
+        allParticles[i].index = i
+        allParticles.removeLastOrNull()
+    }
     particlesToDestroy.clear()
 
     glowLocations.forEach { it.tick() }
@@ -38,8 +47,7 @@ fun spawnFragment(p: Point, v: Velocity, tileType: TileType, affectedByGravity: 
     if (tileType == TileType.Air) return
 
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
-
-    allParticles.add(Fragment(p, v, radius, tileType, affectedByGravity))
+    Fragment(p, v, radius, tileType, affectedByGravity).registerWithSimulation()
 }
 
 fun spawnSmoke(
@@ -53,7 +61,7 @@ fun spawnSmoke(
     // Don't spawn smoke on top of tiles
     if (getTile(p).canCollide() && canCollide) return
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2)
-    allParticles.add(Smoke(p, velocity, radius, color, gravityScaling, canCollide))
+    Smoke(p, velocity, radius, color, gravityScaling, canCollide).registerWithSimulation()
 }
 
 fun spawnGlow(p: Point, radius: Number) {
@@ -79,11 +87,11 @@ class Glow(val p: Point, var radius: Number) {
 class Smoke(
     startP: Point,
     startV: Velocity,
-    var edgeLength: Number,
+    edgeLength: Number,
     val color: Color = Color.DARK_GRAY.withAlpha(0.5),
     val gravityScaling: Double = 1.0,
-    canCollide: Boolean = true
-) : Particle(startP, startV, canCollide) {
+    canCollide: Boolean = true,
+) : Particle(startP, startV, canCollide, edgeLength = edgeLength) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
 
@@ -103,7 +111,7 @@ class Smoke(
         }
         angle += angleRate / 5
 
-        if (edgeLength <= 0) {
+        if (edgeLength <= particleDestroyThreshold) {
             destroy()
         }
     }
@@ -118,11 +126,10 @@ class Smoke(
 class Fragment(
     startP: Point,
     startV: Velocity,
-    var edgeLength: Number,
+    edgeLength: Number,
     val tileType: TileType,
-    var affectedByGravity: Boolean = true
-) :
-    Particle(startP, startV) {
+    var affectedByGravity: Boolean = true,
+) : Particle(startP, startV, edgeLength = edgeLength) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
 
@@ -140,7 +147,7 @@ class Fragment(
         }
         angle += angleRate / 5
 
-        if (edgeLength <= 0) {
+        if (edgeLength <= particleDestroyThreshold) {
             destroy()
         }
     }
@@ -160,16 +167,22 @@ class Fragment(
 abstract class Particle(
     val p: Point,
     val v: Velocity = Velocity(),
-    val canCollide: Boolean = true
+    val canCollide: Boolean = true,
+    var edgeLength: Number,
 ) {
     var insideLevel = false
     var bounciness = 0.6
     var stoppedMoving = false
-
+    var index: Int? = null
     abstract fun render(r: Renderer)
 
+    fun registerWithSimulation() {
+        index = allParticles.size
+        allParticles.add(this)
+    }
+
     fun destroy() {
-        particlesToDestroy.add(this)
+        particlesToDestroy.add(index!!)
     }
 
     abstract fun applyForces();

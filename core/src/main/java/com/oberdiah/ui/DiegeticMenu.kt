@@ -121,8 +121,6 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
         r.color = launchTextColor
 
-        println(r.color)
-
         r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
         if (UpgradeController.playerHas(Upgrade.Slam)) {
             r.text(fontMedium, "Launch!", launchButtonPos, Align.center)
