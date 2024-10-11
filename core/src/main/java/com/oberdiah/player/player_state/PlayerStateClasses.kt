@@ -32,7 +32,7 @@ open class PlayerStateClasses {
     }
 
     protected class PlayerStateHandler {
-        var state: PlayerMode = PlayerMode.INTENTIONALLY_MOVING_UP
+        var state: PlayerMode = getResetState()
             private set
 
         var timeSinceWeEnteredThisState = 0.0
@@ -42,13 +42,17 @@ open class PlayerStateClasses {
             timeSinceWeEnteredThisState += GameTime.GAMEPLAY_DELTA
         }
 
-        fun reset() {
-            timeSinceWeEnteredThisState = 0.0
-            if (UpgradeController.playerHas(Upgrade.Slam)) {
-                setState(PlayerMode.SLAMMING)
+        private fun getResetState(): PlayerMode {
+            return if (UpgradeController.playerHas(Upgrade.Slam)) {
+                PlayerMode.SLAMMING
             } else {
-                setState(PlayerMode.INTENTIONALLY_MOVING_UP)
+                PlayerMode.INTENTIONALLY_MOVING_UP
             }
+        }
+
+        fun reset() {
+            setState(getResetState())
+            timeSinceWeEnteredThisState = 0.0
         }
 
         fun setState(newState: PlayerMode) {
