@@ -5,7 +5,7 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 object Perlin {
-    var noise = OpenSimplexNoise(4)
+    var noise = OpenSimplexNoise(8)
 
     fun randomize() {
         noise = OpenSimplexNoise(Random.nextLong())

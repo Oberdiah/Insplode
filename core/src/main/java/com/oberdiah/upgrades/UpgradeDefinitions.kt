@@ -15,7 +15,7 @@ enum class Upgrade(
 ) {
     Movement(
         "Movement",
-        "Tap anywhere on the screen\nand drag left and right\nto move.",
+        "Touch and drag left and right\nto move. The white line is\nwhere you're heading.",
         1,
     ),
 
@@ -30,92 +30,87 @@ enum class Upgrade(
         "Occasionally spawns in\na bomb.\nMine for orbs!",
         5,
     ),
-    VoidLift(
-        "Void Lift",
-        "Haul that darkness away!\nThe void begins higher up.",
-        5,
-    ),
-    BombWizard(
-        "Bomb Wizard",
-        "Touching a bomb while its\nfuse is in the last quarter of\nits life replenishes it.",
-        5,
-    ),
     Jump(
         "Jump",
         "Tap to jump.",
-        5,
+        10,
+    ),
+    SmallTimedBomb(
+        "Small Bomb",
+        "Helping out with the mining\neffort.",
+        15,
+    ),
+    VoidLift(
+        "Void Lift",
+        "Haul that darkness away!\nThe void begins higher up.",
+        15,
+    ),
+    LineBomb(
+        "Line Bomb",
+        "A harmless bomb that\nexplodes in a straight line.",
+        25,
+    ),
+    FasterMovement(
+        "Move quicker",
+        "Zooooooom!",
+        45,
+    ),
+    LowerGravity(
+        "Player Micro-Gravity",
+        "Less gravity = higher jump.",
+        45,
     ),
 
     // ################ JUMP UPGRADES ################
 
 
-    FasterMovement(
-        "Greater Speed",
-        "Move faster.",
-        15,
-    ),
     ComboOrbs(
         "Combo Orbs",
         "When a bomb explodes\nanother, orbs are spawned.",
-        20,
-    ),
-    MoreSkyOrbs(
-        "More Orbs",
-        "More orbs fall from the sky.",
-        10,
+        25,
     ),
     SlowerTimers(
         "Slower Timers",
         "Timers on bombs are\nslowed down.",
-        10,
+        50,
     ),
     GoldenNuggets(
         "Golden Nuggets",
         "Occasional golden tiles\nfull of treasure.",
         10,
     ),
-    SmallTimedBomb(
-        "Small Bomb",
-        "Extra tiny for easier combos",
-        5,
+    RapidBombs(
+        "Insurgence",
+        "Bombs spawn more\nfrequently.\nMore bombs, more combo.",
+        100,
     ),
-    LineBomb(
-        "Line Bomb",
-        "A harmless bomb that\nexplodes in a straight line.",
-        10,
+    LargeBombs(
+        "Big Bombs",
+        "Massive bombs that\nwreck the landscape.",
+        75,
     ),
     Slam(
         "Slam",
-        "Slam down to the ground to\ncreate an explosion.",
-        15,
+        "Release finger while in the air\nto slam downwards. Slamming\na bomb makes you bounce back up.",
+        150,
     ),
 
     // ################ SLAM UPGRADES ################
 
-    LargeBombs(
-        "Big Bombs",
-        "Massive bombs that\nwreck the landscape.",
-        5,
-    ),
-    BombSlam(
-        "Bomb Slam",
-        "Get propelled into the air\nafter slamming into a bomb.",
-        10,
+    SpringBomb(
+        "Spring Bomb",
+        "A bomb that jumps \n around before exploding.",
+        75,
     ),
     SlamOrbs(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
-        10,
-    ),
-    SpringBomb(
-        "Spring Bomb",
-        "A bomb that jumps \n around before exploding.",
-        10,
+        100,
     ),
     ApexWings(
         "Apex Wings",
         "Hover slightly at the apex of\nyour jump",
-        15,
+        50,
         toggleable = true,
     ),
     SneakySlam(

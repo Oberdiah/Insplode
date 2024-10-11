@@ -77,6 +77,14 @@ fun renderUIScreenSpace(r: Renderer) {
 
     renderDiegeticMenuScreenSpace(r)
 
+    r.color = colorScheme.textColor.withAlpha(saturate(-CAMERA_POS_Y * 0.5))
+
+    var text = "${RUN_TIME_ELAPSED.format(1)}s"
+//            if (gameMessage != "") {
+//                text = gameMessage
+//            }
+    r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center, shouldCache = false)
+
     when (GAME_STATE) {
         GameState.DiegeticMenu -> {}
         GameState.TransitioningToDiegeticMenu -> {}
@@ -105,16 +113,7 @@ fun renderUIScreenSpace(r: Renderer) {
         }
 
         GameState.InGame -> {
-            r.color = colorScheme.textColor.withAlpha(saturate(-CAMERA_POS_Y * 0.5))
-
-            var text = "${RUN_TIME_ELAPSED.format(1)}s"
-//            if (gameMessage != "") {
-//                text = gameMessage
-//            }
-            r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center, shouldCache = false)
-
             // The score itself is rendered by the score system in renderScores(r)
-
             renderPauseButton(r)
         }
     }

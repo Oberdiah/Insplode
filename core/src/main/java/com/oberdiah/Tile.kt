@@ -149,9 +149,10 @@ class Tile(private val id: TileId) : TileLike {
     }
 
     /** Register this tile as no longer materially existing. It will not collide, it will not render, etc. */
-    fun dematerialize() {
-        ScoreSystem.registerTileDestroyed(coord, tileType)
-
+    fun dematerialize(shouldDropOrbs: Boolean = true) {
+        if (shouldDropOrbs) {
+            ScoreSystem.registerTileDestroyed(coord, tileType)
+        }
         setExists(false)
     }
 

@@ -103,12 +103,18 @@ object ScoreSystem {
         lastTimeScoreSounded = 0.0
     }
 
+    fun registerGameStart() {
+        statefulCoinBalance.value += coinsToGiveAtEndOfGame
+        coinsToGiveAtEndOfGame = 0
+    }
+
     fun registerCasuallyLanded() {
         if (numConsecutiveBounces > 0) {
             playMultiplierLossSound()
         }
         bounceDecayAccumulator = 0.0
         numConsecutiveBounces = 0
+
         updateGameSpeed(1.0)
     }
 

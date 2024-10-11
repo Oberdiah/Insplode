@@ -57,6 +57,7 @@ val LASER_HEIGHT_START_IN_GAME
 var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
 var currentPhase = 0
+var random = Random(0)
 
 fun resetLevelController() {
     currentPhase = 0
@@ -65,6 +66,7 @@ fun resetLevelController() {
     maxDepthThisRun = 0.0
     currentDepthThisRun = 0.0
     laserInGameHeight = LASER_HEIGHT_START_IN_GAME
+    random = Random(0)
     bombDropData.clear()
 }
 
@@ -80,14 +82,7 @@ val LASER_HEIGHT: Double
                 saturate(1.0 - player.state.timeSinceDied / (DEAD_CONTEMPLATION_TIME - 1.0))
             )
         } else if (GAME_STATE == GameState.TransitioningToDiegeticMenu) {
-            // Yes, this touches gameplay.
-            // Yes, this uses standard non-warped game time.
-            // I'm fine with it. It's practically an animation anyway.
-            val timeSinceTransition = GameTime.APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED
-            transition = min(
-                transition,
-                saturate(1.0 - timeSinceTransition)
-            )
+            transition = 0.0
         }
 
         return lerp(LASER_HEIGHT_IN_MENU, laserInGameHeight, transition)
@@ -162,7 +157,7 @@ fun tickLevelController() {
                     )
                 )
             if (tile is Tile && tile.doesExist()) {
-                tile.dematerialize()
+                tile.dematerialize(shouldDropOrbs = false)
             }
         }
     }
@@ -190,7 +185,7 @@ fun tickLevelController() {
     }
 }
 
-fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble(0.05, 0.95)) {
+fun spawnBomb(type: BombType, fraction: Number = random.nextDouble(0.05, 0.95)) {
     val pos = Point(fraction * UNITS_WIDE, SAFE_BOMB_SPAWN_HEIGHT)
     when (type) {
         BombType.SmallTimed -> {
@@ -257,17 +252,23 @@ data class BombData(var delay: Number) {
     fun randomiseNextBombAt() {
         val minTime = 0.0
         val maxTime = delay * 2.0
-        nextBombAt = RUN_TIME_ELAPSED + lerp(minTime, maxTime, Random.nextDouble())
+        nextBombAt = RUN_TIME_ELAPSED + lerp(minTime, maxTime, random.nextDouble())
     }
 }
 
 val bombDropData = mutableMapOf<BombType, BombData>()
 
-fun startRandomBombs(type: BombType, delay: Number) {
+fun startRandomBombs(type: BombType, requestedDelay: Number) {
+    val actualDelay = if (UpgradeController.playerHas(Upgrade.RapidBombs)) {
+        requestedDelay * 0.6
+    } else {
+        requestedDelay
+    }
+
     bombDropData[type]?.let {
-        it.delay = delay
+        it.delay = actualDelay
     } ?: run {
-        bombDropData[type] = BombData(delay)
+        bombDropData[type] = BombData(actualDelay)
     }
 }
 

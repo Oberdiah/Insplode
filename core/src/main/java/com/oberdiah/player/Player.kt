@@ -63,7 +63,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun reset() {
         body.setTransform(Point(UNITS_WIDE / 2, PLAYER_SPAWN_Y), 0f)
         body.isFixedRotation = true
-        body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM
+        body.gravityScale = PlayerInfoBoard.currentGravity
         body.velocity = Point(0.0, 0.0)
         body.linearDamping = 0.0
 
@@ -103,7 +103,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         PlayerInfoBoard.tick()
         state.tick()
 
-        if (player.body.p.y > LASER_HEIGHT && RUN_TIME_ELAPSED > 5.0) {
+        val playerLaserCheckHeight = if (UpgradeController.playerHas(Upgrade.Slam)) {
+            player.body.p.y - PLAYER_SIZE.h / 2
+        } else {
+            player.body.p.y + PLAYER_SIZE.h / 2
+        }
+
+        if (playerLaserCheckHeight > LASER_HEIGHT && RUN_TIME_ELAPSED > 5.0) {
             state.justDied()
         }
 
@@ -127,17 +133,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             }
         }
 
-        if (UpgradeController.playerHas(Upgrade.Slam)) {
-            if (PlayerInfoBoard.isUsingApexWings) {
-                body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM * 0.5
-            } else if (state.isSlamming) {
-                body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM * 8.0
-            } else {
-                body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM
-            }
-        } else {
-            body.gravityScale = PLAYER_GRAVITY_MODIFIER_PRE_SLAM
-        }
+        body.gravityScale = PlayerInfoBoard.currentGravity
 
         if (state.isAlive && !pauseHovered) {
             PlayerInputs.tick()

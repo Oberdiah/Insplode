@@ -35,6 +35,26 @@ object PlayerInfoBoard {
                 player.body.velocity.y > 0.0 &&
                 UpgradeController.playerHas(Upgrade.ApexWings)
 
+    val currentGravity: Double
+        get() {
+            val postSlamGravity = 0.5
+            return if (UpgradeController.playerHas(Upgrade.Slam)) {
+                if (isUsingApexWings) {
+                    postSlamGravity * 0.5
+                } else if (player.state.isSlamming) {
+                    postSlamGravity * 8.0
+                } else {
+                    postSlamGravity
+                }
+            } else {
+                if (UpgradeController.playerHas(Upgrade.LowerGravity)) {
+                    0.75
+                } else {
+                    1.0
+                }
+            }
+        }
+
     // If this is non-null, then it is a tile that exists.
     var tileBelowMe: Tile? = null
         private set

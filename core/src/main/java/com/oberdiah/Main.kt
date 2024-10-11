@@ -30,7 +30,7 @@ lateinit var platformInterface: PlatformInterface
 fun endGame() {
     MusicCoordinator.startPlayingMusic()
     GAME_STATE = GameState.DiegeticMenu
-    Perlin.randomize()
+//    Perlin.randomize()
     resetCamera()
 
     resetPhysicsObjects()
@@ -51,6 +51,8 @@ fun startGame() {
     // We might have upgraded or changed settings, so we want to re-reset a bunch of stuff.
     resetPhysicsObjects()
     resetLevelController()
+
+    ScoreSystem.registerGameStart()
 }
 
 private lateinit var leftWall: PhysBody
@@ -140,8 +142,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick pause button") { tickPauseButton() }
             time("Tick Collapse") { tickCollapse() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
-            time("Tick Bombs") { tickBombController() }
             time("Tick Point Orbs") { PointOrbs.tick() }
+            time("Tick Bombs") { tickBombController() }
         } else {
             time("Tick Diegetic Menu") { tickDiegeticMenu() }
             time("Tick Upgrade Controller") { UpgradeController.tick() }

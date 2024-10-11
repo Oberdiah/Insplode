@@ -10,8 +10,6 @@ import com.oberdiah.level.RUN_TIME_ELAPSED
 
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 
-const val PLAYER_GRAVITY_MODIFIER_POST_SLAM = 0.5
-const val PLAYER_GRAVITY_MODIFIER_PRE_SLAM = 1.0
 val DEAD_CONTEMPLATION_TIME
     get() = clamp(RUN_TIME_ELAPSED * 0.1, 1.5, 2.5)
 

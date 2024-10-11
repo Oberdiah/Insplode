@@ -19,9 +19,11 @@ import com.oberdiah.i
 import com.oberdiah.min
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
+import com.oberdiah.upgrades.UpgradeController.playerHas
 import com.oberdiah.utils.Perlin
 import com.oberdiah.utils.TileType
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 /**
  * Should only really be used to represent the tiles off the top and the bottom of the play area.
@@ -208,6 +210,23 @@ fun generateTile(tile: Tile) {
 
     val worldHeight = -abs(Perlin.noise(x, 0, 16)) * 5
     val depth = worldHeight - y
+
+    val spawnCache1 =
+//        !playerHas(Upgrade.Jump) &&
+        tile.coord.distTo(Point(6.8, -0.6)) < 0.2
+    val spawnCache2 =
+//        !playerHas(Upgrade.SmallTimedBomb) &&
+        tile.coord.distTo(Point(2, -1.8)) < 0.25
+
+    if (spawnCache1 || spawnCache2) {
+        tile.setTileType(TileType.OrbTile)
+        return
+    }
+    if (tile.coord.distTo(Point(5.2, -0.4)) < 0.4) {
+        tile.setTileType(TileType.Grass)
+        return
+    }
+
     if (depth < 0) {
         tile.dematerialize()
         return
@@ -223,12 +242,14 @@ fun generateTile(tile: Tile) {
         val randoStone = Perlin.noise(x / 5, y + 2839675, 7.0) > 0.3
         if (caveStone || randoStone) {
             tile.setTileType(TileType.Stone)
-            if (Random.nextDouble() < 0.1) {
+
+            val orbNoise = Perlin.noise(x, y, 5.0)
+            if (orbNoise > 0.65) {
                 tile.setTileType(TileType.OrbTile)
-            }
-            if (Random.nextDouble() < 0.01) {
-                if (UpgradeController.playerHas(Upgrade.GoldenNuggets)) {
-                    tile.setTileType(TileType.GoldenOrbTile)
+                if (Random.nextInt(0..100) < 2) {
+                    if (playerHas(Upgrade.GoldenNuggets)) {
+                        tile.setTileType(TileType.GoldenOrbTile)
+                    }
                 }
             }
         } else {
