@@ -45,7 +45,10 @@ object PlayerInputs {
 
     fun render(r: Renderer) {
         val pos = player.body.p
-        if (GAME_IS_RUNNING && !pauseHovered && UpgradeController.playerHas(Upgrade.SlamAssist)) {
+        if (GAME_IS_RUNNING && !pauseHovered) {
+            if (!UpgradeController.playerHas(Upgrade.Movement)) {
+                println("Warning: Slam Assist requires Movement!")
+            }
             TOUCHES_DOWN.firstOrNull()?.let { _ ->
                 val lineX = desiredXPos
 
@@ -87,8 +90,10 @@ object PlayerInputs {
                 lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
                 lastBodyXValue = player.body.p.x
 
-                if (player.state.isIdle) {
-                    player.state.justStartedPreparingAJump()
+                if (UpgradeController.playerHas(Upgrade.Jump)) {
+                    if (player.state.isIdle) {
+                        player.state.justStartedPreparingAJump()
+                    }
                 }
             }
         }
@@ -115,19 +120,7 @@ object PlayerInputs {
 
         val magnitude = saturate(abs(desiredXPos - player.body.p.x) / PLAYER_UNCERTAINTY_WINDOW)
 
-        val movementSpeed = if (UpgradeController.playerHas(Upgrade.Movement)) {
-            if (UpgradeController.playerHas(Upgrade.FasterMovement)) {
-                if (UpgradeController.playerHas(Upgrade.EvenFasterMovement)) {
-                    10.0
-                } else {
-                    5.0
-                }
-            } else {
-                2.5
-            }
-        } else {
-            0.0
-        }
+        val movementSpeed = UpgradeController.getMovementSpeed()
 
         val desiredXVel = when {
             desiredXPos < player.body.p.x -> -movementSpeed * magnitude
@@ -160,7 +153,7 @@ object PlayerInputs {
             }
         }
 
-        if (onDesktop) {
+        if (onDesktop && UpgradeController.playerHas(Upgrade.Jump)) {
             return isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
         }
 

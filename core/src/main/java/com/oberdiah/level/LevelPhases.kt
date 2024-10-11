@@ -1,6 +1,7 @@
 package com.oberdiah.level
 
 import com.oberdiah.BombType
+import com.oberdiah.PointOrbs
 
 
 class Phase(val d: Number, val callback: () -> Unit) {
@@ -39,6 +40,7 @@ val phases = arrayOf(
     },
     Phase(2.0) {
         spawnBomb(BombType.SmallTimed, 0.6)
+        spawnBomb(BombType.PointOrb, 0.5)
     },
     Phase(2.0) {
         spawnBomb(BombType.SmallTimed, 0.2)

@@ -12,6 +12,7 @@ import com.oberdiah.LineBomb
 import com.oberdiah.NUM_TILES_ACROSS
 import com.oberdiah.OrbRock
 import com.oberdiah.Point
+import com.oberdiah.PointOrbs
 import com.oberdiah.Renderer
 import com.oberdiah.SAFE_BOMB_SPAWN_HEIGHT
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
@@ -51,7 +52,8 @@ val LASER_HEIGHT_IN_MENU: Double
         )
     }
 
-val LASER_HEIGHT_START_IN_GAME = 20.0
+val LASER_HEIGHT_START_IN_GAME
+    get() = UpgradeController.getLaserStartHeight()
 
 var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
@@ -91,7 +93,6 @@ val LASER_HEIGHT: Double
 
         return lerp(LASER_HEIGHT_IN_MENU, laserIdealHeight, transition)
     }
-const val LASER_SPEED = 0.3
 const val LASER_WIDTH = 0.15
 const val LASER_DELAY = 3.0
 
@@ -148,7 +149,7 @@ fun tickLevelController() {
 
     val lastLaserHeight = LASER_HEIGHT
     if (RUN_TIME_ELAPSED > LASER_DELAY) {
-        laserIdealHeight -= GameTime.GAMEPLAY_DELTA * LASER_SPEED * deltaScaling
+        laserIdealHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling
     }
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
@@ -176,6 +177,7 @@ fun tickLevelController() {
             spawnBomb(bombType)
         }
     }
+
 
     var goalTime = 0.0
     phases.forEachIndexed { index, phase ->
@@ -232,6 +234,10 @@ fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble(0.05, 0.95)) 
             if (UpgradeController.playerHas(Upgrade.SpringBomb)) {
                 SpringBomb(pos)
             }
+        }
+
+        BombType.PointOrb -> {
+            PointOrbs.spawnOrbs(pos, 1)
         }
 
         // \/ \/ \/ Unused \/ \/ \/

@@ -5,12 +5,11 @@ import com.oberdiah.Point
 import com.oberdiah.Size
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.level.LASER_HEIGHT_IN_MENU
-import com.oberdiah.player.player_state.PlayerStateImpl
-import com.oberdiah.upgrades.UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS
 
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 
-const val PLAYER_GRAVITY_MODIFIER = 0.5
+const val PLAYER_GRAVITY_MODIFIER_POST_SLAM = 0.5
+const val PLAYER_GRAVITY_MODIFIER_PRE_SLAM = 1.0
 const val DEAD_CONTEMPLATION_TIME = 2.5
 
 /** The x-zone in which the player will no longer be moved closer to where they want to be */

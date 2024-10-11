@@ -17,6 +17,8 @@ import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.rectShape
 import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.ui.pauseHovered
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     /** Narrower than the player */
@@ -60,7 +62,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun reset() {
         body.setTransform(startingPoint, 0f)
         body.isFixedRotation = true
-        body.gravityScale = PLAYER_GRAVITY_MODIFIER
+        body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM
         body.velocity = Point(0.0, 0.0)
         body.linearDamping = 0.0
 
@@ -121,12 +123,16 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             }
         }
 
-        if (state.isIntentionallyMovingUp && body.velocity.y < 1.0 && body.velocity.y > 0.0) {
-            body.gravityScale = PLAYER_GRAVITY_MODIFIER * 0.5
-        } else if (state.isSlamming) {
-            body.gravityScale = PLAYER_GRAVITY_MODIFIER * 8.0
+        if (UpgradeController.playerHas(Upgrade.Slam)) {
+            if (PlayerInfoBoard.isUsingApexWings) {
+                body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM * 0.5
+            } else if (state.isSlamming) {
+                body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM * 8.0
+            } else {
+                body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM
+            }
         } else {
-            body.gravityScale = PLAYER_GRAVITY_MODIFIER
+            body.gravityScale = PLAYER_GRAVITY_MODIFIER_PRE_SLAM
         }
 
         if (state.isAlive && !pauseHovered) {

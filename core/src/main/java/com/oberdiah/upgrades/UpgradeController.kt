@@ -26,6 +26,7 @@ import com.oberdiah.playMultiplierSound
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulCoinBalance
+import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.ui.cameraYUnitsDeltaThisTick
@@ -350,6 +351,38 @@ object UpgradeController {
 
     fun playerHas(upgrade: Upgrade): Boolean {
         return playerUpgradeStates[upgrade]?.value ?: false
+    }
+
+    fun getMovementSpeed(): Double {
+        return if (playerHas(Upgrade.EvenFasterMovement)) {
+            10.0
+        } else if (playerHas(Upgrade.FasterMovement)) {
+            5.0
+        } else if (playerHas(Upgrade.Movement)) {
+            2.5
+        } else {
+            0.0
+        }
+    }
+
+    fun getLaserSpeed(): Double {
+        return if (playerHas(Upgrade.StoppedVoid)) {
+            0.0
+        } else if (playerHas(Upgrade.MuchSlowerVoid)) {
+            0.3
+        } else if (playerHas(Upgrade.SlowerVoid)) {
+            1.0
+        } else {
+            2.0
+        }
+    }
+
+    fun getLaserStartHeight(): Double {
+        return if (playerHas(Upgrade.VoidLift)) {
+            20.0
+        } else {
+            10.0
+        }
     }
 
     private fun highestIndexUnlockedSoFar(): Int {

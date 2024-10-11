@@ -7,6 +7,8 @@ import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
 import com.oberdiah.Velocity
 import com.oberdiah.level.getTile
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.whatAmITouching
 
 /**
@@ -26,6 +28,12 @@ object PlayerInfoBoard {
 
     val playerFeetPosition
         get() = player.body.p - Point(0.0, PLAYER_SIZE.w / 2 * GLOBAL_SCALE)
+
+    val isUsingApexWings
+        get() = player.state.isIntentionallyMovingUp &&
+                player.body.velocity.y < 1.0 &&
+                player.body.velocity.y > 0.0 &&
+                UpgradeController.playerHas(Upgrade.ApexWings)
 
     // If this is non-null, then it is a tile that exists.
     var tileBelowMe: Tile? = null

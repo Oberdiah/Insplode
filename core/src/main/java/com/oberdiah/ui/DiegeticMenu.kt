@@ -39,7 +39,7 @@ import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
 import com.oberdiah.withAlpha
 
-const val MENU_ZONE_BOTTOM_Y = 6.0
+const val MENU_ZONE_BOTTOM_Y = 1.0
 val UPGRADES_SCREEN_BOTTOM_Y
     get() = ceil(MENU_ZONE_BOTTOM_Y) + ceil(SCREEN_HEIGHT_IN_UNITS)
 val MENU_ZONE_TOP_Y

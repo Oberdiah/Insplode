@@ -1,6 +1,8 @@
 package com.oberdiah.player.player_state
 
 import com.oberdiah.player.player
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 
 /**
@@ -30,7 +32,7 @@ open class PlayerStateClasses {
     }
 
     protected class PlayerStateHandler {
-        var state: PlayerMode = PlayerMode.SLAMMING
+        var state: PlayerMode = PlayerMode.IDLE
             private set
 
         var timeSinceWeEnteredThisState = 0.0
@@ -42,7 +44,11 @@ open class PlayerStateClasses {
 
         fun reset() {
             timeSinceWeEnteredThisState = 0.0
-            setState(PlayerMode.SLAMMING)
+            if (UpgradeController.playerHas(Upgrade.Slam)) {
+                setState(PlayerMode.SLAMMING)
+            } else {
+                setState(PlayerMode.IDLE)
+            }
         }
 
         fun setState(newState: PlayerMode) {

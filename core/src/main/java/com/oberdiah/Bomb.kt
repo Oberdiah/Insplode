@@ -112,6 +112,9 @@ enum class BombType(
     ClusterParticle(0.8, 0.1, Double.NaN, Color.BLACK),
     OrbRock(0.3, 0.35, Double.NaN, Color.GRAY),
     ImpactBomb(1.0, 0.3, Double.NaN, colorScheme.bombPrimary),
+
+    // Placeholder for the purpose of spawning orbs in, doesn't have a bomb class associated with it.
+    PointOrb(0.0, 0.0, Double.NaN, Color.WHITE)
 }
 
 class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {

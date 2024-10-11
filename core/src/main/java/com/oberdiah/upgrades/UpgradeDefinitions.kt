@@ -20,6 +20,11 @@ enum class Upgrade(
     ),
 
     // ################ EARLY-GAME UPGRADES ################
+    VoidLift(
+        "Void Lift",
+        "The void starts higher up.",
+        5,
+    ),
     MediumTimedBomb(
         "Timed Bomb",
         "Occasionally drop a bomb\nthat explodes after a short\ndelay.",
@@ -29,6 +34,11 @@ enum class Upgrade(
         "Combo Orbs",
         "When a bomb explodes\nanother, orbs are spawned.",
         10,
+    ),
+    SlowerVoid(
+        "Void Repellent",
+        "Slow down the void's\napproach.",
+        15,
     ),
     BombWizard(
         "Bomb Wizard",
@@ -47,6 +57,11 @@ enum class Upgrade(
     FasterMovement(
         "Greater Speed",
         "Move faster.",
+        15,
+    ),
+    MuchSlowerVoid(
+        "Void Brakes",
+        "Slow the void to a crawl.",
         15,
     ),
     MoreSkyOrbs(
@@ -103,12 +118,6 @@ enum class Upgrade(
         "When fuse is half-depleted,\nslam to get double orbs\nand no explosion.",
         10,
     ),
-    SlamAssist(
-        "Slam Assist",
-        "A line that indicates where\nthe player is moving to and\nlights up when they reach it.",
-        10,
-        toggleable = true,
-    ),
     Magnet(
         "Magnet",
         "Attract orbs to you.",
@@ -136,6 +145,11 @@ enum class Upgrade(
         "Lightning Fast",
         "Move ridiculously fast.",
         25,
+    ),
+    StoppedVoid(
+        "Void Glue",
+        "Glue the void in place,\nnever to move again.",
+        15,
     ),
     GlobalMagnet(
         "Global Magnet",
