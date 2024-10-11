@@ -10,7 +10,12 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 object PointOrbs {
-    private data class OrbToBe(val p: Point, val points: Int, val startVel: Velocity = Velocity())
+    private data class OrbToBe(
+        val p: Point,
+        val points: Int,
+        val startVel: Velocity = Velocity(),
+        val addRandomVelocity: Boolean = true
+    )
 
     private var orbsToSpawn = mutableListOf<OrbToBe>()
 
@@ -21,7 +26,13 @@ object PointOrbs {
             var pointsLeft = points
             while (pointsLeft > 0) {
                 val orbScore = pointOrbValues.first { it.scoreGiven <= pointsLeft }
-                PointOrb(p, orbScore, createRandomFacingPoint() * 5.0 + startVel)
+                var velocity = startVel
+
+                if (orbToSpawn.addRandomVelocity) {
+                    velocity += createRandomFacingPoint() * 5.0
+                }
+
+                PointOrb(p, orbScore, velocity)
                 pointsLeft -= orbScore.scoreGiven
             }
         }
@@ -31,9 +42,14 @@ object PointOrbs {
     /**
      * Spawns a point orb at the given point worth the given number of points.
      */
-    fun spawnOrbs(p: Point, scoreGiven: Int, startVel: Velocity = Velocity()) {
+    fun spawnOrbs(
+        p: Point,
+        scoreGiven: Int,
+        startVel: Velocity = Velocity(),
+        addRandomVelocity: Boolean = true
+    ) {
         // We need to delay spawning because otherwise the physics system doesn't like it much.
-        orbsToSpawn.add(OrbToBe(p, scoreGiven, startVel))
+        orbsToSpawn.add(OrbToBe(p, scoreGiven, startVel, addRandomVelocity))
     }
 
     private val pointOrbValues = PointOrbValue.entries.sortedByDescending { it.scoreGiven }
@@ -58,7 +74,7 @@ object PointOrbs {
                 fixtureDef.shape = it
                 fixtureDef.density = 5.5f
                 fixtureDef.friction = 0.5f
-                fixtureDef.restitution = 0.4f
+                fixtureDef.restitution = 0.2f
                 fixtureDef.filter.categoryBits = PICKUP_PHYSICS_MASK
                 // This has a corresponding line in PhysicsObjects.kt
 //            fixtureDef.filter.maskBits = BOMB_PHYSICS_MASK.inv()

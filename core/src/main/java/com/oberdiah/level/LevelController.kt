@@ -237,7 +237,7 @@ fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble(0.05, 0.95)) 
         }
 
         BombType.PointOrb -> {
-            PointOrbs.spawnOrbs(pos, 1)
+            PointOrbs.spawnOrbs(pos, 1, addRandomVelocity = false)
         }
 
         // \/ \/ \/ Unused \/ \/ \/

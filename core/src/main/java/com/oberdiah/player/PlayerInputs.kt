@@ -46,9 +46,6 @@ object PlayerInputs {
     fun render(r: Renderer) {
         val pos = player.body.p
         if (GAME_IS_RUNNING && !pauseHovered) {
-            if (!UpgradeController.playerHas(Upgrade.Movement)) {
-                println("Warning: Slam Assist requires Movement!")
-            }
             TOUCHES_DOWN.firstOrNull()?.let { _ ->
                 val lineX = desiredXPos
 

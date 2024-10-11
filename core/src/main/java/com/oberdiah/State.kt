@@ -7,7 +7,6 @@ import com.oberdiah.utils.StatefulEnum
 import com.oberdiah.utils.StatefulInt
 
 val statefulHighScore = StatefulInt("highScore", 0)
-val statefulSwipeToSlam = StatefulBoolean("swipeToSlam", true)
 val statefulRenderParticles = StatefulBoolean("renderParticles", true)
 val statefulPauseSide = StatefulInt("pauseSide", Align.right)
 val statefulScreenShakeSetting =
@@ -15,3 +14,4 @@ val statefulScreenShakeSetting =
 val statefulVibrationSetting = StatefulBoolean("doVibration", true)
 val statefulEasyMode = StatefulBoolean("easyMode", false)
 val statefulCoinBalance = StatefulInt("coinBalance", 0)
+val statefulPlayMusicSetting = StatefulBoolean("playMusic", true)

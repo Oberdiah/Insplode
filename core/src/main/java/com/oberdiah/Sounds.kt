@@ -234,7 +234,6 @@ fun playRockCrumbleSound() {
 
 fun playParticleHitSound(velocity: Double, size: Double) {
     // Randomly drop some sounds
-//    if (Random.nextDouble() > 0.5) return
 
     val impact = velocity * size * 25.0
     val volume = saturate((impact - 2.0) / 10).pow(1.5) * 0.25
@@ -244,6 +243,22 @@ fun playParticleHitSound(velocity: Double, size: Double) {
         "Tap ${Random.nextInt(1, 6)}",
         pitch,
         volume,
+    )
+}
+
+fun playPlayerLandSound() {
+    playSound(
+        "Tap ${Random.nextInt(1, 6)}",
+        Random.nextDouble(0.9, 1.1),
+        Random.nextDouble(0.75, 0.9)
+    )
+}
+
+fun playChordsSound(chord: Int) {
+    playSound(
+        "Chords $chord",
+        Random.nextDouble(0.995, 1.005),
+        Random.nextDouble(0.75, 0.85)
     )
 }
 

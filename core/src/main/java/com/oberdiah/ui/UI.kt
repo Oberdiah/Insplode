@@ -39,6 +39,7 @@ import com.oberdiah.saturate
 import com.oberdiah.statefulCoinBalance
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulHighScore
+import com.oberdiah.statefulPlayMusicSetting
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
 import com.oberdiah.statefulVibrationSetting
@@ -160,6 +161,7 @@ private fun creditsUI(r: Renderer) {
 private fun settingsUI(r: Renderer) {
     toggleButton(r, "Particles", statefulRenderParticles::value)
     toggleButton(r, "Vibration", statefulVibrationSetting::value)
+    toggleButton(r, "Music", statefulPlayMusicSetting::value)
 
     // todo - re-enable this
 //    settingButton(r, "Color Scheme", {

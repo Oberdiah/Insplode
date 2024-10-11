@@ -1,7 +1,9 @@
 package com.oberdiah.player.player_state
 
+import com.badlogic.gdx.audio.Music
 import com.oberdiah.Bomb
 import com.oberdiah.GLOBAL_SCALE
+import com.oberdiah.MusicCoordinator
 import com.oberdiah.Point
 import com.oberdiah.ScoreSystem
 import com.oberdiah.Velocity
@@ -11,6 +13,7 @@ import com.oberdiah.clamp
 import com.oberdiah.i
 import com.oberdiah.max
 import com.oberdiah.min
+import com.oberdiah.playPlayerLandSound
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.PlayerInfoBoard
 import com.oberdiah.player.PlayerRenderer
@@ -141,6 +144,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
             println("Player should be in either int_mov_up or slamming states to land on the ground, was in ${s.state}")
         }
         s.setState(PlayerMode.IDLE)
+        playPlayerLandSound()
 
         ScoreSystem.registerCasuallyLanded()
     }

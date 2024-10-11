@@ -371,9 +371,9 @@ object UpgradeController {
         } else if (playerHas(Upgrade.MuchSlowerVoid)) {
             0.3
         } else if (playerHas(Upgrade.SlowerVoid)) {
-            1.0
+            0.75
         } else {
-            2.0
+            1.5
         }
     }
 

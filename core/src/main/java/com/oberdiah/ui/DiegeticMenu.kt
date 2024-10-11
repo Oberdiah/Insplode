@@ -6,6 +6,7 @@ import com.oberdiah.CURRENCY_DENOMINATION
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
+import com.oberdiah.MusicCoordinator
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
@@ -195,7 +196,7 @@ fun tickDiegeticMenu() {
         }
         TOUCHES_WENT_UP.forEach {
             if (isInLaunchButton(it) && !isDragging) {
-
+                MusicCoordinator.stopPlayingMusic()
                 GAME_STATE = GameState.InGame
             }
             if (isDragging) {

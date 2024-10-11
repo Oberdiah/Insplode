@@ -32,7 +32,7 @@ open class PlayerStateClasses {
     }
 
     protected class PlayerStateHandler {
-        var state: PlayerMode = PlayerMode.IDLE
+        var state: PlayerMode = PlayerMode.INTENTIONALLY_MOVING_UP
             private set
 
         var timeSinceWeEnteredThisState = 0.0
@@ -47,7 +47,7 @@ open class PlayerStateClasses {
             if (UpgradeController.playerHas(Upgrade.Slam)) {
                 setState(PlayerMode.SLAMMING)
             } else {
-                setState(PlayerMode.IDLE)
+                setState(PlayerMode.INTENTIONALLY_MOVING_UP)
             }
         }
 

@@ -38,6 +38,7 @@ fun restartGame() {
     updateTilePhysics()
     resetCamera()
     ScoreSystem.reset()
+    MusicCoordinator.startPlayingMusic()
     setCameraGlobalsThisFrame()
     updateCamera()
     updateLevelStorage()
@@ -94,6 +95,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         time("Save State") { saveState() }
         time("Tick Sounds") { tickSounds() }
+        time("Tick Music Coordinator") { MusicCoordinator.tick() }
 
         time("Camera") { updateCamera() }
         setCameraGlobalsThisFrame()

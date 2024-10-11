@@ -24,6 +24,15 @@ Icons/SlamOrbs.png
 Icons/SmallTimedBomb.png
 Icons/SneakySlam.png
 Lato-Medium.ttf
+Sounds/Chords 1.wav
+Sounds/Chords 2.wav
+Sounds/Chords 3.wav
+Sounds/Chords 4.wav
+Sounds/Chords 5.wav
+Sounds/Clap 1.wav
+Sounds/Clap 2.wav
+Sounds/Clap 3.wav
+Sounds/Clap 4.wav
 Sounds/Crunch 1.wav
 Sounds/Crunch 2.wav
 Sounds/Crunch 3.wav
@@ -50,6 +59,13 @@ Sounds/Tap 2.wav
 Sounds/Tap 3.wav
 Sounds/Tap 4.wav
 Sounds/Tap 5.wav
+Sounds/Thump 1.wav
+Sounds/Thump 2.wav
+Sounds/Thump 3.wav
+Sounds/Thump 4.wav
+Sounds/Thump 5.wav
+Sounds/Thump 6.wav
+Sounds/Thump 7.wav
 Sounds/trim_glass clink 1.wav
 Sounds/trim_glass clink 2.wav
 Sounds/trim_glass clink 3.wav
@@ -90,3 +106,4 @@ Sounds/Twang G 1.wav
 Sounds/Twang G 2.wav
 Sounds/Twang G 3.wav
 Sounds/Twang G 4.wav
+Sounds/Void Approaching.wav
