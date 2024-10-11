@@ -4,6 +4,7 @@ import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.Point
 import com.oberdiah.Size
 import com.oberdiah.TILE_SIZE_IN_UNITS
+import com.oberdiah.level.LASER_HEIGHT_IN_MENU
 import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.upgrades.UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS
 
@@ -24,4 +25,4 @@ const val JUMP_PREVENTION_WINDOW = 0.3
 val player = Player(Point(5, PLAYER_SPAWN_Y))
 
 val PLAYER_SPAWN_Y
-    get() = TOP_OF_UPGRADE_SCREEN_UNITS + 1.5
+    get() = LASER_HEIGHT_IN_MENU + 1.5

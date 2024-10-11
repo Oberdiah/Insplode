@@ -36,6 +36,7 @@ import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playChordNote
 import com.oberdiah.saturate
+import com.oberdiah.statefulCoinBalance
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulHighScore
 import com.oberdiah.statefulRenderParticles
@@ -106,9 +107,9 @@ fun renderUIScreenSpace(r: Renderer) {
             r.color = colorScheme.textColor.withAlpha(saturate(-CAMERA_POS_Y * 0.5))
 
             var text = "${RUN_TIME_ELAPSED.format(1)}s"
-            if (gameMessage != "") {
-                text = gameMessage
-            }
+//            if (gameMessage != "") {
+//                text = gameMessage
+//            }
             r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center, shouldCache = false)
 
             // The score itself is rendered by the score system in renderScores(r)
@@ -197,6 +198,9 @@ private fun advancedSettingsUI(r: Renderer) {
     }
     button(r, "Reset All Upgrades") {
         UpgradeController.resetAllUpgrades()
+    }
+    button(r, "Reset Coins") {
+        statefulCoinBalance.value = 0
     }
     button(r, "Back") {
         backAScreen()

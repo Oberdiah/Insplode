@@ -24,6 +24,7 @@ import com.oberdiah.fontMedium
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
 import com.oberdiah.lerp
+import com.oberdiah.level.LASER_HEIGHT_IN_MENU
 import com.oberdiah.sin
 import com.oberdiah.statefulCoinBalance
 import com.oberdiah.upgrades.Upgrade
@@ -163,6 +164,9 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     }
 }
 
+var cameraYUnitsDeltaThisTick = 0.0
+    private set
+
 fun tickDiegeticMenu() {
     if (GAME_STATE == GameState.DiegeticMenu) {
         var newCameraY = cameraY
@@ -214,7 +218,7 @@ fun tickDiegeticMenu() {
         cameraVelocity *= 0.95
         val lowestCameraY = MENU_ZONE_BOTTOM_Y
         val highestCameraY =
-            UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS + 1 - SCREEN_HEIGHT_IN_UNITS
+            LASER_HEIGHT_IN_MENU + 1.0 - SCREEN_HEIGHT_IN_UNITS
 
         // Soft clamp the camera y and make it bounce
 
@@ -226,8 +230,7 @@ fun tickDiegeticMenu() {
             cameraVelocity = 0.0
         }
 
-        val cameraYDelta = newCameraY - cameraY
-        UpgradeController.cameraHasMoved(cameraYDelta)
+        cameraYUnitsDeltaThisTick = newCameraY - cameraY
 
         cameraY = newCameraY
         setCameraY(cameraY)

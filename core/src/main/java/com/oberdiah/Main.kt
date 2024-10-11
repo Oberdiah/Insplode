@@ -146,6 +146,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         worldSpaceRenderer.begin()
         time("Render background") { RenderLevel.renderBackground(worldSpaceRenderer) }
         time("Render player inputs") { PlayerInputs.render(worldSpaceRenderer) }
+        time("Render world space UI") { renderUIWorldSpace(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
         time("Render level") { RenderLevel.render() }
@@ -154,7 +155,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render laser") { renderLaser(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
-        time("Render world space UI") { renderUIWorldSpace(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
 

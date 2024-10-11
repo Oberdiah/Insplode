@@ -28,6 +28,7 @@ import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulCoinBalance
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
+import com.oberdiah.ui.cameraYUnitsDeltaThisTick
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.StatefulBoolean
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
@@ -39,7 +40,7 @@ object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
     private val allUpgradeTextures = mutableMapOf<Upgrade, Sprite>()
 
-    private const val UPGRADE_ENTRY_HEIGHT = 4.0
+    const val UPGRADE_ENTRY_HEIGHT = 4.0
 
     fun init() {
         playerUpgradeStates.clear()
@@ -103,13 +104,11 @@ object UpgradeController {
     }
 
     fun getRedBackgroundRange(): ClosedFloatingPointRange<Double> {
-        return UPGRADES_SCREEN_BOTTOM_Y.d..getUpgradeYPos(
-            highestUpgradeUnlockedSoFar()
-        ) + UPGRADE_ENTRY_HEIGHT
+        return UPGRADES_SCREEN_BOTTOM_Y.d..yPosOfTopOfHighestUpgrade()
     }
 
     fun getGreyscaleRange(): ClosedFloatingPointRange<Double> {
-        return getUpgradeYPos(highestUpgradeUnlockedSoFar()) + UPGRADE_ENTRY_HEIGHT..TOP_OF_UPGRADE_SCREEN_UNITS
+        return yPosOfTopOfHighestUpgrade()..TOP_OF_UPGRADE_SCREEN_UNITS
     }
 
     fun noFundsWarningFract(): Double {
@@ -149,7 +148,11 @@ object UpgradeController {
                 0.0
             }
 
-            val noFundsWarningFract = noFundsWarningFract()
+            val noFundsWarningFract = if (lastAttemptedPurchase == upgrade) {
+                noFundsWarningFract()
+            } else {
+                0.0
+            }
 
             if (upgradeStatus != UpgradeStatus.PURCHASED) {
                 alphaForColor = if (purchaseFract == 0.0) {
@@ -270,7 +273,7 @@ object UpgradeController {
         // Separating line
         r.color = Color.GOLD.withAlpha(0.8)
         r.rect(
-            Point(0.0, getUpgradeYPos(highestUpgradeUnlockedSoFar()) + UPGRADE_ENTRY_HEIGHT),
+            Point(0.0, yPosOfTopOfHighestUpgrade()),
             Size(SCREEN_WIDTH_IN_UNITS, 0.1),
         )
     }
@@ -290,17 +293,8 @@ object UpgradeController {
         currentUpgradePurchaseSoundsPlayed = -1
     }
 
-    /**
-     * The amount it's moved in units this frame, on the Y-axis.
-     */
-    fun cameraHasMoved(deltaUnits: Double) {
-        if (deltaUnits.abs > 0.05) {
-            cancelUpgradePurchase()
-        }
-    }
-
     fun tick() {
-        if (cameraVelocity.abs < 0.1) {
+        if (cameraVelocity.abs < 0.1 && cameraYUnitsDeltaThisTick.abs < 0.05) {
             val purchasingFract = purchasingFraction()
 
             val soundToPlay = purchasingFract * 8
@@ -360,6 +354,10 @@ object UpgradeController {
 
     private fun highestIndexUnlockedSoFar(): Int {
         return Upgrade.entries.indexOfLast { playerHas(it) }
+    }
+
+    fun yPosOfTopOfHighestUpgrade(): Double {
+        return getUpgradeYPos(highestUpgradeUnlockedSoFar()) + UPGRADE_ENTRY_HEIGHT
     }
 
     private fun highestUpgradeUnlockedSoFar(): Upgrade? {

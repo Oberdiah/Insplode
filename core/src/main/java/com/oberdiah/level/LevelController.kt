@@ -45,7 +45,10 @@ import kotlin.random.Random
 
 val LASER_HEIGHT_IN_MENU: Double
     get() {
-        return UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS
+        return min(
+            UpgradeController.yPosOfTopOfHighestUpgrade() + UpgradeController.UPGRADE_ENTRY_HEIGHT * 3.0,
+            UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS
+        )
     }
 
 val LASER_HEIGHT_START_IN_GAME = 20.0

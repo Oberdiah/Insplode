@@ -18,6 +18,8 @@ import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.saturate
 import com.oberdiah.ui.pauseHovered
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
@@ -43,7 +45,7 @@ object PlayerInputs {
 
     fun render(r: Renderer) {
         val pos = player.body.p
-        if (GAME_IS_RUNNING && !pauseHovered) {
+        if (GAME_IS_RUNNING && !pauseHovered && UpgradeController.playerHas(Upgrade.SlamAssist)) {
             TOUCHES_DOWN.firstOrNull()?.let { _ ->
                 val lineX = desiredXPos
 
@@ -113,9 +115,23 @@ object PlayerInputs {
 
         val magnitude = saturate(abs(desiredXPos - player.body.p.x) / PLAYER_UNCERTAINTY_WINDOW)
 
+        val movementSpeed = if (UpgradeController.playerHas(Upgrade.Movement)) {
+            if (UpgradeController.playerHas(Upgrade.FasterMovement)) {
+                if (UpgradeController.playerHas(Upgrade.EvenFasterMovement)) {
+                    10.0
+                } else {
+                    5.0
+                }
+            } else {
+                2.5
+            }
+        } else {
+            0.0
+        }
+
         val desiredXVel = when {
-            desiredXPos < player.body.p.x -> -5 * magnitude
-            desiredXPos > player.body.p.x -> 5 * magnitude
+            desiredXPos < player.body.p.x -> -movementSpeed * magnitude
+            desiredXPos > player.body.p.x -> movementSpeed * magnitude
             else -> 0.0
         }
 
