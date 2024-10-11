@@ -30,13 +30,13 @@ private const val FADE_IN_TIME = 0.05
 private const val FADE_OUT_TIME = 0.3
 private const val HEIGHT_ABOVE_HEAD = 0.5
 
-class PlayerRenderer {
+object PlayerRenderer {
     private var renderedHeadOffset = 0.0
 
     fun render(r: Renderer) {
         val pos = player.body.p
 
-        if (playerInputs.canJump) {
+        if (PlayerInputs.canJump) {
             r.color = colorScheme.player
         } else if (playerState.isSlamming) {
             r.color = colorScheme.playerSlamming
@@ -146,7 +146,7 @@ class PlayerRenderer {
                     ferocity * (Random.nextDouble() - 0.5),
                     ferocity * Random.nextDouble()
                 ),
-                playerInfoBoard.tileBelowMe?.getTileType() ?: TileType.Air
+                PlayerInfoBoard.tileBelowMe?.getTileType() ?: TileType.Air
             )
         }
     }

@@ -7,16 +7,14 @@ import com.oberdiah.Velocity
 import com.oberdiah.abs
 import com.oberdiah.boom
 import com.oberdiah.clamp
-import com.oberdiah.compareTo
-import com.oberdiah.d
 import com.oberdiah.i
 import com.oberdiah.max
 import com.oberdiah.min
 import com.oberdiah.multiplier
 import com.oberdiah.player.PLAYER_SIZE
+import com.oberdiah.player.PlayerInfoBoard
+import com.oberdiah.player.PlayerRenderer
 import com.oberdiah.player.player
-import com.oberdiah.player.playerInfoBoard
-import com.oberdiah.player.playerRenderer
 import com.oberdiah.registerCasuallyLandedWithScoreSystem
 import com.oberdiah.spawnSmoke
 import com.oberdiah.utils.addScreenShake
@@ -51,7 +49,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
 
         val desiredVel =
             clamp(
-                abs(playerInfoBoard.slammingVelocity).pow(0.5) + bomb.power * 2.0 + 3.5,
+                abs(PlayerInfoBoard.slammingVelocity).pow(0.5) + bomb.power * 2.0 + 3.5,
                 5.0,
                 15.0
             )
@@ -68,8 +66,8 @@ class PlayerStateImpl : PlayerStateAccessors() {
 
         registerCasuallyLandedWithScoreSystem()
 
-        val vel = abs(playerInfoBoard.slammingVelocity)
-        playerRenderer.spawnParticlesAtMyFeet(
+        val vel = abs(PlayerInfoBoard.slammingVelocity)
+        PlayerRenderer.spawnParticlesAtMyFeet(
             ferocity = vel * 0.2,
             number = max((vel * 0.5).i, 2)
         )
@@ -132,7 +130,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
         val impulse = player.body.mass * velChange
         player.body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
 
-        playerRenderer.spawnParticlesAtMyFeet(number = 2)
+        PlayerRenderer.spawnParticlesAtMyFeet(number = 2)
     }
 
     /**

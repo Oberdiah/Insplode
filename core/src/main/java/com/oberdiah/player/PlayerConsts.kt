@@ -7,10 +7,7 @@ import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.upgrades.UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS
 
-val playerRenderer = PlayerRenderer()
 val playerState = PlayerStateImpl()
-val playerInfoBoard = PlayerInformationBoard()
-val playerInputs = PlayerInputs()
 
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 

@@ -62,9 +62,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         body.velocity = Point(0.0, 0.0)
         body.linearDamping = 0.0
 
-        playerInfoBoard.reset()
+        PlayerInfoBoard.reset()
         playerState.reset()
-        playerInputs.reset()
+        PlayerInputs.reset()
     }
 
     private fun addFixture(shape: Shape, isSensor: Boolean = false): Fixture {
@@ -80,7 +80,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun render(r: Renderer) {
         if (playerState.isAlive) {
-            playerRenderer.render(r)
+            PlayerRenderer.render(r)
         }
     }
 
@@ -91,7 +91,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             return
         }
 
-        playerInfoBoard.tick()
+
+        PlayerInfoBoard.tick()
         playerState.tick()
 
         if (player.body.p.y > LASER_HEIGHT && RUN_TIME_ELAPSED > 5.0) {
@@ -99,19 +100,19 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         if (playerState.isSlamming) {
-            if (playerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
-                val bomb = playerInfoBoard.bombsStandingOnGenerous.minByOrNull {
-                    it.body.p.distTo(playerInfoBoard.playerFeetPosition)
+            if (PlayerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
+                val bomb = PlayerInfoBoard.bombsStandingOnGenerous.minByOrNull {
+                    it.body.p.distTo(PlayerInfoBoard.playerFeetPosition)
                 }!!
                 playerState.justSlammedIntoABomb(bomb)
-            } else if (playerInfoBoard.isStandingOnNotBombExact) {
+            } else if (PlayerInfoBoard.isStandingOnNotBombExact) {
                 playerState.justSlammedIntoTheGround()
             }
         } else if (playerState.isIntentionallyMovingUp) {
-            if (playerInfoBoard.isStandingOnStandableExact) {
+            if (PlayerInfoBoard.isStandingOnStandableExact) {
                 if (playerState.timeSinceStartedIntentionallyMovingUp > JUMP_PREVENTION_WINDOW) {
                     // You cannot land if you're not moving down
-                    if (playerInfoBoard.velocity.y < 0) {
+                    if (PlayerInfoBoard.velocity.y < 0) {
                         playerState.justCasuallyLanded()
                     }
                 }
@@ -127,7 +128,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         if (playerState.isAlive && !pauseHovered) {
-            playerInputs.tick()
+            PlayerInputs.tick()
         }
     }
 

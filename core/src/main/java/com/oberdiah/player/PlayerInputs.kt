@@ -25,7 +25,7 @@ import com.oberdiah.utils.isKeyJustPressed
 import com.oberdiah.utils.isKeyPressed
 import com.oberdiah.withAlpha
 
-class PlayerInputs {
+object PlayerInputs {
     /** The point where the player's finger last went down. */
     private var lastFingerPoint = Point()
     private var lastBodyXValue = 0.0
@@ -34,7 +34,7 @@ class PlayerInputs {
         private set
 
     val canJump
-        get() = (playerState.isPreparingToJump || playerState.isIdle) && playerInfoBoard.isStandingOnStandableGenerous
+        get() = (playerState.isPreparingToJump || playerState.isIdle) && PlayerInfoBoard.isStandingOnStandableGenerous
 
     fun reset() {
         lastFingerPoint = Point()
@@ -45,7 +45,7 @@ class PlayerInputs {
         val pos = player.body.p
         if (GAME_IS_RUNNING && !pauseHovered) {
             TOUCHES_DOWN.firstOrNull()?.let { _ ->
-                val lineX = playerInputs.desiredXPos
+                val lineX = desiredXPos
 
                 if (lineX in (pos.x - PLAYER_UNCERTAINTY_WINDOW * 1.1)..(pos.x + PLAYER_UNCERTAINTY_WINDOW * 1.1)) {
                     r.color = Color.WHITE.withAlpha(0.5)
@@ -73,6 +73,13 @@ class PlayerInputs {
             playerState.justStartedASlam()
         }
 
+        if (IS_DEBUG_ENABLED) {
+            if (isKeyPressed(Keys.R)) {
+                // Explode on the player
+                boom(player.body.p, 1.0, false)
+            }
+        }
+
         if (TOUCHES_DOWN.size == 1) {
             TOUCHES_WENT_DOWN.forEach {
                 lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
@@ -85,7 +92,6 @@ class PlayerInputs {
         }
 
         desiredXPos = player.body.p.x
-
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
             val finger = touch / UNIT_SIZE_IN_PIXELS
             desiredXPos = lastBodyXValue + (finger.x - lastFingerPoint.x) * 1.8
@@ -94,13 +100,6 @@ class PlayerInputs {
                 if (finger.distTo(lastFingerPoint) > 0.1) {
                     playerState.justCancelledPreparingAJump()
                 }
-            }
-        }
-
-        if (IS_DEBUG_ENABLED) {
-            if (isKeyPressed(Keys.R)) {
-                // Explode on the player
-                boom(player.body.p, 1.0, false)
             }
         }
 
@@ -123,9 +122,9 @@ class PlayerInputs {
         val velChange = desiredXVel - vel.x
 
         // If velChange is large enough, spawn particles to simulate kicked up dirt in the direction of movement
-        if (playerInfoBoard.isStandingOnStandableExact) {
+        if (PlayerInfoBoard.isStandingOnStandableExact) {
             if (abs(velChange) > 5.1) {
-                playerRenderer.spawnParticlesAtMyFeet(
+                PlayerRenderer.spawnParticlesAtMyFeet(
                     number = 3,
                     addedVelocity = Point(velChange * 0.5, 0.0)
                 )

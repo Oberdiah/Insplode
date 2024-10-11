@@ -13,7 +13,7 @@ import com.oberdiah.whatAmITouching
  * Has lots of useful information about the player.
  * Ideally doesn't keep track of any state, and if it does it should be done silently
  */
-class PlayerInformationBoard {
+object PlayerInfoBoard {
     /** Velocities further from 0 are older */
     private val previousVelocities = mutableListOf<Velocity>()
 
@@ -64,7 +64,7 @@ class PlayerInformationBoard {
     fun tick() {
         previousVelocities.add(0, player.body.velocity.cpy)
         if (previousVelocities.size > 10) {
-            previousVelocities.removeLast()
+            previousVelocities.removeLastOrNull()
         }
 
         tileBelowMe = whatTileIsBelowMe()

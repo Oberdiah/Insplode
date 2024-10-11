@@ -13,7 +13,7 @@ import com.oberdiah.level.resetLevelController
 import com.oberdiah.level.tickCollapse
 import com.oberdiah.level.tickLevelController
 import com.oberdiah.level.updateLevelStorage
-import com.oberdiah.player.playerInputs
+import com.oberdiah.player.PlayerInputs
 import com.oberdiah.player.playerState
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
@@ -145,7 +145,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         worldSpaceRenderer.begin()
         time("Render background") { RenderLevel.renderBackground(worldSpaceRenderer) }
-        time("Render player inputs") { playerInputs.render(worldSpaceRenderer) }
+        time("Render player inputs") { PlayerInputs.render(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
         time("Render level") { RenderLevel.render() }
