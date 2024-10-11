@@ -3,6 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.colorScheme
 import kotlin.math.PI
@@ -40,7 +41,7 @@ fun tickBombController() {
 
 abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObject(startingPoint) {
     val maxFuseLength
-        get() = bombType.fuseLength
+        get() = bombType.fuseLength * UpgradeController.getBombFuseModifier()
 
     val radius
         get() = bombType.renderRadius * GLOBAL_SCALE
@@ -110,7 +111,6 @@ enum class BombType(
     StickyBomb(1.3, 0.3, 6.0, colorScheme.bombPrimary),
     ClusterBomb(1.0, 0.3, 8.0, colorScheme.bombPrimary),
     ClusterParticle(0.8, 0.1, Double.NaN, Color.BLACK),
-    OrbRock(0.3, 0.35, Double.NaN, Color.GRAY),
     ImpactBomb(1.0, 0.3, Double.NaN, colorScheme.bombPrimary),
 
     // Placeholder for the purpose of spawning orbs in, doesn't have a bomb class associated with it.
@@ -506,64 +506,5 @@ class SpringBomb(startingPoint: Point) : Bomb(startingPoint, BombType.SpringBomb
         r.circle(bodyPos, radius * 0.7)
         r.color = Color.WHITE.withAlpha(0.5)
         r.arcFrom0(bodyPos, radius * 0.7, overallFract)
-    }
-}
-
-class OrbRock(startingPoint: Point) : Bomb(startingPoint, BombType.OrbRock) {
-    private var livesLeft = 3
-    private var lastTimeLostALife = 0.0
-
-    init {
-        circleShape(radius) {
-            body.addFixture(bombFixtureDef(it))
-        }
-    }
-
-    override fun gotSlammed() {
-        // Explicitly nothing happens
-        boom(
-            body.p,
-            power,
-            affectsThePlayer = false,
-            affectsTheLandscape = false,
-            playSound = true
-        )
-    }
-
-    override fun getPointsWorth(): Int {
-        // We provide our own points when we crack open
-        return 0
-    }
-
-    override fun hitByExplosion() {
-        livesLeft--
-        lastTimeLostALife = RUN_TIME_ELAPSED
-
-        if (livesLeft <= 0) {
-            destroy()
-
-            PointOrbs.spawnOrbs(body.p, 2, Velocity(0, 3.0))
-        }
-    }
-
-    override fun render(r: Renderer) {
-        r.color = color
-        r.circle(body.p, radius)
-        if (livesLeft > 1) {
-            r.color = Color.WHITE.withAlpha(0.5)
-            r.circle(body.p, radius * 0.85)
-        }
-        if (livesLeft > 2) {
-            r.color = Color.WHITE.withAlpha(0.5)
-            r.circle(body.p, radius * 0.7)
-        }
-
-        val pointOrbCirclingZoneRad = radius
-        val innerPointOrbRad = pointOrbCirclingZoneRad / 2.0
-
-        val innerPointOrbOffset = Point(RUN_TIME_ELAPSED) * innerPointOrbRad
-
-        PointOrbs.drawOrb(r, body.p + innerPointOrbOffset, innerPointOrbRad)
-        PointOrbs.drawOrb(r, body.p - innerPointOrbOffset, innerPointOrbRad)
     }
 }

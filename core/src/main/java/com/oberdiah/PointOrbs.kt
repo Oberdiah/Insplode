@@ -54,11 +54,12 @@ object PointOrbs {
 
     private val pointOrbValues = PointOrbValue.entries.sortedByDescending { it.scoreGiven }
 
-    enum class PointOrbValue(val scoreGiven: Int, val radius: Double) {
-        One(1, 0.15),
-        Five(5, 0.20),
-        Twenty(20, 0.25),
-        Hundred(100, 0.30),
+    enum class PointOrbValue(val scoreGiven: Int, val radius: Double, val color: Color) {
+        One(1, 0.15, colorScheme.pointOrbColor),
+        Five(5, 0.20, colorScheme.pointOrbColor),
+        Twenty(20, 0.25, colorScheme.pointOrbColor),
+        Fifty(50, 0.1, colorScheme.goldenPointOrbColor),
+        Hundred(50, 0.2, colorScheme.goldenPointOrbColor),
     }
 
     class PointOrb(
@@ -110,7 +111,7 @@ object PointOrbs {
                     spawnSmoke(
                         body.p + createRandomFacingPoint() * Random.nextDouble() * radius * 0.25,
                         createRandomFacingPoint() * Random.nextDouble(),
-                        colorScheme.pickupColor.cpy()
+                        value.color.cpy()
                             .lerp(Color.WHITE, Random.nextDouble(0.3, 0.8).f)
                     )
                 }
@@ -120,19 +121,17 @@ object PointOrbs {
         override fun render(r: Renderer) {
             val radius = saturate(timeAlive * 2.5 + 0.5) * value.radius
 
-            drawOrb(r, body.p, radius)
+            val thisColor = value.color
+
+            r.color = thisColor.cpy().lerp(Color.BLACK, 0.75f).withAlpha(0.5)
+            r.circle(body.p, radius * 1.15)
+
+            r.color = thisColor
+            r.circle(body.p, radius)
+
+            // render a second white circle on top, pulsing in size
+            r.color = Color.WHITE.withAlpha(0.4)
+            r.circle(body.p, radius * (0.6 + sin(RUN_TIME_ELAPSED * 5) * 0.2))
         }
-    }
-
-    fun drawOrb(r: Renderer, p: Point, radius: Double) {
-        r.color = colorScheme.pickupColor.cpy().lerp(Color.BLACK, 0.75f).withAlpha(0.5)
-        r.circle(p, radius * 1.15)
-
-        r.color = colorScheme.pickupColor
-        r.circle(p, radius)
-
-        // render a second white circle on top, pulsing in size
-        r.color = Color.WHITE.withAlpha(0.4)
-        r.circle(p, radius * (0.6 + sin(RUN_TIME_ELAPSED * 5) * 0.2))
     }
 }

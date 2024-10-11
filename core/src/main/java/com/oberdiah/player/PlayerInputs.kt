@@ -45,7 +45,7 @@ object PlayerInputs {
 
     fun render(r: Renderer) {
         val pos = player.body.p
-        if (GAME_IS_RUNNING && !pauseHovered) {
+        if (GAME_IS_RUNNING && !pauseHovered && UpgradeController.playerHas(Upgrade.Movement)) {
             TOUCHES_DOWN.firstOrNull()?.let { _ ->
                 val lineX = desiredXPos
 
@@ -142,6 +142,10 @@ object PlayerInputs {
     }
 
     private fun isJumpJustPressed(): Boolean {
+        if (!UpgradeController.playerHas(Upgrade.Jump)) {
+            return false
+        }
+
         val onDesktop = Gdx.app.type == Application.ApplicationType.Desktop
 
         if (player.state.isPreparingToJump) {
@@ -150,7 +154,7 @@ object PlayerInputs {
             }
         }
 
-        if (onDesktop && UpgradeController.playerHas(Upgrade.Jump)) {
+        if (onDesktop) {
             return isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
         }
 
@@ -158,6 +162,10 @@ object PlayerInputs {
     }
 
     private fun isSlamJustPressed(): Boolean {
+        if (!UpgradeController.playerHas(Upgrade.Slam)) {
+            return false
+        }
+
         return TOUCHES_WENT_UP.firstOrNull()?.let {
             true
         } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {

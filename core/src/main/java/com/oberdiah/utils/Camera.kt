@@ -23,12 +23,6 @@ fun startCameraToDiegeticMenuTransition() {
     CAMERA_FOLLOWING = CameraFollowing.MenuStartPos
 }
 
-private fun cameraHasReachedFinalDiegeticMenuPosition() {
-    CAMERA_FOLLOWING = CameraFollowing.Nothing
-    GAME_STATE = GameState.DiegeticMenu
-    resetGame()
-}
-
 fun resetCamera() {
     CAMERA_FOLLOWING = CameraFollowing.Nothing
     screenCamera.setToOrtho(false, WIDTH.f, HEIGHT.f)
@@ -95,7 +89,7 @@ fun updateCamera() {
                 clamp(cameraDistToMove, -1.5, -0.05)
             }
             if (abs(camera.position.y - desiredCameraPos) < 0.05) {
-                cameraHasReachedFinalDiegeticMenuPosition()
+                endGame()
             }
         }
 

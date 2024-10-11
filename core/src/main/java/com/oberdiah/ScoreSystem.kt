@@ -10,6 +10,7 @@ import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.GameTime.APP_TIME
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.GameTime.updateGameSpeed
+import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
 import kotlin.random.Random
@@ -66,16 +67,6 @@ object ScoreSystem {
         return clamp((numConsecutiveBounces - 10) * 0.1, 0.0, 0.5)
     }
 
-    fun reset() {
-        playerScore = 0
-        growingScore = 0
-        numConsecutiveBounces = 0
-        lastScoreCollectionTime = RUN_TIME_ELAPSED
-        growingScoreStartedOn = RUN_TIME_ELAPSED
-        scoreLeftToSound = 0
-        lastTimeScoreSounded = 0.0
-    }
-
     fun registerBombSlam(bomb: Bomb) {
         val numToNormallySpawn = bomb.getPointsWorth()
         PointOrbs.spawnOrbs(bomb.body.p, (numToNormallySpawn * getCurrentMultiplier()).i)
@@ -88,10 +79,28 @@ object ScoreSystem {
         playMultiplierSound(numConsecutiveBounces)
     }
 
+    fun registerTileDestroyed(pos: Point, tileType: TileType) {
+        val numToSpawn = when (tileType) {
+            TileType.OrbTile -> 1
+            TileType.GoldenOrbTile -> 50
+            else -> 0
+        }
+
+        PointOrbs.spawnOrbs(pos, (numToSpawn * getCurrentMultiplier()).i)
+    }
+
     fun registerGameEnd() {
         lastScore = playerScore
         lastScoreGivenOn = APP_TIME
         scoreGivingSpeed = max(coinsToGiveAtEndOfGame / 4.0, 4.0)
+
+        playerScore = 0
+        growingScore = 0
+        numConsecutiveBounces = 0
+        lastScoreCollectionTime = RUN_TIME_ELAPSED
+        growingScoreStartedOn = RUN_TIME_ELAPSED
+        scoreLeftToSound = 0
+        lastTimeScoreSounded = 0.0
     }
 
     fun registerCasuallyLanded() {
@@ -157,7 +166,7 @@ object ScoreSystem {
                 spawnSmoke(
                     smokeSpawnPoint,
                     velocity,
-                    color = colorScheme.pickupColor.cpy().mul(Random.nextDouble(0.8, 1.2).f),
+                    color = colorScheme.pointOrbColor.cpy().mul(Random.nextDouble(0.8, 1.2).f),
                     canCollide = false,
                     radiusScaling = 1.7,
                     gravityScaling = 0.0

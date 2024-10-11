@@ -368,10 +368,8 @@ object UpgradeController {
     fun getLaserSpeed(): Double {
         return if (playerHas(Upgrade.StoppedVoid)) {
             0.0
-        } else if (playerHas(Upgrade.MuchSlowerVoid)) {
-            0.3
         } else if (playerHas(Upgrade.SlowerVoid)) {
-            0.75
+            0.3
         } else {
             1.5
         }
@@ -382,6 +380,14 @@ object UpgradeController {
             20.0
         } else {
             10.0
+        }
+    }
+
+    fun getBombFuseModifier(): Double {
+        return if (playerHas(Upgrade.SlowerTimers)) {
+            1.0
+        } else {
+            0.5
         }
     }
 

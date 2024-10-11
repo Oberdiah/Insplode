@@ -20,25 +20,20 @@ enum class Upgrade(
     ),
 
     // ################ EARLY-GAME UPGRADES ################
-    VoidLift(
-        "Void Lift",
-        "The void starts higher up.",
+    SlowerVoid(
+        "Void Repellent",
+        "Slow down the void's\napproach.",
         5,
     ),
     MediumTimedBomb(
         "Timed Bomb",
-        "Occasionally drop a bomb\nthat explodes after a short\ndelay.",
+        "Occasionally spawns in\na bomb.\nMine for orbs!",
         5,
     ),
-    ComboOrbs(
-        "Combo Orbs",
-        "When a bomb explodes\nanother, orbs are spawned.",
-        10,
-    ),
-    SlowerVoid(
-        "Void Repellent",
-        "Slow down the void's\napproach.",
-        15,
+    VoidLift(
+        "Void Lift",
+        "Haul that darkness away!\nThe void begins higher up.",
+        5,
     ),
     BombWizard(
         "Bomb Wizard",
@@ -59,14 +54,24 @@ enum class Upgrade(
         "Move faster.",
         15,
     ),
-    MuchSlowerVoid(
-        "Void Brakes",
-        "Slow the void to a crawl.",
-        15,
+    ComboOrbs(
+        "Combo Orbs",
+        "When a bomb explodes\nanother, orbs are spawned.",
+        20,
     ),
     MoreSkyOrbs(
         "More Orbs",
         "More orbs fall from the sky.",
+        10,
+    ),
+    SlowerTimers(
+        "Slower Timers",
+        "Timers on bombs are\nslowed down.",
+        10,
+    ),
+    GoldenNuggets(
+        "Golden Nuggets",
+        "Occasional golden tiles\nfull of treasure.",
         10,
     ),
     SmallTimedBomb(

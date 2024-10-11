@@ -27,18 +27,18 @@ lateinit var worldSpaceRenderer: Renderer
 lateinit var uiRenderer: Renderer
 lateinit var platformInterface: PlatformInterface
 
-fun resetGame() {
+fun endGame() {
+    MusicCoordinator.startPlayingMusic()
+    GAME_STATE = GameState.DiegeticMenu
     Perlin.randomize()
+    resetCamera()
 
-    resetParticles()
     resetPhysicsObjects()
     resetLevel()
+    updateTilePhysics()
+
     resetLevelController()
     resetLevelCollapse()
-    updateTilePhysics()
-    resetCamera()
-    ScoreSystem.reset()
-    MusicCoordinator.startPlayingMusic()
     setCameraGlobalsThisFrame()
     updateCamera()
     updateLevelStorage()
@@ -46,8 +46,11 @@ fun resetGame() {
 
 fun startGame() {
     MusicCoordinator.stopPlayingMusic()
-    player.reset()
     GAME_STATE = GameState.InGame
+
+    // We might have upgraded or changed settings, so we want to re-reset a bunch of stuff.
+    resetPhysicsObjects()
+    resetLevelController()
 }
 
 private lateinit var leftWall: PhysBody
@@ -81,7 +84,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         ceiling = createWall(Rect(Point(), Size(SCREEN_WIDTH_IN_UNITS, 1)))
         floor = createWall(Rect(Point(), Size(SCREEN_WIDTH_IN_UNITS, 1)))
 
-        resetGame()
+        endGame()
     }
 
     override fun render() {

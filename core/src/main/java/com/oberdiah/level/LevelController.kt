@@ -10,7 +10,6 @@ import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.LAST_APP_TIME_GAME_STATE_CHANGED
 import com.oberdiah.LineBomb
 import com.oberdiah.NUM_TILES_ACROSS
-import com.oberdiah.OrbRock
 import com.oberdiah.Point
 import com.oberdiah.PointOrbs
 import com.oberdiah.Renderer
@@ -65,13 +64,13 @@ fun resetLevelController() {
     gameMessage = ""
     maxDepthThisRun = 0.0
     currentDepthThisRun = 0.0
-    laserIdealHeight = LASER_HEIGHT_START_IN_GAME
+    laserInGameHeight = LASER_HEIGHT_START_IN_GAME
     bombDropData.clear()
 }
 
 var currentDepthThisRun = 0.0
 var maxDepthThisRun = 0.0
-var laserIdealHeight = LASER_HEIGHT_START_IN_GAME
+var laserInGameHeight = LASER_HEIGHT_START_IN_GAME
 val LASER_HEIGHT: Double
     get() {
         var transition = saturate((RUN_TIME_ELAPSED - LASER_DELAY))
@@ -91,7 +90,7 @@ val LASER_HEIGHT: Double
             )
         }
 
-        return lerp(LASER_HEIGHT_IN_MENU, laserIdealHeight, transition)
+        return lerp(LASER_HEIGHT_IN_MENU, laserInGameHeight, transition)
     }
 const val LASER_WIDTH = 0.15
 const val LASER_DELAY = 3.0
@@ -149,7 +148,7 @@ fun tickLevelController() {
 
     val lastLaserHeight = LASER_HEIGHT
     if (RUN_TIME_ELAPSED > LASER_DELAY) {
-        laserIdealHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling
+        laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling
     }
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
@@ -244,7 +243,6 @@ fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble(0.05, 0.95)) 
         BombType.StickyBomb -> StickyBomb(pos)
         BombType.ClusterBomb -> ClusterBomb(pos)
         BombType.ImpactBomb -> ImpactBomb(pos)
-        BombType.OrbRock -> OrbRock(pos)
         else -> throw Exception()
     }
 }

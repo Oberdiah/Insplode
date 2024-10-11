@@ -40,7 +40,7 @@ class Grassy : ColorScheme("Forest") {
         caveWall = colorFrom(0x172117)
         dirt = colorFrom(0x54793E)
         grass = colorFrom(0x103E1F)
-        pickupColor = colorFrom(0x48f06f)
+        pointOrbColor = colorFrom(0x48f06f)
     }
 }
 
@@ -55,7 +55,8 @@ class Grassy2 : ColorScheme("Grass Lands") {
         caveWall = colorFrom(0xFFEABF).withAlpha(0.5f)
         dirt = colorFrom(0x6a994e)
         grass = colorFrom(0xa7c957)
-        pickupColor = colorFrom(0x48f06f)
+        pointOrbColor = colorFrom(0x48f06f)
+        goldenPointOrbColor = Color.GOLD
     }
 }
 
@@ -150,7 +151,8 @@ open class ColorScheme(val name: String) {
     var textColor: Color = colorFrom(0x242423)
     lateinit var player: Color
     lateinit var playerSlamming: Color
-    lateinit var pickupColor: Color
+    lateinit var pointOrbColor: Color
+    lateinit var goldenPointOrbColor: Color
     lateinit var bombPrimary: Color
     lateinit var backgroundA: Color
     lateinit var backgroundB: Color
@@ -179,6 +181,8 @@ enum class TileType(var color: () -> Color, val collidable: Boolean = true) {
     Stone({ colorScheme.stone }),
     Dirt({ colorScheme.dirt }),
     Grass({ colorScheme.grass }),
+    OrbTile({ colorScheme.pointOrbColor }),
+    GoldenOrbTile({ colorScheme.goldenPointOrbColor }),
     CaveWall({ colorScheme.caveWall }, false),
     Air({ Colors.transparent }, false)
 }
