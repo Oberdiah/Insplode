@@ -2,7 +2,6 @@ package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.oberdiah.*
-import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import kotlin.math.pow
@@ -27,7 +26,7 @@ fun startCameraToDiegeticMenuTransition() {
 private fun cameraHasReachedFinalDiegeticMenuPosition() {
     CAMERA_FOLLOWING = CameraFollowing.Nothing
     GAME_STATE = GameState.DiegeticMenu
-    restartGame()
+    resetGame()
 }
 
 fun resetCamera() {

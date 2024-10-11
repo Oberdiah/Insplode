@@ -27,6 +27,7 @@ import com.oberdiah.get2DShake
 import com.oberdiah.lerp
 import com.oberdiah.level.LASER_HEIGHT_IN_MENU
 import com.oberdiah.sin
+import com.oberdiah.startGame
 import com.oberdiah.statefulCoinBalance
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
@@ -196,8 +197,7 @@ fun tickDiegeticMenu() {
         }
         TOUCHES_WENT_UP.forEach {
             if (isInLaunchButton(it) && !isDragging) {
-                MusicCoordinator.stopPlayingMusic()
-                GAME_STATE = GameState.InGame
+                startGame()
             }
             if (isDragging) {
                 val fingerDist = delayedPreviousFingerY - it.y

@@ -27,7 +27,6 @@ import com.oberdiah.playMultiplierSound
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulCoinBalance
-import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.ui.cameraYUnitsDeltaThisTick

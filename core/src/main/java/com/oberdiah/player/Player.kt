@@ -9,6 +9,7 @@ import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem
+import com.oberdiah.UNITS_WIDE
 import com.oberdiah.WORLD_PHYSICS_MASK
 import com.oberdiah.circleShape
 import com.oberdiah.level.LASER_HEIGHT
@@ -60,7 +61,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun reset() {
-        body.setTransform(startingPoint, 0f)
+        body.setTransform(Point(UNITS_WIDE / 2, PLAYER_SPAWN_Y), 0f)
         body.isFixedRotation = true
         body.gravityScale = PLAYER_GRAVITY_MODIFIER_POST_SLAM
         body.velocity = Point(0.0, 0.0)
@@ -92,6 +93,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         if (state.timeSinceDied > DEAD_CONTEMPLATION_TIME && GAME_STATE == GameState.InGame) {
             goToDiegeticMenu()
             ScoreSystem.registerGameEnd()
+            return
+        }
+        if (GAME_STATE == GameState.DiegeticMenu) {
             return
         }
 
