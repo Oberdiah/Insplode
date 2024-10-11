@@ -20,17 +20,15 @@ import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
-import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
-import com.oberdiah.lastScore
+import com.oberdiah.get2DShake
 import com.oberdiah.lerp
 import com.oberdiah.renderScores
 import com.oberdiah.sin
 import com.oberdiah.statefulCoinBalance
-import com.oberdiah.statefulHighScore
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
-import com.oberdiah.utils.ColorScheme
+import com.oberdiah.upgrades.UpgradeController.noFundsWarningFract
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
@@ -151,11 +149,14 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         r.color = Color.DARK_GRAY
         r.polyLine(coinAreaPoints, coinAreaPosition, WIDTH / 150)
 
+        val coinTextWobble = get2DShake(noFundsWarningFract() * UNIT_SIZE_IN_PIXELS * 0.5)
+
         r.color = Color.WHITE
         r.text(
             fontMedium,
             "${statefulCoinBalance.value}$CURRENCY_DENOMINATION",
-            coinAreaPosition.x - coinAreaWidth * 0.4, coinAreaPosition.y - coinAreaHeight / 2,
+            coinAreaPosition.x - coinAreaWidth * 0.4 + coinTextWobble.x,
+            coinAreaPosition.y - coinAreaHeight / 2 + coinTextWobble.y,
             Align.left,
             shouldCache = false
         )

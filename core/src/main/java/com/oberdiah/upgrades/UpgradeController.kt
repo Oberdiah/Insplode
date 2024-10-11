@@ -20,6 +20,7 @@ import com.oberdiah.f
 import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
 import com.oberdiah.get2DShake
+import com.oberdiah.getOrZero
 import com.oberdiah.max
 import com.oberdiah.playMultiplierSound
 import com.oberdiah.saturate
@@ -42,7 +43,7 @@ object UpgradeController {
 
     fun init() {
         playerUpgradeStates.clear()
-        Upgrade.values().forEach {
+        Upgrade.entries.forEach {
             playerUpgradeStates[it] = StatefulBoolean(it.name, false)
             allUpgradeTextures[it] = Sprite(Texture("Icons/${it.name}.png"))
         }
@@ -55,13 +56,13 @@ object UpgradeController {
     }
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
-        get() = UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * Upgrade.values().size
+        get() = UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * Upgrade.entries.size
 
     /**
      * An iterator of upgrade and its Y-position in the upgrade menu.
      */
     fun upgradesIterator(): Iterator<Pair<Upgrade, Double>> {
-        return Upgrade.values().mapIndexed { index, upgrade ->
+        return Upgrade.entries.mapIndexed { index, upgrade ->
             upgrade to UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * index
         }.iterator()
     }
@@ -82,7 +83,11 @@ object UpgradeController {
 
         val timeToPurchase = 1.5
 
-        return easeInOutSine(saturate((GameTime.APP_TIME - timePurchasingUpgradeStarted) / timeToPurchase))
+        return easeInOutSine(
+            saturate(
+                (GameTime.APP_TIME - (timeOfAttemptedPurchase.getOrZero(UpgradeStatus.PURCHASABLE))) / timeToPurchase
+            )
+        )
     }
 
     fun currentUpgradeYRange(): ClosedFloatingPointRange<Double> {
@@ -94,6 +99,16 @@ object UpgradeController {
         return UPGRADES_SCREEN_BOTTOM_Y.d..getUpgradeYPos(
             highestUpgradeUnlockedSoFar()
         ) + UPGRADE_ENTRY_HEIGHT
+    }
+
+    fun getGreyscaleRange(): ClosedFloatingPointRange<Double> {
+        return getUpgradeYPos(highestUpgradeUnlockedSoFar()) + UPGRADE_ENTRY_HEIGHT..TOP_OF_UPGRADE_SCREEN_UNITS
+    }
+
+    fun noFundsWarningFract(): Double {
+        return 1.0 - saturate(
+            (GameTime.APP_TIME - timeOfAttemptedPurchase.getOrZero(UpgradeStatus.TOO_EXPENSIVE)) / 0.5
+        )
     }
 
     private fun getUpgradeSectionColor(upgrade: Upgrade): Color {
@@ -108,8 +123,6 @@ object UpgradeController {
         val textXPos = 4.5
         val costTextXPos = 9.5
         val iconXPos = 2.25
-        val iconSize = 3.0
-        val iconSizeBeforePurchase = 2.0
 
         for ((upgrade, yPos) in upgradesIterator()) {
             if (yPos > JUST_UP_OFF_SCREEN_UNITS) {
@@ -119,9 +132,7 @@ object UpgradeController {
                 continue
             }
 
-            val hasUpgrade = playerHas(upgrade)
-            val isPurchasable = upgradeIsPurchasable(upgrade)
-            val isAbleToSee = isPurchasable || hasUpgrade
+            val upgradeStatus = getUpgradeStatus(upgrade)
 
             var alphaForColor = if (currentlyPurchasingUpgrade == upgrade) 0.2 else 0.11
 
@@ -131,7 +142,9 @@ object UpgradeController {
                 0.0
             }
 
-            if (!hasUpgrade) {
+            val noFundsWarningFract = noFundsWarningFract()
+
+            if (upgradeStatus != UpgradeStatus.PURCHASED) {
                 alphaForColor = if (purchaseFract == 0.0) {
                     0.025
                 } else {
@@ -172,77 +185,65 @@ object UpgradeController {
                 Size(SCREEN_WIDTH_IN_UNITS, 0.05),
             )
 
-            r.color = colorScheme.textColor
+            r.color = colorScheme.textColor.withAlpha(upgradeStatus.getTextAlpha())
 
-            if (!hasUpgrade) {
-                if (isPurchasable) {
-                    r.color = r.color.withAlpha(0.75)
-                } else {
-                    r.color = r.color.withAlpha(0.3)
-                }
-            }
+            val titleShake = get2DShake(purchaseFract, 1)
+            val descriptionShake = get2DShake(purchaseFract, 2)
+            val priceShake = get2DShake(purchaseFract + noFundsWarningFract, 3)
+            val lineShake = get2DShake(purchaseFract, 4)
+            val iconShake = get2DShake(purchaseFract, 5)
 
             r.text(
                 fontSmallish,
-                if (isAbleToSee) {
+                if (upgradeStatus.isTextVisible()) {
                     upgrade.title
                 } else {
                     upgrade.obfuscatedTitle
                 },
-                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + get2DShake(purchaseFract, 1),
+                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + titleShake,
                 Align.left
             )
 
-            // Price
-            if (isPurchasable) {
-                r.text(
-                    fontSmallish,
-                    "${upgrade.price}${CURRENCY_DENOMINATION}",
-                    Point(costTextXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + get2DShake(
-                        purchaseFract,
-                        2
-                    ),
-                    Align.right
-                )
-            }
-
             r.text(
                 fontTiny,
-                if (isAbleToSee) {
+                if (upgradeStatus.isTextVisible()) {
                     upgrade.description
                 } else {
                     upgrade.obfuscatedDescription
                 },
-                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.375) + get2DShake(
-                    purchaseFract,
-                    3
-                ),
+                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.375) + descriptionShake,
                 Align.left
             )
+
+            // Price
+            if (upgradeStatus.isPriceVisible()) {
+                if (upgradeStatus.isPriceRed()) {
+                    r.color.r = saturate(r.color.r + noFundsWarningFract + 0.5).f
+                }
+
+                r.text(
+                    fontSmallish,
+                    "${upgrade.price}${CURRENCY_DENOMINATION}",
+                    Point(costTextXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + priceShake,
+                    Align.right
+                )
+            }
 
             // Small line
             r.color = Color.BLACK.withAlpha(0.5)
             r.rect(
-                Point(textXPos + 0.05, yPos + UPGRADE_ENTRY_HEIGHT * 0.5) + get2DShake(
-                    purchaseFract, 4
-                ),
+                Point(textXPos + 0.05, yPos + UPGRADE_ENTRY_HEIGHT * 0.5) + lineShake,
                 Size(4.0, 0.05),
             )
 
             val sprite = allUpgradeTextures[upgrade] ?: break
-            val p =
-                Point(iconXPos, yPos + UPGRADE_ENTRY_HEIGHT / 2) + get2DShake(purchaseFract, 5)
+            val p = Point(iconXPos, yPos + UPGRADE_ENTRY_HEIGHT / 2) + iconShake
             // Draw the texture centered on the position, scaled as much as it can be without warping.
             val textureSize = Size(sprite.width.f, sprite.height.f)
 
-            val iconScale = if (hasUpgrade) {
-                iconSize
-            } else {
-                iconSizeBeforePurchase - purchaseFract * 0.5
-            }
+            val iconScale = upgradeStatus.getIconSize() - purchaseFract * 0.5
 
             val scale = iconScale / max(textureSize.w, textureSize.h).f
-
             val shadowDirection = Point(0.1, -0.1)
 
             // Shadow
@@ -253,7 +254,7 @@ object UpgradeController {
                 color = Color.BLACK.withAlpha(0.5)
             )
 
-            if (isAbleToSee) {
+            if (upgradeStatus.isIconVisible()) {
                 // Main sprite
                 r.centeredSprite(sprite, p, Size(textureSize.w * scale, textureSize.h * scale))
             }
@@ -268,8 +269,14 @@ object UpgradeController {
     }
 
     private var currentlyPurchasingUpgrade: Upgrade? = null
-    private var timePurchasingUpgradeStarted = 0.0
+    private var lastAttemptedPurchase: Upgrade? = null
     private var currentUpgradePurchaseSoundsPlayed = -1
+    private val timeOfAttemptedPurchase = mutableMapOf(
+        UpgradeStatus.HIDDEN to Double.NEGATIVE_INFINITY,
+        UpgradeStatus.TOO_EXPENSIVE to Double.NEGATIVE_INFINITY,
+        UpgradeStatus.PURCHASABLE to Double.NEGATIVE_INFINITY,
+        UpgradeStatus.PURCHASED to Double.NEGATIVE_INFINITY,
+    )
 
     private fun cancelUpgradePurchase() {
         currentlyPurchasingUpgrade = null
@@ -298,8 +305,10 @@ object UpgradeController {
             TOUCHES_WENT_DOWN.forEach { touch ->
                 upgradesIterator().forEach { (upgrade, yPos) ->
                     if ((yPos + UPGRADE_ENTRY_HEIGHT / 2 - touch.wo.y).abs < UPGRADE_ENTRY_HEIGHT / 2) {
-                        if (upgradeIsPurchasable(upgrade)) {
-                            timePurchasingUpgradeStarted = GameTime.APP_TIME
+                        val upgradeStatus = getUpgradeStatus(upgrade)
+                        timeOfAttemptedPurchase[upgradeStatus] = GameTime.APP_TIME
+                        lastAttemptedPurchase = upgrade
+                        if (upgradeStatus == UpgradeStatus.PURCHASABLE) {
                             currentlyPurchasingUpgrade = upgrade
                         }
                     }
@@ -343,15 +352,67 @@ object UpgradeController {
     }
 
     private fun highestIndexUnlockedSoFar(): Int {
-        return Upgrade.values().indexOfLast { playerHas(it) }
+        return Upgrade.entries.indexOfLast { playerHas(it) }
     }
 
     private fun highestUpgradeUnlockedSoFar(): Upgrade? {
-        return Upgrade.values().lastOrNull { playerHas(it) }
+        return Upgrade.entries.lastOrNull { playerHas(it) }
     }
 
-    private fun upgradeIsPurchasable(upgrade: Upgrade): Boolean {
-        val index = upgrade.ordinal
-        return (index <= highestIndexUnlockedSoFar() + 1) && !playerHas(upgrade) && statefulCoinBalance.value >= upgrade.price
+    private fun getUpgradeStatus(upgrade: Upgrade): UpgradeStatus {
+        return if (playerHas(upgrade)) {
+            UpgradeStatus.PURCHASED
+        } else if (upgrade.ordinal <= highestIndexUnlockedSoFar() + 1) {
+            if (statefulCoinBalance.value >= upgrade.price) {
+                UpgradeStatus.PURCHASABLE
+            } else {
+                UpgradeStatus.TOO_EXPENSIVE
+            }
+        } else {
+            UpgradeStatus.HIDDEN
+        }
+    }
+
+    private enum class UpgradeStatus {
+        HIDDEN,
+        TOO_EXPENSIVE,
+        PURCHASABLE,
+        PURCHASED;
+
+        fun isPriceVisible(): Boolean {
+            return this == PURCHASABLE || this == TOO_EXPENSIVE
+        }
+
+        fun isPriceRed(): Boolean {
+            return this == TOO_EXPENSIVE
+        }
+
+        fun isIconVisible(): Boolean {
+            return this != HIDDEN
+        }
+
+        fun isTextVisible(): Boolean {
+            return this != HIDDEN
+        }
+
+        fun shouldFadeBackground(): Boolean {
+            return this != PURCHASED
+        }
+
+        fun getIconSize(): Double {
+            return when (this) {
+                HIDDEN, TOO_EXPENSIVE, PURCHASABLE -> 2.0
+                PURCHASED -> 3.0
+            }
+        }
+
+        fun getTextAlpha(): Double {
+            return when (this) {
+                HIDDEN -> 0.3
+                TOO_EXPENSIVE -> 0.75
+                PURCHASABLE -> 0.75
+                PURCHASED -> 1.0
+            }
+        }
     }
 }

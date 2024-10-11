@@ -170,6 +170,7 @@ private fun renderTile(tile: TileLike, tileX: Int, tileY: Int) {
 fun renderBackground(r: Renderer) {
     val wobbleRange = UpgradeController.currentUpgradeYRange()
     val redMakerRange = UpgradeController.getRedBackgroundRange()
+    val greyscaleRange = UpgradeController.getGreyscaleRange()
     val purchasingFract = UpgradeController.purchasingFraction()
 
     for (tx in 0 until UNITS_WIDE) {
@@ -203,6 +204,13 @@ fun renderBackground(r: Renderer) {
                 min(0.15f * (ty / 50f) + redMaker, 0.05f).f,
                 0.0f
             )
+
+            if ((ty.d + 0.5) in greyscaleRange) {
+                val avg = (thisColor.r + thisColor.g + thisColor.b) / 3
+                thisColor.r = avg
+                thisColor.g = avg
+                thisColor.b = avg
+            }
 
             r.color = thisColor
 

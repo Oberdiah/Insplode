@@ -297,12 +297,20 @@ fun transitionOver(
 }
 
 fun getShake(power: Double, ferocity: Double = 200.0, seed: Int = 1): Double {
+    if (power < 0.001) {
+        return 0.0
+    }
+
     return (Perlin.fbm(GameTime.APP_TIME * ferocity + seed * 200.0, 0, 3, 2.0) * power * 0.2)
 }
 
-fun get2DShake(power: Double, seed: Int = 1): Point {
+fun get2DShake(power: Double, seed: Int = 1, ferocity: Double = 200.0): Point {
     return Point(
-        getShake(power, seed = seed),
-        getShake(power, seed = seed + 2)
+        getShake(power, ferocity, seed = seed),
+        getShake(power, ferocity, seed = seed + 2)
     )
+}
+
+fun <T> Map<T, Double>.getOrZero(key: T): Double {
+    return this[key] ?: 0.0
 }
