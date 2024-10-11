@@ -37,7 +37,7 @@ fun restartGame() {
     resetLevelCollapse()
     updateTilePhysics()
     resetCamera()
-    resetScoreSystem()
+    ScoreSystem.reset()
     setCameraGlobalsThisFrame()
     updateCamera()
     updateLevelStorage()
@@ -135,7 +135,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Diegetic Menu") { tickDiegeticMenu() }
             time("Tick Upgrade Controller") { UpgradeController.tick() }
         }
-        time("Tick Score System") { tickScoreSystem() }
+        time("Tick Score System") { ScoreSystem.tick() }
 
         time("Update tile physics") { updateTilePhysics() }
         if (GAME_IS_RUNNING) {

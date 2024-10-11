@@ -8,13 +8,13 @@ import com.oberdiah.PLAYER_PHYSICS_MASK
 import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.Renderer
+import com.oberdiah.ScoreSystem
 import com.oberdiah.WORLD_PHYSICS_MASK
 import com.oberdiah.circleShape
 import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.rectShape
-import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.ui.pauseHovered
 
@@ -89,7 +89,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     override fun tick() {
         if (state.timeSinceDied > DEAD_CONTEMPLATION_TIME && GAME_STATE == GameState.InGame) {
             goToDiegeticMenu()
-            registerGameEndWithScoreSystem()
+            ScoreSystem.registerGameEnd()
             return
         }
 

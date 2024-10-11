@@ -66,7 +66,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
 
     open fun gotSlammed() {
         boom(body.p, power, affectsThePlayer = false)
-        registerBombSlamWithScoreSystem(this)
+        ScoreSystem.registerBombSlam(this)
         destroy()
     }
 

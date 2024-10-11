@@ -89,7 +89,7 @@ object PointOrbs {
                     )
                 }
 
-                givePlayerScore(value.scoreGiven)
+                ScoreSystem.givePlayerScore(value.scoreGiven)
                 for (i in 0..15 * strength.i) {
                     spawnSmoke(
                         body.p + createRandomFacingPoint() * Random.nextDouble() * radius * 0.25,

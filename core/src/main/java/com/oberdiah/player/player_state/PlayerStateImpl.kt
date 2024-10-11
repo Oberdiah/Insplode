@@ -3,6 +3,7 @@ package com.oberdiah.player.player_state
 import com.oberdiah.Bomb
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.Point
+import com.oberdiah.ScoreSystem
 import com.oberdiah.Velocity
 import com.oberdiah.abs
 import com.oberdiah.boom
@@ -10,12 +11,10 @@ import com.oberdiah.clamp
 import com.oberdiah.i
 import com.oberdiah.max
 import com.oberdiah.min
-import com.oberdiah.multiplier
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.PlayerInfoBoard
 import com.oberdiah.player.PlayerRenderer
 import com.oberdiah.player.player
-import com.oberdiah.registerCasuallyLandedWithScoreSystem
 import com.oberdiah.spawnSmoke
 import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.colorScheme
@@ -62,9 +61,9 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
         s.setState(PlayerMode.IDLE)
 
-        val multiplier = multiplier()
+        val multiplier = ScoreSystem.getCurrentMultiplier()
 
-        registerCasuallyLandedWithScoreSystem()
+        ScoreSystem.registerCasuallyLanded()
 
         val vel = abs(PlayerInfoBoard.slammingVelocity)
         PlayerRenderer.spawnParticlesAtMyFeet(
@@ -143,6 +142,6 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
         s.setState(PlayerMode.IDLE)
 
-        registerCasuallyLandedWithScoreSystem()
+        ScoreSystem.registerCasuallyLanded()
     }
 }

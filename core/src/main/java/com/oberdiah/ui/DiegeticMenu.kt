@@ -10,6 +10,7 @@ import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
+import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
@@ -23,7 +24,6 @@ import com.oberdiah.fontMedium
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
 import com.oberdiah.lerp
-import com.oberdiah.renderScores
 import com.oberdiah.sin
 import com.oberdiah.statefulCoinBalance
 import com.oberdiah.upgrades.Upgrade
@@ -74,7 +74,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         Align.center
     )
 
-    renderScores(r)
+    ScoreSystem.renderDiegeticText(r)
 }
 
 private var isLaunchTapped = false
@@ -191,6 +191,7 @@ fun tickDiegeticMenu() {
         }
         TOUCHES_WENT_UP.forEach {
             if (isInLaunchButton(it) && !isDragging) {
+
                 GAME_STATE = GameState.InGame
             }
             if (isDragging) {

@@ -15,6 +15,7 @@ import com.oberdiah.Point
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
 import com.oberdiah.SHOW_FRAMERATE_DATA
+import com.oberdiah.ScoreSystem
 import com.oberdiah.Screen
 import com.oberdiah.Size
 import com.oberdiah.TEXT_CHECKBOX_OFFSET_RIGHT
@@ -34,8 +35,6 @@ import com.oberdiah.level.gameMessage
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playChordNote
-import com.oberdiah.playerScore
-import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.saturate
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulHighScore
@@ -218,7 +217,7 @@ private fun pausedUI(r: Renderer) {
     lineBreak()
     button(r, "Quit Run") {
         goToDiegeticMenu()
-        registerGameEndWithScoreSystem()
+        ScoreSystem.registerGameEnd()
     }
 }
 
