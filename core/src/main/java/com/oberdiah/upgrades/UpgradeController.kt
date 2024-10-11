@@ -1,5 +1,6 @@
 package com.oberdiah.upgrades
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
@@ -49,7 +50,7 @@ object UpgradeController {
             playerUpgradeStates[it] = StatefulBoolean(it.name, false)
             val path = "Icons/${it.name}.png"
             // Check if file exists
-            if (UpgradeController::class.java.getResource("/$path") != null) {
+            if (Gdx.files.internal(path).exists()) {
                 allUpgradeTextures[it] = Sprite(Texture(path))
             } else {
                 println("Upgrade icon not found: $path")
