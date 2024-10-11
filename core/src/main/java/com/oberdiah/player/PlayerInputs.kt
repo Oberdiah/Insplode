@@ -138,14 +138,14 @@ object PlayerInputs {
     private fun isJumpJustPressed(): Boolean {
         val onDesktop = Gdx.app.type == Application.ApplicationType.Desktop
 
-        if (player.state.isPreparingToJump || onDesktop) {
-            return TOUCHES_WENT_UP.firstOrNull()?.let {
-                true
-            } ?: if (onDesktop) {
-                isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
-            } else {
-                false
+        if (player.state.isPreparingToJump) {
+            TOUCHES_WENT_UP.firstOrNull()?.let {
+                return true
             }
+        }
+
+        if (onDesktop) {
+            return isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
         }
 
         return false
