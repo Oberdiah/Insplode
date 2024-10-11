@@ -72,6 +72,11 @@ enum class Upgrade(
 
     // ################ SLAM UPGRADES ################
 
+    LargeBombs(
+        "Big Bombs",
+        "Massive bombs that\nwreck the landscape.",
+        5,
+    ),
     BombSlam(
         "Bomb Slam",
         "Get propelled into the air\nafter slamming into a bomb.",
@@ -80,6 +85,11 @@ enum class Upgrade(
     SlamOrbs(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
+        10,
+    ),
+    SpringBomb(
+        "Spring Bomb",
+        "A bomb that jumps \n around before exploding.",
         10,
     ),
     ApexWings(

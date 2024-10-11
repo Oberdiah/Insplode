@@ -35,6 +35,7 @@ import com.oberdiah.sin
 import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.times
+import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TileType
@@ -188,16 +189,52 @@ fun tickLevelController() {
 fun spawnBomb(type: BombType, fraction: Number = Random.nextDouble(0.05, 0.95)) {
     val pos = Point(fraction * UNITS_WIDE, SAFE_BOMB_SPAWN_HEIGHT)
     when (type) {
-        BombType.SmallTimed -> TimedBomb(pos, type)
-        BombType.MediumTimed -> TimedBomb(pos, type)
-        BombType.LargeTimed -> TimedBomb(pos, type)
-        BombType.MegaTimed -> TimedBomb(pos, type)
-        BombType.UltraTimed -> TimedBomb(pos, type)
-        BombType.LineBomb -> LineBomb(pos)
-        BombType.ClusterBomb -> ClusterBomb(pos)
+        BombType.SmallTimed -> {
+            if (UpgradeController.playerHas(Upgrade.SmallTimedBomb)) {
+                TimedBomb(pos, type)
+            }
+        }
+
+        BombType.MediumTimed -> {
+            if (UpgradeController.playerHas(Upgrade.MediumTimedBomb)) {
+                TimedBomb(pos, type)
+            }
+        }
+
+        BombType.LargeTimed -> {
+            if (UpgradeController.playerHas(Upgrade.LargeBombs)) {
+                TimedBomb(pos, type)
+            }
+        }
+
+        BombType.MegaTimed -> {
+            if (UpgradeController.playerHas(Upgrade.LargeBombs)) {
+                TimedBomb(pos, type)
+            }
+        }
+
+        BombType.UltraTimed -> {
+            if (UpgradeController.playerHas(Upgrade.LargeBombs)) {
+                TimedBomb(pos, type)
+            }
+        }
+
+        BombType.LineBomb -> {
+            if (UpgradeController.playerHas(Upgrade.LineBomb)) {
+                LineBomb(pos)
+            }
+        }
+
+        BombType.SpringBomb -> {
+            if (UpgradeController.playerHas(Upgrade.SpringBomb)) {
+                SpringBomb(pos)
+            }
+        }
+
+        // \/ \/ \/ Unused \/ \/ \/
         BombType.StickyBomb -> StickyBomb(pos)
+        BombType.ClusterBomb -> ClusterBomb(pos)
         BombType.ImpactBomb -> ImpactBomb(pos)
-        BombType.SpringBomb -> SpringBomb(pos)
         BombType.OrbRock -> OrbRock(pos)
         else -> throw Exception()
     }

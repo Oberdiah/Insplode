@@ -45,7 +45,14 @@ object UpgradeController {
         playerUpgradeStates.clear()
         Upgrade.entries.forEach {
             playerUpgradeStates[it] = StatefulBoolean(it.name, false)
-            allUpgradeTextures[it] = Sprite(Texture("Icons/${it.name}.png"))
+            val path = "Icons/${it.name}.png"
+            // Check if file exists
+            if (UpgradeController::class.java.getResource("/$path") != null) {
+                allUpgradeTextures[it] = Sprite(Texture(path))
+            } else {
+                println("Upgrade icon not found: $path")
+                allUpgradeTextures[it] = Sprite(Texture("Icons/Not Found.png"))
+            }
         }
         // Eventually we can do something like filling in any gaps that have been
         // added by updates here. For now we'll keep it simple.
