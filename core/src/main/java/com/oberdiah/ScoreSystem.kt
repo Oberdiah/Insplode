@@ -76,7 +76,7 @@ fun resetScoreSystem() {
 
 fun registerBombSlamWithScoreSystem(bomb: Bomb) {
     val numToNormallySpawn = bomb.getPointsWorth()
-    spawnPointOrbs(bomb.body.p, (numToNormallySpawn * multiplier()).i)
+    PointOrbs.spawnOrbs(bomb.body.p, (numToNormallySpawn * multiplier()).i)
     updateGameSpeed(timeWarp())
 
     bounceDecayAccumulator = 0.0

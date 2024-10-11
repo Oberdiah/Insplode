@@ -18,8 +18,7 @@ fun resetPhysicsObjects() {
 }
 
 fun renderPhysicsObjects(r: Renderer) {
-    getAllPhysicsObjects.filter { it !is PointOrb }.forEach { it.render(r) }
-    getAllPhysicsObjects.filterIsInstance<PointOrb>().forEach { it.render(r) }
+    getAllPhysicsObjects.forEach { it.render(r) }
 }
 
 private val allDynamicPhysicsObjects = mutableListOf<PhysicsObject>()

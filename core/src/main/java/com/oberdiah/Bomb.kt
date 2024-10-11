@@ -3,7 +3,6 @@ package com.oberdiah
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.level.RUN_TIME_ELAPSED
-import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.colorScheme
 import kotlin.math.PI
@@ -540,7 +539,7 @@ class OrbRock(startingPoint: Point) : Bomb(startingPoint, BombType.OrbRock) {
         if (livesLeft <= 0) {
             destroy()
 
-            spawnPointOrbs(body.p, 2, Velocity(0, 3.0))
+            PointOrbs.spawnOrbs(body.p, 2, Velocity(0, 3.0))
         }
     }
 
@@ -561,7 +560,7 @@ class OrbRock(startingPoint: Point) : Bomb(startingPoint, BombType.OrbRock) {
 
         val innerPointOrbOffset = Point(RUN_TIME_ELAPSED) * innerPointOrbRad
 
-        renderPointOrb(r, body.p + innerPointOrbOffset, innerPointOrbRad)
-        renderPointOrb(r, body.p - innerPointOrbOffset, innerPointOrbRad)
+        PointOrbs.drawOrb(r, body.p + innerPointOrbOffset, innerPointOrbRad)
+        PointOrbs.drawOrb(r, body.p - innerPointOrbOffset, innerPointOrbRad)
     }
 }

@@ -57,7 +57,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         resetCamera()
         setGlobalsThisFrame()
         initMarchingSquares()
-        initLevelRender()
+        RenderLevel.init()
         UpgradeController.init()
 
         worldSpaceRenderer = Renderer("World Space Renderer", camera)
@@ -130,7 +130,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Collapse") { tickCollapse() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
             time("Tick Bombs") { tickBombController() }
-            time("Tick Point Orbs") { tickPointOrbs() }
+            time("Tick Point Orbs") { PointOrbs.tick() }
         } else {
             time("Tick Diegetic Menu") { tickDiegeticMenu() }
             time("Tick Upgrade Controller") { UpgradeController.tick() }
@@ -144,11 +144,11 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         }
 
         worldSpaceRenderer.begin()
-        time("Render background") { renderBackground(worldSpaceRenderer) }
+        time("Render background") { RenderLevel.renderBackground(worldSpaceRenderer) }
         time("Render player inputs") { playerInputs.render(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
-        time("Render level") { renderLevel() }
+        time("Render level") { RenderLevel.render() }
 
         worldSpaceRenderer.begin()
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
