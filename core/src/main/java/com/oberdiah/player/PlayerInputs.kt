@@ -34,7 +34,7 @@ object PlayerInputs {
         private set
 
     val canJump
-        get() = (playerState.isPreparingToJump || playerState.isIdle) && PlayerInfoBoard.isStandingOnStandableGenerous
+        get() = (player.state.isPreparingToJump || player.state.isIdle) && PlayerInfoBoard.isStandingOnStandableGenerous
 
     fun reset() {
         lastFingerPoint = Point()
@@ -68,9 +68,9 @@ object PlayerInputs {
         val vel = player.body.velocity
 
         if (isJumpJustPressed() && canJump) {
-            playerState.justPerformedAJump()
+            player.state.justPerformedAJump()
         } else if (isSlamJustPressed() && !canJump) {
-            playerState.justStartedASlam()
+            player.state.justStartedASlam()
         }
 
         if (IS_DEBUG_ENABLED) {
@@ -85,8 +85,8 @@ object PlayerInputs {
                 lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
                 lastBodyXValue = player.body.p.x
 
-                if (playerState.isIdle) {
-                    playerState.justStartedPreparingAJump()
+                if (player.state.isIdle) {
+                    player.state.justStartedPreparingAJump()
                 }
             }
         }
@@ -96,9 +96,9 @@ object PlayerInputs {
             val finger = touch / UNIT_SIZE_IN_PIXELS
             desiredXPos = lastBodyXValue + (finger.x - lastFingerPoint.x) * 1.8
 
-            if (playerState.isPreparingToJump) {
+            if (player.state.isPreparingToJump) {
                 if (finger.distTo(lastFingerPoint) > 0.1) {
-                    playerState.justCancelledPreparingAJump()
+                    player.state.justCancelledPreparingAJump()
                 }
             }
         }
@@ -138,7 +138,7 @@ object PlayerInputs {
     private fun isJumpJustPressed(): Boolean {
         val onDesktop = Gdx.app.type == Application.ApplicationType.Desktop
 
-        if (playerState.isPreparingToJump || onDesktop) {
+        if (player.state.isPreparingToJump || onDesktop) {
             return TOUCHES_WENT_UP.firstOrNull()?.let {
                 true
             } ?: if (onDesktop) {

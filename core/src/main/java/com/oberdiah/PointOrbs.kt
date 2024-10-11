@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
-import com.oberdiah.player.playerState
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
@@ -74,7 +73,7 @@ object PointOrbs {
 
         override fun collided(obj: PhysicsObject) {
             super.collided(obj)
-            if (obj == player && timeAlive > 0.5 && playerState.isAlive) {
+            if (obj == player && timeAlive > 0.5 && player.state.isAlive) {
                 destroy()
 
                 val strength = value.scoreGiven.d.pow(0.5)

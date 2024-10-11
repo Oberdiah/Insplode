@@ -12,6 +12,7 @@ import com.oberdiah.WORLD_PHYSICS_MASK
 import com.oberdiah.circleShape
 import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.rectShape
 import com.oberdiah.registerGameEndWithScoreSystem
 import com.oberdiah.ui.goToDiegeticMenu
@@ -24,6 +25,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     lateinit var bottomCircleFixture: Fixture
     lateinit var midRectFixture: Fixture
     lateinit var topCircleFixture: Fixture
+    val state = PlayerStateImpl()
 
     init {
         circleShape(PLAYER_SIZE.w / 2) {
@@ -50,8 +52,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun hitByExplosion() {
-        if (!playerState.isDead) {
-            playerState.justDied()
+        if (!state.isDead) {
+            state.justDied()
         }
     }
 
@@ -63,7 +65,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         body.linearDamping = 0.0
 
         PlayerInfoBoard.reset()
-        playerState.reset()
+        state.reset()
         PlayerInputs.reset()
     }
 
@@ -79,13 +81,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun render(r: Renderer) {
-        if (playerState.isAlive) {
+        if (state.isAlive) {
             PlayerRenderer.render(r)
         }
     }
 
     override fun tick() {
-        if (playerState.timeSinceDied > DEAD_CONTEMPLATION_TIME && GAME_STATE == GameState.InGame) {
+        if (state.timeSinceDied > DEAD_CONTEMPLATION_TIME && GAME_STATE == GameState.InGame) {
             goToDiegeticMenu()
             registerGameEndWithScoreSystem()
             return
@@ -93,41 +95,41 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
 
         PlayerInfoBoard.tick()
-        playerState.tick()
+        state.tick()
 
         if (player.body.p.y > LASER_HEIGHT && RUN_TIME_ELAPSED > 5.0) {
-            playerState.justDied()
+            state.justDied()
         }
 
-        if (playerState.isSlamming) {
+        if (state.isSlamming) {
             if (PlayerInfoBoard.bombsStandingOnGenerous.isNotEmpty()) {
                 val bomb = PlayerInfoBoard.bombsStandingOnGenerous.minByOrNull {
                     it.body.p.distTo(PlayerInfoBoard.playerFeetPosition)
                 }!!
-                playerState.justSlammedIntoABomb(bomb)
+                state.justSlammedIntoABomb(bomb)
             } else if (PlayerInfoBoard.isStandingOnNotBombExact) {
-                playerState.justSlammedIntoTheGround()
+                state.justSlammedIntoTheGround()
             }
-        } else if (playerState.isIntentionallyMovingUp) {
+        } else if (state.isIntentionallyMovingUp) {
             if (PlayerInfoBoard.isStandingOnStandableExact) {
-                if (playerState.timeSinceStartedIntentionallyMovingUp > JUMP_PREVENTION_WINDOW) {
+                if (state.timeSinceStartedIntentionallyMovingUp > JUMP_PREVENTION_WINDOW) {
                     // You cannot land if you're not moving down
                     if (PlayerInfoBoard.velocity.y < 0) {
-                        playerState.justCasuallyLanded()
+                        state.justCasuallyLanded()
                     }
                 }
             }
         }
 
-        if (playerState.isIntentionallyMovingUp && body.velocity.y < 1.0 && body.velocity.y > 0.0) {
+        if (state.isIntentionallyMovingUp && body.velocity.y < 1.0 && body.velocity.y > 0.0) {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER * 0.5
-        } else if (playerState.isSlamming) {
+        } else if (state.isSlamming) {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER * 8.0
         } else {
             body.gravityScale = PLAYER_GRAVITY_MODIFIER
         }
 
-        if (playerState.isAlive && !pauseHovered) {
+        if (state.isAlive && !pauseHovered) {
             PlayerInputs.tick()
         }
     }

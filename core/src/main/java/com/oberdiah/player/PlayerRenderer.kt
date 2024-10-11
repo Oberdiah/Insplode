@@ -38,15 +38,15 @@ object PlayerRenderer {
 
         if (PlayerInputs.canJump) {
             r.color = colorScheme.player
-        } else if (playerState.isSlamming) {
+        } else if (player.state.isSlamming) {
             r.color = colorScheme.playerSlamming
         } else {
             r.color = colorScheme.playerNoJump
         }
 
-        val desiredHeadOffset = if (playerState.isPreparingToJump) {
+        val desiredHeadOffset = if (player.state.isPreparingToJump) {
             -0.2
-        } else if (playerState.isSlamming) {
+        } else if (player.state.isSlamming) {
             0.2
         } else {
             0.0
@@ -84,7 +84,7 @@ object PlayerRenderer {
 
     // Uses the in-world renderer
     private fun renderFloatingPlayerText(r: Renderer) {
-        if (playerState.isDead) return
+        if (player.state.isDead) return
 
         val lineHeight = fontSmall.lineHeight / UNIT_SIZE_IN_PIXELS
 

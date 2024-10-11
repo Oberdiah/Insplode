@@ -30,7 +30,6 @@ import com.oberdiah.max
 import com.oberdiah.min
 import com.oberdiah.player.DEAD_CONTEMPLATION_TIME
 import com.oberdiah.player.player
-import com.oberdiah.player.playerState
 import com.oberdiah.saturate
 import com.oberdiah.sin
 import com.oberdiah.spawnSmoke
@@ -70,10 +69,10 @@ var laserIdealHeight = LASER_HEIGHT_START_IN_GAME
 val LASER_HEIGHT: Double
     get() {
         var transition = saturate((RUN_TIME_ELAPSED - LASER_DELAY))
-        if (playerState.isDead) {
+        if (player.state.isDead) {
             transition = min(
                 transition,
-                saturate(1.0 - playerState.timeSinceDied / (DEAD_CONTEMPLATION_TIME - 1.0))
+                saturate(1.0 - player.state.timeSinceDied / (DEAD_CONTEMPLATION_TIME - 1.0))
             )
         } else if (GAME_STATE == GameState.TransitioningToDiegeticMenu) {
             // Yes, this touches gameplay.
