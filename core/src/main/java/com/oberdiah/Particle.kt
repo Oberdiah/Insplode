@@ -2,6 +2,9 @@ package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.level.getTile
+import com.oberdiah.player.player
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.TileType
 import kotlin.random.Random
@@ -200,6 +203,17 @@ abstract class Particle(
         if (!stoppedMoving) {
             applyForces()
         }
+
+        if (UpgradeController.playerHas(Upgrade.BlackHole)) {
+            val playerP = player.body.p
+            val force = playerP - p
+            force.len = min(1.0, force.len)
+            if (v.dot(force) < 0 || v.len < 5.0) {
+                v.x += force.x
+                v.y += force.y
+            }
+        }
+
         p.x += v.x * GAMEPLAY_DELTA
         p.y += v.y * GAMEPLAY_DELTA
 

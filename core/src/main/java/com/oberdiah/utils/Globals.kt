@@ -54,6 +54,11 @@ const val PLAYER_PHYSICS_MASK: Short = 0x2
 const val BOMB_PHYSICS_MASK: Short = 0x4
 const val PICKUP_PHYSICS_MASK: Short = 0x8
 
+// Just some random number we can use to detect this.
+// Used for allowing points to be collected by the player despite the player
+// being in ghost mode
+const val PLAYER_DETECTOR_IDENTIFIER = 0x746
+
 val TEXT_SIDE_OFFSET
     get() = 0.05 * WIDTH
 val TEXT_CHECKBOX_OFFSET_RIGHT

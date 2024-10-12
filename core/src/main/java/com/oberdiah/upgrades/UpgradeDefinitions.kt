@@ -113,11 +113,12 @@ enum class Upgrade(
         "Massive bombs that\nwreck the landscape.",
         75,
     ),
-    SneakySlam(
-        "Sneaky Slam",
-        "When fuse is half-depleted,\nslam to get double orbs\nand no explosion.",
-        100,
-    ),
+
+    //    SneakySlam(
+//        "Sneaky Slam",
+//        "When fuse is half-depleted,\nslam to get double orbs\nand no explosion.",
+//        100,
+//    ),
     Multiplier(
         "Multiplier",
         "Gain multiplier for each\nbomb slam. Applies to\nthe number of orbs spawned.",
@@ -133,10 +134,15 @@ enum class Upgrade(
         "Covers most of the screen.",
         300,
     ),
+    InfiniteMultiplier(
+        "Sky's the Limit",
+        "Multiplier is no longer capped.\nAfter 2x it can decay.\nAfter 2.5x time accelerates.",
+        400,
+    ),
     EvenFasterMovement(
         "Lightning Fast",
         "Move ridiculously fast.",
-        350,
+        500,
     ),
 
     // ################ POST-GAME UPGRADES ################
@@ -144,28 +150,35 @@ enum class Upgrade(
     UltraTimedBomb(
         "Ultra Bombs",
         "Ok this is a bit\nridiculous.",
-        300,
+        600,
     ),
     StoppedVoid(
         "Void Glue",
         "Glue the void in place,\nnever to move again.",
-        500,
+        1000,
     ),
     GlobalMagnet(
         "Global Magnet",
         "The orbs simply cannot\nget away.",
-        1000,
+        2000,
+        toggleable = true,
     ),
     RainbowPlayer(
         "Rainbow Player",
         "Why not?",
-        2000,
+        5000,
         toggleable = true,
     ),
-    ParticleBlackHole(
-        "Black Hole",
-        "Everything is attracted\nto you.",
+    DeadlyTouch(
+        "Deadly Touch",
+        "Simply touching a bomb\nwill cause it to self-destruct.",
         10000,
+        toggleable = true,
+    ),
+    BlackHole(
+        "Black Hole",
+        "Everything must be consumed,\nand so it shall be.",
+        25000,
         toggleable = true,
     );
 

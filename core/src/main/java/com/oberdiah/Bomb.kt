@@ -2,7 +2,8 @@ package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
-import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.player.Player
+import com.oberdiah.player.player
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
@@ -82,6 +83,15 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
 
     override fun tick() {
         standableCountdown -= GAMEPLAY_DELTA
+
+        if (UpgradeController.playerHas(Upgrade.BlackHole)) {
+            val playerPos = player.body.p
+            if (player.state.isAlive) {
+                val direction = (playerPos - body.p)
+                direction.len = clamp(direction.len, 0.5, 1.5)
+                body.applyImpulse(direction * 0.5, body.p)
+            }
+        }
     }
 
     open fun explode() {
@@ -95,6 +105,13 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
         super.collided(yourFixture, otherFixture)
         val hitObject = otherFixture.body.userData
+
+        if (hitObject is Player &&
+            UpgradeController.playerHas(Upgrade.BlackHole) &&
+            otherFixture.userData == PLAYER_DETECTOR_IDENTIFIER
+        ) {
+            gotSlammed()
+        }
 
         playBombBumpSound(
             yourFixture.body.linearVelocity.len().d,

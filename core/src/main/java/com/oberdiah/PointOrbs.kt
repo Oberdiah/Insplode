@@ -135,6 +135,7 @@ object PointOrbs {
             circleShape(radius) {
                 val fixtureDef = FixtureDef()
                 fixtureDef.shape = it
+                // Very light so it doesn't affect the player much.
                 fixtureDef.density = 5.5f
                 fixtureDef.friction = 0.5f
                 fixtureDef.restitution = 0.2f
@@ -157,7 +158,7 @@ object PointOrbs {
 
             if (isAttractedToPlayer) {
                 val direction = (playerPos - body.p)
-                direction.len = min(1.5, direction.len)
+                direction.len = clamp(direction.len, 0.5, 1.5)
                 body.applyImpulse(direction * 0.5, body.p)
                 timeAttractedToPlayer += GAMEPLAY_DELTA
             } else {
@@ -170,7 +171,7 @@ object PointOrbs {
             super.collided(yourFixture, otherFixture)
             val data = otherFixture.body.userData
             if (timeAlive > 0.5 || isAttractedToPlayer) {
-                if (data == player && player.state.isAlive && !otherFixture.isSensor) {
+                if (data == player && player.state.isAlive && otherFixture.userData == PLAYER_DETECTOR_IDENTIFIER) {
                     destroy()
 
                     val strength = value.d.pow(0.5)

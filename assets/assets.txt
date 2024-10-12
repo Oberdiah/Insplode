@@ -1,4 +1,5 @@
 Icons/ApexWings.png
+Icons/BlackHole.png
 Icons/BombSlam.png
 Icons/BombWizard.png
 Icons/ComboOrbs.png
@@ -16,7 +17,6 @@ Icons/MoreSkyOrbs.png
 Icons/Movement.png
 Icons/Multiplier.png
 Icons/Not Found.png
-Icons/ParticleBlackHole.png
 Icons/RainbowPlayer.png
 Icons/Slam.png
 Icons/SlamAssist.png

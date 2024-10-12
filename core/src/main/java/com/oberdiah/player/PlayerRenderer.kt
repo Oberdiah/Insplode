@@ -8,6 +8,7 @@ import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.Velocity
+import com.oberdiah.f
 import com.oberdiah.fontSmall
 import com.oberdiah.format
 import com.oberdiah.frameAccurateLerp
@@ -15,7 +16,9 @@ import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.min
 import com.oberdiah.saturate
 import com.oberdiah.spawnFragment
+import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
+import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.withAlpha
@@ -23,8 +26,11 @@ import kotlin.random.Random
 
 object PlayerRenderer {
     private var renderedHeadOffset = 0.0
+    private var colorRotation = 0.0f
 
     fun render(r: Renderer) {
+        colorRotation += GameTime.GRAPHICS_DELTA.f
+
         val pos = player.body.p
 
 //        r.color = Color.BLACK.withAlpha(0.05)
@@ -36,6 +42,13 @@ object PlayerRenderer {
             r.color = colorScheme.playerSlamming
         } else {
             r.color = colorScheme.playerNoJump
+        }
+
+        if (UpgradeController.playerHas(Upgrade.RainbowPlayer)) {
+            val hsv = FloatArray(3)
+            r.color.toHsv(hsv)
+            hsv[0] = (hsv[0] + colorRotation * 100) % 360
+            r.color = Color(1f, 1f, 1f, 1f).fromHsv(hsv)
         }
 
         val desiredHeadOffset = if (player.state.isPreparingToJump) {

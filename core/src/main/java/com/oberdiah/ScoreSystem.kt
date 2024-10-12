@@ -6,6 +6,8 @@ import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import com.oberdiah.ui.coinAreaPosition
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.GameTime.APP_TIME
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
@@ -61,6 +63,10 @@ object ScoreSystem {
     }
 
     fun getCurrentMultiplier(): Double {
+        if (UpgradeController.playerHas(Upgrade.InfiniteMultiplier)) {
+            return min(1 + (numConsecutiveBounces * 0.1), 2.0)
+        }
+
         return if (numConsecutiveBounces < 15) {
             1 + (numConsecutiveBounces * 0.1)
         } else {
@@ -70,12 +76,11 @@ object ScoreSystem {
 
     /** The amount we multiply time by to speed up the game */
     fun timeWarp(): Double {
-        return 1 + max((numConsecutiveBounces - 15) * 0.05, 0)
-    }
+        if (UpgradeController.playerHas(Upgrade.InfiniteMultiplier)) {
+            return 1.0
+        }
 
-    fun canStartGame(): Boolean {
-        // All score has become coins
-        return playerScore == 0
+        return 1 + max((numConsecutiveBounces - 15) * 0.05, 0)
     }
 
     /** Per game-second. */
@@ -83,16 +88,25 @@ object ScoreSystem {
         return clamp((numConsecutiveBounces - 10) * 0.1, 0.0, 0.5)
     }
 
+    fun canStartGame(): Boolean {
+        // All score has become coins
+        return playerScore == 0
+    }
+
     fun registerBombSlam(bomb: Bomb) {
-        val numToNormallySpawn = bomb.getPointsWorth()
-        val numToActuallySpawn = (numToNormallySpawn * getCurrentMultiplier()).i
-        PointOrbs.spawnOrbs(bomb.body.p, numToActuallySpawn, ensureEmptySpaceOnSpawn = false)
+        if (UpgradeController.playerHas(Upgrade.SlamOrbs)) {
+            val numToNormallySpawn = bomb.getPointsWorth()
+            val numToActuallySpawn = (numToNormallySpawn * getCurrentMultiplier()).i
+            PointOrbs.spawnOrbs(bomb.body.p, numToActuallySpawn, ensureEmptySpaceOnSpawn = false)
+        }
+
         updateGameSpeed(timeWarp())
-
         bounceDecayAccumulator = 0.0
-        numConsecutiveBounces++
 
-        playMultiplierSound(numConsecutiveBounces)
+        if (UpgradeController.playerHas(Upgrade.Multiplier)) {
+            numConsecutiveBounces++
+            playMultiplierSound(numConsecutiveBounces)
+        }
     }
 
     fun registerBombComboExplode(bomb: Bomb) {
@@ -289,7 +303,7 @@ object ScoreSystem {
 
         val lineHeight = fontSmall.lineHeight / UNIT_SIZE_IN_PIXELS
 
-        if (getCurrentMultiplier() > 1.0) {
+        if (getCurrentMultiplier() > 1.0 && UpgradeController.playerHas(Upgrade.Multiplier)) {
             val textOffset = Point(
                 0,
                 PLAYER_SIZE.h + lineHeight * HEIGHT_ABOVE_HEAD
@@ -319,7 +333,12 @@ object ScoreSystem {
                 0,
                 PLAYER_SIZE.h +
                         pickupMotion * 0.15 +
-                        lineHeight * (1 + HEIGHT_ABOVE_HEAD)
+                        lineHeight * if (UpgradeController.playerHas(Upgrade.Multiplier)) {
+                    HEIGHT_ABOVE_HEAD + 1.0
+                } else {
+                    HEIGHT_ABOVE_HEAD
+                }
+
             )
 
             r.color = colorScheme.textColor.withAlpha(alpha)

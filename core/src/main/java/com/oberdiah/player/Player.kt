@@ -5,6 +5,7 @@ import com.oberdiah.GAME_STATE
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.GameState
 import com.oberdiah.PICKUP_PHYSICS_MASK
+import com.oberdiah.PLAYER_DETECTOR_IDENTIFIER
 import com.oberdiah.PLAYER_PHYSICS_MASK
 import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
@@ -30,15 +31,25 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     lateinit var bottomCircleFixture: Fixture
     lateinit var midRectFixture: Fixture
     lateinit var topCircleFixture: Fixture
+
+    lateinit var topCircleDetector: Fixture
+    lateinit var bottomCircleDetector: Fixture
+
     val state = PlayerStateImpl()
 
     init {
         circleShape(PLAYER_SIZE.w / 2) {
             bottomCircleFixture = addFixture(it)
+            bottomCircleFixture.userData = PLAYER_DETECTOR_IDENTIFIER
+            bottomCircleDetector = addFixture(it, true)
+            bottomCircleDetector.userData = PLAYER_DETECTOR_IDENTIFIER
         }
         // Put the second circle up a circle diameter above the first
         circleShape(PLAYER_SIZE.w / 2, Point(0, PLAYER_SIZE.w)) {
             topCircleFixture = addFixture(it)
+            topCircleFixture.userData = PLAYER_DETECTOR_IDENTIFIER
+            topCircleDetector = addFixture(it, true)
+            topCircleDetector.userData = PLAYER_DETECTOR_IDENTIFIER
         }
 
         rectShape(PLAYER_SIZE / Point(1.6, 2), Point(0, PLAYER_SIZE.x / 2) * GLOBAL_SCALE) {
@@ -146,7 +157,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             Filter().apply {
                 categoryBits = PLAYER_PHYSICS_MASK
                 // Only collide with tiles & pickups
-                maskBits = WORLD_PHYSICS_MASK.or(PICKUP_PHYSICS_MASK)
+                maskBits = WORLD_PHYSICS_MASK
             }
         } else {
             Filter().apply {
