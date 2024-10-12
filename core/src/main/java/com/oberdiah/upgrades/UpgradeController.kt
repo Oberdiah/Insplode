@@ -395,6 +395,18 @@ object UpgradeController {
         }
     }
 
+    fun getPlayerMagnetRadius(): Double {
+        return if (playerHas(Upgrade.GlobalMagnet)) {
+            30.0
+        } else if (playerHas(Upgrade.MegaMagnet)) {
+            3.0
+        } else if (playerHas(Upgrade.Magnet)) {
+            1.5
+        } else {
+            0.0
+        }
+    }
+
     private fun highestIndexUnlockedSoFar(): Int {
         return Upgrade.entries.indexOfLast { playerHas(it) }
     }

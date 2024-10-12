@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.GameState
+import com.oberdiah.PICKUP_PHYSICS_MASK
 import com.oberdiah.PLAYER_PHYSICS_MASK
 import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
@@ -20,6 +21,7 @@ import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.ui.pauseHovered
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
+import kotlin.experimental.or
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     /** Narrower than the player */
@@ -143,8 +145,8 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         val filter = if (ghosting) {
             Filter().apply {
                 categoryBits = PLAYER_PHYSICS_MASK
-                // Only collide with tiles
-                maskBits = WORLD_PHYSICS_MASK
+                // Only collide with tiles & pickups
+                maskBits = WORLD_PHYSICS_MASK.or(PICKUP_PHYSICS_MASK)
             }
         } else {
             Filter().apply {

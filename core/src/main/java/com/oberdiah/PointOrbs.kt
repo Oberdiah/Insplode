@@ -1,9 +1,12 @@
 package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
@@ -99,6 +102,8 @@ object PointOrbs {
         startingVelocity: Velocity = Velocity()
     ) : PhysicsObject(startingPoint, startingVelocity) {
         var timeAlive = 0.0
+        var isAttractedToPlayer = false
+        var timeAttractedToPlayer = 0.0
 
         companion object {
             const val GOLDEN_THRESHOLD = 50
@@ -135,7 +140,7 @@ object PointOrbs {
                 fixtureDef.restitution = 0.2f
                 fixtureDef.filter.categoryBits = PICKUP_PHYSICS_MASK
                 // This has a corresponding line in PhysicsObjects.kt
-//            fixtureDef.filter.maskBits = BOMB_PHYSICS_MASK.inv()
+//                fixtureDef.filter.maskBits = BOMB_PHYSICS_MASK.inv()
                 body.addFixture(fixtureDef)
             }
         }
@@ -143,12 +148,29 @@ object PointOrbs {
         override fun tick() {
             super.tick()
             timeAlive += GAMEPLAY_DELTA
+
+            val magnetRadius = UpgradeController.getPlayerMagnetRadius()
+
+            val playerPos = player.body.p
+            val distance = playerPos.distTo(body.p)
+            isAttractedToPlayer = distance < magnetRadius && player.state.isAlive
+
+            if (isAttractedToPlayer) {
+                val direction = (playerPos - body.p)
+                direction.len = min(1.5, direction.len)
+                body.applyImpulse(direction * 0.5, body.p)
+                timeAttractedToPlayer += GAMEPLAY_DELTA
+            } else {
+                timeAttractedToPlayer -= GAMEPLAY_DELTA
+                timeAttractedToPlayer = timeAttractedToPlayer.coerceAtLeast(0.0)
+            }
         }
 
-        override fun collided(obj: PhysicsObject) {
-            super.collided(obj)
-            if (timeAlive > 0.5) {
-                if (obj == player && player.state.isAlive) {
+        override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
+            super.collided(yourFixture, otherFixture)
+            val data = otherFixture.body.userData
+            if (timeAlive > 0.5 || isAttractedToPlayer) {
+                if (data == player && player.state.isAlive && !otherFixture.isSensor) {
                     destroy()
 
                     val strength = value.d.pow(0.5)
@@ -167,6 +189,12 @@ object PointOrbs {
                     ScoreSystem.givePlayerScore(value)
                     spawnSmokeHere(15, body.p)
                 }
+            }
+        }
+
+        override fun collided(obj: PhysicsObject) {
+            super.collided(obj)
+            if (timeAlive > 0.5) {
                 if (obj is PointOrb) {
                     if (obj.value == value) {
                         // Spawn a new orb in, with the combined value.
@@ -201,7 +229,8 @@ object PointOrbs {
         }
 
         override fun render(r: Renderer) {
-            val radius = saturate(timeAlive * 2.5 + 0.5) * radius
+            val radius =
+                saturate(saturate(timeAlive * 2.5 + 0.5) - saturate(timeAttractedToPlayer) * 0.5) * radius
 
             val thisColor = color
 

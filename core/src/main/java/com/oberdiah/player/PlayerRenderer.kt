@@ -15,6 +15,7 @@ import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.min
 import com.oberdiah.saturate
 import com.oberdiah.spawnFragment
+import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.withAlpha
@@ -25,6 +26,9 @@ object PlayerRenderer {
 
     fun render(r: Renderer) {
         val pos = player.body.p
+
+//        r.color = Color.BLACK.withAlpha(0.05)
+//        r.lineCircle(pos, UpgradeController.getPlayerMagnetRadius(), 0.05, segments = 40)
 
         if (PlayerInputs.canJump) {
             r.color = colorScheme.player
@@ -62,7 +66,6 @@ object PlayerRenderer {
         r.circle(topOfPlayersHeadPos, radius)
 
         r.color = Color.WHITE.withAlpha(0.5)
-
         if (ScoreSystem.timeWarp() > 1.0) {
             r.color = Color.CORAL.withAlpha(0.5)
         }
