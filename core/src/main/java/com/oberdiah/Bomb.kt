@@ -107,7 +107,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
         val hitObject = otherFixture.body.userData
 
         if (hitObject is Player &&
-            UpgradeController.playerHas(Upgrade.BlackHole) &&
+            UpgradeController.playerHas(Upgrade.DeadlyTouch) &&
             otherFixture.userData == PLAYER_DETECTOR_IDENTIFIER
         ) {
             gotSlammed()

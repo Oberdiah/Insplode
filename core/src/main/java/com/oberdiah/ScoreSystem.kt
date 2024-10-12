@@ -63,7 +63,7 @@ object ScoreSystem {
     }
 
     fun getCurrentMultiplier(): Double {
-        if (UpgradeController.playerHas(Upgrade.InfiniteMultiplier)) {
+        if (!UpgradeController.playerHas(Upgrade.InfiniteMultiplier)) {
             return min(1 + (numConsecutiveBounces * 0.1), 2.0)
         }
 
@@ -76,7 +76,7 @@ object ScoreSystem {
 
     /** The amount we multiply time by to speed up the game */
     fun timeWarp(): Double {
-        if (UpgradeController.playerHas(Upgrade.InfiniteMultiplier)) {
+        if (!UpgradeController.playerHas(Upgrade.InfiniteMultiplier)) {
             return 1.0
         }
 
