@@ -16,7 +16,8 @@ object PointOrbs {
         val startVel: Velocity = Velocity(),
         val addRandomVelocity: Boolean = true,
         // Spawn a single large orb rather than many small ones.
-        val spawnSingleOrb: Boolean = false
+        val spawnSingleOrb: Boolean = false,
+        val ensureEmptySpaceOnSpawn: Boolean = true
     )
 
     private var orbsToSpawn = mutableListOf<OrbToBe>()
@@ -24,12 +25,26 @@ object PointOrbs {
     // We like to spawn point orbs with these values if we can, it's just nice :)
     private val pointOrbValues = listOf(1, 5, 20, 50, 100)
 
+    fun reset() {
+        orbsToSpawn.clear()
+    }
+
     fun tick() {
-        orbsToSpawn.forEach { orbToSpawn ->
+        orbsToSpawn.removeIf { orbToSpawn ->
             val (p, points, startVel) = orbToSpawn
+
+            // Check if it's safe to spawn
+            if (orbToSpawn.ensureEmptySpaceOnSpawn) {
+                val radius = PointOrb.calculateRadius(points)
+                // This should technically be radius * 2, but we want to allow a little overlap.
+                if (!isRectEmptySpace(Rect.centered(p, Size(radius, radius)))) {
+                    return@removeIf false
+                }
+            }
+
             if (orbToSpawn.spawnSingleOrb) {
                 PointOrb(p, points, startVel)
-                return@forEach
+                return@removeIf true
             }
 
             // greedy algorithm to spawn point orbs
@@ -45,8 +60,9 @@ object PointOrbs {
                 PointOrb(p, orbScore, velocity)
                 pointsLeft -= orbScore
             }
+
+            return@removeIf true
         }
-        orbsToSpawn.clear()
     }
 
     /**
@@ -57,14 +73,24 @@ object PointOrbs {
         scoreGiven: Int,
         startVel: Velocity = Velocity(),
         addRandomVelocity: Boolean = true,
-        spawnSingleOrb: Boolean = false
+        spawnSingleOrb: Boolean = false,
+        ensureEmptySpaceOnSpawn: Boolean = true
     ) {
         if (scoreGiven == 0) {
             return
         }
 
         // We need to delay spawning because otherwise the physics system doesn't like it much.
-        orbsToSpawn.add(OrbToBe(p, scoreGiven, startVel, addRandomVelocity, spawnSingleOrb))
+        orbsToSpawn.add(
+            OrbToBe(
+                p,
+                scoreGiven,
+                startVel,
+                addRandomVelocity,
+                spawnSingleOrb,
+                ensureEmptySpaceOnSpawn
+            )
+        )
     }
 
     class PointOrb(
@@ -74,10 +100,10 @@ object PointOrbs {
     ) : PhysicsObject(startingPoint, startingVelocity) {
         var timeAlive = 0.0
 
-        val GOLDEN_THRESHOLD = 50
+        companion object {
+            const val GOLDEN_THRESHOLD = 50
 
-        val radius: Double
-            get() {
+            fun calculateRadius(value: Int): Double {
                 var relativeValue = value.d
                 if (relativeValue >= GOLDEN_THRESHOLD) {
                     relativeValue /= 50.0
@@ -86,6 +112,10 @@ object PointOrbs {
                 // https://www.desmos.com/calculator/dj5zns3vu4
                 return relativeValue.pow(0.2) / 8.0 + 0.03
             }
+        }
+
+        val radius: Double
+            get() = calculateRadius(value)
 
         val color: Color
             get() {
@@ -145,7 +175,8 @@ object PointOrbs {
                             value * 2,
                             body.velocity,
                             addRandomVelocity = false,
-                            spawnSingleOrb = true
+                            spawnSingleOrb = true,
+                            ensureEmptySpaceOnSpawn = false
                         )
 
                         val smokeSpawnPoint = body.p + (obj.body.p - body.p) * 0.5

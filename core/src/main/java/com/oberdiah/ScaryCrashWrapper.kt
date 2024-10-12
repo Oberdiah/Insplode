@@ -65,6 +65,18 @@ fun forAllContacts(action: (Fixture, Fixture) -> Unit) {
     }
 }
 
+fun isRectEmptySpace(rect: Rect): Boolean {
+    var isEmpty = true
+    world.QueryAABB(
+        { fixture ->
+            isEmpty = false
+            false
+        },
+        rect.p.x.f, rect.p.y.f, rect.x.f + rect.w.f, rect.y.f + rect.h.f
+    )
+    return isEmpty
+}
+
 fun tickPhysicsWrapper() {
     allPhysBodies.forEach { it.updateInternals() }
 }

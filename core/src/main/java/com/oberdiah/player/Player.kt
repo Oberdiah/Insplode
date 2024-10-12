@@ -103,7 +103,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         state.tick()
 
         val playerLaserCheckHeight = if (UpgradeController.playerHas(Upgrade.Slam)) {
-            player.body.p.y - PLAYER_SIZE.h / 2
+            player.body.p.y
         } else {
             player.body.p.y + PLAYER_SIZE.h / 2
         }

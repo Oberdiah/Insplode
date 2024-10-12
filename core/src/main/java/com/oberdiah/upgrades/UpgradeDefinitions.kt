@@ -84,6 +84,11 @@ enum class Upgrade(
         "Attract orbs to you.",
         100,
     ),
+    LargeTimedBomb(
+        "Large Bombs",
+        "Bigger can only mean better.\nWorth more, too.",
+        75,
+    ),
     Slam(
         "Slam",
         "Release finger while in the air\nto slam downwards. Slamming\nbombs makes you bounce.",
@@ -92,11 +97,6 @@ enum class Upgrade(
 
     // ################ SLAM UPGRADES ################
 
-    LargeTimedBomb(
-        "Large Bombs",
-        "Bigger can only mean better.\nWorth more, too.",
-        75,
-    ),
     SlamOrbs(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",

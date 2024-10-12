@@ -37,6 +37,7 @@ fun endGame() {
     resetLevel()
     updateTilePhysics()
 
+    PointOrbs.reset()
     resetLevelController()
     resetLevelCollapse()
     setCameraGlobalsThisFrame()

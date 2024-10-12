@@ -263,6 +263,18 @@ class Rect(var p: Point, var s: Size) {
         }
     }
 
+    val x
+        get() = p.x
+
+    val y
+        get() = p.y
+
+    val w
+        get() = s.w
+
+    val h
+        get() = s.h
+
     fun enlargen(buffer: Number): Rect {
         return Rect(p - Point(buffer, buffer), s + Point(buffer, buffer) * 2)
     }
