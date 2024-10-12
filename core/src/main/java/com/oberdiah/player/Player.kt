@@ -83,7 +83,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun render(r: Renderer) {
-        if (state.isAlive) {
+        if (state.isAlive && GAME_STATE != GameState.DiegeticMenu) {
             PlayerRenderer.render(r)
         }
     }

@@ -49,9 +49,15 @@ object ScoreSystem {
     const val TIME_TO_GIVE_SCORE = 2.5
 
     private fun convertPlayerScoreIntoCoins(scoreToMove: Int) {
+        val scoreToActuallyMove = min(scoreToMove, playerScore)
+
+        if (scoreToActuallyMove != scoreToMove) {
+            println("Warning: $scoreToMove was requested to be moved, but only $scoreToActuallyMove was moved")
+        }
+
         // The only place we should be updating the coin balance
-        statefulCoinBalance.value += scoreToMove
-        playerScore -= scoreToMove
+        statefulCoinBalance.value += scoreToActuallyMove
+        playerScore -= scoreToActuallyMove
     }
 
     fun getCurrentMultiplier(): Double {

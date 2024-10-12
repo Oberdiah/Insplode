@@ -24,6 +24,7 @@ import com.oberdiah.get2DShake
 import com.oberdiah.getOrZero
 import com.oberdiah.max
 import com.oberdiah.playMultiplierSound
+import com.oberdiah.player.player
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulCoinBalance
@@ -319,25 +320,7 @@ object UpgradeController {
 
             if (purchasingFract >= 1.0) {
                 val upgradePurchased = currentlyPurchasingUpgrade!!
-
-                // Spawn a pile of particles
-                val upgradeYPos = getUpgradeYPos(upgradePurchased)
-                val color =
-                    getUpgradeSectionColor(upgradePurchased).cpy().add(0.9f, 0.9f, 0.9f, -0.1f)
-                for (i in 0..1000) {
-                    spawnSmoke(
-                        Rect(
-                            Point(0.0, upgradeYPos),
-                            Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
-                        ).randomPointInside(),
-                        createRandomFacingPoint(),
-                        color = color,
-                        canCollide = false
-                    )
-                }
-
-                playerUpgradeStates[upgradePurchased]?.value = true
-                statefulCoinBalance.value -= upgradePurchased.price
+                completeUpgradePurchase(upgradePurchased)
                 cancelUpgradePurchase()
             }
 
@@ -347,6 +330,27 @@ object UpgradeController {
         } else {
             cancelUpgradePurchase()
         }
+    }
+
+    private fun completeUpgradePurchase(upgrade: Upgrade) {
+        // Spawn a pile of particles
+        val upgradeYPos = getUpgradeYPos(upgrade)
+        val color =
+            getUpgradeSectionColor(upgrade).cpy().add(0.9f, 0.9f, 0.9f, -0.1f)
+        for (i in 0..1000) {
+            spawnSmoke(
+                Rect(
+                    Point(0.0, upgradeYPos),
+                    Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
+                ).randomPointInside(),
+                createRandomFacingPoint(),
+                color = color,
+                canCollide = false
+            )
+        }
+
+        playerUpgradeStates[upgrade]?.value = true
+        statefulCoinBalance.value -= upgrade.price
     }
 
     fun playerHas(upgrade: Upgrade): Boolean {
