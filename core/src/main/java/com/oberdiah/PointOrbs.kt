@@ -14,18 +14,28 @@ object PointOrbs {
         val p: Point,
         val points: Int,
         val startVel: Velocity = Velocity(),
-        val addRandomVelocity: Boolean = true
+        val addRandomVelocity: Boolean = true,
+        // Spawn a single large orb rather than many small ones.
+        val spawnSingleOrb: Boolean = false
     )
 
     private var orbsToSpawn = mutableListOf<OrbToBe>()
 
+    // We like to spawn point orbs with these values if we can, it's just nice :)
+    private val pointOrbValues = listOf(1, 5, 20, 50, 100)
+
     fun tick() {
         orbsToSpawn.forEach { orbToSpawn ->
             val (p, points, startVel) = orbToSpawn
+            if (orbToSpawn.spawnSingleOrb) {
+                PointOrb(p, points, startVel)
+                return@forEach
+            }
+
             // greedy algorithm to spawn point orbs
             var pointsLeft = points
             while (pointsLeft > 0) {
-                val orbScore = pointOrbValues.first { it.scoreGiven <= pointsLeft }
+                val orbScore = pointOrbValues.last { it <= pointsLeft }
                 var velocity = startVel
 
                 if (orbToSpawn.addRandomVelocity) {
@@ -33,7 +43,7 @@ object PointOrbs {
                 }
 
                 PointOrb(p, orbScore, velocity)
-                pointsLeft -= orbScore.scoreGiven
+                pointsLeft -= orbScore
             }
         }
         orbsToSpawn.clear()
@@ -46,35 +56,48 @@ object PointOrbs {
         p: Point,
         scoreGiven: Int,
         startVel: Velocity = Velocity(),
-        addRandomVelocity: Boolean = true
+        addRandomVelocity: Boolean = true,
+        spawnSingleOrb: Boolean = false
     ) {
         if (scoreGiven == 0) {
             return
         }
 
         // We need to delay spawning because otherwise the physics system doesn't like it much.
-        orbsToSpawn.add(OrbToBe(p, scoreGiven, startVel, addRandomVelocity))
-    }
-
-    private val pointOrbValues = PointOrbValue.entries.sortedByDescending { it.scoreGiven }
-
-    enum class PointOrbValue(val scoreGiven: Int, val radius: Double, val color: Color) {
-        One(1, 0.15, colorScheme.pointOrbColor),
-        Five(5, 0.20, colorScheme.pointOrbColor),
-        Twenty(20, 0.25, colorScheme.pointOrbColor),
-        Fifty(50, 0.1, colorScheme.goldenPointOrbColor),
-        Hundred(50, 0.2, colorScheme.goldenPointOrbColor),
+        orbsToSpawn.add(OrbToBe(p, scoreGiven, startVel, addRandomVelocity, spawnSingleOrb))
     }
 
     class PointOrb(
         startingPoint: Point,
-        val value: PointOrbValue,
+        val value: Int,
         startingVelocity: Velocity = Velocity()
     ) : PhysicsObject(startingPoint, startingVelocity) {
         var timeAlive = 0.0
 
+        val GOLDEN_THRESHOLD = 50
+
+        val radius: Double
+            get() {
+                var relativeValue = value.d
+                if (relativeValue >= GOLDEN_THRESHOLD) {
+                    relativeValue /= 50.0
+                }
+
+                // https://www.desmos.com/calculator/dj5zns3vu4
+                return relativeValue.pow(0.2) / 8.0 + 0.03
+            }
+
+        val color: Color
+            get() {
+                return if (value >= GOLDEN_THRESHOLD) {
+                    colorScheme.goldenPointOrbColor
+                } else {
+                    colorScheme.pointOrbColor
+                }
+            }
+
         init {
-            circleShape(value.radius) {
+            circleShape(radius) {
                 val fixtureDef = FixtureDef()
                 fixtureDef.shape = it
                 fixtureDef.density = 5.5f
@@ -94,38 +117,62 @@ object PointOrbs {
 
         override fun collided(obj: PhysicsObject) {
             super.collided(obj)
-            if (obj == player && timeAlive > 0.5 && player.state.isAlive) {
-                destroy()
+            if (timeAlive > 0.5) {
+                if (obj == player && player.state.isAlive) {
+                    destroy()
 
-                val strength = value.scoreGiven.d.pow(0.5)
-                val radius = strength * TILE_SIZE_IN_UNITS
+                    val strength = value.d.pow(0.5)
+                    val radius = strength * TILE_SIZE_IN_UNITS
 
-                if (value != PointOrbValue.One) {
-                    boom(
-                        body.p,
-                        radius * 0.5,
-                        affectsThePlayer = false,
-                        affectsTheLandscape = false,
-                        playSound = false
-                    )
+                    if (value >= 5.0) {
+                        boom(
+                            body.p,
+                            radius * 0.5,
+                            affectsThePlayer = false,
+                            affectsTheLandscape = false,
+                            playSound = false
+                        )
+                    }
+
+                    ScoreSystem.givePlayerScore(value)
+                    spawnSmokeHere(15, body.p)
                 }
+                if (obj is PointOrb) {
+                    if (obj.value == value) {
+                        // Spawn a new orb in, with the combined value.
+                        spawnOrbs(
+                            body.p,
+                            value * 2,
+                            body.velocity,
+                            addRandomVelocity = false,
+                            spawnSingleOrb = true
+                        )
 
-                ScoreSystem.givePlayerScore(value.scoreGiven)
-                for (i in 0..15 * strength.i) {
-                    spawnSmoke(
-                        body.p + createRandomFacingPoint() * Random.nextDouble() * radius * 0.25,
-                        createRandomFacingPoint() * Random.nextDouble(),
-                        value.color.cpy()
-                            .lerp(Color.WHITE, Random.nextDouble(0.3, 0.8).f)
-                    )
+                        val smokeSpawnPoint = body.p + (obj.body.p - body.p) * 0.5
+                        spawnSmokeHere(5, smokeSpawnPoint)
+
+                        obj.destroy()
+                        destroy()
+                    }
                 }
             }
         }
 
-        override fun render(r: Renderer) {
-            val radius = saturate(timeAlive * 2.5 + 0.5) * value.radius
+        private fun spawnSmokeHere(num: Int, centeredOn: Point) {
+            val radius = radius.pow(0.5)
+            for (i in 0..num * radius.i) {
+                spawnSmoke(
+                    centeredOn + createRandomFacingPoint() * Random.nextDouble() * this@PointOrb.radius * 0.25,
+                    createRandomFacingPoint() * Random.nextDouble(),
+                    color.cpy().lerp(Color.WHITE, Random.nextDouble(0.3, 0.8).f)
+                )
+            }
+        }
 
-            val thisColor = value.color
+        override fun render(r: Renderer) {
+            val radius = saturate(timeAlive * 2.5 + 0.5) * radius
+
+            val thisColor = color
 
             r.color = thisColor.cpy().lerp(Color.BLACK, 0.75f).withAlpha(0.5)
             r.circle(body.p, radius * 1.15)

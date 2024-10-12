@@ -69,6 +69,11 @@ enum class Upgrade(
         "Timers on bombs are\nslowed down.",
         50,
     ),
+    GoldenNuggets(
+        "Gold Nuggets",
+        "Occasional golden tiles\nfull of treasure.",
+        60,
+    ),
     SpringBomb(
         "Spring Bomb",
         "A bomb that jumps \n around before exploding.",
@@ -81,7 +86,7 @@ enum class Upgrade(
     ),
     Slam(
         "Slam",
-        "Release finger while in the air\nto slam downwards. Slamming\na bomb makes you bounce back up.",
+        "Release finger while in the air\nto slam downwards. Slamming\nbombs makes you bounce.",
         75,
     ),
 
@@ -107,11 +112,6 @@ enum class Upgrade(
         "Mega Bombs",
         "Massive bombs that\nwreck the landscape.",
         75,
-    ),
-    GoldenNuggets(
-        "Golden Nuggets",
-        "Occasional golden tiles\nfull of treasure.",
-        150,
     ),
     SneakySlam(
         "Sneaky Slam",

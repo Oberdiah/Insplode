@@ -12,6 +12,7 @@ import com.oberdiah.utils.Perlin
 import com.oberdiah.utils.camera
 import kotlin.math.PI
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.random.Random
 
 fun project(p: Point, camera: Camera): Point {
@@ -32,9 +33,13 @@ fun toWorldSpace(p: Point): Point {
     return unproject(p, camera)
 }
 
-fun formatCurrency(amount: Number): String {
+fun formatCurrency(amount: Int): String {
     if (amount >= 1000) {
-        return "${(amount / 1000).format(1)}kc"
+        if (amount % 1000 == 0) {
+            return "${amount / 1000}k"
+        }
+
+        return "${(amount / 1000.0).format(2)}k"
     }
 
     return "${amount}c"

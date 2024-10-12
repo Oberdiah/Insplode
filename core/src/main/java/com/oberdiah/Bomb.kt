@@ -64,7 +64,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     val size = Size(radius * 2, radius * 2)
 
     open fun getPointsWorth(): Int {
-        return ((power.d * 2.0).pow(2.0) * 2.0).i
+        return ((power.d * 2.0).pow(2.0) * 1.5).i
     }
 
     open fun gotSlammed() {
