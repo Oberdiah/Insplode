@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.CAMERA_POS_Y
-import com.oberdiah.CURRENCY_DENOMINATION
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
 import com.oberdiah.Rect
@@ -20,6 +19,7 @@ import com.oberdiah.easeInOutSine
 import com.oberdiah.f
 import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
+import com.oberdiah.formatCurrency
 import com.oberdiah.get2DShake
 import com.oberdiah.getOrZero
 import com.oberdiah.max
@@ -234,7 +234,7 @@ object UpgradeController {
 
                 r.text(
                     fontSmallish,
-                    "${upgrade.price}${CURRENCY_DENOMINATION}",
+                    formatCurrency(upgrade.price),
                     Point(costTextXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + priceShake,
                     Align.right
                 )

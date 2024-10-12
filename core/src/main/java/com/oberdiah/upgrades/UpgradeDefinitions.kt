@@ -56,8 +56,8 @@ enum class Upgrade(
         45,
     ),
     LowerGravity(
-        "Player Micro-Gravity",
-        "Less gravity = higher jump.",
+        "Micro-Gravity",
+        "Only applies to the player.\nLess gravity = higher jump.",
         45,
     ),
 

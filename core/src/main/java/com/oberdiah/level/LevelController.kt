@@ -157,7 +157,7 @@ fun tickLevelController() {
                     )
                 )
             if (tile is Tile && tile.doesExist()) {
-                tile.dematerialize(shouldDropOrbs = false)
+                tile.dematerialize(reason = Tile.DematerializeReason.Laser)
             }
         }
     }

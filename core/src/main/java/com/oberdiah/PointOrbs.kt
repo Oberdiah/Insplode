@@ -48,6 +48,10 @@ object PointOrbs {
         startVel: Velocity = Velocity(),
         addRandomVelocity: Boolean = true
     ) {
+        if (scoreGiven == 0) {
+            return
+        }
+
         // We need to delay spawning because otherwise the physics system doesn't like it much.
         orbsToSpawn.add(OrbToBe(p, scoreGiven, startVel, addRandomVelocity))
     }

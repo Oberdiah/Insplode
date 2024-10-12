@@ -2,11 +2,9 @@ package com.oberdiah.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.oberdiah.CURRENCY_DENOMINATION
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
-import com.oberdiah.MusicCoordinator
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
@@ -22,6 +20,7 @@ import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
+import com.oberdiah.formatCurrency
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
 import com.oberdiah.lerp
@@ -157,7 +156,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         r.color = Color.WHITE
         r.text(
             fontMedium,
-            "${statefulCoinBalance.value}$CURRENCY_DENOMINATION",
+            formatCurrency(statefulCoinBalance.value),
             coinAreaPosition.x - coinAreaWidth * 0.4 + coinTextWobble.x,
             coinAreaPosition.y - coinAreaHeight / 2 + coinTextWobble.y,
             Align.left,

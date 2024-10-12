@@ -72,6 +72,6 @@ fun tickCollapse() {
             Point(Random.nextDouble() - 0.5, -Random.nextDouble()),
             tile.getTileType()
         )
-        tile.dematerialize()
+        tile.dematerialize(reason = Tile.DematerializeReason.Collapse)
     }
 }

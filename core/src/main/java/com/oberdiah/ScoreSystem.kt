@@ -83,11 +83,25 @@ object ScoreSystem {
         PointOrbs.spawnOrbs(bomb.body.p, (numToNormallySpawn * getCurrentMultiplier()).i)
     }
 
-    fun registerTileDestroyed(pos: Point, tileType: TileType) {
-        val numToSpawn = when (tileType) {
+    fun registerTileDestroyed(pos: Point, tileType: TileType, reason: Tile.DematerializeReason) {
+        if (reason == Tile.DematerializeReason.Laser) {
+            return
+        }
+
+        var numToSpawn = when (tileType) {
             TileType.OrbTile -> 1
             TileType.GoldenOrbTile -> 50
             else -> 0
+        }
+
+        if (reason == Tile.DematerializeReason.Collapse) {
+            if (numToSpawn == 1) {
+                if (Random.nextDouble() < 0.5) {
+                    return
+                }
+            } else {
+                numToSpawn /= 2
+            }
         }
 
         PointOrbs.spawnOrbs(pos, (numToSpawn * getCurrentMultiplier()).i)

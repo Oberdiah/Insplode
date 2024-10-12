@@ -148,11 +148,18 @@ class Tile(private val id: TileId) : TileLike {
         setExists(true)
     }
 
+    enum class DematerializeReason {
+        Collapse,
+        Laser,
+        Bomb,
+        Player,
+        Fall,
+        Other
+    }
+
     /** Register this tile as no longer materially existing. It will not collide, it will not render, etc. */
-    fun dematerialize(shouldDropOrbs: Boolean = true) {
-        if (shouldDropOrbs) {
-            ScoreSystem.registerTileDestroyed(coord, tileType)
-        }
+    fun dematerialize(reason: DematerializeReason = DematerializeReason.Other) {
+        ScoreSystem.registerTileDestroyed(coord, tileType, reason)
         setExists(false)
     }
 

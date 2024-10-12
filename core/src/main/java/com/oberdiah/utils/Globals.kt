@@ -34,8 +34,6 @@ enum class Screen(val title: String, val note: Char) {
     Credits("Credits", 'G'),
 }
 
-const val CURRENCY_DENOMINATION = "c"
-
 /// Size of the screen in pixels
 var WIDTH = 0.0
 

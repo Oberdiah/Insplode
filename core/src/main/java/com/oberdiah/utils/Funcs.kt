@@ -32,6 +32,14 @@ fun toWorldSpace(p: Point): Point {
     return unproject(p, camera)
 }
 
+fun formatCurrency(amount: Number): String {
+    if (amount >= 1000) {
+        return "${(amount / 1000).format(1)}kc"
+    }
+
+    return "${amount}c"
+}
+
 fun createRandomPoint(): Point {
     return Point(Random.nextDouble(), Random.nextDouble())
 }
