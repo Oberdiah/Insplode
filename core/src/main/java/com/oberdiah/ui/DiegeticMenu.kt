@@ -45,6 +45,8 @@ val UPGRADES_SCREEN_BOTTOM_Y
     get() = ceil(MENU_ZONE_BOTTOM_Y) + ceil(SCREEN_HEIGHT_IN_UNITS)
 val MENU_ZONE_TOP_Y
     get() = UPGRADES_SCREEN_BOTTOM_Y
+var cameraVelocity = 0.0
+    private set
 
 fun goToDiegeticMenu() {
     GAME_STATE = GameState.TransitioningToDiegeticMenu
@@ -53,12 +55,12 @@ fun goToDiegeticMenu() {
     cameraY = MENU_ZONE_BOTTOM_Y
 }
 
-var delayedPreviousFingerY = 0.0
-var launchTextAlpha = 1.0f
-var lastFingerY = 0.0
-var isDragging = false
-var cameraVelocity = 0.0
-var cameraY = MENU_ZONE_BOTTOM_Y
+private var delayedPreviousFingerY = 0.0
+private var launchTextAlpha = 1.0f
+private var coinTextAlpha = 1.0f
+private var lastFingerY = 0.0
+private var isDragging = false
+private var cameraY = MENU_ZONE_BOTTOM_Y
 
 // The diegetic menu is always there and rendered using in-world coordinates.
 fun renderDiegeticMenuWorldSpace(r: Renderer) {
@@ -86,6 +88,10 @@ private val launchButtonSize
     get() = Size(WIDTH / 3, HEIGHT / 20)
 
 private fun isInLaunchButton(touch: Point): Boolean {
+    if (launchTextAlpha < 0.001) {
+        return false
+    }
+
     return touch.x > launchButtonPos.x - launchButtonSize.w / 2 &&
             touch.x < launchButtonPos.x + launchButtonSize.w / 2 &&
             touch.y > launchButtonPos.y - launchButtonSize.h / 2 &&
@@ -107,7 +113,7 @@ private val coinAreaPoints
     )
 val coinAreaPosition
     get() =
-        Point(WIDTH / 4, HEIGHT + (1 - launchTextAlpha) * coinAreaHeight * 1.4)
+        Point(WIDTH / 4, HEIGHT + (1 - coinTextAlpha) * coinAreaHeight * 1.4)
 
 fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val launchTextColor = colorScheme.textColor.cpy()
@@ -117,10 +123,17 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     }
 
     launchTextAlpha =
-        if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
+        if (GAME_STATE == GameState.DiegeticMenu && ScoreSystem.canStartGame()) {
             frameAccurateLerp(launchTextAlpha, 1.0f, 10.0).f
         } else {
             frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
+        }
+
+    coinTextAlpha =
+        if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
+            frameAccurateLerp(coinTextAlpha, 1.0f, 10.0).f
+        } else {
+            frameAccurateLerp(coinTextAlpha, 0.0f, 10.0).f
         }
 
     launchTextColor.a = launchTextAlpha
@@ -144,7 +157,8 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
             "Drop!"
         }
         r.text(fontMedium, dropText, launchButtonPos, Align.center)
-
+    }
+    if (coinTextAlpha > 0.001) {
         r.color = Color.DARK_GRAY.withAlpha(0.9)
         r.poly(coinAreaPoints, coinAreaPosition, 0.0)
 

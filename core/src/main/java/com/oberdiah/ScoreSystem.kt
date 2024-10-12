@@ -20,9 +20,6 @@ object ScoreSystem {
     var lastScore: Int? = null
         private set
 
-    var playerScore = 0
-        private set
-
     var growingScore = 0
         private set
 
@@ -43,11 +40,19 @@ object ScoreSystem {
     private var scoreLeftToSound = 0
     private var lastTimeScoreSounded = 0.0
 
-    private var coinsToGiveAtEndOfGame = 0
+    private var playerScore = 0
     private var lastScoreGivenOn = 0.0
 
     // In score per second
     private var scoreGivingSpeed = 0.0
+
+    const val TIME_TO_GIVE_SCORE = 2.5
+
+    private fun convertPlayerScoreIntoCoins(scoreToMove: Int) {
+        // The only place we should be updating the coin balance
+        statefulCoinBalance.value += scoreToMove
+        playerScore -= scoreToMove
+    }
 
     fun getCurrentMultiplier(): Double {
         return if (numConsecutiveBounces < 15) {
@@ -60,6 +65,11 @@ object ScoreSystem {
     /** The amount we multiply time by to speed up the game */
     fun timeWarp(): Double {
         return 1 + max((numConsecutiveBounces - 15) * 0.05, 0)
+    }
+
+    fun canStartGame(): Boolean {
+        // All score has become coins
+        return playerScore == 0
     }
 
     /** Per game-second. */
@@ -111,9 +121,8 @@ object ScoreSystem {
     fun registerGameEnd() {
         lastScore = playerScore
         lastScoreGivenOn = APP_TIME
-        scoreGivingSpeed = max(coinsToGiveAtEndOfGame / 4.0, 4.0)
+        scoreGivingSpeed = max(playerScore / TIME_TO_GIVE_SCORE, 4.0)
 
-        playerScore = 0
         growingScore = 0
         numConsecutiveBounces = 0
         lastScoreCollectionTime = RUN_TIME_ELAPSED
@@ -123,8 +132,10 @@ object ScoreSystem {
     }
 
     fun registerGameStart() {
-        statefulCoinBalance.value += coinsToGiveAtEndOfGame
-        coinsToGiveAtEndOfGame = 0
+        if (playerScore > 0) {
+            println("Warning: $playerScore was left over when launching, this shouldn't really happen?")
+        }
+        convertPlayerScoreIntoCoins(playerScore)
     }
 
     fun registerCasuallyLanded() {
@@ -153,7 +164,6 @@ object ScoreSystem {
         }
         growingScore += score
         playerScore += score
-        coinsToGiveAtEndOfGame += score
         statefulHighScore.value = max(playerScore, statefulHighScore.value)
         lastScoreCollectionTime = RUN_TIME_ELAPSED
     }
@@ -173,12 +183,11 @@ object ScoreSystem {
             if (delayBetweenScoreGiving < GameTime.GRAPHICS_DELTA) {
                 scoreToMove = min(
                     (GameTime.GRAPHICS_DELTA / delayBetweenScoreGiving).i,
-                    coinsToGiveAtEndOfGame
+                    playerScore
                 )
             }
-            if (coinsToGiveAtEndOfGame > 0 && lastScoreGivenOn + delayBetweenScoreGiving < APP_TIME) {
-                statefulCoinBalance.value += scoreToMove
-                coinsToGiveAtEndOfGame -= scoreToMove
+            if (playerScore > 0 && lastScoreGivenOn + delayBetweenScoreGiving < APP_TIME) {
+                convertPlayerScoreIntoCoins(scoreToMove)
                 lastScoreGivenOn = APP_TIME
                 val smokeSpawnPoint = Rect.centered(
                     Point(SCREEN_WIDTH_IN_UNITS / 2, endOfGameCoinsHeight),
@@ -233,23 +242,28 @@ object ScoreSystem {
             )
         }
 
-        val coinsFractionLeft = coinsToGiveAtEndOfGame / (lastScore?.d ?: 1.0)
-        val coinTextOpacity = saturate(coinsFractionLeft * 5.0)
-
         val inGameScreenSpaceLocation = Point(WIDTH / 2, HEIGHT * 0.9).wo
 
-        if (coinsToGiveAtEndOfGame > 0) {
-            r.color = colorScheme.textColor.withAlpha(coinTextOpacity)
+        if (playerScore > 0) {
+            r.color = colorScheme.textColor
             r.text(
                 fontLarge,
-                "$coinsToGiveAtEndOfGame",
+                "$playerScore",
                 W / 2, min(endOfGameCoinsHeight, inGameScreenSpaceLocation.y),
                 Align.center,
                 shouldCache = false
             )
         }
         if (lastScore != null) {
-            r.color = colorScheme.textColor.withAlpha(1.0 - coinTextOpacity)
+            val lastScore = lastScore
+            val lastScoreOpacity = if (GAME_STATE == GameState.DiegeticMenu && lastScore != null) {
+                val timeToGiveScore = lastScore / scoreGivingSpeed
+                1.0 - saturate(((LAST_APP_TIME_GAME_STATE_CHANGED + timeToGiveScore) - APP_TIME) * 3.0)
+            } else {
+                0.0
+            }
+
+            r.color = colorScheme.textColor.withAlpha(lastScoreOpacity)
             r.text(
                 fontSmallish,
                 "Score: $lastScore",
