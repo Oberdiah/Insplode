@@ -41,6 +41,11 @@ enum class Upgrade(
         "Haul that darkness away!\nThe void begins higher up.",
         15,
     ),
+    LowerGravity(
+        "Micro-Gravity",
+        "Only applies to the player.\nLess gravity = higher jump.",
+        20,
+    ),
     ComboOrbs(
         "Combo Orbs",
         "When a bomb explodes\nanother, orbs are spawned.",
@@ -51,12 +56,6 @@ enum class Upgrade(
         "Zooooooom!",
         45,
     ),
-    LowerGravity(
-        "Micro-Gravity",
-        "Only applies to the player.\nLess gravity = higher jump.",
-        45,
-    ),
-
     // ################ JUMP UPGRADES ################
 
     LineBomb(
