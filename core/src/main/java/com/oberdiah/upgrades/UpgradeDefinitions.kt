@@ -1,9 +1,5 @@
 package com.oberdiah.upgrades
 
-import com.oberdiah.Point
-import com.oberdiah.SCREEN_WIDTH_IN_UNITS
-import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
-
 const val P = 3.0
 const val MAIN_UPGRADE_SIZE = 2.0
 
@@ -45,9 +41,9 @@ enum class Upgrade(
         "Haul that darkness away!\nThe void begins higher up.",
         15,
     ),
-    LineBomb(
-        "Line Bomb",
-        "A harmless bomb that\nexplodes in a straight line.",
+    ComboOrbs(
+        "Combo Orbs",
+        "When a bomb explodes\nanother, orbs are spawned.",
         25,
     ),
     FasterMovement(
@@ -63,11 +59,10 @@ enum class Upgrade(
 
     // ################ JUMP UPGRADES ################
 
-
-    ComboOrbs(
-        "Combo Orbs",
-        "When a bomb explodes\nanother, orbs are spawned.",
-        25,
+    LineBomb(
+        "Line Bomb",
+        "A harmless bomb that\nexplodes in a straight line.",
+        60,
     ),
     SlowerTimers(
         "Slower Timers",
@@ -79,24 +74,24 @@ enum class Upgrade(
         "A bomb that jumps \n around before exploding.",
         75,
     ),
-    RapidBombs(
-        "Insurgence",
-        "Bombs spawn more\nfrequently.\nMore bombs, more combo.",
+    Magnet(
+        "Magnet",
+        "Attract orbs to you.",
         100,
-    ),
-    LargeBombs(
-        "Big Bombs",
-        "Massive bombs that\nwreck the landscape.",
-        75,
     ),
     Slam(
         "Slam",
         "Release finger while in the air\nto slam downwards. Slamming\na bomb makes you bounce back up.",
-        150,
+        75,
     ),
 
     // ################ SLAM UPGRADES ################
 
+    LargeTimedBomb(
+        "Large Bombs",
+        "Bigger can only mean better.\nWorth more, too.",
+        75,
+    ),
     SlamOrbs(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
@@ -108,6 +103,11 @@ enum class Upgrade(
         200,
         toggleable = true,
     ),
+    MegaTimedBomb(
+        "Mega Bombs",
+        "Massive bombs that\nwreck the landscape.",
+        75,
+    ),
     GoldenNuggets(
         "Golden Nuggets",
         "Occasional golden tiles\nfull of treasure.",
@@ -116,56 +116,56 @@ enum class Upgrade(
     SneakySlam(
         "Sneaky Slam",
         "When fuse is half-depleted,\nslam to get double orbs\nand no explosion.",
-        10,
-    ),
-    Magnet(
-        "Magnet",
-        "Attract orbs to you.",
-        15,
-    ),
-    GhostMode(
-        "Ghost Mode",
-        "While you're in the air bombs\njust phase through you\nharmlessly.",
-        20,
+        100,
     ),
     Multiplier(
         "Multiplier",
-        "Gain multiplier for every\nsuccessive bomb slam. Grows\nthe number of orbs spawned.",
-        10,
+        "Gain multiplier for each\nbomb slam. Applies to\nthe number of orbs spawned.",
+        200,
+    ),
+    RapidBombs(
+        "Insurgence",
+        "Bombs spawn more\nfrequently.\nMore bombs, more fun.",
+        150,
     ),
     MegaMagnet(
         "Mega Magnet",
         "Covers most of the screen.",
-        20,
+        300,
+    ),
+    EvenFasterMovement(
+        "Lightning Fast",
+        "Move ridiculously fast.",
+        350,
     ),
 
     // ################ POST-GAME UPGRADES ################
 
-    EvenFasterMovement(
-        "Lightning Fast",
-        "Move ridiculously fast.",
-        25,
+    UltraTimedBomb(
+        "Ultra Bombs",
+        "Ok this is a bit\nridiculous.",
+        300,
     ),
     StoppedVoid(
         "Void Glue",
         "Glue the void in place,\nnever to move again.",
-        15,
+        500,
     ),
     GlobalMagnet(
         "Global Magnet",
         "The orbs simply cannot\nget away.",
-        25,
+        1000,
     ),
     RainbowPlayer(
         "Rainbow Player",
         "Why not?",
-        25,
+        2000,
         toggleable = true,
     ),
     ParticleBlackHole(
         "Black Hole",
         "Everything is attracted\nto you.",
-        25,
+        10000,
         toggleable = true,
     );
 

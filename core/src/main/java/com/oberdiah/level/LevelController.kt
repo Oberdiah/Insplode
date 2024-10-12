@@ -7,7 +7,6 @@ import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.ImpactBomb
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
-import com.oberdiah.LAST_APP_TIME_GAME_STATE_CHANGED
 import com.oberdiah.LineBomb
 import com.oberdiah.NUM_TILES_ACROSS
 import com.oberdiah.Point
@@ -201,19 +200,19 @@ fun spawnBomb(type: BombType, fraction: Number = random.nextDouble(0.05, 0.95)) 
         }
 
         BombType.LargeTimed -> {
-            if (UpgradeController.playerHas(Upgrade.LargeBombs)) {
+            if (UpgradeController.playerHas(Upgrade.LargeTimedBomb)) {
                 TimedBomb(pos, type)
             }
         }
 
         BombType.MegaTimed -> {
-            if (UpgradeController.playerHas(Upgrade.LargeBombs)) {
+            if (UpgradeController.playerHas(Upgrade.MegaTimedBomb)) {
                 TimedBomb(pos, type)
             }
         }
 
         BombType.UltraTimed -> {
-            if (UpgradeController.playerHas(Upgrade.LargeBombs)) {
+            if (UpgradeController.playerHas(Upgrade.UltraTimedBomb)) {
                 TimedBomb(pos, type)
             }
         }
@@ -260,7 +259,7 @@ val bombDropData = mutableMapOf<BombType, BombData>()
 
 fun startRandomBombs(type: BombType, requestedDelay: Number) {
     val actualDelay = if (UpgradeController.playerHas(Upgrade.RapidBombs)) {
-        requestedDelay * 0.6
+        requestedDelay * 0.8
     } else {
         requestedDelay
     }
