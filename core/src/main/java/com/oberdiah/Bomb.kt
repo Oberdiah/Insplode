@@ -3,6 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.*
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.colorScheme
@@ -53,6 +54,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
         get() = bombType.power
 
     protected var timeLeft = maxFuseLength
+    var givesPointsOnExplode = false
 
     /** If this is greater than 0 we can stand on it. */
     var standableCountdown = 0.0
@@ -62,7 +64,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     val size = Size(radius * 2, radius * 2)
 
     open fun getPointsWorth(): Int {
-        return (power.d * 2.0).pow(2.0).i
+        return ((power.d * 2.0).pow(2.0) * 2.0).i
     }
 
     open fun gotSlammed() {
@@ -73,6 +75,9 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
 
     override fun hitByExplosion() {
         timeLeft = min(Random.nextDouble(0.4, 0.6), timeLeft)
+        if (UpgradeController.playerHas(Upgrade.ComboOrbs)) {
+            givesPointsOnExplode = true
+        }
     }
 
     override fun tick() {
@@ -81,6 +86,10 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
 
     open fun explode() {
         destroy()
+
+        if (givesPointsOnExplode) {
+            ScoreSystem.registerBombComboExplode(this)
+        }
     }
 
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {

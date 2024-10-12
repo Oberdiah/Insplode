@@ -74,10 +74,10 @@ enum class Upgrade(
         "Timers on bombs are\nslowed down.",
         50,
     ),
-    GoldenNuggets(
-        "Golden Nuggets",
-        "Occasional golden tiles\nfull of treasure.",
-        10,
+    SpringBomb(
+        "Spring Bomb",
+        "A bomb that jumps \n around before exploding.",
+        75,
     ),
     RapidBombs(
         "Insurgence",
@@ -97,11 +97,6 @@ enum class Upgrade(
 
     // ################ SLAM UPGRADES ################
 
-    SpringBomb(
-        "Spring Bomb",
-        "A bomb that jumps \n around before exploding.",
-        75,
-    ),
     SlamOrbs(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
@@ -110,8 +105,13 @@ enum class Upgrade(
     ApexWings(
         "Apex Wings",
         "Hover slightly at the apex of\nyour jump",
-        50,
+        200,
         toggleable = true,
+    ),
+    GoldenNuggets(
+        "Golden Nuggets",
+        "Occasional golden tiles\nfull of treasure.",
+        150,
     ),
     SneakySlam(
         "Sneaky Slam",

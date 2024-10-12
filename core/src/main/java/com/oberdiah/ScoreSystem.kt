@@ -73,10 +73,14 @@ object ScoreSystem {
         updateGameSpeed(timeWarp())
 
         bounceDecayAccumulator = 0.0
-
         numConsecutiveBounces++
 
         playMultiplierSound(numConsecutiveBounces)
+    }
+
+    fun registerBombComboExplode(bomb: Bomb) {
+        val numToNormallySpawn = ceil(bomb.getPointsWorth() * 0.15)
+        PointOrbs.spawnOrbs(bomb.body.p, (numToNormallySpawn * getCurrentMultiplier()).i)
     }
 
     fun registerTileDestroyed(pos: Point, tileType: TileType) {
