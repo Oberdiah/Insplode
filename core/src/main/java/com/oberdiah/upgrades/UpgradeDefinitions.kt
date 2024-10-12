@@ -69,6 +69,11 @@ enum class Upgrade(
         "Timers on bombs are\nslowed down.",
         50,
     ),
+    CombineOrbs(
+        "Combine Orbs",
+        "Orbs combine when they\nare close together, making\nthem easier to pick up.",
+        30,
+    ),
     GoldenNuggets(
         "Gold Nuggets",
         "Occasional golden tiles\nfull of treasure.",
