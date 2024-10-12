@@ -182,6 +182,6 @@ enum class Upgrade(
         toggleable = true,
     );
 
-    val obfuscatedTitle = title.replace(Regex("[A-Za-z]")) { "?" }
-    val obfuscatedDescription = description.replace(Regex("[A-Za-z]")) { "?" }
+    val obfuscatedTitle = title.replace(Regex("\\S")) { "?" }
+    val obfuscatedDescription = description.replace(Regex("\\S")) { "?" }
 }
