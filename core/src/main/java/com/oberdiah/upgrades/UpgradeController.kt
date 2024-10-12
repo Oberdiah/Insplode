@@ -351,6 +351,9 @@ object UpgradeController {
 
         playerUpgradeStates[upgrade]?.value = true
         statefulCoinBalance.value -= upgrade.price
+
+        // Make sure the player moves up if they need to
+        player.reset()
     }
 
     fun playerHas(upgrade: Upgrade): Boolean {
