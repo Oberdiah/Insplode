@@ -41,15 +41,20 @@ enum class Upgrade(
         "Haul that darkness away!\nThe void begins higher up.",
         15,
     ),
+    LineBomb(
+        "Line Bomb",
+        "A harmless bomb that\nexplodes in a straight line.",
+        15,
+    ),
     LowerGravity(
         "Micro-Gravity",
         "Only applies to the player.\nLess gravity = higher jump.",
-        20,
+        30,
     ),
     ComboOrbs(
         "Combo Orbs",
         "When a bomb explodes\nanother, orbs are spawned.",
-        25,
+        30,
     ),
     FasterMovement(
         "Move quicker",
@@ -58,11 +63,6 @@ enum class Upgrade(
     ),
     // ################ JUMP UPGRADES ################
 
-    LineBomb(
-        "Line Bomb",
-        "A harmless bomb that\nexplodes in a straight line.",
-        60,
-    ),
     SlowerTimers(
         "Slower Timers",
         "Timers on bombs are\nslowed down.",
@@ -130,7 +130,7 @@ enum class Upgrade(
     ),
     RapidBombs(
         "Insurgence",
-        "Bombs spawn more\nfrequently.\nMore bombs, more fun.",
+        "Bombs spawn more\nfrequently.\nMore bombs, more points.",
         150,
     ),
     MegaMagnet(

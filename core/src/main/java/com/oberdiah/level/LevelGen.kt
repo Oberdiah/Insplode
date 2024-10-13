@@ -116,9 +116,11 @@ fun initTiles() {
     }
 }
 
+private var random = Random(3)
 fun resetLevel() {
     requestedLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 10
     currentLowestTileY = -SIMULATED_REGION_NUM_TILES_HIGH + 10
+    random = Random(3)
 
     for (tile in tilesStorage) {
         tile.dispose()
@@ -246,7 +248,7 @@ fun generateTile(tile: Tile) {
             val orbNoise = Perlin.noise(x, y, 5.0)
             if (orbNoise > 0.65) {
                 tile.setTileType(TileType.OrbTile)
-                if (Random.nextInt(0..100) < 2) {
+                if (random.nextInt(0..100) < 2) {
                     if (playerHas(Upgrade.GoldenNuggets)) {
                         tile.setTileType(TileType.GoldenOrbTile)
                     }

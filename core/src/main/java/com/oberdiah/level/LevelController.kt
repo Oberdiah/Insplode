@@ -1,6 +1,7 @@
 package com.oberdiah.level
 
 import com.badlogic.gdx.graphics.Color
+import com.oberdiah.Bomb
 import com.oberdiah.BombType
 import com.oberdiah.ClusterBomb
 import com.oberdiah.GAME_STATE
@@ -50,13 +51,14 @@ val LASER_HEIGHT_IN_MENU: Double
         )
     }
 
-val LASER_HEIGHT_START_IN_GAME
+private val LASER_HEIGHT_START_IN_GAME
     get() = UpgradeController.getLaserStartHeight()
 
 var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
-var currentPhase = 0
-var random = Random(0)
+private var currentPhase = 0
+private var bombRandoms = mutableMapOf<BombType, Random>()
+private var laserSpeedMultiplier = 1.0
 
 fun resetLevelController() {
     currentPhase = 0
@@ -65,7 +67,8 @@ fun resetLevelController() {
     maxDepthThisRun = 0.0
     currentDepthThisRun = 0.0
     laserInGameHeight = LASER_HEIGHT_START_IN_GAME
-    random = Random(0)
+    bombRandoms.clear()
+    laserSpeedMultiplier = 1.0
     bombDropData.clear()
 }
 
@@ -142,8 +145,9 @@ fun tickLevelController() {
 
     val lastLaserHeight = LASER_HEIGHT
     if (RUN_TIME_ELAPSED > LASER_DELAY) {
-        laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling
+        laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling * laserSpeedMultiplier
     }
+    laserSpeedMultiplier += GameTime.GAMEPLAY_DELTA * 0.01
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
         // Delete this entire row of tiles
@@ -184,7 +188,7 @@ fun tickLevelController() {
     }
 }
 
-fun spawnBomb(type: BombType, fraction: Number = random.nextDouble(0.05, 0.95)) {
+fun spawnBomb(type: BombType, fraction: Number = getBombRandom(type).nextDouble(0.05, 0.95)) {
     val pos = Point(fraction * UNITS_WIDE, SAFE_BOMB_SPAWN_HEIGHT)
     when (type) {
         BombType.SmallTimed -> {
@@ -241,7 +245,7 @@ fun spawnBomb(type: BombType, fraction: Number = random.nextDouble(0.05, 0.95)) 
     }
 }
 
-data class BombData(var delay: Number) {
+data class BombData(var delay: Number, val type: BombType) {
     var nextBombAt: Number = 0.0
 
     init {
@@ -251,7 +255,7 @@ data class BombData(var delay: Number) {
     fun randomiseNextBombAt() {
         val minTime = 0.0
         val maxTime = delay * 2.0
-        nextBombAt = RUN_TIME_ELAPSED + lerp(minTime, maxTime, random.nextDouble())
+        nextBombAt = RUN_TIME_ELAPSED + lerp(minTime, maxTime, getBombRandom(type).nextDouble())
     }
 }
 
@@ -267,7 +271,7 @@ fun startRandomBombs(type: BombType, requestedDelay: Number) {
     bombDropData[type]?.let {
         it.delay = actualDelay
     } ?: run {
-        bombDropData[type] = BombData(actualDelay)
+        bombDropData[type] = BombData(actualDelay, type)
     }
 }
 
@@ -277,4 +281,8 @@ fun stopAllBombs() {
 
 fun stopRandomBombs(type: BombType) {
     bombDropData.remove(type)
+}
+
+private fun getBombRandom(type: BombType): Random {
+    return bombRandoms.getOrPut(type) { Random(type.ordinal) }
 }
