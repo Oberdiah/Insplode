@@ -5,13 +5,14 @@ import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
-import com.oberdiah.ui.coinAreaPosition
+import com.oberdiah.ui.starsAreaPosition
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.GameTime.APP_TIME
 import com.oberdiah.utils.GameTime.GAMEPLAY_DELTA
 import com.oberdiah.utils.GameTime.updateGameSpeed
+import com.oberdiah.utils.StatefulInt
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
@@ -49,17 +50,43 @@ object ScoreSystem {
     private var scoreGivingSpeed = 0.0
 
     const val TIME_TO_GIVE_SCORE = 2.5
+    private var currentlyPlayingUpgrade = Upgrade.StarterUpgrade
 
-    private fun convertPlayerScoreIntoCoins(scoreToMove: Int) {
-        val scoreToActuallyMove = min(scoreToMove, playerScore)
-
-        if (scoreToActuallyMove != scoreToMove) {
-            println("Warning: $scoreToMove was requested to be moved, but only $scoreToActuallyMove was moved")
+    private val playerHighScores = mutableMapOf<Upgrade, StatefulInt>()
+    fun init() {
+        Upgrade.entries.forEach {
+            playerHighScores[it] = StatefulInt("${it.name} High Score", 0)
         }
+    }
 
-        // The only place we should be updating the coin balance
-        statefulCoinBalance.value += scoreToActuallyMove
-        playerScore -= scoreToActuallyMove
+    fun resetScores() {
+        playerHighScores.values.forEach { it.value = 0 }
+    }
+
+
+    private var totalNumStarsCache = 0
+    fun getPlayerNumStars(): Int {
+        if (totalNumStarsCache == 0) {
+            totalNumStarsCache = Upgrade.entries.sumOf { getNumStarsOnUpgrade(it) }
+        }
+        return totalNumStarsCache
+    }
+
+    fun getNumStarsOnUpgrade(upgrade: Upgrade): Int {
+        val fourStarsScore = upgrade.developerBest
+        val threeStarsScore = upgrade.threeStarsScore
+        val twoStarsScore = threeStarsScore * 0.65
+        val oneStarScore = threeStarsScore * 0.25
+
+        val ourScore = playerHighScores[upgrade]!!.value
+
+        return when {
+            ourScore >= fourStarsScore -> 4
+            ourScore >= threeStarsScore -> 3
+            ourScore >= twoStarsScore -> 2
+            ourScore >= oneStarScore -> 1
+            else -> 0
+        }
     }
 
     fun getCurrentMultiplier(): Double {
@@ -142,8 +169,8 @@ object ScoreSystem {
         lastScore = playerScore
         lastScoreGivenOn = APP_TIME
         scoreGivingSpeed = max(playerScore / TIME_TO_GIVE_SCORE, 4.0)
-
         growingScore = 0
+        totalNumStarsCache = 0 // Force a regeneration of the cache
         numConsecutiveBounces = 0
         lastScoreCollectionTime = RUN_TIME_ELAPSED
         growingScoreStartedOn = RUN_TIME_ELAPSED
@@ -152,10 +179,7 @@ object ScoreSystem {
     }
 
     fun registerGameStart() {
-        if (playerScore > 0) {
-            println("Warning: $playerScore was left over when launching, this shouldn't really happen?")
-        }
-        convertPlayerScoreIntoCoins(playerScore)
+        // Nothing at the moment
     }
 
     fun registerCasuallyLanded() {
@@ -184,7 +208,8 @@ object ScoreSystem {
         }
         growingScore += score
         playerScore += score
-        statefulHighScore.value = max(playerScore, statefulHighScore.value)
+        playerHighScores[currentlyPlayingUpgrade]!!.value =
+            max(playerScore, playerHighScores[currentlyPlayingUpgrade]!!.value)
         lastScoreCollectionTime = RUN_TIME_ELAPSED
     }
 
@@ -207,14 +232,14 @@ object ScoreSystem {
                 )
             }
             if (playerScore > 0 && lastScoreGivenOn + delayBetweenScoreGiving < APP_TIME) {
-                convertPlayerScoreIntoCoins(scoreToMove)
+                playerScore -= scoreToMove
                 lastScoreGivenOn = APP_TIME
                 val smokeSpawnPoint = Rect.centered(
                     Point(SCREEN_WIDTH_IN_UNITS / 2, endOfGameCoinsHeight),
                     Size(SCREEN_HEIGHT_IN_UNITS / 30, SCREEN_HEIGHT_IN_UNITS / 30)
                 ).randomPointInside()
 
-                val velocity = coinAreaPosition.wo - smokeSpawnPoint
+                val velocity = starsAreaPosition.wo - smokeSpawnPoint
                 velocity.len = 15
 
                 spawnSmoke(
@@ -252,16 +277,6 @@ object ScoreSystem {
 
         r.color = colorScheme.textColor
 
-        if (statefulHighScore.value != 0) {
-            r.text(
-                fontSmallish,
-                "High Score: ${statefulHighScore.value}",
-                W / 2, MENU_ZONE_BOTTOM_Y + H * 3.0 / 4 - 2.0,
-                Align.center,
-                shouldCache = false
-            )
-        }
-
         val inGameScreenSpaceLocation = Point(WIDTH / 2, HEIGHT * 0.9).wo
 
         if (playerScore > 0) {
@@ -275,10 +290,8 @@ object ScoreSystem {
             )
         }
         if (lastScore != null) {
-            val lastScore = lastScore
-            val lastScoreOpacity = if (GAME_STATE == GameState.DiegeticMenu && lastScore != null) {
-                val timeToGiveScore = lastScore / scoreGivingSpeed
-                1.0 - saturate(((LAST_APP_TIME_GAME_STATE_CHANGED + timeToGiveScore) - APP_TIME) * 3.0)
+            val lastScoreOpacity = if (GAME_STATE == GameState.DiegeticMenu) {
+                1.0 - saturate((LAST_APP_TIME_GAME_STATE_CHANGED - APP_TIME) * 3.0)
             } else {
                 0.0
             }

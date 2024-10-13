@@ -20,14 +20,12 @@ import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
-import com.oberdiah.formatCurrency
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
 import com.oberdiah.lerp
 import com.oberdiah.level.LASER_HEIGHT_IN_MENU
 import com.oberdiah.sin
 import com.oberdiah.startGame
-import com.oberdiah.statefulCoinBalance
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.noFundsWarningFract
@@ -36,6 +34,7 @@ import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
+import com.oberdiah.utils.renderStar
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
 import com.oberdiah.withAlpha
@@ -59,7 +58,7 @@ fun goToDiegeticMenu() {
 
 private var delayedPreviousFingerY = 0.0
 private var launchTextAlpha = 1.0f
-private var coinTextAlpha = 1.0f
+private var starsTextAlpha = 1.0f
 private var lastFingerY = 0.0
 private var isDragging = false
 private var cameraY = MENU_ZONE_BOTTOM_Y
@@ -101,21 +100,21 @@ private fun isInLaunchButton(touch: Point): Boolean {
 }
 
 private val coinAreaWidth
-    get() = WIDTH / 4
+    get() = WIDTH / 4.0
 private val coinAreaHeight
     get() = HEIGHT / 25
 private val coinAreaTriangleWidth
     get() = WIDTH / 20
-private val coinAreaPoints
+private val starsAreaPoints
     get() = listOf(
         Point(-coinAreaWidth / 2 - coinAreaTriangleWidth, 0),
         Point(-coinAreaWidth / 2, -coinAreaHeight),
         Point(coinAreaWidth / 2, -coinAreaHeight),
         Point(coinAreaWidth / 2 + coinAreaTriangleWidth, 0)
     )
-val coinAreaPosition
+val starsAreaPosition
     get() =
-        Point(WIDTH / 4, HEIGHT + (1 - coinTextAlpha) * coinAreaHeight * 1.4)
+        Point(WIDTH / 4, HEIGHT + (1 - starsTextAlpha) * coinAreaHeight * 1.4)
 
 fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val launchTextColor = colorScheme.textColor.cpy()
@@ -131,11 +130,11 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
             frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
         }
 
-    coinTextAlpha =
+    starsTextAlpha =
         if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
-            frameAccurateLerp(coinTextAlpha, 1.0f, 10.0).f
+            frameAccurateLerp(starsTextAlpha, 1.0f, 10.0).f
         } else {
-            frameAccurateLerp(coinTextAlpha, 0.0f, 10.0).f
+            frameAccurateLerp(starsTextAlpha, 0.0f, 10.0).f
         }
 
     launchTextColor.a = launchTextAlpha
@@ -160,23 +159,33 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         }
         r.text(fontMedium, dropText, launchButtonPos, Align.center)
     }
-    if (coinTextAlpha > 0.001) {
+    if (starsTextAlpha > 0.001) {
         r.color = Color.DARK_GRAY.withAlpha(0.9)
-        r.poly(coinAreaPoints, coinAreaPosition, 0.0)
+        r.poly(starsAreaPoints, starsAreaPosition, 0.0)
 
         r.color = Color.DARK_GRAY
-        r.polyLine(coinAreaPoints, coinAreaPosition, WIDTH / 150)
+        r.polyLine(starsAreaPoints, starsAreaPosition, WIDTH / 150)
 
         val coinTextWobble = get2DShake(noFundsWarningFract() * UNIT_SIZE_IN_PIXELS * 0.5)
+
+        val textPos = Point(
+            starsAreaPosition.x - coinAreaWidth * 0.4 + coinTextWobble.x,
+            starsAreaPosition.y - coinAreaHeight / 2 + coinTextWobble.y
+        )
 
         r.color = Color.WHITE
         r.text(
             fontMedium,
-            formatCurrency(statefulCoinBalance.value),
-            coinAreaPosition.x - coinAreaWidth * 0.4 + coinTextWobble.x,
-            coinAreaPosition.y - coinAreaHeight / 2 + coinTextWobble.y,
+            "${ScoreSystem.getPlayerNumStars()}",
+            textPos,
             Align.left,
             shouldCache = false
+        )
+        renderStar(
+            r, Point(
+                starsAreaPosition.x + coinAreaWidth * 0.4 + coinTextWobble.x,
+                textPos.y
+            ), fontMedium.capHeight * 1.25
         )
     }
 }

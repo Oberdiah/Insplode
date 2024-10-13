@@ -11,7 +11,9 @@ import com.oberdiah.Point
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
+import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
+import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.abs
 import com.oberdiah.createRandomFacingPoint
 import com.oberdiah.d
@@ -19,7 +21,6 @@ import com.oberdiah.easeInOutSine
 import com.oberdiah.f
 import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
-import com.oberdiah.formatCurrency
 import com.oberdiah.get2DShake
 import com.oberdiah.getOrZero
 import com.oberdiah.max
@@ -27,7 +28,6 @@ import com.oberdiah.playMultiplierSound
 import com.oberdiah.player.player
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
-import com.oberdiah.statefulCoinBalance
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.ui.cameraYUnitsDeltaThisTick
@@ -36,6 +36,7 @@ import com.oberdiah.utils.StatefulBoolean
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
+import com.oberdiah.utils.renderAwardedStars
 import com.oberdiah.withAlpha
 
 object UpgradeController {
@@ -47,7 +48,7 @@ object UpgradeController {
     fun init() {
         playerUpgradeStates.clear()
         Upgrade.entries.forEach {
-            playerUpgradeStates[it] = StatefulBoolean(it.name, false)
+            playerUpgradeStates[it] = StatefulBoolean("${it.name} Unlocked", false)
             val path = "Icons/${it.name}.png"
             // Check if file exists
             if (Gdx.files.internal(path).exists()) {
@@ -235,9 +236,17 @@ object UpgradeController {
 
                 r.text(
                     fontSmallish,
-                    formatCurrency(upgrade.price),
+                    "${upgrade.starsToUnlock}",
                     Point(costTextXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + priceShake,
                     Align.right
+                )
+            } else if (upgradeStatus.areStarsVisible()) {
+                renderAwardedStars(
+                    r,
+                    Point(10.0, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + priceShake,
+                    Align.right,
+                    fontSmallish.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS,
+                    ScoreSystem.getNumStarsOnUpgrade(upgrade)
                 )
             }
 
@@ -350,7 +359,6 @@ object UpgradeController {
         }
 
         playerUpgradeStates[upgrade]?.value = true
-        statefulCoinBalance.value -= upgrade.price
 
         // Make sure the player moves up if they need to
         player.reset()
@@ -426,7 +434,7 @@ object UpgradeController {
         return if (playerHas(upgrade)) {
             UpgradeStatus.PURCHASED
         } else if (upgrade.ordinal <= highestIndexUnlockedSoFar() + 1) {
-            if (statefulCoinBalance.value >= upgrade.price) {
+            if (ScoreSystem.getPlayerNumStars() >= upgrade.starsToUnlock) {
                 UpgradeStatus.PURCHASABLE
             } else {
                 UpgradeStatus.TOO_EXPENSIVE
@@ -452,6 +460,10 @@ object UpgradeController {
 
         fun isIconVisible(): Boolean {
             return this != HIDDEN
+        }
+
+        fun areStarsVisible(): Boolean {
+            return this == PURCHASED
         }
 
         fun isTextVisible(): Boolean {

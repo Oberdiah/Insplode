@@ -6,9 +6,17 @@ const val MAIN_UPGRADE_SIZE = 2.0
 enum class Upgrade(
     val title: String,
     val description: String,
-    val price: Int,
-    val toggleable: Boolean = false,
+    val starsToUnlock: Int,
+    val threeStarsScore: Int = 100000,
+    val developerBest: Int = 999999,
 ) {
+    StarterUpgrade(
+        "Launch",
+        "Spawn onto the map.",
+        0, // You start with this
+        1,
+        1,
+    ),
     Movement(
         "Movement",
         "Touch and drag left and right\nto move. The white line is\nwhere you're heading.",
@@ -110,7 +118,6 @@ enum class Upgrade(
         "Apex Wings",
         "Hover slightly at the apex of\nyour jump",
         200,
-        toggleable = true,
     ),
     MegaTimedBomb(
         "Mega Bombs",
@@ -165,25 +172,21 @@ enum class Upgrade(
         "Global Magnet",
         "The orbs simply cannot\nget away.",
         2000,
-        toggleable = true,
     ),
     RainbowPlayer(
         "Rainbow Player",
         "Why not?",
         5000,
-        toggleable = true,
     ),
     DeadlyTouch(
         "Deadly Touch",
         "Simply touching a bomb\nwill cause it to self-destruct.",
         10000,
-        toggleable = true,
     ),
     BlackHole(
         "Black Hole",
         "Everything must be consumed,\nand so it shall be.",
         25000,
-        toggleable = true,
     );
 
     val obfuscatedTitle = title.replace(Regex("\\S")) { "?" }

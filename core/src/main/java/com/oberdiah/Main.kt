@@ -72,6 +72,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         initMarchingSquares()
         RenderLevel.init()
         UpgradeController.init()
+        ScoreSystem.init()
 
         worldSpaceRenderer = Renderer("World Space Renderer", camera)
         uiRenderer = Renderer("UI Renderer", screenCamera)

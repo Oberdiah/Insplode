@@ -279,6 +279,27 @@ class Renderer(val name: String, val camera: Camera) {
         }
     }
 
+    fun star(center: Point, radius: Number, angle: Number = Math.PI / 10) {
+        val points = mutableListOf<Point>()
+        for (i in 0 until 5) {
+            val angle1 = angle + i * 2 * PI / 5
+            val angle2 = angle + (i + 0.5) * 2 * PI / 5
+            points.add(
+                Point(
+                    center.x + cos(angle1) * radius,
+                    center.y + sin(angle1) * radius
+                )
+            )
+            points.add(
+                Point(
+                    center.x + cos(angle2) * radius / 2,
+                    center.y + sin(angle2) * radius / 2
+                )
+            )
+        }
+        poly(points, Point(), 0.0)
+    }
+
     fun circle(p: Point, rad: Number, segments: Int = 20) {
         shapeRenderer.circle(p.x.f, p.y.f, rad.f, segments)
     }

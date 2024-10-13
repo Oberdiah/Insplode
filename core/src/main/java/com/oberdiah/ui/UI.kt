@@ -31,14 +31,11 @@ import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
 import com.oberdiah.fontSmallish
 import com.oberdiah.format
-import com.oberdiah.level.gameMessage
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playChordNote
 import com.oberdiah.saturate
-import com.oberdiah.statefulCoinBalance
 import com.oberdiah.statefulEasyMode
-import com.oberdiah.statefulHighScore
 import com.oberdiah.statefulPlayMusicSetting
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
@@ -194,14 +191,8 @@ private fun advancedSettingsUI(r: Renderer) {
     if (IS_DEBUG_ENABLED) {
         toggleButton(r, "Physics Render", ::DO_PHYSICS_DEBUG_RENDER)
     }
-    button(r, "Reset High Score") {
-        statefulHighScore.value = 0
-    }
-    button(r, "Reset All Upgrades") {
-        UpgradeController.resetAllUpgrades()
-    }
-    button(r, "Reset Coins") {
-        statefulCoinBalance.value = 0
+    button(r, "Reset everything") {
+        ScoreSystem.resetScores()
     }
     button(r, "Back") {
         backAScreen()
