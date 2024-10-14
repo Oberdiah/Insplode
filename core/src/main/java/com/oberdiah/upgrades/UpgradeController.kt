@@ -332,13 +332,13 @@ object UpgradeController {
         UpgradeStatus.HIDDEN to null,
         UpgradeStatus.TOO_EXPENSIVE to null,
         UpgradeStatus.PURCHASABLE to null,
-        UpgradeStatus.PURCHASED to null,
+        UpgradeStatus.PURCHASED to Upgrade.StarterUpgrade,
     )
     private var upgradeTappedBeforeThat: MutableMap<UpgradeStatus, Upgrade?> = mutableMapOf(
         UpgradeStatus.HIDDEN to null,
         UpgradeStatus.TOO_EXPENSIVE to null,
         UpgradeStatus.PURCHASABLE to null,
-        UpgradeStatus.PURCHASED to null,
+        UpgradeStatus.PURCHASED to Upgrade.StarterUpgrade,
     )
     private var currentUpgradePurchaseSoundsPlayed = -1
     private val timeOfLastUpgradeTap = mutableMapOf(
@@ -438,6 +438,10 @@ object UpgradeController {
     }
 
     fun playerHasTheAbilityToPlayWith(upgrade: Upgrade): Boolean {
+        if (upgrade == Upgrade.StarterUpgrade) {
+            return true
+        }
+
         return playerUpgradeStates[upgrade]?.value == true
     }
 
