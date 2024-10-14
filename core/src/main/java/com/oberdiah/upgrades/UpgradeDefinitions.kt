@@ -36,7 +36,7 @@ enum class Upgrade(
     ),
     Jump(
         "Jump",
-        "Tap to jump.",
+        "Swipe up to jump.",
         10,
     ),
     SmallTimedBomb(
@@ -103,7 +103,7 @@ enum class Upgrade(
     ),
     Slam(
         "Slam",
-        "Release finger while in the air\nto slam downwards. Slamming\nbombs makes you bounce.",
+        "Swipe down to slam.\nSlamming bombs is harmless\nand makes you bounce.",
         75,
     ),
 
