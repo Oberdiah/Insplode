@@ -12,8 +12,8 @@ fun renderAwardedStars(r: Renderer, p: Point, align: Int, starSize: Double, star
 
     val spacing = starSize * 1.05
     val startXPos = when (align) {
-        Align.center -> -1.5 * spacing
-        Align.right -> -3 * spacing
+        Align.center -> -0.5 * spacing
+        Align.right -> -2 * spacing
         else -> 0.0
     }
 

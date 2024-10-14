@@ -86,7 +86,10 @@ private val launchButtonPos
 private val launchButtonSize
     get() = Size(WIDTH / 3, HEIGHT / 20)
 
-private fun isInLaunchButton(touch: Point): Boolean {
+/**
+ * In ui/screen-space
+ */
+fun isInLaunchButton(touch: Point): Boolean {
     if (launchTextAlpha < 0.001) {
         return false
     }

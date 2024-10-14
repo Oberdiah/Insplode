@@ -6,7 +6,7 @@ const val MAIN_UPGRADE_SIZE = 2.0
 enum class Upgrade(
     val title: String,
     val description: String,
-    val threeStarsScore: Int = 1000,
+    val threeStarsScore: Int = 5,
     val developerBest: Int = 9999,
 ) {
     StarterUpgrade(
@@ -18,12 +18,16 @@ enum class Upgrade(
     Movement(
         "Movement",
         "Touch and drag left and right\nto move. The white line is\nwhere you're heading.",
+        3,
+        4
     ),
 
     // ################ EARLY-GAME UPGRADES ################
     SlowerVoid(
         "Void Repellent",
         "Slow down the void's\napproach.",
+        9,
+        10
     ),
     MediumTimedBomb(
         "Timed Bomb",

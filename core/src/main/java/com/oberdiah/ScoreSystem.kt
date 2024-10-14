@@ -52,7 +52,6 @@ object ScoreSystem {
     private var scoreGivingSpeed = 0.0
 
     const val TIME_TO_GIVE_SCORE = 2.5
-    private var currentlyPlayingUpgrade = Upgrade.StarterUpgrade
 
     private val playerHighScores = mutableMapOf<Upgrade, StatefulInt>()
     fun init() {
@@ -61,10 +60,13 @@ object ScoreSystem {
         }
     }
 
+    fun getPlayerScore(upgrade: Upgrade): Int {
+        return playerHighScores[upgrade]?.value ?: 0
+    }
+
     fun resetScores() {
         playerHighScores.values.forEach { it.value = 0 }
     }
-
 
     private var totalNumStarsCache = 0
     fun getPlayerNumStars(): Int {
@@ -83,7 +85,7 @@ object ScoreSystem {
         val ourScore = playerHighScores[upgrade]!!.value
 
         return when {
-            ourScore >= fourStarsScore -> 4
+            ourScore >= fourStarsScore -> 3
             ourScore >= threeStarsScore -> 3
             ourScore >= twoStarsScore -> 2
             ourScore >= oneStarScore -> 1
@@ -205,8 +207,8 @@ object ScoreSystem {
         }
         growingScore += score
         playerScore += score
-        playerHighScores[currentlyPlayingUpgrade]!!.value =
-            max(playerScore, playerHighScores[currentlyPlayingUpgrade]!!.value)
+        playerHighScores[UpgradeController.currentlyPlayingUpgrade]!!.value =
+            max(playerScore, playerHighScores[UpgradeController.currentlyPlayingUpgrade]!!.value)
         lastScoreCollectionTime = RUN_TIME_ELAPSED
     }
 

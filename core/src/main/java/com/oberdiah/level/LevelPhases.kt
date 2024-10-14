@@ -40,6 +40,7 @@ val phases = arrayOf(
     },
     Phase(3.0) {
         spawnBomb(BombType.SmallTimed, 0.6)
+        spawnBomb(BombType.PointOrb, 0.1)
     },
     Phase(0.5) {
         spawnBomb(BombType.SmallTimed, 0.2)
@@ -48,7 +49,7 @@ val phases = arrayOf(
     Phase(0.5) {
         spawnBomb(BombType.PointOrb, 0.8)
     },
-    Phase(1.75) {
+    Phase(2.0) {
         startRandomBombs(BombType.SmallTimed, 5.0)
         spawnBomb(BombType.MediumTimed, 0.75)
         spawnBomb(BombType.PointOrb, 0.4)
