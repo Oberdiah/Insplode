@@ -1,5 +1,6 @@
 package com.oberdiah
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.oberdiah.level.laserInGameHeight
 import com.oberdiah.level.requestNewLowestTileY
@@ -18,6 +19,8 @@ const val DEBUG_VERIFY = IS_DEBUG_ENABLED
  * 2.0 is zoomed in, 0.5 is zoomed out.
  */
 const val GLOBAL_SCALE = 1.0
+
+val ON_DESKTOP = Gdx.app.type == Application.ApplicationType.Desktop
 
 /** The number of 'tiles' per unit on the grid. */
 const val TILES_PER_UNIT = 5

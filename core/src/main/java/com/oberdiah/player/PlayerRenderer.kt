@@ -51,13 +51,15 @@ object PlayerRenderer {
             r.color = Color(1f, 1f, 1f, 1f).fromHsv(hsv)
         }
 
-        val desiredHeadOffset = if (player.state.isPreparingToJump) {
-            -0.2
-        } else if (player.state.isSlamming) {
-            0.2
-        } else {
-            0.0
-        }
+        val preparingAction = PlayerInputs.currentPreparingAction
+        val desiredHeadOffset =
+            if (player.state.isSlamming || preparingAction == PlayerInputs.PreparingAction.Jump) {
+                0.2
+            } else if (preparingAction == PlayerInputs.PreparingAction.Slam) {
+                -0.2
+            } else {
+                0.0
+            }
 
         renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 20.0)
 

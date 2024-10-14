@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.CAMERA_POS_Y
+import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
 import com.oberdiah.Rect
@@ -364,8 +365,16 @@ object UpgradeController {
         player.reset()
     }
 
+
+    private val FORCE_UPGRADES_UNTIL: Upgrade? = Upgrade.InfiniteMultiplier
     fun playerHas(upgrade: Upgrade): Boolean {
-        return playerUpgradeStates[upgrade]?.value ?: false
+        if (IS_DEBUG_ENABLED) {
+            FORCE_UPGRADES_UNTIL?.let {
+                return upgrade.ordinal <= it.ordinal
+            }
+        }
+
+        return playerUpgradeStates[upgrade]?.value == true
     }
 
     fun getMovementSpeed(): Double {

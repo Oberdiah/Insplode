@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color
 import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.GAME_IS_RUNNING
 import com.oberdiah.IS_DEBUG_ENABLED
+import com.oberdiah.ON_DESKTOP
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
@@ -16,6 +17,7 @@ import com.oberdiah.abs
 import com.oberdiah.boom
 import com.oberdiah.d
 import com.oberdiah.f
+import com.oberdiah.frameAccurateLerp
 import com.oberdiah.saturate
 import com.oberdiah.ui.pauseHovered
 import com.oberdiah.upgrades.Upgrade
@@ -28,15 +30,39 @@ import com.oberdiah.utils.isKeyPressed
 import com.oberdiah.withAlpha
 
 object PlayerInputs {
+    private const val PLAYER_FINGER_DRAG_DISTANCE = 0.2
+
     /** The point where the player's finger last went down. */
     private var lastFingerPoint = Point()
     private var lastBodyXValue = 0.0
+    private var driftingPlayerSwipeStartY = 0.0
+    var currentPreparingAction: PreparingAction = PreparingAction.None
+        private set
+
+    enum class PreparingAction {
+        Jump,
+        Slam,
+        None
+    }
+
+    private fun calculateCurrentPreparingAction(): PreparingAction {
+        TOUCHES_DOWN.firstOrNull()?.let { touch ->
+            val v =
+                (touch.y / UNIT_SIZE_IN_PIXELS - driftingPlayerSwipeStartY) / PLAYER_FINGER_DRAG_DISTANCE
+            if (v >= 1) {
+                return PreparingAction.Jump
+            } else if (v <= -1) {
+                return PreparingAction.Slam
+            }
+        }
+        return PreparingAction.None
+    }
 
     var desiredXPos = 0.0
         private set
 
     val canJump
-        get() = (player.state.isPreparingToJump || player.state.isIdle) && PlayerInfoBoard.isStandingOnStandableGenerous
+        get() = player.state.isIdle && PlayerInfoBoard.isStandingOnStandableGenerous
 
     fun reset() {
         lastFingerPoint = Point()
@@ -69,9 +95,9 @@ object PlayerInputs {
     fun tick() {
         val vel = player.body.velocity
 
-        if (isJumpJustPressed() && canJump) {
+        if (isJumpFiredThisFrame() && canJump) {
             player.state.justPerformedAJump()
-        } else if (isSlamJustPressed() && !canJump) {
+        } else if (isSlamFiredThisFrame() && !canJump) {
             player.state.justStartedASlam()
         }
 
@@ -85,13 +111,8 @@ object PlayerInputs {
         if (TOUCHES_DOWN.size == 1) {
             TOUCHES_WENT_DOWN.forEach {
                 lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
+                driftingPlayerSwipeStartY = lastFingerPoint.y
                 lastBodyXValue = player.body.p.x
-
-                if (UpgradeController.playerHas(Upgrade.Jump)) {
-                    if (player.state.isIdle) {
-                        player.state.justStartedPreparingAJump()
-                    }
-                }
             }
         }
 
@@ -99,12 +120,8 @@ object PlayerInputs {
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
             val finger = touch / UNIT_SIZE_IN_PIXELS
             desiredXPos = lastBodyXValue + (finger.x - lastFingerPoint.x) * 1.8
-
-            if (player.state.isPreparingToJump) {
-                if (finger.distTo(lastFingerPoint) > 0.1) {
-                    player.state.justCancelledPreparingAJump()
-                }
-            }
+            driftingPlayerSwipeStartY =
+                frameAccurateLerp(driftingPlayerSwipeStartY, touch.y / UNIT_SIZE_IN_PIXELS, 10.0)
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys
@@ -139,39 +156,27 @@ object PlayerInputs {
 
         val impulse = player.body.mass * velChange
         player.body.applyImpulse(Point(impulse.f, 0))
+
+        currentPreparingAction = calculateCurrentPreparingAction()
     }
 
-    private fun isJumpJustPressed(): Boolean {
+    private fun isJumpFiredThisFrame(): Boolean {
         if (!UpgradeController.playerHas(Upgrade.Jump)) {
             return false
         }
 
-        val onDesktop = Gdx.app.type == Application.ApplicationType.Desktop
-
-        if (player.state.isPreparingToJump) {
-            TOUCHES_WENT_UP.firstOrNull()?.let {
-                return true
-            }
-        }
-
-        if (onDesktop) {
-            return isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
-        }
-
-        return false
+        return TOUCHES_WENT_UP.firstOrNull()?.let {
+            currentPreparingAction == PreparingAction.Jump
+        } ?: isKeyJustPressed(Keys.SPACE) || isKeyJustPressed(Keys.W) || isKeyJustPressed(Keys.UP)
     }
 
-    private fun isSlamJustPressed(): Boolean {
+    private fun isSlamFiredThisFrame(): Boolean {
         if (!UpgradeController.playerHas(Upgrade.Slam)) {
             return false
         }
 
         return TOUCHES_WENT_UP.firstOrNull()?.let {
-            true
-        } ?: if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            isKeyJustPressed(Keys.S) || isKeyJustPressed(Keys.DOWN)
-        } else {
-            false
-        }
+            currentPreparingAction == PreparingAction.Slam
+        } ?: isKeyJustPressed(Keys.S) || isKeyJustPressed(Keys.DOWN)
     }
 }
