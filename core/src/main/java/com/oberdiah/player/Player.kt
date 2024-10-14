@@ -81,7 +81,6 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         PlayerInfoBoard.reset()
         state.reset()
-        PlayerInputs.reset()
     }
 
     private fun addFixture(shape: Shape, isSensor: Boolean = false): Fixture {

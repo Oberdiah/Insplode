@@ -1,13 +1,10 @@
 package com.oberdiah.player
 
-import com.badlogic.gdx.Application
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.GAME_IS_RUNNING
 import com.oberdiah.IS_DEBUG_ENABLED
-import com.oberdiah.ON_DESKTOP
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
@@ -32,9 +29,8 @@ import com.oberdiah.withAlpha
 object PlayerInputs {
     private const val PLAYER_FINGER_DRAG_DISTANCE = 0.2
 
-    /** The point where the player's finger last went down. */
+    /** The point where the player's finger was last frame. */
     private var lastFingerPoint = Point()
-    private var lastBodyXValue = 0.0
     private var driftingPlayerSwipeStartY = 0.0
     var currentPreparingAction: PreparingAction = PreparingAction.None
         private set
@@ -63,11 +59,6 @@ object PlayerInputs {
 
     val canJump
         get() = player.state.isIdle && PlayerInfoBoard.isStandingOnStandableGenerous
-
-    fun reset() {
-        lastFingerPoint = Point()
-        lastBodyXValue = 0.0
-    }
 
     fun render(r: Renderer) {
         val pos = player.body.p
@@ -110,35 +101,43 @@ object PlayerInputs {
 
         if (TOUCHES_DOWN.size == 1) {
             TOUCHES_WENT_DOWN.forEach {
-                lastFingerPoint = it / UNIT_SIZE_IN_PIXELS
-                driftingPlayerSwipeStartY = lastFingerPoint.y
-                lastBodyXValue = player.body.p.x
+                val finger = it / UNIT_SIZE_IN_PIXELS
+                desiredXPos = player.body.p.x
+                driftingPlayerSwipeStartY = finger.y
+                lastFingerPoint = finger
             }
         }
 
-        desiredXPos = player.body.p.x
+        var xPosToUse = player.body.p.x
+
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
             val finger = touch / UNIT_SIZE_IN_PIXELS
-            desiredXPos = lastBodyXValue + (finger.x - lastFingerPoint.x) * 1.8
-            driftingPlayerSwipeStartY =
-                frameAccurateLerp(driftingPlayerSwipeStartY, touch.y / UNIT_SIZE_IN_PIXELS, 10.0)
+
+            val diff = finger - lastFingerPoint
+            if (diff.x.abs > diff.y.abs) {
+                desiredXPos += diff.x * 1.8
+            }
+
+            driftingPlayerSwipeStartY = frameAccurateLerp(driftingPlayerSwipeStartY, finger.y, 10.0)
+            lastFingerPoint = finger
+            xPosToUse = desiredXPos
         }
 
         // If on Desktop, read A/D and Left/Right arrow keys
         if (isKeyPressed(Keys.A) || isKeyPressed(Keys.LEFT)) {
-            desiredXPos = 0.0
+            xPosToUse = 0.0
         }
         if (isKeyPressed(Keys.D) || isKeyPressed(Keys.RIGHT)) {
-            desiredXPos = UNITS_WIDE.d
+            xPosToUse = UNITS_WIDE.d
         }
 
-        val magnitude = saturate(abs(desiredXPos - player.body.p.x) / PLAYER_UNCERTAINTY_WINDOW)
+        val magnitude = saturate(abs(xPosToUse - player.body.p.x) / PLAYER_UNCERTAINTY_WINDOW)
 
         val movementSpeed = UpgradeController.getMovementSpeed()
 
         val desiredXVel = when {
-            desiredXPos < player.body.p.x -> -movementSpeed * magnitude
-            desiredXPos > player.body.p.x -> movementSpeed * magnitude
+            xPosToUse < player.body.p.x -> -movementSpeed * magnitude
+            xPosToUse > player.body.p.x -> movementSpeed * magnitude
             else -> 0.0
         }
 
