@@ -38,10 +38,10 @@ val phases = arrayOf(
     Phase(2.0) {
         // Drop pod from above.
     },
-    Phase(2.0) {
+    Phase(3.0) {
         spawnBomb(BombType.SmallTimed, 0.6)
     },
-    Phase(1.0) {
+    Phase(0.5) {
         spawnBomb(BombType.SmallTimed, 0.2)
         spawnBomb(BombType.PointOrb, 0.5)
     },

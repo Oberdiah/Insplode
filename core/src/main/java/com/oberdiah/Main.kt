@@ -15,9 +15,9 @@ import com.oberdiah.level.tickLevelController
 import com.oberdiah.level.updateLevelStorage
 import com.oberdiah.player.PlayerInputs
 import com.oberdiah.player.player
+import com.oberdiah.ui.renderDiegeticMenuWorldSpace
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
-import com.oberdiah.ui.renderUIWorldSpace
 import com.oberdiah.ui.tickDiegeticMenu
 import com.oberdiah.ui.tickPauseButton
 import com.oberdiah.upgrades.UpgradeController
@@ -161,7 +161,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         worldSpaceRenderer.begin()
         time("Render background") { RenderLevel.renderBackground(worldSpaceRenderer) }
         time("Render player inputs") { PlayerInputs.render(worldSpaceRenderer) }
-        time("Render world space UI") { renderUIWorldSpace(worldSpaceRenderer) }
+        time("Render world space UI") { renderDiegeticMenuWorldSpace(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
         time("Render level") { RenderLevel.render() }
@@ -180,6 +180,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render UI") {
             uiRenderer.begin()
             renderUIScreenSpace(uiRenderer)
+            ScoreSystem.renderDiegeticText(uiRenderer)
             uiRenderer.end()
         }
 

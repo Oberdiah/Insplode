@@ -59,11 +59,6 @@ enum class Upgrade(
         "Only applies to the player.\nLess gravity = higher jump.",
         30,
     ),
-    ComboOrbs(
-        "Combo Orbs",
-        "When a bomb explodes\nanother, orbs are spawned.",
-        30,
-    ),
     FasterMovement(
         "Move quicker",
         "Zooooooom!",

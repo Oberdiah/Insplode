@@ -112,7 +112,6 @@ enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
     Off("Off", 0.0),
     Low("Low", 1.0),
     Normal("Normal", 2.0),
-    Extreme("Extreme", 5.0),
 }
 
 private var SCREEN_SHAKE = 0.0

@@ -50,10 +50,6 @@ private fun formatDepth(depth: Number): String {
     return "${depth.format(1)}$DEPTH_UNITS"
 }
 
-fun renderUIWorldSpace(r: Renderer) {
-    renderDiegeticMenuWorldSpace(r)
-}
-
 fun renderUIScreenSpace(r: Renderer) {
     r.color = colorScheme.textColor
 
@@ -73,14 +69,6 @@ fun renderUIScreenSpace(r: Renderer) {
     r.color = colorScheme.textColor
 
     renderDiegeticMenuScreenSpace(r)
-
-    r.color = colorScheme.textColor.withAlpha(saturate(-CAMERA_POS_Y * 0.5))
-
-    var text = "${RUN_TIME_ELAPSED.format(1)}s"
-//            if (gameMessage != "") {
-//                text = gameMessage
-//            }
-    r.text(fontSmallish, text, WIDTH / 2, HEIGHT * 0.95, Align.center, shouldCache = false)
 
     when (GAME_STATE) {
         GameState.DiegeticMenu -> {}

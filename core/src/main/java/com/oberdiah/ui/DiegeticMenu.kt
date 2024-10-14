@@ -78,8 +78,6 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4,
         Align.center
     )
-
-    ScoreSystem.renderDiegeticText(r)
 }
 
 private var isLaunchTapped = false

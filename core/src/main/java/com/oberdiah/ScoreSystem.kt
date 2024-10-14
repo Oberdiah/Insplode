@@ -1,6 +1,8 @@
 package com.oberdiah
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
@@ -134,11 +136,6 @@ object ScoreSystem {
             numConsecutiveBounces++
             playMultiplierSound(numConsecutiveBounces)
         }
-    }
-
-    fun registerBombComboExplode(bomb: Bomb) {
-        val numToNormallySpawn = ceil(bomb.getPointsWorth() * 0.15)
-        PointOrbs.spawnOrbs(bomb.body.p, (numToNormallySpawn * getCurrentMultiplier()).i)
     }
 
     fun registerTileDestroyed(pos: Point, tileType: TileType, reason: Tile.DematerializeReason) {
@@ -277,14 +274,41 @@ object ScoreSystem {
 
         r.color = colorScheme.textColor
 
-        val inGameScreenSpaceLocation = Point(WIDTH / 2, HEIGHT * 0.9).wo
+        val secondsTimerPos = Point(WIDTH / 2, HEIGHT * 0.95)
+        val scorePos = Point(WIDTH / 2, HEIGHT * 0.9)
+
+
+        // Seconds counter
+        val alpha = saturate(-CAMERA_POS_Y * 0.5)
+        r.color = colorScheme.textColor.withAlpha(alpha)
+        if (secondsTimerPos.wo.y > LASER_HEIGHT) {
+            r.color = Color.WHITE.withAlpha(alpha)
+        }
+        r.text(
+            fontSmallish,
+            "${RUN_TIME_ELAPSED.format(1)}s",
+            secondsTimerPos,
+            Align.center,
+            shouldCache = false
+        )
+
 
         if (playerScore > 0) {
             r.color = colorScheme.textColor
+
+            val worldSpaceCoords = Point(
+                W / 2 + 0.05,
+                min(endOfGameCoinsHeight, scorePos.wo.y) - 0.05
+            )
+
+            if (worldSpaceCoords.y > LASER_HEIGHT) {
+                r.color = Color.WHITE
+            }
+
             r.text(
                 fontLarge,
                 "$playerScore",
-                W / 2, min(endOfGameCoinsHeight, inGameScreenSpaceLocation.y),
+                worldSpaceCoords.ui,
                 Align.center,
                 shouldCache = false
             )
@@ -300,7 +324,7 @@ object ScoreSystem {
             r.text(
                 fontSmallish,
                 "Score: $lastScore",
-                W / 2, MENU_ZONE_BOTTOM_Y + H * 3.0 / 4 - 3.0,
+                Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3.0 / 4 - 3.0).ui,
                 Align.center,
                 shouldCache = false
             )

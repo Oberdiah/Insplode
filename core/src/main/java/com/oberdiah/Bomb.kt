@@ -55,7 +55,6 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
         get() = bombType.power
 
     protected var timeLeft = maxFuseLength
-    var givesPointsOnExplode = false
 
     /** If this is greater than 0 we can stand on it. */
     var standableCountdown = 0.0
@@ -76,9 +75,6 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
 
     override fun hitByExplosion() {
         timeLeft = min(Random.nextDouble(0.4, 0.6), timeLeft)
-        if (UpgradeController.playerHas(Upgrade.ComboOrbs)) {
-            givesPointsOnExplode = true
-        }
     }
 
     override fun tick() {
@@ -96,10 +92,6 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
 
     open fun explode() {
         destroy()
-
-        if (givesPointsOnExplode) {
-            ScoreSystem.registerBombComboExplode(this)
-        }
     }
 
     override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
