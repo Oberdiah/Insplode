@@ -366,7 +366,7 @@ object UpgradeController {
     }
 
 
-    private val FORCE_UPGRADES_UNTIL: Upgrade? = Upgrade.InfiniteMultiplier
+    private val FORCE_UPGRADES_UNTIL: Upgrade? = null //Upgrade.InfiniteMultiplier
     fun playerHas(upgrade: Upgrade): Boolean {
         if (IS_DEBUG_ENABLED) {
             FORCE_UPGRADES_UNTIL?.let {

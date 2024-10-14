@@ -20,7 +20,8 @@ object PointOrbs {
         val addRandomVelocity: Boolean = true,
         // Spawn a single large orb rather than many small ones.
         val spawnSingleOrb: Boolean = false,
-        val ensureEmptySpaceOnSpawn: Boolean = true
+        val ensureEmptySpaceOnSpawn: Boolean = true,
+        val canBePickedUpInstantly: Boolean = false
     )
 
     private var orbsToSpawn = mutableListOf<OrbToBe>()
@@ -60,7 +61,10 @@ object PointOrbs {
                     velocity += createRandomFacingPoint() * 5.0
                 }
 
-                PointOrb(p, orbScore, velocity)
+                val orb = PointOrb(p, orbScore, velocity)
+                if (orbToSpawn.canBePickedUpInstantly) {
+                    orb.timeAlive = 0.5
+                }
                 pointsLeft -= orbScore
             }
 
@@ -77,7 +81,8 @@ object PointOrbs {
         startVel: Velocity = Velocity(),
         addRandomVelocity: Boolean = true,
         spawnSingleOrb: Boolean = false,
-        ensureEmptySpaceOnSpawn: Boolean = true
+        ensureEmptySpaceOnSpawn: Boolean = true,
+        canBePickedUpInstantly: Boolean = false
     ) {
         if (scoreGiven == 0) {
             return
@@ -91,7 +96,8 @@ object PointOrbs {
                 startVel,
                 addRandomVelocity,
                 spawnSingleOrb,
-                ensureEmptySpaceOnSpawn
+                ensureEmptySpaceOnSpawn,
+                canBePickedUpInstantly
             )
         )
     }
@@ -205,7 +211,8 @@ object PointOrbs {
                             body.velocity,
                             addRandomVelocity = false,
                             spawnSingleOrb = true,
-                            ensureEmptySpaceOnSpawn = false
+                            ensureEmptySpaceOnSpawn = false,
+                            canBePickedUpInstantly = true
                         )
 
                         val smokeSpawnPoint = body.p + (obj.body.p - body.p) * 0.5

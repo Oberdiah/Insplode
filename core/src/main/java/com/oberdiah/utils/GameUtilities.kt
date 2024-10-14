@@ -1,7 +1,6 @@
 package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.Point
 import com.oberdiah.Renderer
@@ -11,19 +10,19 @@ fun renderAwardedStars(r: Renderer, p: Point, align: Int, starSize: Double, star
     // 4 stars represents beating the developer score.
     assert(stars in 0..4)
 
-    val spacing = starSize * 1.25
+    val spacing = starSize * 1.05
     val startXPos = when (align) {
         Align.center -> -1.5 * spacing
         Align.right -> -3 * spacing
         else -> 0.0
     }
 
-    for (i in 0 until 3) {
-        r.color = if (i <= stars) Color.GOLD else Color.BLACK.withAlpha(0.5f)
+    for (starNum in 1..3) {
+        r.color = if (starNum <= stars) Color.GOLD else Color.BLACK.withAlpha(0.5f)
 
         renderStar(
             r,
-            p + Point(i * spacing + startXPos, 0.0),
+            p + Point((starNum - 1) * spacing + startXPos, 0.0),
             starSize
         )
     }
