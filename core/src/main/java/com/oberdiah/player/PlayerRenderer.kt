@@ -1,21 +1,16 @@
 package com.oberdiah.player
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.utils.Align
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.Point
+import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem
-import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.Velocity
 import com.oberdiah.f
-import com.oberdiah.fontSmall
-import com.oberdiah.format
 import com.oberdiah.frameAccurateLerp
-import com.oberdiah.level.RUN_TIME_ELAPSED
-import com.oberdiah.min
-import com.oberdiah.saturate
 import com.oberdiah.spawnFragment
+import com.oberdiah.spawnSmoke
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
@@ -33,22 +28,29 @@ object PlayerRenderer {
 
         val pos = player.body.p
 
-//        r.color = Color.BLACK.withAlpha(0.05)
-//        r.lineCircle(pos, UpgradeController.getPlayerMagnetRadius(), 0.05, segments = 40)
+        var colorful = false
 
         if (PlayerInputs.canJump) {
+            colorful = true
             r.color = colorScheme.player
         } else if (player.state.isSlamming) {
+            colorful = true
             r.color = colorScheme.playerSlamming
         } else {
             r.color = colorScheme.playerNoJump
         }
 
-        if (UpgradeController.playerHas(Upgrade.RainbowPlayer)) {
+        if (UpgradeController.playerHas(Upgrade.RainbowPlayer) && colorful) {
             val hsv = FloatArray(3)
             r.color.toHsv(hsv)
             hsv[0] = (hsv[0] + colorRotation * 100) % 360
             r.color = Color(1f, 1f, 1f, 1f).fromHsv(hsv)
+
+            spawnSmoke(
+                Rect.centered(pos, PLAYER_SIZE * 0.5).randomPointInside(),
+                Velocity(),
+                r.color.cpy()
+            )
         }
 
         val preparingAction = PlayerInputs.currentPreparingAction
