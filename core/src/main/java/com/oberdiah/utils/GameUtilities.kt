@@ -7,7 +7,16 @@ import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem.StarsAwarded
 import com.oberdiah.withAlpha
 
-fun renderAwardedStars(r: Renderer, p: Point, align: Int, starSize: Double, stars: StarsAwarded) {
+fun renderAwardedStars(
+    r: Renderer,
+    p: Point,
+    align: Int,
+    starSize: Double,
+    stars: StarsAwarded,
+    backgroundColor: Color = Color.BLACK.withAlpha(0.5f),
+    mainStarColor: Color = colorScheme.starsColor,
+    developerStarColor: Color = colorScheme.developerStarsColor
+) {
     val numStars = stars.stars
     assert(numStars in 0..3)
 
@@ -19,14 +28,20 @@ fun renderAwardedStars(r: Renderer, p: Point, align: Int, starSize: Double, star
     }
 
     for (starNum in 1..3) {
-        r.color = if (starNum <= numStars) {
-            if (stars.developerBest) colorScheme.developerStarsColor else colorScheme.starsColor
-        } else Color.BLACK.withAlpha(0.5f)
+        r.color = backgroundColor
+        r.star(
+            // IMO it looks slightly better down just a touch.
+            p + Point((starNum - 1) * spacing + startXPos, -starSize / 25),
+            starSize / 1.8,
+        )
 
-        renderStar(
-            r,
-            p + Point((starNum - 1) * spacing + startXPos, 0.0),
-            starSize
+        r.color = if (starNum <= numStars) {
+            if (stars.developerBest) developerStarColor else mainStarColor
+        } else Color.BLACK.withAlpha(0.5f)
+        r.star(
+            // IMO it looks slightly better down just a touch.
+            p + Point((starNum - 1) * spacing + startXPos, -starSize / 25),
+            starSize / 2.6,
         )
     }
 }

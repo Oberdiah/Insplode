@@ -21,6 +21,7 @@ import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.tickDiegeticMenu
 import com.oberdiah.ui.tickPauseButton
 import com.oberdiah.upgrades.UpgradeController
+import com.oberdiah.upgrades.UpgradeController.renderUpgradeMenuWorldSpace2
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -167,6 +168,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render level") { RenderLevel.render() }
 
         worldSpaceRenderer.begin()
+        time("Render upgrade menu world space 2") { renderUpgradeMenuWorldSpace2(worldSpaceRenderer) }
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render laser") { renderLaser(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }

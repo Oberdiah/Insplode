@@ -39,6 +39,18 @@ object ScoreSystem {
 
         val developerBest: Boolean
             get() = this == DeveloperBest
+
+        companion object {
+            fun fromNumber(stars: Int): StarsAwarded {
+                return when (stars) {
+                    0 -> Zero
+                    1 -> One
+                    2 -> Two
+                    3 -> Three
+                    else -> DeveloperBest
+                }
+            }
+        }
     }
 
     var lastScore: Int? = null
@@ -90,16 +102,16 @@ object ScoreSystem {
     private var totalNumStarsCache = 0
     fun getPlayerTotalNumStars(): Int {
         if (totalNumStarsCache == 0) {
-            totalNumStarsCache = Upgrade.entries.sumOf { getNumStarsForUpgrade(it).stars }
+            totalNumStarsCache = Upgrade.entries.sumOf { getNumStarsPlayerHasOnUpgrade(it).stars }
         }
         return totalNumStarsCache
     }
 
-    fun getNumStarsForUpgrade(upgrade: Upgrade): StarsAwarded {
+    fun getNumStarsPlayerHasOnUpgrade(upgrade: Upgrade): StarsAwarded {
         val developerScore = upgrade.developerBest
         val threeStarsScore = upgrade.threeStarsScore
-        val twoStarsScore = threeStarsScore * 0.65
-        val oneStarScore = threeStarsScore * 0.25
+        val twoStarsScore = upgrade.twoStarsScore
+        val oneStarScore = upgrade.oneStarScore
 
         val ourScore = playerHighScores[upgrade]!!.value
 

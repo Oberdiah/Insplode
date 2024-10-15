@@ -124,15 +124,17 @@ object UpgradeController {
     }
 
     private fun selectedUpgradeFract(upgrade: Upgrade): Double {
-        return if (currentlyPlayingUpgrade == upgrade && upgradeTappedBeforeThat[UpgradeStatus.PURCHASED] == upgrade) {
-            1.0
-        } else if (currentlyPlayingUpgrade == upgrade) {
-            saturate((GameTime.APP_TIME - timeOfLastUpgradeTap[UpgradeStatus.PURCHASED]!!) * 5.0)
-        } else if (upgrade == upgradeTappedBeforeThat[UpgradeStatus.PURCHASED]) {
-            1.0 - saturate((GameTime.APP_TIME - timeOfLastUpgradeTap[UpgradeStatus.PURCHASED]!!) * 5.0)
-        } else {
-            0.0
-        }
+        return easeInOutSine(
+            if (currentlyPlayingUpgrade == upgrade && lastPlayingUpgrade == upgrade) {
+                1.0
+            } else if (currentlyPlayingUpgrade == upgrade) {
+                saturate((GameTime.APP_TIME - timeSwitchedPlayingUpgrade) * 5.0)
+            } else if (upgrade == lastPlayingUpgrade) {
+                1.0 - saturate((GameTime.APP_TIME - timeSwitchedPlayingUpgrade) * 5.0)
+            } else {
+                0.0
+            }
+        )
     }
 
     private fun getUpgradeSectionColor(upgrade: Upgrade): Color {
@@ -180,12 +182,11 @@ object UpgradeController {
                 }
             }
 
-            val selectedUpgradeFract = selectedUpgradeFract(upgrade)
-
             val transCutoff = 0.85
             val lateT = saturate((purchaseFract - transCutoff) / (1.0 - transCutoff))
 
             val backgroundColor = getUpgradeSectionColor(upgrade).withAlpha(alphaForColor)
+            val selectedUpgradeFract = selectedUpgradeFract(upgrade)
 
             r.color = backgroundColor
 
@@ -272,16 +273,22 @@ object UpgradeController {
                 r.text(
                     fontSmallish,
                     "${ScoreSystem.getPlayerScore(upgrade)}",
-                    Point(1.0, yPos + UPGRADE_ENTRY_HEIGHT * 0.9) + priceShake,
+                    Point(
+                        10.0 - starSize + (1.0 - selectedUpgradeFract) * 3.0,
+                        yPos + UPGRADE_ENTRY_HEIGHT * 0.7
+                    ) + priceShake,
                     Align.right
                 )
 
                 renderAwardedStars(
                     r,
-                    Point(10.0 - starSize, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + priceShake,
+                    Point(
+                        10.0 - starSize + selectedUpgradeFract * 3.0,
+                        yPos + UPGRADE_ENTRY_HEIGHT * 0.7
+                    ) + priceShake,
                     Align.right,
                     starSize,
-                    ScoreSystem.getNumStarsForUpgrade(upgrade)
+                    ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade)
                 )
             }
 
@@ -293,12 +300,15 @@ object UpgradeController {
             )
 
             val sprite = allUpgradeTextures[upgrade] ?: break
-            val p = Point(iconXPos, yPos + UPGRADE_ENTRY_HEIGHT / 2) + iconShake
+            val p = Point(
+                iconXPos - selectedUpgradeFract * 3.0,
+                yPos + UPGRADE_ENTRY_HEIGHT / 2
+            ) + iconShake
             // Draw the texture centered on the position, scaled as much as it can be without warping.
             val textureSize = Size(sprite.width.f, sprite.height.f)
 
             val iconScale =
-                upgradeStatus.getIconSize() - purchaseFract * 0.5 + selectedUpgradeFract * 0.5
+                (upgradeStatus.getIconSize() - purchaseFract * 0.5) * (1.0 - selectedUpgradeFract) + 0.0001
 
             val scale = iconScale / max(textureSize.w, textureSize.h).f
             val shadowDirection = Point(0.1, -0.1)
@@ -313,28 +323,70 @@ object UpgradeController {
 
             if (upgradeStatus.isIconVisible()) {
                 // Main sprite
-                r.centeredSprite(sprite, p, Size(textureSize.w * scale, textureSize.h * scale))
+                r.centeredSprite(
+                    sprite,
+                    p,
+                    Size(textureSize.w * scale, textureSize.h * scale),
+                )
             }
         }
 
         // Separating line
         r.color = Color.GOLD.withAlpha(0.8)
         r.rect(
-            Point(0.0, yPosOfTopOfHighestUpgrade()),
+            Point(0.0, getUpgradeYPos(currentlyPlayingUpgrade) + UPGRADE_ENTRY_HEIGHT),
             Size(SCREEN_WIDTH_IN_UNITS, 0.1),
         )
+    }
+
+    fun renderUpgradeMenuWorldSpace2(r: Renderer) {
+        val OVERLAY_WIDTH = 4.0
+
+        for ((upgrade, yPos) in upgradesIterator()) {
+            val selectedUpgradeFract = selectedUpgradeFract(upgrade)
+
+            if (selectedUpgradeFract > 0.01) {
+                val xPosOfInfoOverlay = -OVERLAY_WIDTH + selectedUpgradeFract * OVERLAY_WIDTH
+
+                // Three lines, one of each of the three stars and their requirements.
+                val starSize = fontSmallish.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS
+
+                for (i in 0..2) {
+                    val starYPos =
+                        yPos + UPGRADE_ENTRY_HEIGHT * 0.7 - i * UPGRADE_ENTRY_HEIGHT * 0.2
+                    val starXPos = 1.0 + xPosOfInfoOverlay
+
+                    val haveThisUpgrade =
+                        ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade).stars >= i + 1
+
+                    renderAwardedStars(
+                        r,
+                        Point(starXPos, starYPos),
+                        Align.left,
+                        starSize,
+                        ScoreSystem.StarsAwarded.fromNumber(i + 1),
+                        mainStarColor = if (haveThisUpgrade) colorScheme.starsColor else colorScheme.starsColor.cpy()
+                            .mul(0.35f),
+                    )
+
+                    r.color =
+                        if (haveThisUpgrade) colorScheme.textColor else colorScheme.textColor
+                            .withAlpha(0.35f)
+                    r.text(
+                        fontSmallish,
+                        "${upgrade.starsToScore(i + 1)}",
+                        Point(starXPos + 1.65, starYPos),
+                        Align.left
+                    )
+                }
+            }
+        }
     }
 
     var currentlyPlayingUpgrade = Upgrade.StarterUpgrade
         private set
     private var currentlyPurchasingUpgrade: Upgrade? = null
     private var lastUpgradeTapped: MutableMap<UpgradeStatus, Upgrade?> = mutableMapOf(
-        UpgradeStatus.HIDDEN to null,
-        UpgradeStatus.TOO_EXPENSIVE to null,
-        UpgradeStatus.PURCHASABLE to null,
-        UpgradeStatus.PURCHASED to Upgrade.StarterUpgrade,
-    )
-    private var upgradeTappedBeforeThat: MutableMap<UpgradeStatus, Upgrade?> = mutableMapOf(
         UpgradeStatus.HIDDEN to null,
         UpgradeStatus.TOO_EXPENSIVE to null,
         UpgradeStatus.PURCHASABLE to null,
@@ -353,8 +405,11 @@ object UpgradeController {
         currentUpgradePurchaseSoundsPlayed = -1
     }
 
-    fun tick() {
+    var isConsideringSwitchingPlayingUpgrade = false
+    var lastPlayingUpgrade: Upgrade? = null
+    var timeSwitchedPlayingUpgrade = Double.NEGATIVE_INFINITY
 
+    fun tick() {
         if (cameraVelocity.abs < 0.1 && cameraYUnitsDeltaThisTick.abs < 0.05) {
             val purchasingFract = purchasingFraction()
 
@@ -373,12 +428,11 @@ object UpgradeController {
                     if ((yPos + UPGRADE_ENTRY_HEIGHT / 2 - touch.wo.y).abs < UPGRADE_ENTRY_HEIGHT / 2) {
                         val upgradeStatus = getUpgradeStatus(upgrade)
                         timeOfLastUpgradeTap[upgradeStatus] = GameTime.APP_TIME
-                        upgradeTappedBeforeThat[upgradeStatus] = lastUpgradeTapped[upgradeStatus]
                         lastUpgradeTapped[upgradeStatus] = upgrade
                         if (upgradeStatus == UpgradeStatus.PURCHASABLE) {
                             currentlyPurchasingUpgrade = upgrade
                         } else if (upgradeStatus == UpgradeStatus.PURCHASED) {
-                            currentlyPlayingUpgrade = upgrade
+                            isConsideringSwitchingPlayingUpgrade = true
                         }
                     }
                 }
@@ -390,11 +444,18 @@ object UpgradeController {
                 cancelUpgradePurchase()
             }
 
-            TOUCHES_WENT_UP.forEach { _ ->
+            TOUCHES_WENT_UP.forEach { touch ->
                 cancelUpgradePurchase()
+                if (isConsideringSwitchingPlayingUpgrade) {
+                    lastPlayingUpgrade = currentlyPlayingUpgrade
+                    currentlyPlayingUpgrade = lastUpgradeTapped[UpgradeStatus.PURCHASED]!!
+                    isConsideringSwitchingPlayingUpgrade = false
+                    timeSwitchedPlayingUpgrade = GameTime.APP_TIME
+                }
             }
         } else {
             cancelUpgradePurchase()
+            isConsideringSwitchingPlayingUpgrade = false
         }
     }
 

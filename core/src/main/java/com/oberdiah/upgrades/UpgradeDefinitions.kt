@@ -166,4 +166,16 @@ enum class Upgrade(
 
     val obfuscatedTitle = title.replace(Regex("\\S")) { "?" }
     val obfuscatedDescription = description.replace(Regex("\\S")) { "?" }
+
+    val twoStarsScore = (threeStarsScore * 0.65).toInt()
+    val oneStarScore = (threeStarsScore * 0.25).toInt()
+
+    fun starsToScore(stars: Int): Int {
+        return when (stars) {
+            3 -> threeStarsScore
+            2 -> twoStarsScore
+            1 -> oneStarScore
+            else -> 0
+        }
+    }
 }
