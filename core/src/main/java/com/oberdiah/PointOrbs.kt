@@ -21,7 +21,9 @@ object PointOrbs {
         // Spawn a single large orb rather than many small ones.
         val spawnSingleOrb: Boolean = false,
         val ensureEmptySpaceOnSpawn: Boolean = true,
-        val canBePickedUpInstantly: Boolean = false
+        val canBePickedUpInstantly: Boolean = false,
+        // Starts out at 0.0 and increases a bit every frame we can't find a place to spawn.
+        var searchRadius: Double = 0.0
     )
 
     private var orbsToSpawn = mutableListOf<OrbToBe>()
@@ -35,13 +37,15 @@ object PointOrbs {
 
     fun tick() {
         orbsToSpawn.removeIf { orbToSpawn ->
-            val (p, points, startVel) = orbToSpawn
+            val (_, points, startVel) = orbToSpawn
+            var p = orbToSpawn.p + createRandomFacingPoint() * orbToSpawn.searchRadius
 
             // Check if it's safe to spawn
             if (orbToSpawn.ensureEmptySpaceOnSpawn) {
                 val radius = PointOrb.calculateRadius(points)
                 // This should technically be radius * 2, but we want to allow a little overlap.
                 if (!isRectEmptySpace(Rect.centered(p, Size(radius, radius)))) {
+                    orbToSpawn.searchRadius += 0.05
                     return@removeIf false
                 }
             }
