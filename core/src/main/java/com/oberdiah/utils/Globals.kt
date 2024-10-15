@@ -2,6 +2,7 @@ package com.oberdiah
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.laserInGameHeight
 import com.oberdiah.level.requestNewLowestTileY
 import com.oberdiah.utils.GameTime
@@ -100,7 +101,7 @@ val SCREEN_WIDTH_IN_UNITS: Int
 
 val SAFE_BOMB_SPAWN_HEIGHT
     // Add 5 to be super duper safe.
-    get() = laserInGameHeight + 5
+    get() = LASER_HEIGHT + 5
 
 val JUST_UP_OFF_SCREEN_UNITS
     get() = CAMERA_POS_Y + SCREEN_HEIGHT_IN_UNITS
