@@ -21,6 +21,25 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 object ScoreSystem {
+    enum class StarsAwarded {
+        Zero,
+        One,
+        Two,
+        Three,
+        DeveloperBest;
+
+        val stars: Int
+            get() = when (this) {
+                Zero -> 0
+                One -> 1
+                Two -> 2
+                Three -> 3
+                DeveloperBest -> 3
+            }
+
+        val developerBest: Boolean
+            get() = this == DeveloperBest
+    }
 
     var lastScore: Int? = null
         private set
@@ -69,15 +88,15 @@ object ScoreSystem {
     }
 
     private var totalNumStarsCache = 0
-    fun getPlayerNumStars(): Int {
+    fun getPlayerTotalNumStars(): Int {
         if (totalNumStarsCache == 0) {
-            totalNumStarsCache = Upgrade.entries.sumOf { getNumStarsOnUpgrade(it) }
+            totalNumStarsCache = Upgrade.entries.sumOf { getNumStarsForUpgrade(it).stars }
         }
         return totalNumStarsCache
     }
 
-    fun getNumStarsOnUpgrade(upgrade: Upgrade): Int {
-        val fourStarsScore = upgrade.developerBest
+    fun getNumStarsForUpgrade(upgrade: Upgrade): StarsAwarded {
+        val developerScore = upgrade.developerBest
         val threeStarsScore = upgrade.threeStarsScore
         val twoStarsScore = threeStarsScore * 0.65
         val oneStarScore = threeStarsScore * 0.25
@@ -85,11 +104,11 @@ object ScoreSystem {
         val ourScore = playerHighScores[upgrade]!!.value
 
         return when {
-            ourScore >= fourStarsScore -> 3
-            ourScore >= threeStarsScore -> 3
-            ourScore >= twoStarsScore -> 2
-            ourScore >= oneStarScore -> 1
-            else -> 0
+            ourScore >= developerScore -> StarsAwarded.DeveloperBest
+            ourScore >= threeStarsScore -> StarsAwarded.Three
+            ourScore >= twoStarsScore -> StarsAwarded.Two
+            ourScore >= oneStarScore -> StarsAwarded.One
+            else -> StarsAwarded.Zero
         }
     }
 

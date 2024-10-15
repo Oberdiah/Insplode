@@ -149,6 +149,8 @@ open class ColorScheme(val name: String) {
     var playerNoJump: Color = Color.GRAY
     var overlay: Color = Color.WHITE.withAlpha(0.3)
     var textColor: Color = colorFrom(0x242423)
+    var developerStarsColor: Color = colorFrom(0x51D0FF).add(0.1f, 0.05f, 0.2f, 0f)
+    var starsColor: Color = Color.GOLD
     lateinit var player: Color
     lateinit var playerSlamming: Color
     lateinit var pointOrbColor: Color

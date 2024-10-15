@@ -4,11 +4,12 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.Point
 import com.oberdiah.Renderer
+import com.oberdiah.ScoreSystem.StarsAwarded
 import com.oberdiah.withAlpha
 
-fun renderAwardedStars(r: Renderer, p: Point, align: Int, starSize: Double, stars: Int) {
-    // 4 stars represents beating the developer score.
-    assert(stars in 0..4)
+fun renderAwardedStars(r: Renderer, p: Point, align: Int, starSize: Double, stars: StarsAwarded) {
+    val numStars = stars.stars
+    assert(numStars in 0..3)
 
     val spacing = starSize * 1.05
     val startXPos = when (align) {
@@ -18,7 +19,9 @@ fun renderAwardedStars(r: Renderer, p: Point, align: Int, starSize: Double, star
     }
 
     for (starNum in 1..3) {
-        r.color = if (starNum <= stars) Color.GOLD else Color.BLACK.withAlpha(0.5f)
+        r.color = if (starNum <= numStars) {
+            if (stars.developerBest) colorScheme.developerStarsColor else colorScheme.starsColor
+        } else Color.BLACK.withAlpha(0.5f)
 
         renderStar(
             r,

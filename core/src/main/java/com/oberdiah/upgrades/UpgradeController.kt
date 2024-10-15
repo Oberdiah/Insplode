@@ -281,7 +281,7 @@ object UpgradeController {
                     Point(10.0 - starSize, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + priceShake,
                     Align.right,
                     starSize,
-                    ScoreSystem.getNumStarsOnUpgrade(upgrade)
+                    ScoreSystem.getNumStarsForUpgrade(upgrade)
                 )
             }
 
@@ -511,7 +511,7 @@ object UpgradeController {
         return if (playerHasTheAbilityToPlayWith(upgrade)) {
             UpgradeStatus.PURCHASED
         } else if (upgrade.ordinal <= highestIndexUnlockedSoFar() + 1) {
-            if (ScoreSystem.getPlayerNumStars() >= upgrade.starsToUnlock) {
+            if (ScoreSystem.getPlayerTotalNumStars() >= upgrade.starsToUnlock) {
                 UpgradeStatus.PURCHASABLE
             } else {
                 UpgradeStatus.TOO_EXPENSIVE

@@ -177,7 +177,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         r.color = Color.WHITE
         r.text(
             fontMedium,
-            "${ScoreSystem.getPlayerNumStars()}",
+            "${ScoreSystem.getPlayerTotalNumStars()}",
             textPos,
             Align.left,
             shouldCache = false
