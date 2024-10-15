@@ -159,12 +159,12 @@ object ScoreSystem {
         }
     }
 
-    fun registerTileDestroyed(pos: Point, tileType: TileType, reason: Tile.DematerializeReason) {
+    fun registerTileDestroyed(tile: Tile, reason: Tile.DematerializeReason) {
         if (reason == Tile.DematerializeReason.Laser) {
             return
         }
 
-        var numToSpawn = when (tileType) {
+        var numToSpawn = when (tile.getTileType()) {
             TileType.OrbTile -> 1
             TileType.GoldenOrbTile -> 50
             else -> 0
@@ -172,7 +172,7 @@ object ScoreSystem {
 
         if (reason == Tile.DematerializeReason.Collapse) {
             if (numToSpawn == 1) {
-                if (Random.nextDouble() < 0.5) {
+                if ((tile.getId().id + tile.y) % 2 == 0) {
                     return
                 }
             } else {
@@ -180,7 +180,7 @@ object ScoreSystem {
             }
         }
 
-        PointOrbs.spawnOrbs(pos, (numToSpawn * getCurrentMultiplier()).i)
+        PointOrbs.spawnOrbs(tile.coord, (numToSpawn * getCurrentMultiplier()).i)
     }
 
     fun registerGameEnd() {
