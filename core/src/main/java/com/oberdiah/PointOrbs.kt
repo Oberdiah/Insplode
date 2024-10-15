@@ -45,7 +45,7 @@ object PointOrbs {
                 val radius = PointOrb.calculateRadius(points)
                 // This should technically be radius * 2, but we want to allow a little overlap.
                 if (!isRectEmptySpace(Rect.centered(p, Size(radius, radius)))) {
-                    orbToSpawn.searchRadius += 0.05
+                    orbToSpawn.searchRadius += 0.1
                     return@removeIf false
                 }
             }
