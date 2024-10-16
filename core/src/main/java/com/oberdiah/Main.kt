@@ -35,7 +35,6 @@ fun endGame() {
     resetCamera()
 
     resetPhysicsObjects()
-    resetLevel()
     updateTilePhysics()
 
     PointOrbs.reset()
@@ -53,6 +52,9 @@ fun startGame() {
     // We might have upgraded or changed settings, so we want to re-reset a bunch of stuff.
     resetPhysicsObjects()
     resetLevelController()
+    // We reset level at the start of the game because we need to be able to apply any upgrades
+    // the player has bought.
+    resetLevel()
 
     ScoreSystem.registerGameStart()
 }
