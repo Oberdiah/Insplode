@@ -136,10 +136,6 @@ enum class Upgrade(
         "Ultra Bombs",
         "Ok this is a bit\nridiculous.",
     ),
-    StoppedVoid(
-        "Void Glue",
-        "Glue the void in place,\nnever to move again.",
-    ),
     GlobalMagnet(
         "Global Magnet",
         "The orbs simply cannot\nget away.",

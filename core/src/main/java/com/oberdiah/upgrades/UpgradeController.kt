@@ -519,9 +519,7 @@ object UpgradeController {
     }
 
     fun getLaserSpeed(): Double {
-        return if (playerHas(Upgrade.StoppedVoid)) {
-            0.0
-        } else if (playerHas(Upgrade.SlowerVoid)) {
+        return if (playerHas(Upgrade.SlowerVoid)) {
             0.3
         } else {
             1.5
