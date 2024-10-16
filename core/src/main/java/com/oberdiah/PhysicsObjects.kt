@@ -13,6 +13,7 @@ fun tickPhysicsObjects() {
 }
 
 fun resetPhysicsObjects() {
+    tickPhysicsObjects()
     allDynamicPhysicsObjects.forEach { it.reset() }
     doPhysicsStep()
 }

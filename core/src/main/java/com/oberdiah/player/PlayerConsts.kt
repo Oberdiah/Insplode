@@ -5,8 +5,11 @@ import com.oberdiah.Point
 import com.oberdiah.Size
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.clamp
-import com.oberdiah.level.LASER_HEIGHT_IN_MENU
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
+import com.oberdiah.upgrades.UpgradeController
+import com.oberdiah.upgrades.UpgradeController.UPGRADE_ENTRY_HEIGHT
+import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
 
 val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 
@@ -25,4 +28,5 @@ const val JUMP_PREVENTION_WINDOW = 0.3
 val player = Player(Point(5, PLAYER_SPAWN_Y))
 
 val PLAYER_SPAWN_Y
-    get() = LASER_HEIGHT_IN_MENU + 1.5
+    get() = getUpgradeYPos(UpgradeController.currentlyPlayingUpgrade) +
+            UPGRADE_ENTRY_HEIGHT + 1.5

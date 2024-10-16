@@ -9,6 +9,8 @@ import com.oberdiah.ScoreSystem
 import com.oberdiah.Velocity
 import com.oberdiah.f
 import com.oberdiah.frameAccurateLerp
+import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.saturate
 import com.oberdiah.spawnFragment
 import com.oberdiah.spawnSmoke
 import com.oberdiah.upgrades.Upgrade
@@ -40,6 +42,8 @@ object PlayerRenderer {
             r.color = colorScheme.playerNoJump
         }
 
+        val playerSize = PLAYER_SIZE * saturate(RUN_TIME_ELAPSED * 4.0)
+
         if (UpgradeController.playerHas(Upgrade.RainbowPlayer) && colorful) {
             val hsv = FloatArray(3)
             r.color.toHsv(hsv)
@@ -47,7 +51,7 @@ object PlayerRenderer {
             r.color = Color(1f, 1f, 1f, 1f).fromHsv(hsv)
 
             spawnSmoke(
-                Rect.centered(pos, PLAYER_SIZE * 0.5).randomPointInside(),
+                Rect.centered(pos, playerSize * 0.5).randomPointInside(),
                 Velocity(),
                 r.color.cpy()
             )
@@ -65,7 +69,7 @@ object PlayerRenderer {
 
         renderedHeadOffset = frameAccurateLerp(renderedHeadOffset, desiredHeadOffset, 20.0)
 
-        val radius = (1 - renderedHeadOffset * 0.5) * PLAYER_SIZE.w / 2
+        val radius = (1 - renderedHeadOffset * 0.5) * playerSize.w / 2
 
         r.circle(pos, radius)
 
@@ -73,12 +77,13 @@ object PlayerRenderer {
             pos.x - radius,
             pos.y,
             radius * 2,
-            PLAYER_SIZE.h / 2 + renderedHeadOffset
+            playerSize.h / 2 + renderedHeadOffset
         )
 
         // Move the player's head up and down based on the actionPerformAmount
 
-        val topOfPlayersHeadPos = Point(pos.x, pos.y + 0.35 * GLOBAL_SCALE + renderedHeadOffset)
+        val topOfPlayersHeadPos =
+            Point(pos.x, pos.y + playerSize.h / 2 * GLOBAL_SCALE + renderedHeadOffset)
 
         r.circle(topOfPlayersHeadPos, radius)
 
