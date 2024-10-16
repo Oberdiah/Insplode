@@ -12,6 +12,7 @@ import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
 import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.Point
+import com.oberdiah.RAINBOW_PLAYER
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
 import com.oberdiah.SHOW_FRAMERATE_DATA
@@ -40,6 +41,7 @@ import com.oberdiah.statefulPlayMusicSetting
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
 import com.oberdiah.statefulVibrationSetting
+import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.withAlpha
 import java.util.*
@@ -147,13 +149,6 @@ private fun settingsUI(r: Renderer) {
     toggleButton(r, "Vibration", statefulVibrationSetting::value)
     toggleButton(r, "Music", statefulPlayMusicSetting::value)
 
-    // todo - re-enable this
-//    settingButton(r, "Color Scheme", {
-//        r.text(fontMedium, colorScheme.name, it, Align.right)
-//    }, {
-//        nextColorScheme()
-//    })
-
     toggleButton(r, "Easy Mode", statefulEasyMode::value)
 
     settingButton(r, "Screen Shake", {
@@ -161,6 +156,18 @@ private fun settingsUI(r: Renderer) {
     }, {
         statefulScreenShakeSetting.value = statefulScreenShakeSetting.value.next()
     })
+
+    val rainbowUnlocked =
+        ScoreSystem.getPlayerTotalDeveloperBests() >= Upgrade.entries.size * 0.5 &&
+                ScoreSystem.getPlayerTotalNumStars() >= Upgrade.entries.size * 3
+
+    toggleButton(
+        r,
+        if (rainbowUnlocked) "Rainbow Player" else "(Locked) ???",
+        ::RAINBOW_PLAYER,
+        enabled = rainbowUnlocked
+    )
+
     button(r, "Controls") {
         switchScreen(Screen.Controls)
     }
@@ -222,7 +229,7 @@ fun toggleButton(
     r: Renderer,
     text: String,
     t: KMutableProperty0<Boolean>,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     settingButton(r, text, {
         val boxSize = DIST_BETWEEN_WORDS * 0.8

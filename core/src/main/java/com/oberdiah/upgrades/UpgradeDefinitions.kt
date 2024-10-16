@@ -140,10 +140,6 @@ enum class Upgrade(
         "Global Magnet",
         "The orbs simply cannot\nget away.",
     ),
-    RainbowPlayer(
-        "Rainbow Player",
-        "Why not?",
-    ),
     DeadlyTouch(
         "Deadly Touch",
         "Simply touching a bomb\nwill cause it to self-destruct.",

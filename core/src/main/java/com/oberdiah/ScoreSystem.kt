@@ -107,6 +107,10 @@ object ScoreSystem {
         return totalNumStarsCache
     }
 
+    fun getPlayerTotalDeveloperBests(): Int {
+        return Upgrade.entries.count { getNumStarsPlayerHasOnUpgrade(it).developerBest }
+    }
+
     fun getNumStarsPlayerHasOnUpgrade(upgrade: Upgrade): StarsAwarded {
         val developerScore = upgrade.developerBest
         val threeStarsScore = upgrade.threeStarsScore

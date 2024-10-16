@@ -3,6 +3,7 @@ package com.oberdiah.player
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.Point
+import com.oberdiah.RAINBOW_PLAYER
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem
@@ -44,7 +45,7 @@ object PlayerRenderer {
 
         val playerSize = PLAYER_SIZE * saturate(RUN_TIME_ELAPSED * 4.0)
 
-        if (UpgradeController.playerHas(Upgrade.RainbowPlayer) && colorful) {
+        if (RAINBOW_PLAYER && colorful) {
             val hsv = FloatArray(3)
             r.color.toHsv(hsv)
             hsv[0] = (hsv[0] + colorRotation * 100) % 360
