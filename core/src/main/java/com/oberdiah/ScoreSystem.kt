@@ -196,7 +196,11 @@ object ScoreSystem {
             }
         }
 
-        PointOrbs.spawnOrbs(tile.coord, (numToSpawn * getCurrentMultiplier()).i)
+        PointOrbs.spawnOrbs(
+            tile.coord,
+            (numToSpawn * getCurrentMultiplier()).i,
+            canBePickedUpInstantly = true
+        )
     }
 
     fun registerGameEnd() {

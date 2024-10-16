@@ -32,37 +32,52 @@ enum class Upgrade(
     MediumTimedBomb(
         "Timed Bomb",
         "Occasionally spawns in\na bomb.\nMine for orbs!",
+        8,
+        16
     ),
     Jump(
         "Jump",
         "Swipe up to jump.",
+        10,
+        16
     ),
     SmallTimedBomb(
         "Small Bomb",
         "Helping out with the mining\neffort.",
+        10,
+        18
     ),
     VoidLift(
         "Void Lift",
         "Haul that darkness away!\nThe void begins higher up.",
         15,
+        22
     ),
     LineBomb(
         "Line Bomb",
         "A harmless bomb that\nexplodes in a straight line.",
+        20,
+        39
     ),
     LowerGravity(
         "Micro-Gravity",
         "Only applies to the player.\nLess gravity = higher jump.",
+        40,
+        53
     ),
     FasterMovement(
         "Move quicker",
         "Zooooooom!",
+        50,
+        106
     ),
     // ################ JUMP UPGRADES ################
 
     SlowerTimers(
         "Slower Timers",
         "Timers on bombs are\nslowed down.",
+        60,
+        81
     ),
     CombineOrbs(
         "Combine Orbs",
