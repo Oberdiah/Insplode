@@ -477,6 +477,7 @@ object UpgradeController {
             )
         }
 
+        currentlyPlayingUpgrade.value = upgrade
         playerUpgradeStates[upgrade]?.value = true
 
         // Make sure the player moves up if they need to
