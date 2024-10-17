@@ -17,6 +17,7 @@ import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.abs
 import com.oberdiah.createRandomFacingPoint
+import com.oberdiah.currentlyPlayingUpgrade
 import com.oberdiah.d
 import com.oberdiah.easeInOutSine
 import com.oberdiah.f
@@ -63,10 +64,6 @@ object UpgradeController {
         }
         // Eventually we can do something like filling in any gaps that have been
         // added by updates here. For now we'll keep it simple.
-    }
-
-    fun resetAllUpgrades() {
-        playerUpgradeStates.values.forEach { it.value = false }
     }
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
@@ -125,9 +122,9 @@ object UpgradeController {
 
     private fun selectedUpgradeFract(upgrade: Upgrade): Double {
         return easeInOutSine(
-            if (currentlyPlayingUpgrade == upgrade && lastPlayingUpgrade == upgrade) {
+            if (currentlyPlayingUpgrade.value == upgrade && lastPlayingUpgrade == upgrade) {
                 1.0
-            } else if (currentlyPlayingUpgrade == upgrade) {
+            } else if (currentlyPlayingUpgrade.value == upgrade) {
                 saturate((GameTime.APP_TIME - timeSwitchedPlayingUpgrade) * 5.0)
             } else if (upgrade == lastPlayingUpgrade) {
                 1.0 - saturate((GameTime.APP_TIME - timeSwitchedPlayingUpgrade) * 5.0)
@@ -334,7 +331,7 @@ object UpgradeController {
         // Separating line
         r.color = Color.GOLD.withAlpha(0.8)
         r.rect(
-            Point(0.0, getUpgradeYPos(currentlyPlayingUpgrade) + UPGRADE_ENTRY_HEIGHT),
+            Point(0.0, getUpgradeYPos(currentlyPlayingUpgrade.value) + UPGRADE_ENTRY_HEIGHT),
             Size(SCREEN_WIDTH_IN_UNITS, 0.1),
         )
     }
@@ -383,8 +380,6 @@ object UpgradeController {
         }
     }
 
-    var currentlyPlayingUpgrade = Upgrade.StarterUpgrade
-        private set
     private var currentlyPurchasingUpgrade: Upgrade? = null
     private var lastUpgradeTapped: MutableMap<UpgradeStatus, Upgrade?> = mutableMapOf(
         UpgradeStatus.HIDDEN to null,
@@ -447,8 +442,8 @@ object UpgradeController {
             TOUCHES_WENT_UP.forEach { touch ->
                 cancelUpgradePurchase()
                 if (isConsideringSwitchingPlayingUpgrade) {
-                    lastPlayingUpgrade = currentlyPlayingUpgrade
-                    currentlyPlayingUpgrade = lastUpgradeTapped[UpgradeStatus.PURCHASED]!!
+                    lastPlayingUpgrade = currentlyPlayingUpgrade.value
+                    currentlyPlayingUpgrade.value = lastUpgradeTapped[UpgradeStatus.PURCHASED]!!
                     isConsideringSwitchingPlayingUpgrade = false
                     timeSwitchedPlayingUpgrade = GameTime.APP_TIME
                 }
@@ -495,7 +490,7 @@ object UpgradeController {
             }
         }
 
-        return upgrade.ordinal <= currentlyPlayingUpgrade.ordinal
+        return upgrade.ordinal <= currentlyPlayingUpgrade.value.ordinal
     }
 
     fun playerHasTheAbilityToPlayWith(upgrade: Upgrade): Boolean {
@@ -551,6 +546,14 @@ object UpgradeController {
             1.5
         } else {
             0.0
+        }
+    }
+
+    fun getLineBombWidth(): Double {
+        return if (playerHas(Upgrade.WiderLineBombs)) {
+            14.0
+        } else {
+            6.0
         }
     }
 

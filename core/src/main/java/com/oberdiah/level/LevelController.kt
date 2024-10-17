@@ -1,7 +1,6 @@
 package com.oberdiah.level
 
 import com.badlogic.gdx.graphics.Color
-import com.oberdiah.Bomb
 import com.oberdiah.BombType
 import com.oberdiah.ClusterBomb
 import com.oberdiah.GAME_STATE
@@ -25,6 +24,7 @@ import com.oberdiah.UNITS_WIDE
 import com.oberdiah.compareTo
 import com.oberdiah.createRandomFacingPoint
 import com.oberdiah.d
+import com.oberdiah.f
 import com.oberdiah.lerp
 import com.oberdiah.max
 import com.oberdiah.min
@@ -107,10 +107,12 @@ fun renderLaser(r: Renderer) {
     r.color = Color.WHITE.withAlpha(0.5)
     r.line(startPoint, endPoint, LASER_WIDTH * 0.75 * width2)
 
-    r.color = Color.BLACK.cpy().add(0.1f, 0.1f, 0.1f, 0.0f)
+    val red = 1f - saturate((GameTime.APP_TIME - lastTimeSlamHappened) * 4.0).f
+
+    r.color = Color.BLACK.cpy().add(0.1f + red, 0.1f + red * 0.5f, 0.1f + red * 0.5f, 0.0f)
     r.rect(
         startPoint,
-        Size(endPoint.x - startPoint.x, SCREEN_HEIGHT_IN_UNITS),
+        Size(endPoint.x - startPoint.x, SCREEN_HEIGHT_IN_UNITS * 2.0),
     )
 
     if (GAME_STATE != GameState.PausedPopup) {
@@ -132,6 +134,12 @@ fun renderLaser(r: Renderer) {
             )
         }
     }
+}
+
+private var lastTimeSlamHappened = 0.0
+fun playerHasSlammed() {
+    laserInGameHeight += 0.4
+    lastTimeSlamHappened = GameTime.APP_TIME
 }
 
 fun tickLevelController() {

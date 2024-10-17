@@ -5,6 +5,7 @@ import com.oberdiah.Point
 import com.oberdiah.Size
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.clamp
+import com.oberdiah.currentlyPlayingUpgrade
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.upgrades.UpgradeController
@@ -28,5 +29,5 @@ const val JUMP_PREVENTION_WINDOW = 0.3
 val player = Player(Point(5, PLAYER_SPAWN_Y))
 
 val PLAYER_SPAWN_Y
-    get() = getUpgradeYPos(UpgradeController.currentlyPlayingUpgrade) +
+    get() = getUpgradeYPos(currentlyPlayingUpgrade.value) +
             UPGRADE_ENTRY_HEIGHT + 1.5

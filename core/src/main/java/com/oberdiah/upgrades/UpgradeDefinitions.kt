@@ -41,6 +41,8 @@ enum class Upgrade(
         10,
         16
     ),
+
+    // ################ JUMP UPGRADES ################
     SmallTimedBomb(
         "Small Bomb",
         "Helping out with the mining\neffort.",
@@ -57,13 +59,13 @@ enum class Upgrade(
         "Line Bomb",
         "A harmless bomb that\nexplodes in a straight line.",
         20,
-        39
+        82
     ),
     LowerGravity(
         "Micro-Gravity",
         "Only applies to the player.\nLess gravity = higher jump.",
-        40,
-        53
+        30,
+        82
     ),
     FasterMovement(
         "Move quicker",
@@ -71,38 +73,57 @@ enum class Upgrade(
         50,
         106
     ),
-    // ################ JUMP UPGRADES ################
-
     SlowerTimers(
         "Slower Timers",
         "Timers on bombs are\nslowed down.",
-        60,
-        81
-    ),
-    CombineOrbs(
-        "Combine Orbs",
-        "Orbs combine when they\nare close together, making\nthem easier to pick up.",
-    ),
-    GoldenNuggets(
-        "Gold Nuggets",
-        "Occasional golden tiles\nfull of treasure.",
+        40,
+        65
     ),
     SpringBomb(
         "Spring Bomb",
         "A bomb that jumps \n around before exploding.",
+        100,
+        71
+    ),
+    Slam(
+        "Slam",
+        "Swipe down to slam.\nSlamming bombs makes you\nbounce and repels the void.",
+        65,
+        71
+    ),
+    LargeTimedBomb(
+        "Large Bombs",
+        "Bigger can only mean better.",
+        150,
+        295
+    ),
+    GoldenNuggets(
+        "Gold Nuggets",
+        "Occasional golden tiles\nfull of treasure.",
+        90,
+        71
+    ),
+    WiderLineBombs(
+        "Wider Line",
+        "Line bombs now stretch the\nentire way across the screen.",
+    ),
+    MegaTimedBomb(
+        "Mega Bombs",
+        "Massive bombs that\nwreck the landscape.",
+    ),
+    CombineOrbs(
+        "Combine Orbs",
+        "Orbs combine when they\nare close together, making\nthem easier to pick up.",
+        45,
+        67
     ),
     Magnet(
         "Magnet",
         "Attract orbs to you.",
+        125,
+        160
     ),
-    LargeTimedBomb(
-        "Large Bombs",
-        "Bigger can only mean better.\nWorth more, too.",
-    ),
-    Slam(
-        "Slam",
-        "Swipe down to slam.\nSlamming bombs is harmless\nand makes you bounce.",
-    ),
+
 
     // ################ SLAM UPGRADES ################
 
@@ -113,10 +134,6 @@ enum class Upgrade(
     ApexWings(
         "Apex Wings",
         "Hover slightly at the apex of\nyour jump",
-    ),
-    MegaTimedBomb(
-        "Mega Bombs",
-        "Massive bombs that\nwreck the landscape.",
     ),
 
     //    SneakySlam(

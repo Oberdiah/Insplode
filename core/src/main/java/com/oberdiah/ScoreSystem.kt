@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.level.playerHasSlammed
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
@@ -166,6 +167,7 @@ object ScoreSystem {
             PointOrbs.spawnOrbs(bomb.body.p, numToActuallySpawn, ensureEmptySpaceOnSpawn = false)
         }
 
+        playerHasSlammed()
         updateGameSpeed(timeWarp())
         bounceDecayAccumulator = 0.0
 
@@ -246,8 +248,8 @@ object ScoreSystem {
         }
         growingScore += score
         playerScore += score
-        playerHighScores[UpgradeController.currentlyPlayingUpgrade]!!.value =
-            max(playerScore, playerHighScores[UpgradeController.currentlyPlayingUpgrade]!!.value)
+        playerHighScores[currentlyPlayingUpgrade.value]!!.value =
+            max(playerScore, playerHighScores[currentlyPlayingUpgrade.value]!!.value)
         lastScoreCollectionTime = RUN_TIME_ELAPSED
     }
 

@@ -64,7 +64,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     val size = Size(radius * 2, radius * 2)
 
     open fun getPointsWorth(): Int {
-        return ((power.d * 2.0).pow(2.0) * 1.5).i
+        return ceil((power.d * 2.0).pow(2.0))
     }
 
     open fun gotSlammed() {
@@ -124,7 +124,7 @@ enum class BombType(
     LargeTimed(2.0, 0.4, 8.0, colorScheme.bombPrimary),
     MegaTimed(3.0, 0.6, 8.0, colorScheme.bombPrimary),
     UltraTimed(5.0, 0.8, 15.0, colorScheme.bombPrimary),
-    LineBomb(0.3, 0.15, 7.0, colorScheme.bombPrimary),
+    LineBomb(0.3, 0.15, 7.0, Color.ROYAL),
     SpringBomb(1.0, 0.25, 12.0, colorScheme.bombPrimary),
     StickyBomb(1.3, 0.3, 6.0, colorScheme.bombPrimary),
     ClusterBomb(1.0, 0.3, 8.0, colorScheme.bombPrimary),
@@ -150,7 +150,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         }
     }
 
-    private val lineLength = 14 * GLOBAL_SCALE
+    private val lineLength = UpgradeController.getLineBombWidth() * GLOBAL_SCALE
     private val canBlow: Boolean
         get() {
             val angle = (body.angle % (PI * 2) + PI * 2) % (PI * 2)
@@ -175,8 +175,15 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         }
     }
 
+    override fun gotSlammed() {
+        ScoreSystem.registerBombSlam(this)
+        if (canBlow) {
+            explode()
+        }
+    }
+
     override fun render(r: Renderer) {
-        r.color = Color.RED.withAlpha(0.5)
+        r.color = color.withAlpha(0.5)
         if (canBlow && timeLeft < maxFuseLength / 4) {
             val length = lineLength * (1 - timeLeft / (maxFuseLength / 4))
             r.line(
