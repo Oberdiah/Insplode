@@ -47,7 +47,7 @@ object PlayerInfoBoard {
                     postSlamGravity
                 }
             } else {
-                if (UpgradeController.playerHas(Upgrade.LowerGravity)) {
+                if (UpgradeController.playerHas(Upgrade.Mobility)) {
                     0.75
                 } else {
                     1.0

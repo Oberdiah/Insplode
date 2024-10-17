@@ -511,7 +511,7 @@ object UpgradeController {
     fun getMovementSpeed(): Double {
         return if (playerHas(Upgrade.EvenFasterMovement)) {
             10.0
-        } else if (playerHas(Upgrade.FasterMovement)) {
+        } else if (playerHas(Upgrade.Mobility)) {
             5.0
         } else if (playerHas(Upgrade.Movement)) {
             2.5
@@ -529,9 +529,9 @@ object UpgradeController {
     }
 
     fun getLaserStartHeight(): Double {
-        return if (playerHas(Upgrade.FasterMovement)) {
+        return if (playerHas(Upgrade.SpringBomb)) {
             13.0
-        } else if (playerHas(Upgrade.LowerGravity)) {
+        } else if (playerHas(Upgrade.Mobility)) {
             12.0
         } else if (playerHas(Upgrade.LineBomb)) {
             11.0
@@ -540,12 +540,13 @@ object UpgradeController {
         }
     }
 
-    fun getBombFuseModifier(): Double {
-        return if (playerHas(Upgrade.SlowerTimers)) {
-            1.0
-        } else {
-            0.5
-        }
+    fun getBombFuseMultiplier(): Double {
+        return 0.5
+//        return if (playerHas(Upgrade.SlowerTimers)) {
+//            1.0
+//        } else {
+//            0.5
+//        }
     }
 
     fun getPlayerMagnetRadius(): Double {

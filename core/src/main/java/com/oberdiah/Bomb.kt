@@ -43,7 +43,7 @@ fun tickBombController() {
 
 abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObject(startingPoint) {
     val maxFuseLength
-        get() = bombType.fuseLength * UpgradeController.getBombFuseModifier()
+        get() = bombType.fuseLength * UpgradeController.getBombFuseMultiplier()
 
     val radius
         get() = bombType.renderRadius * GLOBAL_SCALE
