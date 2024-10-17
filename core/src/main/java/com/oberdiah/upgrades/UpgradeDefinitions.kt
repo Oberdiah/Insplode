@@ -1,19 +1,20 @@
 package com.oberdiah.upgrades
 
-const val P = 3.0
-const val MAIN_UPGRADE_SIZE = 2.0
+import com.oberdiah.ceil
 
 enum class Upgrade(
     val title: String,
     val description: String,
     val threeStarsScore: Int = 5,
     val developerBest: Int = 9999,
+    val twoStarsScore: Int = ceil(threeStarsScore * 0.65),
+    val oneStarScore: Int = ceil(threeStarsScore * 0.25),
 ) {
     StarterUpgrade(
         "Launch",
         "Spawn onto the map.",
         1,
-        1,
+        2,
     ),
     Movement(
         "Movement",
@@ -26,34 +27,28 @@ enum class Upgrade(
     SlowerVoid(
         "Void Repellent",
         "Slow down the void's\napproach.",
-        9,
-        10
+        7,
+        9
     ),
     MediumTimedBomb(
         "Timed Bomb",
         "Occasionally spawns in\na bomb.\nMine for orbs!",
-        8,
-        16
+        7,
+        13,
     ),
     Jump(
         "Jump",
         "Swipe up to jump.",
-        10,
-        16
+        9,
+        13
     ),
 
     // ################ JUMP UPGRADES ################
     SmallTimedBomb(
         "Small Bomb",
         "Helping out with the mining\neffort.",
-        10,
-        18
-    ),
-    VoidLift(
-        "Void Lift",
-        "Haul that darkness away!\nThe void begins higher up.",
-        15,
-        22
+        12,
+        19
     ),
     LineBomb(
         "Line Bomb",
@@ -135,12 +130,6 @@ enum class Upgrade(
         "Apex Wings",
         "Hover slightly at the apex of\nyour jump",
     ),
-
-    //    SneakySlam(
-//        "Sneaky Slam",
-//        "When fuse is half-depleted,\nslam to get double orbs\nand no explosion.",
-//        100,
-//    ),
     Multiplier(
         "Multiplier",
         "Gain multiplier for each\nbomb slam. Applies to\nthe number of orbs spawned.",
@@ -191,11 +180,9 @@ enum class Upgrade(
     val obfuscatedTitle = title.replace(Regex("\\S")) { "?" }
     val obfuscatedDescription = description.replace(Regex("\\S")) { "?" }
 
-    val twoStarsScore = (threeStarsScore * 0.65).toInt()
-    val oneStarScore = (threeStarsScore * 0.25).toInt()
-
     fun starsToScore(stars: Int): Int {
         return when (stars) {
+            4 -> developerBest
             3 -> threeStarsScore
             2 -> twoStarsScore
             1 -> oneStarScore

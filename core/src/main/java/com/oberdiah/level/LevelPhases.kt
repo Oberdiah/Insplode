@@ -35,13 +35,13 @@ class Phase(val d: Number, val callback: () -> Unit) {
 
 // The values in a phase are how long we wait on that phase before moving on.
 val phases = arrayOf(
-    Phase(3.0) {
+    Phase(2.5) {
         spawnBomb(BombType.SmallTimed, 0.6)
         spawnBomb(BombType.PointOrb, 0.1)
     },
     Phase(0.5) {
         spawnBomb(BombType.SmallTimed, 0.2)
-        spawnBomb(BombType.PointOrb, 0.5)
+        spawnBomb(BombType.PointOrb, 0.51)
     },
     Phase(0.5) {
         spawnBomb(BombType.PointOrb, 0.8)
@@ -52,11 +52,12 @@ val phases = arrayOf(
         spawnBomb(BombType.PointOrb, 0.4)
         startRandomBombs(BombType.PointOrb, 3.5)
     },
-    Phase(0.5, BombType.SpringBomb) {
+    Phase(0.45, BombType.SpringBomb) {
         spawnBomb(BombType.SpringBomb, 0.25)
+        spawnBomb(BombType.PointOrb, 0.49)
         gameMessage = "Spring Bomb"
     },
-    Phase(1.75) {
+    Phase(1.65) {
         gameMessage = ""
         spawnBomb(BombType.SmallTimed)
         startRandomBombs(BombType.LineBomb, 7.0)
@@ -66,12 +67,13 @@ val phases = arrayOf(
     },
     Phase(2.0) {
         spawnBomb(BombType.SmallTimed, 0.25)
+        spawnBomb(BombType.LineBomb, 0.4)
     },
     Phase(1.5, BombType.LargeTimed) {
         spawnBomb(BombType.LargeTimed, 0.5)
         gameMessage = "Large Bomb"
     },
-    Phase(15.0) {
+    Phase(3.0) {
         gameMessage = ""
         startRandomBombs(BombType.LineBomb, 7.0)
         startRandomBombs(BombType.SmallTimed, 6.0)
@@ -79,7 +81,19 @@ val phases = arrayOf(
         startRandomBombs(BombType.SpringBomb, 6.0)
         startRandomBombs(BombType.LargeTimed, 10.0)
     },
+    Phase(3.0) {
+        spawnBomb(BombType.MediumTimed, 0.7)
+    },
+    Phase(2.0) {
+        spawnBomb(BombType.MediumTimed, 0.3)
+    },
+    Phase(7.0) {
+        spawnBomb(BombType.MediumTimed, 0.25)
+    },
     Phase(15.0) {
+        spawnBomb(BombType.MediumTimed, 0.25)
+        spawnBomb(BombType.MediumTimed, 0.75)
+
         gameMessage = ""
         startRandomBombs(BombType.LineBomb, 7.0)
         startRandomBombs(BombType.SmallTimed, 6.0)

@@ -69,6 +69,10 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun hitByExplosion() {
+        hasDied()
+    }
+
+    private fun hasDied() {
         if (!state.isDead) {
             state.justDied()
         }
@@ -115,14 +119,17 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         PlayerInfoBoard.tick()
         state.tick()
 
-        val playerLaserCheckHeight = if (UpgradeController.playerHas(Upgrade.Slam)) {
-            player.body.p.y
-        } else {
-            player.body.p.y + PLAYER_SIZE.h / 2
-        }
+        val playerLaserCheckHeight =
+            if (UpgradeController.playerHas(Upgrade.Slam) ||
+                PlayerInputs.currentPreparingAction == PlayerInputs.PreparingAction.Slam
+            ) {
+                player.body.p.y / 2
+            } else {
+                player.body.p.y + PLAYER_SIZE.h / 2
+            }
 
         if (playerLaserCheckHeight > LASER_HEIGHT) {
-            state.justDied()
+            hasDied()
         }
 
         if (state.isSlamming) {

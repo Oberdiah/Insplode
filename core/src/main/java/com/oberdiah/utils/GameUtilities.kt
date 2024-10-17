@@ -36,7 +36,7 @@ fun renderAwardedStars(
         )
 
         r.color = if (starNum <= numStars) {
-            if (stars.developerBest) developerStarColor else mainStarColor
+            if (stars.isDeveloperBest) developerStarColor else mainStarColor
         } else Color.BLACK.withAlpha(0.5f)
         r.star(
             // IMO it looks slightly better down just a touch.

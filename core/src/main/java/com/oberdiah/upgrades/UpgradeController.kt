@@ -62,7 +62,7 @@ object UpgradeController {
                 allUpgradeTextures[it] = Sprite(Texture("Icons/Not Found.png"))
             }
         }
-        resetUpgradeStates()
+        playerUpgradeStates[Upgrade.StarterUpgrade]?.value = true
     }
 
     fun resetUpgradeStates() {
@@ -354,13 +354,17 @@ object UpgradeController {
                 // Three lines, one of each of the three stars and their requirements.
                 val starSize = fontSmallish.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS
 
-                for (i in 0..2) {
+                val hasDevScore = ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade).isDeveloperBest
+
+                val startPos = if (hasDevScore) 0.8 else 0.7
+
+                for (i in 0..if (hasDevScore) 3 else 2) {
                     val starYPos =
-                        yPos + UPGRADE_ENTRY_HEIGHT * 0.7 - i * UPGRADE_ENTRY_HEIGHT * 0.2
+                        yPos + UPGRADE_ENTRY_HEIGHT * startPos - i * UPGRADE_ENTRY_HEIGHT * 0.2
                     val starXPos = 1.0 + xPosOfInfoOverlay
 
                     val haveThisUpgrade =
-                        ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade).stars >= i + 1
+                        ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade).stars >= i + 1 || hasDevScore
 
                     renderAwardedStars(
                         r,
@@ -525,8 +529,12 @@ object UpgradeController {
     }
 
     fun getLaserStartHeight(): Double {
-        return if (playerHas(Upgrade.VoidLift)) {
-            20.0
+        return if (playerHas(Upgrade.FasterMovement)) {
+            18.0
+        } else if (playerHas(Upgrade.LowerGravity)) {
+            16.0
+        } else if (playerHas(Upgrade.LineBomb)) {
+            14.0
         } else {
             10.0
         }

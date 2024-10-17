@@ -38,7 +38,7 @@ object ScoreSystem {
                 DeveloperBest -> 3
             }
 
-        val developerBest: Boolean
+        val isDeveloperBest: Boolean
             get() = this == DeveloperBest
 
         companion object {
@@ -109,7 +109,7 @@ object ScoreSystem {
     }
 
     fun getPlayerTotalDeveloperBests(): Int {
-        return Upgrade.entries.count { getNumStarsPlayerHasOnUpgrade(it).developerBest }
+        return Upgrade.entries.count { getNumStarsPlayerHasOnUpgrade(it).isDeveloperBest }
     }
 
     fun getNumStarsPlayerHasOnUpgrade(upgrade: Upgrade): StarsAwarded {
@@ -317,8 +317,8 @@ object ScoreSystem {
 
         r.color = colorScheme.textColor
 
-        val secondsTimerPos = Point(WIDTH / 2, HEIGHT * 0.95)
-        val scorePos = Point(WIDTH / 2, HEIGHT * 0.9)
+        val secondsTimerPos = Point(WIDTH / 2, HEIGHT * 0.9)
+        val scorePos = Point(WIDTH / 2, HEIGHT * 0.85)
 
 
         // Seconds counter
