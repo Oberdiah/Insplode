@@ -65,40 +65,38 @@ enum class Upgrade(
     SpringBomb(
         "Spring Bomb",
         "A bomb that jumps \n around before exploding.",
-        100,
-        71
+        25,
+        40
     ),
     Slam(
         "Slam",
         "Swipe down to slam.\nSlamming bombs makes you\nbounce and repels the void.",
-        65,
-        71
+        30,
+        43
     ),
     LargeTimedBomb(
         "Large Bombs",
         "Bigger can only mean better.",
-        150,
-        295
+        35,
+        50
     ),
     GoldenNuggets(
         "Gold Nuggets",
         "Occasional golden tiles\nfull of treasure.",
-        90,
-        71
+        50,
+        108
     ),
     WiderLineBombs(
         "Wider Line",
         "Line bombs now stretch the\nentire way across the screen.",
+        75,
+        143
     ),
     MegaTimedBomb(
         "Mega Bombs",
         "Massive bombs that\nwreck the landscape.",
-    ),
-    CombineOrbs(
-        "Combine Orbs",
-        "Orbs combine when they\nare close together, making\nthem easier to pick up.",
-        45,
-        67
+        100,
+        218
     ),
     Magnet(
         "Magnet",

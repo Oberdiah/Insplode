@@ -205,7 +205,7 @@ object PointOrbs {
 
         override fun collided(obj: PhysicsObject) {
             super.collided(obj)
-            if (timeAlive > 0.5 && UpgradeController.playerHas(Upgrade.CombineOrbs)) {
+            if (timeAlive > 0.5 && UpgradeController.playerHas(Upgrade.GoldenNuggets)) {
                 if (obj is PointOrb) {
                     if (obj.value == value) {
                         // Spawn a new orb in, with the combined value.

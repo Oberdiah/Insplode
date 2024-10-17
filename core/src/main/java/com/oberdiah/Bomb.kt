@@ -119,11 +119,11 @@ enum class BombType(
     val fuseLength: Double,
     val color: Color
 ) {
-    SmallTimed(0.8, 0.2, 8.0, colorScheme.bombPrimary),
+    SmallTimed(0.8, 0.2, 6.0, colorScheme.bombPrimary),
     MediumTimed(1.3, 0.3, 8.0, colorScheme.bombPrimary),
-    LargeTimed(2.0, 0.4, 8.0, colorScheme.bombPrimary),
-    MegaTimed(3.0, 0.6, 8.0, colorScheme.bombPrimary),
-    UltraTimed(5.0, 0.8, 15.0, colorScheme.bombPrimary),
+    LargeTimed(2.0, 0.4, 12.0, colorScheme.bombPrimary),
+    MegaTimed(3.0, 0.6, 14.0, colorScheme.bombPrimary),
+    UltraTimed(5.0, 0.8, 16.0, colorScheme.bombPrimary),
     LineBomb(0.3, 0.15, 7.0, colorScheme.bombPrimary),
     SpringBomb(1.0, 0.25, 12.0, colorScheme.bombPrimary),
     StickyBomb(1.3, 0.3, 6.0, colorScheme.bombPrimary),
@@ -151,7 +151,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
     }
 
     private val lineLength = UpgradeController.getLineBombWidth() * GLOBAL_SCALE
-    private val canBlow: Boolean
+    private val canLineExplode: Boolean
         get() {
             if (body.angularVelocity.abs > 2.5) {
                 return false
@@ -171,7 +171,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     override fun tick() {
         super.tick()
-        if (canBlow) {
+        if (canLineExplode) {
             timeLeft -= GAMEPLAY_DELTA
             if (timeLeft <= 0.0) {
                 explode()
@@ -181,8 +181,9 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     override fun gotSlammed() {
         ScoreSystem.registerBombSlam(this)
-        if (canBlow) {
-            explode()
+        if (canLineExplode) {
+            lineExplode(false)
+            destroy()
         } else {
             boom(body.p, power, affectsThePlayer = false)
             destroy()
@@ -191,7 +192,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     override fun render(r: Renderer) {
         r.color = color.withAlpha(0.5)
-        if (canBlow && timeLeft < maxFuseLength / 4) {
+        if (canLineExplode && timeLeft < maxFuseLength / 4) {
             val length = lineLength * (1 - timeLeft / (maxFuseLength / 4))
             r.line(
                 body.p + Point(body.angle - PI / 2) * length,
@@ -200,7 +201,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
             )
         }
 
-        if (canBlow) {
+        if (canLineExplode) {
             r.color = color
         } else {
             r.color = Color.GRAY
@@ -222,6 +223,10 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     override fun explode() {
         super.explode()
+        lineExplode(true)
+    }
+
+    private fun lineExplode(hurtsThePlayer: Boolean) {
         val spacing = 0.5
         val numExplosionsInEachDir = floor(lineLength / spacing)
         val motion = Point(body.angle - PI / 2) * 0.5
@@ -229,7 +234,12 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         for (i in -numExplosionsInEachDir..numExplosionsInEachDir) {
             boomLoc.x += motion.x
             boomLoc.y += motion.y
-            boom(boomLoc, power / GLOBAL_SCALE, playSound = (abs(i) < 3))
+            boom(
+                boomLoc,
+                power / GLOBAL_SCALE,
+                playSound = (abs(i) < 3),
+                affectsThePlayer = hurtsThePlayer
+            )
         }
     }
 }
