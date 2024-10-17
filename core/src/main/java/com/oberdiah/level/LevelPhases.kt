@@ -11,12 +11,12 @@ class Phase(val d: Number, val callback: () -> Unit) {
         bombType = bomb
     }
 }
-
-val phases = arrayOf(
-    Phase(5.0) {
-        startRandomBombs(BombType.LineBomb, 3.0)
-    }
-)
+//
+//val phases = arrayOf(
+//    Phase(5.0) {
+//        startRandomBombs(BombType.LineBomb, 3.0)
+//    }
+//)
 
 //val phases = arrayOf(
 //    Phase(5.0) {
@@ -34,7 +34,7 @@ val phases = arrayOf(
 // It's all going wrong in BombVille
 
 // The values in a phase are how long we wait on that phase before moving on.
-val phases2 = arrayOf(
+val phases = arrayOf(
     Phase(TIME_FOR_LASER_TO_DESCEND) {},
     Phase(1.5) {
         spawnBomb(BombType.SmallTimed, 0.6)
