@@ -179,6 +179,9 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         ScoreSystem.registerBombSlam(this)
         if (canBlow) {
             explode()
+        } else {
+            boom(body.p, power, affectsThePlayer = false)
+            destroy()
         }
     }
 
