@@ -22,6 +22,7 @@ import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.ui.pauseHovered
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
+import kotlin.experimental.inv
 import kotlin.experimental.or
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
@@ -120,7 +121,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             player.body.p.y + PLAYER_SIZE.h / 2
         }
 
-        if (playerLaserCheckHeight > LASER_HEIGHT && RUN_TIME_ELAPSED > 5.0) {
+        if (playerLaserCheckHeight > LASER_HEIGHT) {
             state.justDied()
         }
 
@@ -155,13 +156,13 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         val filter = if (ghosting) {
             Filter().apply {
                 categoryBits = PLAYER_PHYSICS_MASK
-                // Only collide with tiles & pickups
+                // Only collide with tiles
                 maskBits = WORLD_PHYSICS_MASK
             }
         } else {
             Filter().apply {
                 categoryBits = PLAYER_PHYSICS_MASK
-                maskBits = 0xFFFF.toShort()
+                maskBits = PICKUP_PHYSICS_MASK.inv()
             }
         }
 

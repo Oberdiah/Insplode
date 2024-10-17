@@ -10,6 +10,7 @@ import com.oberdiah.ScoreSystem
 import com.oberdiah.Velocity
 import com.oberdiah.f
 import com.oberdiah.frameAccurateLerp
+import com.oberdiah.level.APP_TIME_GAME_STARTED
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.saturate
 import com.oberdiah.spawnFragment
@@ -43,7 +44,7 @@ object PlayerRenderer {
             r.color = colorScheme.playerNoJump
         }
 
-        val playerSize = PLAYER_SIZE * saturate(RUN_TIME_ELAPSED * 4.0)
+        val playerSize = PLAYER_SIZE * saturate((GameTime.APP_TIME - APP_TIME_GAME_STARTED) * 4.0)
 
         if (RAINBOW_PLAYER && colorful) {
             val hsv = FloatArray(3)

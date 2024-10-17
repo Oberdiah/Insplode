@@ -21,6 +21,7 @@ import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
 import com.oberdiah.TimedBomb
 import com.oberdiah.UNITS_WIDE
+import com.oberdiah.abs
 import com.oberdiah.compareTo
 import com.oberdiah.createRandomFacingPoint
 import com.oberdiah.d
@@ -54,30 +55,20 @@ val LASER_HEIGHT_IN_MENU: Double
 private val LASER_HEIGHT_START_IN_GAME
     get() = UpgradeController.getLaserStartHeight()
 
+/** This only starts ticking up once the player hits the ground */
 var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
 private var currentPhase = 0
 private var bombRandoms = mutableMapOf<BombType, Random>()
 private var laserSpeedMultiplier = 1.0
 
-fun resetLevelController() {
-    currentPhase = 0
-    RUN_TIME_ELAPSED = 0.0
-    gameMessage = ""
-    maxDepthThisRun = 0.0
-    currentDepthThisRun = 0.0
-    laserInGameHeight = LASER_HEIGHT_START_IN_GAME
-    bombRandoms.clear()
-    laserSpeedMultiplier = 1.0
-    bombDropData.clear()
-}
-
 var currentDepthThisRun = 0.0
+
 var maxDepthThisRun = 0.0
 var laserInGameHeight = LASER_HEIGHT_START_IN_GAME
 val LASER_HEIGHT: Double
     get() {
-        var transition = saturate((RUN_TIME_ELAPSED - LASER_DELAY))
+        var transition = saturate(RUN_TIME_ELAPSED)
         if (player.state.isDead) {
             transition = min(
                 transition,
@@ -89,8 +80,24 @@ val LASER_HEIGHT: Double
 
         return lerp(LASER_HEIGHT_IN_MENU, laserInGameHeight, transition)
     }
+
 const val LASER_WIDTH = 0.15
-const val LASER_DELAY = 3.0
+var APP_TIME_GAME_STARTED = 0.0
+    private set
+
+fun resetLevelController() {
+    currentPhase = 0
+    RUN_TIME_ELAPSED = 0.0
+    gameMessage = ""
+    maxDepthThisRun = 0.0
+    currentDepthThisRun = 0.0
+    laserInGameHeight = LASER_HEIGHT_START_IN_GAME
+    bombRandoms.clear()
+    laserSpeedMultiplier = 1.0
+    gameHasReallyStarted = false
+    bombDropData.clear()
+    APP_TIME_GAME_STARTED = GameTime.APP_TIME
+}
 
 fun renderLaser(r: Renderer) {
     // We need a fairly good buffer because the particles take time to spawn
@@ -142,7 +149,18 @@ fun playerHasSlammed() {
     lastTimeSlamHappened = GameTime.APP_TIME
 }
 
+var gameHasReallyStarted = false
+    private set
+
 fun tickLevelController() {
+    if (!gameHasReallyStarted) {
+        if (player.state.isIdle) {
+            gameHasReallyStarted = true
+        } else {
+            return
+        }
+    }
+
     val deltaScaling = if (statefulEasyMode.value) {
         0.5
     } else {
@@ -152,9 +170,7 @@ fun tickLevelController() {
     RUN_TIME_ELAPSED += GameTime.GAMEPLAY_DELTA * deltaScaling
 
     val lastLaserHeight = LASER_HEIGHT
-    if (RUN_TIME_ELAPSED > LASER_DELAY) {
-        laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling * laserSpeedMultiplier
-    }
+    laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling * laserSpeedMultiplier
     laserSpeedMultiplier += GameTime.GAMEPLAY_DELTA * 0.01
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
@@ -197,6 +213,10 @@ fun tickLevelController() {
 }
 
 fun spawnBomb(type: BombType, fraction: Number = getBombRandom(type).nextDouble(0.05, 0.95)) {
+    if ((LASER_HEIGHT - laserInGameHeight).abs > 0.2) {
+        println("WARNING: Bomb spawned at wrong height $LASER_HEIGHT vs $laserInGameHeight")
+    }
+
     val pos = Point(fraction * UNITS_WIDE, SAFE_BOMB_SPAWN_HEIGHT)
     when (type) {
         BombType.SmallTimed -> {
@@ -271,9 +291,9 @@ val bombDropData = mutableMapOf<BombType, BombData>()
 
 fun startRandomBombs(type: BombType, requestedDelay: Number) {
     val actualDelay = if (UpgradeController.playerHas(Upgrade.RapidBombs)) {
-        requestedDelay * 0.8
-    } else {
         requestedDelay
+    } else {
+        requestedDelay * 1.4
     }
 
     bombDropData[type]?.let {

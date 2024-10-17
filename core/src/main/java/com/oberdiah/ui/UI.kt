@@ -188,6 +188,7 @@ private fun advancedSettingsUI(r: Renderer) {
     }
     button(r, "Reset everything") {
         ScoreSystem.resetScores()
+        UpgradeController.resetUpgradeStates()
     }
     button(r, "Back") {
         backAScreen()

@@ -62,8 +62,14 @@ object UpgradeController {
                 allUpgradeTextures[it] = Sprite(Texture("Icons/Not Found.png"))
             }
         }
-        // Eventually we can do something like filling in any gaps that have been
-        // added by updates here. For now we'll keep it simple.
+        resetUpgradeStates()
+    }
+
+    fun resetUpgradeStates() {
+        playerUpgradeStates.forEach { (_, state) ->
+            state.value = false
+        }
+        playerUpgradeStates[Upgrade.StarterUpgrade]?.value = true
     }
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
@@ -494,10 +500,6 @@ object UpgradeController {
     }
 
     fun playerHasTheAbilityToPlayWith(upgrade: Upgrade): Boolean {
-        if (upgrade == Upgrade.StarterUpgrade) {
-            return true
-        }
-
         return playerUpgradeStates[upgrade]?.value == true
     }
 

@@ -35,9 +35,6 @@ class Phase(val d: Number, val callback: () -> Unit) {
 
 // The values in a phase are how long we wait on that phase before moving on.
 val phases = arrayOf(
-    Phase(2.0) {
-        // Drop pod from above.
-    },
     Phase(3.0) {
         spawnBomb(BombType.SmallTimed, 0.6)
         spawnBomb(BombType.PointOrb, 0.1)

@@ -71,7 +71,6 @@ object PlayerInputs {
                 } else {
                     r.color = Color.WHITE.withAlpha(0.25)
                 }
-                // For visual interest, draw two lines one thinner than the other
                 r.line(
                     lineX,
                     CAMERA_POS_Y,

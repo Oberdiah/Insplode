@@ -242,7 +242,7 @@ object PointOrbs {
 
         override fun render(r: Renderer) {
             val radius =
-                saturate(saturate(timeAlive * 2.5 + 0.5) - saturate(timeAttractedToPlayer) * 0.5) * radius
+                saturate(saturate(timeAlive * 2.5 + 0.5) - saturate(timeAttractedToPlayer * 3.0) * 0.25) * radius
 
             val thisColor = color
 
