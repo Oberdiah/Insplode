@@ -53,14 +53,14 @@ enum class Upgrade(
     LineBomb(
         "Line Bomb",
         "Explodes in a straight line.\nWon't explode if pointing\nup or spinning fast.",
-        20,
+        15,
         37
     ),
     Mobility(
         "High Mobility",
         "Move quicker, jump higher.",
-        30,
-        106
+        20,
+        34
     ),
     SpringBomb(
         "Spring Bomb",
