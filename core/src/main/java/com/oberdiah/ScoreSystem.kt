@@ -317,8 +317,10 @@ object ScoreSystem {
 
         r.color = colorScheme.textColor
 
-        val secondsTimerPos = Point(WIDTH / 2, HEIGHT * 0.9)
-        val scorePos = Point(WIDTH / 2, HEIGHT * 0.85)
+        val textStartHeight = HEIGHT * 0.925
+
+        val secondsTimerPos = Point(WIDTH / 2, textStartHeight)
+        val scorePos = Point(WIDTH / 2, textStartHeight - HEIGHT * 0.05)
 
 
         // Seconds counter

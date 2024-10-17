@@ -66,9 +66,10 @@ var currentDepthThisRun = 0.0
 
 var maxDepthThisRun = 0.0
 var laserInGameHeight = LASER_HEIGHT_START_IN_GAME
+const val TIME_FOR_LASER_TO_DESCEND = 1.0
 val LASER_HEIGHT: Double
     get() {
-        var transition = saturate(RUN_TIME_ELAPSED)
+        var transition = saturate(RUN_TIME_ELAPSED * TIME_FOR_LASER_TO_DESCEND)
         if (player.state.isDead) {
             transition = min(
                 transition,

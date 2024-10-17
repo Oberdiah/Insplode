@@ -124,7 +124,7 @@ enum class BombType(
     LargeTimed(2.0, 0.4, 8.0, colorScheme.bombPrimary),
     MegaTimed(3.0, 0.6, 8.0, colorScheme.bombPrimary),
     UltraTimed(5.0, 0.8, 15.0, colorScheme.bombPrimary),
-    LineBomb(0.3, 0.15, 7.0, Color.ROYAL),
+    LineBomb(0.3, 0.15, 7.0, colorScheme.bombPrimary),
     SpringBomb(1.0, 0.25, 12.0, colorScheme.bombPrimary),
     StickyBomb(1.3, 0.3, 6.0, colorScheme.bombPrimary),
     ClusterBomb(1.0, 0.3, 8.0, colorScheme.bombPrimary),
@@ -153,13 +153,17 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
     private val lineLength = UpgradeController.getLineBombWidth() * GLOBAL_SCALE
     private val canBlow: Boolean
         get() {
+            if (body.angularVelocity.abs > 2.5) {
+                return false
+            }
+
             val angle = (body.angle % (PI * 2) + PI * 2) % (PI * 2)
             val down = PI / 2
             val up = 3 * PI / 2
-            val range = PI / 4
-            if (angle > down - range && angle < down + range) {
+            val disabledRange = PI / 2 - PI / 4
+            if (angle > down - disabledRange && angle < down + disabledRange) {
                 return false
-            } else if (angle > up - range && angle < up + range) {
+            } else if (angle > up - disabledRange && angle < up + disabledRange) {
                 return false
             }
             return true
@@ -225,7 +229,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         for (i in -numExplosionsInEachDir..numExplosionsInEachDir) {
             boomLoc.x += motion.x
             boomLoc.y += motion.y
-            boom(boomLoc, power / GLOBAL_SCALE, playSound = (abs(i) < 3), affectsThePlayer = false)
+            boom(boomLoc, power / GLOBAL_SCALE, playSound = (abs(i) < 3))
         }
     }
 }

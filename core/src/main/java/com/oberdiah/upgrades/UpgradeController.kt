@@ -530,11 +530,11 @@ object UpgradeController {
 
     fun getLaserStartHeight(): Double {
         return if (playerHas(Upgrade.FasterMovement)) {
-            18.0
+            13.0
         } else if (playerHas(Upgrade.LowerGravity)) {
-            16.0
+            12.0
         } else if (playerHas(Upgrade.LineBomb)) {
-            14.0
+            11.0
         } else {
             10.0
         }

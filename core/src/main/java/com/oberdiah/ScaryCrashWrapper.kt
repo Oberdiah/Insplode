@@ -105,6 +105,12 @@ class PhysBody(private val body: Body, private val shouldUpdate: Boolean = true)
             field = value.cpy
         }
 
+    var angularVelocity: Number
+        get() = body.angularVelocity.d
+        set(value) {
+            require(exists)
+            body.angularVelocity = value.f
+        }
 
     private var exists = true
     private var fixtures = mutableListOf<Fixture>()

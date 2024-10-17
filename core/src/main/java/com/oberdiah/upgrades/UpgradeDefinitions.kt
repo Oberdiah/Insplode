@@ -52,20 +52,20 @@ enum class Upgrade(
     ),
     LineBomb(
         "Line Bomb",
-        "A harmless bomb that\nexplodes in a straight line.",
+        "Explodes in a straight line.\nWon't explode if pointing\nup or spinning fast.",
         20,
-        82
+        42
     ),
     LowerGravity(
         "Micro-Gravity",
         "Only applies to the player.\nLess gravity = higher jump.",
-        30,
+        25,
         82
     ),
     FasterMovement(
         "Move quicker",
         "Zooooooom!",
-        50,
+        30,
         106
     ),
     SlowerTimers(
