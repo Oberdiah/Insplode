@@ -41,6 +41,7 @@ import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.renderAwardedStars
 import com.oberdiah.utils.renderStar
+import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
 
 object UpgradeController {
@@ -436,8 +437,11 @@ object UpgradeController {
                         lastUpgradeTapped[upgradeStatus] = upgrade
                         if (upgradeStatus == UpgradeStatus.PURCHASABLE) {
                             currentlyPurchasingUpgrade = upgrade
+                            vibrate(10)
                         } else if (upgradeStatus == UpgradeStatus.PURCHASED) {
                             isConsideringSwitchingPlayingUpgrade = true
+                        } else if (upgradeStatus == UpgradeStatus.TOO_EXPENSIVE) {
+                            vibrate(10)
                         }
                     }
                 }
@@ -452,8 +456,12 @@ object UpgradeController {
             TOUCHES_WENT_UP.forEach { touch ->
                 cancelUpgradePurchase()
                 if (isConsideringSwitchingPlayingUpgrade) {
+                    val toSwitchTo = lastUpgradeTapped[UpgradeStatus.PURCHASED]!!
+                    if (currentlyPlayingUpgrade.value != toSwitchTo) {
+                        vibrate(10)
+                    }
                     lastPlayingUpgrade = currentlyPlayingUpgrade.value
-                    currentlyPlayingUpgrade.value = lastUpgradeTapped[UpgradeStatus.PURCHASED]!!
+                    currentlyPlayingUpgrade.value = toSwitchTo
                     isConsideringSwitchingPlayingUpgrade = false
                     timeSwitchedPlayingUpgrade = GameTime.APP_TIME
                 }
@@ -483,6 +491,7 @@ object UpgradeController {
 
         currentlyPlayingUpgrade.value = upgrade
         playerUpgradeStates[upgrade]?.value = true
+        vibrate(10)
 
         // Make sure the player moves up if they need to
         player.reset()

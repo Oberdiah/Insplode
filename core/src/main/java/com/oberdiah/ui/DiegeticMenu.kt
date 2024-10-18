@@ -37,6 +37,7 @@ import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.renderStar
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
+import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
 
 // So that when the game ends and the camera pans back up the chance of us seeing
@@ -222,6 +223,7 @@ fun tickDiegeticMenu() {
         }
         TOUCHES_WENT_UP.forEach {
             if (isInLaunchButton(it) && !isDragging) {
+                vibrate(10)
                 startGame()
             }
             if (isDragging) {

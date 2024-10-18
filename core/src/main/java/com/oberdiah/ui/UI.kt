@@ -43,6 +43,7 @@ import com.oberdiah.statefulScreenShakeSetting
 import com.oberdiah.statefulVibrationSetting
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
+import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
 import java.util.*
 import kotlin.math.PI
@@ -156,7 +157,7 @@ private fun settingsUI(r: Renderer) {
     }, {
         statefulScreenShakeSetting.value = statefulScreenShakeSetting.value.next()
     })
-    
+
     val rainbowUnlocked = UpgradeController.playerHas(Upgrade.FinalRun)
 
     toggleButton(
@@ -297,6 +298,7 @@ fun settingButton(
         TOUCHES_WENT_UP.forEach {
             if (it.y > buttonBottom && it.y < buttonTop) {
                 playChordNote(GAME_SCREEN.note)
+                vibrate(10)
                 callback()
             }
         }

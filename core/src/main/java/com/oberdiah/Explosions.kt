@@ -3,6 +3,7 @@ package com.oberdiah
 import com.oberdiah.level.getTile
 import com.oberdiah.player.Player
 import com.oberdiah.utils.addScreenShake
+import com.oberdiah.utils.vibrate
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -32,6 +33,10 @@ fun boom(
 
     if (playSound) {
         playExplosionSound(radius.d)
+    }
+
+    if (radius > 2.0) {
+        vibrate((radius * 10).i)
     }
 
     for (dx in -tileRadius..tileRadius) {

@@ -1,10 +1,12 @@
 package com.oberdiah.utils
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem.StarsAwarded
+import com.oberdiah.statefulVibrationSetting
 import com.oberdiah.withAlpha
 
 fun renderAwardedStars(
@@ -52,4 +54,10 @@ fun renderStar(r: Renderer, center: Point, starSize: Double) {
         center - Point(0.0, starSize / 25),
         starSize / 2,
     )
+}
+
+fun vibrate(milliseconds: Int) {
+    if (statefulVibrationSetting.value) {
+        Gdx.input.vibrate(milliseconds)
+    }
 }
