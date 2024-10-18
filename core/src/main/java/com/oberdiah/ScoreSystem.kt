@@ -18,6 +18,7 @@ import com.oberdiah.utils.GameTime.updateGameSpeed
 import com.oberdiah.utils.StatefulInt
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
+import com.oberdiah.utils.renderAwardedStars
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -103,28 +104,29 @@ object ScoreSystem {
     private var totalNumStarsCache = 0
     fun getPlayerTotalNumStars(): Int {
         if (totalNumStarsCache == 0) {
-            totalNumStarsCache = Upgrade.entries.sumOf { getNumStarsPlayerHasOnUpgrade(it).stars }
+            totalNumStarsCache = Upgrade.entries.sumOf { getNumStarsOnUpgrade(it).stars }
         }
         return totalNumStarsCache
     }
 
     fun getPlayerTotalDeveloperBests(): Int {
-        return Upgrade.entries.count { getNumStarsPlayerHasOnUpgrade(it).isDeveloperBest }
+        return Upgrade.entries.count { getNumStarsOnUpgrade(it).isDeveloperBest }
     }
 
-    fun getNumStarsPlayerHasOnUpgrade(upgrade: Upgrade): StarsAwarded {
+    fun getNumStarsOnUpgrade(
+        upgrade: Upgrade,
+        yourScore: Int = playerHighScores[upgrade]!!.value
+    ): StarsAwarded {
         val developerScore = upgrade.developerBest
         val threeStarsScore = upgrade.threeStarsScore
         val twoStarsScore = upgrade.twoStarsScore
         val oneStarScore = upgrade.oneStarScore
 
-        val ourScore = playerHighScores[upgrade]!!.value
-
         return when {
-            ourScore >= developerScore -> StarsAwarded.DeveloperBest
-            ourScore >= threeStarsScore -> StarsAwarded.Three
-            ourScore >= twoStarsScore -> StarsAwarded.Two
-            ourScore >= oneStarScore -> StarsAwarded.One
+            yourScore >= developerScore -> StarsAwarded.DeveloperBest
+            yourScore >= threeStarsScore -> StarsAwarded.Three
+            yourScore >= twoStarsScore -> StarsAwarded.Two
+            yourScore >= oneStarScore -> StarsAwarded.One
             else -> StarsAwarded.Zero
         }
     }
@@ -337,6 +339,27 @@ object ScoreSystem {
             Align.center,
             shouldCache = false
         )
+
+        if (RUN_TIME_ELAPSED > 0) {
+            val starSize = fontSmallish.capHeight * 1.25
+
+            val transitionIfQuit = if (GAME_STATE == GameState.TransitioningToDiegeticMenu) {
+                saturate((APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED) * 5.0)
+            } else {
+                0.0
+            }
+
+            val transition =
+                easeInOutSine(saturate(RUN_TIME_ELAPSED * 2.0) - saturate(player.state.timeSinceDied * 2.0) - transitionIfQuit)
+            val offset = (transition * 2.0 - 2.0) * starSize
+            renderAwardedStars(
+                r,
+                Point(WIDTH / 15, HEIGHT - WIDTH / 15 - offset),
+                Align.left,
+                starSize,
+                getNumStarsOnUpgrade(currentlyPlayingUpgrade.value, playerScore)
+            )
+        }
 
 
         if (playerScore > 0) {

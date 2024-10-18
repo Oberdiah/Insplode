@@ -291,7 +291,7 @@ object UpgradeController {
                     ) + priceShake,
                     Align.right,
                     starSize,
-                    ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade)
+                    ScoreSystem.getNumStarsOnUpgrade(upgrade)
                 )
             }
 
@@ -354,7 +354,7 @@ object UpgradeController {
                 // Three lines, one of each of the three stars and their requirements.
                 val starSize = fontSmallish.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS
 
-                val hasDevScore = ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade).isDeveloperBest
+                val hasDevScore = ScoreSystem.getNumStarsOnUpgrade(upgrade).isDeveloperBest
 
                 val startPos = if (hasDevScore) 0.8 else 0.7
 
@@ -364,7 +364,7 @@ object UpgradeController {
                     val starXPos = 1.0 + xPosOfInfoOverlay
 
                     val haveThisUpgrade =
-                        ScoreSystem.getNumStarsPlayerHasOnUpgrade(upgrade).stars >= i + 1 || hasDevScore
+                        ScoreSystem.getNumStarsOnUpgrade(upgrade).stars >= i + 1 || hasDevScore
 
                     renderAwardedStars(
                         r,
