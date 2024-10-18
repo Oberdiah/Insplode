@@ -11,8 +11,8 @@ enum class Upgrade(
     val oneStarScore: Int = ceil(threeStarsScore * 0.25),
 ) {
     StarterUpgrade(
-        "Launch",
-        "Spawn onto the map.",
+        "Begin",
+        "The start of your adventure.\nFall into the world.",
         1,
         2,
     ),
@@ -25,7 +25,7 @@ enum class Upgrade(
 
     // ################ EARLY-GAME UPGRADES ################
     SlowerVoid(
-        "Void Repellent",
+        "Void Slowdown",
         "Slow down the void's\napproach.",
         7,
         9

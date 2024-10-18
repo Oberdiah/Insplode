@@ -489,7 +489,7 @@ object UpgradeController {
     }
 
 
-    private val FORCE_UPGRADES_UNTIL: Upgrade? = null //Upgrade.InfiniteMultiplier
+    private val FORCE_UPGRADES_UNTIL: Upgrade? = null //Upgrade.BlackHole
 
     /**
      * Whether the player is playing with this upgrade this game.
@@ -505,6 +505,12 @@ object UpgradeController {
     }
 
     fun playerHasTheAbilityToPlayWith(upgrade: Upgrade): Boolean {
+        if (IS_DEBUG_ENABLED) {
+            FORCE_UPGRADES_UNTIL?.let {
+                return upgrade.ordinal <= it.ordinal
+            }
+        }
+
         return playerUpgradeStates[upgrade]?.value == true
     }
 

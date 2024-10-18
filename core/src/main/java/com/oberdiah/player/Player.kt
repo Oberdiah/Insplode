@@ -128,7 +128,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
                 player.body.p.y + PLAYER_SIZE.h / 2
             }
 
-        if (playerLaserCheckHeight > LASER_HEIGHT) {
+        if (playerLaserCheckHeight > LASER_HEIGHT && RUN_TIME_ELAPSED > 0.0) {
             hasDied()
             return
         }

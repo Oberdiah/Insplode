@@ -1,4 +1,3 @@
-Icons/ApexWings.png
 Icons/BlackHole.png
 Icons/BombSlam.png
 Icons/BombWizard.png
@@ -13,6 +12,7 @@ Icons/LineBomb.png
 Icons/Magnet.png
 Icons/MediumTimedBomb.png
 Icons/MegaMagnet.png
+Icons/Mobility.png
 Icons/MoreSkyOrbs.png
 Icons/Movement.png
 Icons/Multiplier.png

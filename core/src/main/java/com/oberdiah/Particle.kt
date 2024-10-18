@@ -204,7 +204,7 @@ abstract class Particle(
             applyForces()
         }
 
-        if (UpgradeController.playerHas(Upgrade.BlackHole)) {
+        if (UpgradeController.playerHas(Upgrade.BlackHole) && GAME_STATE == GameState.InGame) {
             val playerP = player.body.p
             val force = playerP - p
             force.len = min(1.0, force.len)
