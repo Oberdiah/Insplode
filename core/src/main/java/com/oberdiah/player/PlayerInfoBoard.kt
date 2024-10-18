@@ -33,7 +33,7 @@ object PlayerInfoBoard {
         get() = player.state.isIntentionallyMovingUp &&
                 player.body.velocity.y < 1.0 &&
                 player.body.velocity.y > 0.0 &&
-                UpgradeController.playerHas(Upgrade.ApexWings)
+                UpgradeController.playerHas(Upgrade.Slam)
 
     val currentGravity: Double
         get() {

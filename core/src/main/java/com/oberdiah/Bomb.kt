@@ -160,7 +160,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
             val angle = (body.angle % (PI * 2) + PI * 2) % (PI * 2)
             val down = PI / 2
             val up = 3 * PI / 2
-            val disabledRange = PI / 2 - PI / 4
+            val disabledRange = PI / 2 - PI / 8
             if (angle > down - disabledRange && angle < down + disabledRange) {
                 return false
             } else if (angle > up - disabledRange && angle < up + disabledRange) {

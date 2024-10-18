@@ -170,7 +170,8 @@ fun tickLevelController() {
     RUN_TIME_ELAPSED += GameTime.GAMEPLAY_DELTA * deltaScaling
 
     val lastLaserHeight = LASER_HEIGHT
-    val laserSpeedMultiplier = 1.0 + RUN_TIME_ELAPSED / 100.0
+    val laserSpeedMultiplier =
+        if (RUN_TIME_ELAPSED < 100.0) 1.0 + RUN_TIME_ELAPSED / 100.0 else 1.0 + RUN_TIME_ELAPSED / 50
     laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling * laserSpeedMultiplier
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {

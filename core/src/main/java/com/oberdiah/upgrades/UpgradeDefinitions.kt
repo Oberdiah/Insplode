@@ -34,13 +34,13 @@ enum class Upgrade(
         "Timed Bomb",
         "Occasionally spawns in\na bomb.\nMine for orbs!",
         7,
-        13,
+        18,
     ),
     Jump(
         "Jump",
         "Swipe up to jump.",
         9,
-        13
+        27
     ),
 
     // ################ JUMP UPGRADES ################
@@ -90,7 +90,7 @@ enum class Upgrade(
         "Wider Line",
         "Line bombs now stretch the\nentire way across the screen.",
         75,
-        143
+        151
     ),
     MegaTimedBomb(
         "Mega Bombs",
@@ -112,25 +112,19 @@ enum class Upgrade(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
         200,
-        324
-    ),
-    ApexWings(
-        "Apex Wings",
-        "Hover slightly at the apex of\nyour jump",
-        250,
-        360
+        497
     ),
     Multiplier(
         "Multiplier",
         "Gain multiplier for each\nbomb slam. Affects orb\nspawning and void pushback.",
         400,
-        802
+        926
     ),
     RapidBombs(
         "Insurgence",
         "Bombs spawn more\nfrequently and have\nlonger fuses.",
         500,
-        1004
+        1054
     ),
     MegaMagnet(
         "Mega Magnet",
