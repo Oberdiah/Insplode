@@ -541,12 +541,11 @@ object UpgradeController {
     }
 
     fun getBombFuseMultiplier(): Double {
-        return 0.5
-//        return if (playerHas(Upgrade.SlowerTimers)) {
-//            1.0
-//        } else {
-//            0.5
-//        }
+        return if (playerHas(Upgrade.RapidBombs)) {
+            0.75
+        } else {
+            0.5
+        }
     }
 
     fun getPlayerMagnetRadius(): Double {

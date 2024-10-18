@@ -69,7 +69,9 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun hitByExplosion() {
-        hasDied()
+        if (!state.isSlamming) {
+            hasDied()
+        }
     }
 
     private fun hasDied() {

@@ -1,6 +1,7 @@
 package com.oberdiah.level
 
 import com.badlogic.gdx.graphics.Color
+import com.oberdiah.Bomb
 import com.oberdiah.BombType
 import com.oberdiah.ClusterBomb
 import com.oberdiah.GAME_STATE
@@ -60,7 +61,6 @@ var RUN_TIME_ELAPSED = 0.0
 var gameMessage = ""
 private var currentPhase = 0
 private var bombRandoms = mutableMapOf<BombType, Random>()
-private var laserSpeedMultiplier = 1.0
 
 var currentDepthThisRun = 0.0
 
@@ -94,7 +94,6 @@ fun resetLevelController() {
     currentDepthThisRun = 0.0
     laserInGameHeight = LASER_HEIGHT_START_IN_GAME
     bombRandoms.clear()
-    laserSpeedMultiplier = 1.0
     gameHasReallyStarted = false
     bombDropData.clear()
     APP_TIME_GAME_STARTED = GameTime.APP_TIME
@@ -145,8 +144,8 @@ fun renderLaser(r: Renderer) {
 }
 
 private var lastTimeSlamHappened = 0.0
-fun playerHasSlammed() {
-    laserInGameHeight += 0.4
+fun playerHasSlammed(laserPushBackMultiplier: Double) {
+    laserInGameHeight += 0.5 * laserPushBackMultiplier
     lastTimeSlamHappened = GameTime.APP_TIME
 }
 
@@ -171,8 +170,8 @@ fun tickLevelController() {
     RUN_TIME_ELAPSED += GameTime.GAMEPLAY_DELTA * deltaScaling
 
     val lastLaserHeight = LASER_HEIGHT
+    val laserSpeedMultiplier = 1.0 + RUN_TIME_ELAPSED / 100.0
     laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling * laserSpeedMultiplier
-    laserSpeedMultiplier += GameTime.GAMEPLAY_DELTA * 0.01
 
     if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
         // Delete this entire row of tiles

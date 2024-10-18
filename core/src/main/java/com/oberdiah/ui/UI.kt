@@ -157,9 +157,11 @@ private fun settingsUI(r: Renderer) {
         statefulScreenShakeSetting.value = statefulScreenShakeSetting.value.next()
     })
 
-    val rainbowUnlocked =
-        ScoreSystem.getPlayerTotalDeveloperBests() >= Upgrade.entries.size * 0.5 &&
-                ScoreSystem.getPlayerTotalNumStars() >= Upgrade.entries.size * 3
+//    val rainbowUnlocked =
+//        ScoreSystem.getPlayerTotalDeveloperBests() >= Upgrade.entries.size * 0.5 &&
+//                ScoreSystem.getPlayerTotalNumStars() >= Upgrade.entries.size * 3
+
+    val rainbowUnlocked = UpgradeController.playerHas(Upgrade.FinalRun)
 
     toggleButton(
         r,

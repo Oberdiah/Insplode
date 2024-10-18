@@ -83,7 +83,7 @@ object ScoreSystem {
     // In score per second
     private var scoreGivingSpeed = 0.0
 
-    const val TIME_TO_GIVE_SCORE = 2.5
+    const val TIME_TO_GIVE_SCORE = 1.5
 
     private val playerHighScores = mutableMapOf<Upgrade, StatefulInt>()
     fun init() {
@@ -167,7 +167,6 @@ object ScoreSystem {
             PointOrbs.spawnOrbs(bomb.body.p, numToActuallySpawn, ensureEmptySpaceOnSpawn = false)
         }
 
-        playerHasSlammed()
         updateGameSpeed(timeWarp())
         bounceDecayAccumulator = 0.0
 
@@ -175,6 +174,8 @@ object ScoreSystem {
             numConsecutiveBounces++
             playMultiplierSound(numConsecutiveBounces)
         }
+
+        playerHasSlammed(getCurrentMultiplier())
     }
 
     fun registerTileDestroyed(tile: Tile, reason: Tile.DematerializeReason) {

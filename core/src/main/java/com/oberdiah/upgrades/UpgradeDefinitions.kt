@@ -101,8 +101,8 @@ enum class Upgrade(
     Magnet(
         "Magnet",
         "Attract orbs to you.",
-        125,
-        160
+        150,
+        240
     ),
 
 
@@ -111,38 +111,59 @@ enum class Upgrade(
     SlamOrbs(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
+        200,
+        324
     ),
     ApexWings(
         "Apex Wings",
         "Hover slightly at the apex of\nyour jump",
+        250,
+        360
     ),
     Multiplier(
         "Multiplier",
-        "Gain multiplier for each\nbomb slam. Applies to\nthe number of orbs spawned.",
+        "Gain multiplier for each\nbomb slam. Affects orb\nspawning and void pushback.",
+        400,
+        802
     ),
     RapidBombs(
         "Insurgence",
-        "Bombs spawn more\nfrequently.\nMore bombs, more points.",
+        "Bombs spawn more\nfrequently and have\nlonger fuses.",
+        500,
+        1004
     ),
     MegaMagnet(
         "Mega Magnet",
         "Covers most of the screen.",
+        650,
+        1200
+    ),
+    UltraTimedBomb(
+        "Ultra Bombs",
+        "Ok this is a bit\nridiculous.",
+        700,
+        1400
     ),
     InfiniteMultiplier(
         "Sky's the Limit",
         "Multiplier is no longer capped.\nAfter 2x it can decay.\nAfter 2.5x time accelerates.",
+        800,
+        2000
     ),
     EvenFasterMovement(
         "Lightning Fast",
         "Move ridiculously fast.",
+        1000,
+        2000
+    ),
+    FinalRun(
+        "???",
+        "Something's glowing way,\nway down there in the\ndepths.",
+        9999,
+        9999
     ),
 
     // ################ POST-GAME UPGRADES ################
-
-    UltraTimedBomb(
-        "Ultra Bombs",
-        "Ok this is a bit\nridiculous.",
-    ),
     GlobalMagnet(
         "Global Magnet",
         "The orbs simply cannot\nget away.",
