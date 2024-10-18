@@ -2,27 +2,39 @@ Icons/BlackHole.png
 Icons/BombSlam.png
 Icons/BombWizard.png
 Icons/ComboOrbs.png
+Icons/DeadlyTouch.png
 Icons/EvenFasterMovement.png
 Icons/FasterMovement.png
+Icons/FinalRun.png
 Icons/GhostMode.png
 Icons/GlobalMagnet.png
+Icons/GoldenNuggets.png
+Icons/InfiniteMultiplier.png
 Icons/Jump.png
 Icons/LargeTimedBomb.png
 Icons/LineBomb.png
 Icons/Magnet.png
 Icons/MediumTimedBomb.png
 Icons/MegaMagnet.png
+Icons/MegaTimedBomb.png
 Icons/Mobility.png
 Icons/MoreSkyOrbs.png
 Icons/Movement.png
 Icons/Multiplier.png
 Icons/Not Found.png
 Icons/RainbowPlayer.png
+Icons/RapidBombs.png
 Icons/Slam.png
 Icons/SlamAssist.png
 Icons/SlamOrbs.png
+Icons/SlowerVoid.png
 Icons/SmallTimedBomb.png
 Icons/SneakySlam.png
+Icons/SpringBomb.png
+Icons/StarterUpgrade.png
+Icons/UltraTimedBomb.png
+Icons/Victory.png
+Icons/WiderLineBombs.png
 Lato-Medium.ttf
 Sounds/Chords 1.wav
 Sounds/Chords 2.wav
