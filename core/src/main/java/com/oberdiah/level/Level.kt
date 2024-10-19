@@ -204,8 +204,6 @@ object Level {
         }
     }
 
-    const val JEWEL_DEPTH = -100.0
-
     fun generateTile(tile: Tile) {
         tile.materialize()
 
@@ -231,27 +229,7 @@ object Level {
             return
         }
 
-        if (playerHas(Upgrade.FinalRun)) {
-            val distToJewel = tile.coord.distTo(5.1, JEWEL_DEPTH)
-            if (distToJewel < 4.0) {
-                tile.setTileType(TileType.CaveWall)
-
-                if (distToJewel < 3.0) {
-                    val belowFloor = tile.coord.y < JEWEL_DEPTH - 1.0
-                    val belowMantle = tile.coord.y < JEWEL_DEPTH - 0.5
-
-                    if (distToJewel < 2.6) {
-                        if (belowFloor) {
-                            tile.setTileType(TileType.Dirt)
-                        }
-                    } else if (belowMantle) {
-                        tile.setTileType(TileType.Stone)
-                    }
-                }
-
-                return
-            }
-        }
+        if (Jewel.generateJewelInLevel(tile)) return
 
         if (depth < 0) {
             tile.dematerialize()

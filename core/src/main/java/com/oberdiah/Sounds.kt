@@ -34,24 +34,14 @@ fun loadSounds() {
     lowPassFilter.attachToThisNode(caveSplitter, 0)
     delayNode.attachToThisNode(caveSplitter, 1)
 
-    val allPaths = listFolder("Sounds/").map {
-        var path = it.path()
-
-        if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            path = "C:\\Users\\richa\\Documents\\MyCodeProjects\\WeeklyGame2\\assets\\$path"
-        }
-
-        Pair(path, it.nameWithoutExtension())
-    }
-
     val numSoundsInPoolPerAsset = 10
 
-    allPaths.forEach {
-        val path = it.first
+    listFolder("Sounds/").forEach {
+        val path = it.path()
         val sounds = (0 until numSoundsInPoolPerAsset).map {
             miniAudio.createSound(path)
         }
-        SOUND_POOL += it.second to sounds
+        SOUND_POOL += it.nameWithoutExtension() to sounds
     }
 }
 

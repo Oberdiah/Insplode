@@ -212,7 +212,17 @@ object ScoreSystem {
         )
     }
 
-    fun registerGameEnd() {
+    fun isFinalRun(): Boolean {
+        return currentlyPlayingUpgrade.value == Upgrade.FinalRun
+    }
+
+    fun registerGameEnd(grabbedJewel: Boolean = false) {
+        if (isFinalRun()) {
+            if (!grabbedJewel) {
+                playerScore = 0
+            }
+        }
+
         lastScore = playerScore
         lastScoreGivenOn = APP_TIME
         scoreGivingSpeed = max(playerScore / TIME_TO_GIVE_SCORE, 4.0)

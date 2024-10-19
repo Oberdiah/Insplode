@@ -14,6 +14,7 @@ import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
+import com.oberdiah.Sprites
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.abs
 import com.oberdiah.createRandomFacingPoint
@@ -47,8 +48,6 @@ import com.oberdiah.withAlpha
 
 object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
-    private val allUpgradeTextures = mutableMapOf<Upgrade, Sprite>()
-    private lateinit var finalUpgradeSprite: Sprite
 
     const val UPGRADE_ENTRY_HEIGHT = 4.0
 
@@ -56,17 +55,8 @@ object UpgradeController {
         playerUpgradeStates.clear()
         Upgrade.entries.forEach {
             playerUpgradeStates[it] = StatefulBoolean("${it.name} Unlocked", false)
-            val path = "Icons/${it.name}.png"
-            // Check if file exists
-            if (Gdx.files.internal(path).exists()) {
-                allUpgradeTextures[it] = Sprite(Texture(path))
-            } else {
-                println("Upgrade icon not found: $path")
-                allUpgradeTextures[it] = Sprite(Texture("Icons/Not Found.png"))
-            }
         }
 
-        finalUpgradeSprite = Sprite(Texture("Icons/Victory.png"))
         playerUpgradeStates[Upgrade.StarterUpgrade]?.value = true
     }
 
@@ -152,13 +142,11 @@ object UpgradeController {
     private fun getSpriteForUpgrade(upgrade: Upgrade): Sprite {
         if (upgrade == Upgrade.FinalRun) {
             if (ScoreSystem.playerHasFinishedTheGame()) {
-                return finalUpgradeSprite
-            } else {
-                return allUpgradeTextures[Upgrade.FinalRun]!!
+                return Sprites.getSprite("Victory")
             }
         }
 
-        return allUpgradeTextures[upgrade]!!
+        return Sprites.getSprite(upgrade.name)
     }
 
     fun renderUpgradeMenuWorldSpace(r: Renderer) {

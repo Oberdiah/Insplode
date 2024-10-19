@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
+import com.oberdiah.level.Jewel
 import com.oberdiah.level.Level
 import com.oberdiah.level.RenderLevel
 import com.oberdiah.level.renderLaser
@@ -84,6 +85,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         loadFiles()
         loadFonts()
         loadSounds()
+        Sprites.init()
 
         leftWall = createWall(Rect(Point(), Size(1, WALL_HEIGHT)))
         rightWall = createWall(Rect(Point(), Size(1, WALL_HEIGHT)))
@@ -150,6 +152,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Physics Objects") { tickPhysicsObjects() }
             time("Tick Point Orbs") { PointOrbs.tick() }
             time("Tick Bombs") { tickBombController() }
+            time("Tick Jewel") { Jewel.tick() }
         } else {
             time("Tick Diegetic Menu") { tickDiegeticMenu() }
             time("Tick Upgrade Controller") { UpgradeController.tick() }
@@ -172,6 +175,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render level") { RenderLevel.render() }
 
         worldSpaceRenderer.begin()
+        time("Render level sprites") { Jewel.renderJewelInLevel(worldSpaceRenderer) }
         time("Render upgrade 2") { renderUpgradeMenuWorldSpace2(worldSpaceRenderer) }
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render laser") { renderLaser(worldSpaceRenderer) }

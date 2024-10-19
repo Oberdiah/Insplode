@@ -24,7 +24,13 @@ abstract class Drawable {
     abstract fun draw(renderer: SpriteBatch, camera: Camera)
 }
 
-class SpriteDraw(val sprite: Sprite, val p: Point, val s: Size, val color: Color = Color.WHITE) :
+class SpriteDraw(
+    val sprite: Sprite,
+    val p: Point,
+    val s: Size,
+    val color: Color = Color.WHITE,
+    val angle: Number
+) :
     Drawable() {
     override fun draw(renderer: SpriteBatch, camera: Camera) {
         // The sprite renderer isn't projected to make the text look correct
@@ -36,10 +42,10 @@ class SpriteDraw(val sprite: Sprite, val p: Point, val s: Size, val color: Color
         }
 
         val s = s * SCREEN_SIZE / Size(camera.viewportWidth, camera.viewportHeight)
-        sprite.x = p.x.f
-        sprite.y = p.y.f
-        sprite.setSize(s.x.f, s.y.f)
+        sprite.setBounds(p.x.f, p.y.f, s.x.f, s.y.f)
         sprite.color = color
+        sprite.rotation = angle.f
+        sprite.setOrigin(s.x.f / 2, s.y.f / 2)
         sprite.draw(renderer)
     }
 }
@@ -122,19 +128,31 @@ class Renderer(val name: String, val camera: Camera) {
             shapeRenderer.color = c
         }
 
-    fun sprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE) {
-        spritesToDraw.add(SpriteDraw(sprite, p, s, color.cpy()))
-    }
-
-    fun centeredSprite(sprite: Sprite, p: Point, scale: Double, color: Color = Color.WHITE) {
+    fun centeredSprite(
+        sprite: Sprite,
+        p: Point,
+        scale: Double,
+        color: Color = Color.WHITE,
+        angle: Number = 0.0
+    ) {
         val textureSize = Size(sprite.width.f, sprite.height.f)
         val scale = scale / max(textureSize.w, textureSize.h).f
         val size = textureSize * scale
-        centeredSprite(sprite, p, size, color)
+        centeredSprite(sprite, p, size, color, angle)
     }
 
-    fun centeredSprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE) {
-        sprite(sprite, p - s / 2, s, color)
+    fun centeredSprite(
+        sprite: Sprite,
+        p: Point,
+        s: Size,
+        color: Color = Color.WHITE,
+        angle: Number = 0.0
+    ) {
+        sprite(sprite, p - s / 2, s, color, angle)
+    }
+
+    fun sprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE, angle: Number = 0.0) {
+        spritesToDraw.add(SpriteDraw(sprite, p, s, color.cpy(), angle))
     }
 
     fun text(
