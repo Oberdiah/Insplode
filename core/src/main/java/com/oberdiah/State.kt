@@ -17,6 +17,7 @@ val statefulScreenShakeSetting =
 val statefulVibrationSetting = StatefulBoolean("doVibration", true)
 val statefulEasyMode = StatefulBoolean("easyMode", false)
 val statefulPlayMusicSetting = StatefulBoolean("playMusic", true)
+val statefulPlaySoundSetting = StatefulBoolean("playSound", true)
 val currentlyPlayingUpgrade =
     StatefulEnum<Upgrade>(
         "currentlyPlayingUpgrade", Upgrade.StarterUpgrade,

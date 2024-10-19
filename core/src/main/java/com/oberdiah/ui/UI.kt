@@ -38,6 +38,7 @@ import com.oberdiah.playChordNote
 import com.oberdiah.saturate
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulPlayMusicSetting
+import com.oberdiah.statefulPlaySoundSetting
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
 import com.oberdiah.statefulVibrationSetting
@@ -149,8 +150,9 @@ private fun settingsUI(r: Renderer) {
     toggleButton(r, "Particles", statefulRenderParticles::value)
     toggleButton(r, "Vibration", statefulVibrationSetting::value)
     toggleButton(r, "Music", statefulPlayMusicSetting::value)
+    toggleButton(r, "Sounds", statefulPlaySoundSetting::value)
 
-    toggleButton(r, "Easy Mode", statefulEasyMode::value)
+//    toggleButton(r, "Easy Mode", statefulEasyMode::value)
 
     settingButton(r, "Screen Shake", {
         r.text(fontMedium, statefulScreenShakeSetting.value.text, it, Align.right)

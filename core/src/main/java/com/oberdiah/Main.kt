@@ -170,7 +170,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render level") { RenderLevel.render() }
 
         worldSpaceRenderer.begin()
-        time("Render upgrade menu world space 2") { renderUpgradeMenuWorldSpace2(worldSpaceRenderer) }
+        time("Render upgrade 2") { renderUpgradeMenuWorldSpace2(worldSpaceRenderer) }
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render laser") { renderLaser(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }

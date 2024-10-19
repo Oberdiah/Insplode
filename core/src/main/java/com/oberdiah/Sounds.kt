@@ -105,6 +105,7 @@ fun playSound(
     delay: Double? = null,
 ) {
     if (volume < 0.005) return
+    if (statefulPlaySoundSetting.value == false) return
 
     // Get the first sound that isn't playing (sound.isPlaying())
     val soundPool = SOUND_POOL[soundName]
