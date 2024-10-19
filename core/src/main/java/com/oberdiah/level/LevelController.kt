@@ -15,6 +15,7 @@ import com.oberdiah.PointOrbs
 import com.oberdiah.Renderer
 import com.oberdiah.SAFE_BOMB_SPAWN_HEIGHT
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
+import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
 import com.oberdiah.SpringBomb
 import com.oberdiah.StickyBomb
@@ -47,8 +48,17 @@ import kotlin.random.Random
 
 val LASER_HEIGHT_IN_MENU: Double
     get() {
+        val finalRunFogClamp = if (ScoreSystem.playerHasFinishedTheGame()) {
+            9999
+        } else {
+            UpgradeController.getUpgradeYPos(Upgrade.FinalRun) + UpgradeController.UPGRADE_ENTRY_HEIGHT
+        }
+
         return min(
-            UpgradeController.yPosOfTopOfHighestUpgrade() + UpgradeController.UPGRADE_ENTRY_HEIGHT * 3.0,
+            min(
+                UpgradeController.yPosOfTopOfHighestUpgrade() + UpgradeController.UPGRADE_ENTRY_HEIGHT * 3.0,
+                finalRunFogClamp
+            ),
             UpgradeController.TOP_OF_UPGRADE_SCREEN_UNITS
         )
     }

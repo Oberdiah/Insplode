@@ -153,8 +153,10 @@ enum class Upgrade(
     FinalRun(
         "???",
         "Something's glowing way,\nway down there in the\ndepths.",
-        9999,
-        9999
+        2000,
+        2919,
+        oneStarScore = 1,
+        twoStarsScore = 1000,
     ),
 
     // ################ POST-GAME UPGRADES ################

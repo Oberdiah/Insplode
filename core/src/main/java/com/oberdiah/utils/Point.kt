@@ -93,6 +93,12 @@ open class Point {
         return atan2(p.x - x, p.y - y)
     }
 
+    fun distTo(x: Number, y: Number): Double {
+        val dx = x - this.x
+        val dy = y - this.y
+        return sqrt(dx * dx + dy * dy)
+    }
+
     fun distTo(p: Point): Double {
         val dx = p.x - x
         val dy = p.y - y

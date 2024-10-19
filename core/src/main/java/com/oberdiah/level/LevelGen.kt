@@ -202,6 +202,8 @@ fun updateLevelStorage() {
     }
 }
 
+const val JEWEL_DEPTH = -100.0
+
 fun generateTile(tile: Tile) {
     tile.materialize()
 
@@ -213,21 +215,42 @@ fun generateTile(tile: Tile) {
     val depth = worldHeight - y
 
     val spawnCache1 =
-//        !playerHas(Upgrade.Jump) &&
-        tile.coord.distTo(Point(6.8, -0.6)) < 0.2
+        tile.coord.distTo(6.8, -0.6) < 0.2
     val spawnCache2 =
-//        !playerHas(Upgrade.SmallTimedBomb) &&
-        tile.coord.distTo(Point(2, -1.8)) < 0.25
+        tile.coord.distTo(2, -1.8) < 0.25
 
     if (spawnCache1 || spawnCache2) {
         tile.setTileType(TileType.OrbTile)
         return
     }
-    if (tile.coord.distTo(Point(5.2, -0.4)) < 0.4) {
+
+    if (tile.coord.distTo(5.2, -0.4) < 0.4) {
         tile.setTileType(TileType.Grass)
         return
     }
 
+    if (playerHas(Upgrade.FinalRun)) {
+        val distToJewel = tile.coord.distTo(5.1, JEWEL_DEPTH)
+        if (distToJewel < 4.0) {
+            tile.setTileType(TileType.CaveWall)
+
+            if (distToJewel < 3.0) {
+                val belowFloor = tile.coord.y < JEWEL_DEPTH - 1.0
+                val belowMantle = tile.coord.y < JEWEL_DEPTH - 0.5
+
+                if (distToJewel < 2.6) {
+                    if (belowFloor) {
+                        tile.setTileType(TileType.Dirt)
+                    }
+                } else if (belowMantle) {
+                    tile.setTileType(TileType.Stone)
+                }
+            }
+
+            return
+        }
+    }
+    
     if (depth < 0) {
         tile.dematerialize()
         return
@@ -250,7 +273,7 @@ fun generateTile(tile: Tile) {
             val orbNoise = Perlin.noise(x, y, 5.0)
             if (orbNoise > 0.65) {
                 tile.setTileType(TileType.OrbTile)
-                if (random.nextInt(0..100) < 2) {
+                if (random.nextInt(0..100) < 1) {
                     if (playerHas(Upgrade.GoldenNuggets)) {
                         tile.setTileType(TileType.GoldenOrbTile)
                     }

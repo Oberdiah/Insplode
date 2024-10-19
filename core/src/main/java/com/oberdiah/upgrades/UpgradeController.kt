@@ -47,6 +47,7 @@ import com.oberdiah.withAlpha
 object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
     private val allUpgradeTextures = mutableMapOf<Upgrade, Sprite>()
+    lateinit var finalUpgradeSprite: Sprite
 
     const val UPGRADE_ENTRY_HEIGHT = 4.0
 
@@ -63,6 +64,8 @@ object UpgradeController {
                 allUpgradeTextures[it] = Sprite(Texture("Icons/Not Found.png"))
             }
         }
+
+        finalUpgradeSprite = Sprite(Texture("Icons/Victory.png"))
         playerUpgradeStates[Upgrade.StarterUpgrade]?.value = true
     }
 
@@ -143,6 +146,18 @@ object UpgradeController {
 
     private fun getUpgradeSectionColor(upgrade: Upgrade): Color {
         return if (upgrade.ordinal % 2 == 0) Color.CYAN else Color.YELLOW
+    }
+
+    private fun getSpriteForUpgrade(upgrade: Upgrade): Sprite {
+        if (upgrade == Upgrade.FinalRun) {
+            if (ScoreSystem.playerHasFinishedTheGame()) {
+                return finalUpgradeSprite
+            } else {
+                return allUpgradeTextures[Upgrade.FinalRun]!!
+            }
+        }
+
+        return allUpgradeTextures[upgrade]!!
     }
 
     fun renderUpgradeMenuWorldSpace(r: Renderer) {
@@ -303,7 +318,7 @@ object UpgradeController {
                 Size(4.0, 0.05),
             )
 
-            val sprite = allUpgradeTextures[upgrade] ?: break
+            val sprite = getSpriteForUpgrade(upgrade)
             val p = Point(
                 iconXPos - selectedUpgradeFract * 3.0,
                 yPos + UPGRADE_ENTRY_HEIGHT / 2
@@ -497,8 +512,7 @@ object UpgradeController {
         player.reset()
     }
 
-
-    private val FORCE_UPGRADES_UNTIL: Upgrade? = null //Upgrade.BlackHole
+    private val FORCE_UPGRADES_UNTIL: Upgrade? = null // Upgrade.FinalRun
 
     /**
      * Whether the player is playing with this upgrade this game.

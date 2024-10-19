@@ -113,6 +113,10 @@ object ScoreSystem {
         return Upgrade.entries.count { getNumStarsOnUpgrade(it).isDeveloperBest }
     }
 
+    fun playerHasFinishedTheGame(): Boolean {
+        return getPlayerScore(Upgrade.FinalRun) > 0
+    }
+
     fun getNumStarsOnUpgrade(
         upgrade: Upgrade,
         yourScore: Int = playerHighScores[upgrade]!!.value
