@@ -143,7 +143,13 @@ fun cos(a: Number): Double {
 }
 
 fun clamp(t: Number, a: Number, b: Number): Double {
-    return min(max(t, a), b)
+    return if (t < a) {
+        a.d
+    } else if (t > b) {
+        b.d
+    } else {
+        t.d
+    }
 }
 
 fun saturate(t: Number): Double {
