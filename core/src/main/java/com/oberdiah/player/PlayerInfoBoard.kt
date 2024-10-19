@@ -6,7 +6,7 @@ import com.oberdiah.Point
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
 import com.oberdiah.Velocity
-import com.oberdiah.level.getTile
+import com.oberdiah.level.Level
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.whatAmITouching
@@ -142,7 +142,7 @@ object PlayerInfoBoard {
                     y * TILE_SIZE_IN_UNITS * 0.75
                 )
 
-                val newTile = getTile(pos)
+                val newTile = Level.getTile(pos)
                 if (newTile is Tile && newTile.doesExist()) {
                     return newTile
                 }

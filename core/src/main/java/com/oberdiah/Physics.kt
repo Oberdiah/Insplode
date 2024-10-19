@@ -1,7 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.physics.box2d.*
-import com.oberdiah.level.getTile
+import com.oberdiah.level.Level
 
 val collisionListener = ListenerClass()
 
@@ -38,7 +38,7 @@ class ListenerClass : ContactListener {
 }
 
 fun updateTilePhysics() {
-    tileIdsChangedLastFrameMarchingCubes.mapNotNull { getTile(it) as? Tile }
+    tileIdsChangedLastFrameMarchingCubes.mapNotNull { Level.getTile(it) as? Tile }
         .forEach { it.recalculatePhysicsBody() }
 }
 

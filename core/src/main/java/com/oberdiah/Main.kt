@@ -4,15 +4,12 @@ import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
-import com.oberdiah.level.LOWEST_TILE_Y_UNITS
-import com.oberdiah.level.initTiles
+import com.oberdiah.level.Level
 import com.oberdiah.level.renderLaser
-import com.oberdiah.level.resetLevel
 import com.oberdiah.level.resetLevelCollapse
 import com.oberdiah.level.resetLevelController
 import com.oberdiah.level.tickCollapse
 import com.oberdiah.level.tickLevelController
-import com.oberdiah.level.updateLevelStorage
 import com.oberdiah.player.PlayerInputs
 import com.oberdiah.player.player
 import com.oberdiah.ui.PauseButton
@@ -42,7 +39,7 @@ fun endGame() {
     resetLevelCollapse()
     setCameraGlobalsThisFrame()
     updateCamera()
-    updateLevelStorage()
+    Level.updateStorage()
 }
 
 fun startGame() {
@@ -54,7 +51,7 @@ fun startGame() {
     resetLevelController()
     // We reset level at the start of the game because we need to be able to apply any upgrades
     // the player has bought.
-    resetLevel()
+    Level.reset()
 
     ScoreSystem.registerGameStart()
 }
@@ -81,7 +78,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         worldSpaceRenderer = Renderer("World Space Renderer", camera)
         uiRenderer = Renderer("UI Renderer", screenCamera)
         initWorld()
-        initTiles()
+        Level.initTiles()
 
         loadFiles()
         loadFonts()
@@ -117,7 +114,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Camera") { updateCamera() }
         setCameraGlobalsThisFrame()
 
-        time("Update level storage") { updateLevelStorage() }
+        time("Update level storage") { Level.updateStorage() }
         time("Update tile changes") { updateTileChanges() }
         if (GAME_STATE != GameState.PausedPopup) {
             time("Tick Particles") { tickParticles() }
@@ -125,17 +122,20 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         if (GAME_IS_RUNNING) {
             // 'Coz Box2d stupid, these are the centres of the positions.
-            leftWall.setTransform(Point(-0.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
-            rightWall.setTransform(Point(10.5, LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
+            leftWall.setTransform(Point(-0.5, Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
+            rightWall.setTransform(Point(10.5, Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
 
             if (CAMERA_FOLLOWING == CameraFollowing.Player) {
                 ceiling.setTransform(
                     Point(
                         SCREEN_WIDTH_IN_UNITS / 2.0,
-                        LOWEST_TILE_Y_UNITS + WALL_HEIGHT
+                        Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT
                     ), 0f
                 )
-                floor.setTransform(Point(SCREEN_WIDTH_IN_UNITS / 2.0, LOWEST_TILE_Y_UNITS), 0f)
+                floor.setTransform(
+                    Point(SCREEN_WIDTH_IN_UNITS / 2.0, Level.LOWEST_TILE_Y_UNITS),
+                    0f
+                )
             } else {
                 ceiling.setTransform(Point(-5, 0), 0f)
                 floor.setTransform(Point(-5, 0), 0f)

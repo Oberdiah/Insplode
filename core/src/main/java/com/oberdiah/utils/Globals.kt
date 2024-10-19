@@ -3,8 +3,7 @@ package com.oberdiah
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.oberdiah.level.LASER_HEIGHT
-import com.oberdiah.level.laserInGameHeight
-import com.oberdiah.level.requestNewLowestTileY
+import com.oberdiah.level.Level
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.camera
 
@@ -79,7 +78,7 @@ fun setGlobalsThisFrame() {
 }
 
 fun setCameraGlobalsThisFrame() {
-    requestNewLowestTileY((CAMERA_POS_Y * TILES_PER_UNIT - 1).i)
+    Level.requestNewLowestTileY((CAMERA_POS_Y * TILES_PER_UNIT - 1).i)
 }
 
 /** The size of 1m in pixels */

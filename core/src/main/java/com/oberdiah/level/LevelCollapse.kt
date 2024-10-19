@@ -25,9 +25,9 @@ fun tickCollapse() {
     }
 
     for (tileId in tileIdsChangedLastFrameAllNeighbors) {
-        val tile = getTile(tileId)
+        val tile = Level.getTile(tileId)
 
-        if (tile !is Tile || tile.y <= getLowestStoredTileYIdx() + abs(getLowestStoredTileYDiff())) {
+        if (tile !is Tile || tile.y <= Level.getLowestStoredTileYIdx() + abs(Level.getLowestStoredTileYDiff())) {
             continue
         }
 
@@ -48,7 +48,7 @@ fun tickCollapse() {
 
     val toRemove = mutableSetOf<Tile>()
     for (tileId in collapsingTileIds) {
-        val tile = getTile(tileId)
+        val tile = Level.getTile(tileId)
         if (tile !is Tile) {
             continue
         }

@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.oberdiah.level.getTile
+import com.oberdiah.level.Level
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.Colors
@@ -79,7 +79,7 @@ object RenderLevel {
             // Going up
             for (y in 0..diff) {
                 for (tileX in 0 until NUM_TILES_ACROSS) {
-                    val tile = getTile(tileX, highestTileOnScreen - y)
+                    val tile = Level.getTile(tileX, highestTileOnScreen - y)
                     renderTile(tile, tileX, highestTileOnScreen - y)
                 }
             }
@@ -88,7 +88,7 @@ object RenderLevel {
             // Going down
             for (y in 0..-diff) {
                 for (tileX in 0 until NUM_TILES_ACROSS) {
-                    val tile = getTile(tileX, lowestTileOnScreen + y)
+                    val tile = Level.getTile(tileX, lowestTileOnScreen + y)
                     renderTile(tile, tileX, lowestTileOnScreen + y)
                 }
             }
@@ -96,7 +96,7 @@ object RenderLevel {
 
         for (tileId in tileIdsChangedLastFrameMarchingCubes) {
             if (tileId.y in lowestTileOnScreen..highestTileOnScreen) {
-                renderTile(getTile(tileId), tileId.x, tileId.y)
+                renderTile(Level.getTile(tileId), tileId.x, tileId.y)
             }
         }
         levelShapeRenderer.end()

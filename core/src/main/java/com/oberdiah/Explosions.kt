@@ -1,6 +1,6 @@
 package com.oberdiah
 
-import com.oberdiah.level.getTile
+import com.oberdiah.level.Level
 import com.oberdiah.player.Player
 import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.vibrate
@@ -43,7 +43,7 @@ fun boom(
         for (dy in -tileRadius..tileRadius) {
             tempPoint.x = point.x + dx * TILE_SIZE_IN_UNITS
             tempPoint.y = point.y + dy * TILE_SIZE_IN_UNITS
-            val tile = getTile(tempPoint)
+            val tile = Level.getTile(tempPoint)
             val dist = point.distTo(tempPoint)
 
             if (dist <= radius) {

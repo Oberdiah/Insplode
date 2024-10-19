@@ -2,22 +2,21 @@ package com.oberdiah
 
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
-import com.oberdiah.level.getTile
-import com.oberdiah.level.tilesStorage
+import com.oberdiah.level.Level
 import com.oberdiah.utils.TileType
 
 class TileData(var tile: Tile) {
     private val x = tile.x
     private val y = tile.y
 
-    val bl = getTile(x - 1, y - 1)
-    val bm = getTile(x, y - 1)
-    val br = getTile(x + 1, y - 1)
-    val rm = getTile(x + 1, y)
-    val tr = getTile(x + 1, y + 1)
-    val tm = getTile(x, y + 1)
-    val tl = getTile(x - 1, y + 1)
-    val lm = getTile(x - 1, y)
+    val bl = Level.getTile(x - 1, y - 1)
+    val bm = Level.getTile(x, y - 1)
+    val br = Level.getTile(x + 1, y - 1)
+    val rm = Level.getTile(x + 1, y)
+    val tr = Level.getTile(x + 1, y + 1)
+    val tm = Level.getTile(x, y + 1)
+    val tl = Level.getTile(x - 1, y + 1)
+    val lm = Level.getTile(x - 1, y)
 
     val allSurroundingTiles = listOf(bl, bm, br, rm, tr, tm, tl, lm)
     val touchingNeighbors = listOf(bm, rm, tm, lm)
@@ -99,7 +98,7 @@ var tileIdsChangedLastFrameAllNeighbors = setOf<TileId>()
     private set
 
 fun forceFullScreenRefresh() {
-    tileIdsChangedThisFrameMarchingCubes = tilesStorage.map(Tile::getId).toMutableSet()
+    tileIdsChangedThisFrameMarchingCubes = Level.tilesStorage.map(Tile::getId).toMutableSet()
     updateTileChanges()
 }
 

@@ -135,7 +135,7 @@ fun renderLaser(r: Renderer) {
     if (GAME_STATE != GameState.PausedPopup) {
         for (i in 0 until 10) {
             val particlePos = Point(Random.nextDouble(startPoint.x, endPoint.x), LASER_HEIGHT)
-            val destroyingTileType = getTile(particlePos).getTileType()
+            val destroyingTileType = Level.getTile(particlePos).getTileType()
 
             var color = colorScheme.laserParticleColors.random()
             if (destroyingTileType != TileType.Air) {
@@ -184,11 +184,11 @@ fun tickLevelController() {
         if (RUN_TIME_ELAPSED < 100.0) 1.0 + RUN_TIME_ELAPSED / 100.0 else 1.0 + RUN_TIME_ELAPSED / 50
     laserInGameHeight -= GameTime.GAMEPLAY_DELTA * UpgradeController.getLaserSpeed() * deltaScaling * laserSpeedMultiplier
 
-    if (getTileId(Point(0, LASER_HEIGHT)) != getTileId(Point(0, lastLaserHeight))) {
+    if (Level.getTileId(Point(0, LASER_HEIGHT)) != Level.getTileId(Point(0, lastLaserHeight))) {
         // Delete this entire row of tiles
         for (x in 0 until NUM_TILES_ACROSS) {
             val tile =
-                getTile(
+                Level.getTile(
                     Point(
                         (x.d + 0.5) * TILE_SIZE_IN_UNITS,
                         LASER_HEIGHT + TILE_SIZE_IN_UNITS * 2.0

@@ -1,7 +1,7 @@
 package com.oberdiah
 
 import com.badlogic.gdx.graphics.Color
-import com.oberdiah.level.getTile
+import com.oberdiah.level.Level
 import com.oberdiah.player.player
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
@@ -63,7 +63,7 @@ fun spawnSmoke(
 ) {
     if (!statefulRenderParticles.value) return
     // Don't spawn smoke on top of tiles
-    if (getTile(p).canCollide() && canCollide) return
+    if (Level.getTile(p).canCollide() && canCollide) return
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2) * radiusScaling
     Smoke(p, velocity, radius, color, gravityScaling, canCollide).registerWithSimulation()
 }
@@ -231,16 +231,16 @@ abstract class Particle(
     private fun bounce() {
         if (!canCollide) return
 
-        val tile = getTile(p)
+        val tile = Level.getTile(p)
         // if it's not a tile we can forget it.
         if (tile !is Tile) return
 
         val tx = tile.x
         val ty = tile.y
         val bottomLeft = tile.canCollide()
-        val topLeft = getTile(tx, ty + 1).canCollide()
-        val bottomRight = getTile(tx + 1, ty).canCollide()
-        val topRight = getTile(tx + 1, ty + 1).canCollide()
+        val topLeft = Level.getTile(tx, ty + 1).canCollide()
+        val bottomRight = Level.getTile(tx + 1, ty).canCollide()
+        val topRight = Level.getTile(tx + 1, ty + 1).canCollide()
 
         if (bottomLeft || topLeft || bottomRight || topRight) {
             val polygon = marchingSquaresScaled(bottomLeft, bottomRight, topLeft, topRight)
