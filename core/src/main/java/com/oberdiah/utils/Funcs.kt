@@ -290,7 +290,7 @@ fun frameAccurateLerp(a: Number, b: Number, speed: Number): Double {
 }
 
 fun easeInOutSine(x: Double): Double {
-    return -(cos(Math.PI * x) - 1) / 2;
+    return -(cos(Math.PI * saturate(x)) - 1) / 2;
 }
 
 fun transitionOver(
