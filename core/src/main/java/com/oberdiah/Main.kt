@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.*
 import com.oberdiah.level.Level
+import com.oberdiah.level.RenderLevel
 import com.oberdiah.level.renderLaser
 import com.oberdiah.level.resetLevelCollapse
 import com.oberdiah.level.resetLevelController
