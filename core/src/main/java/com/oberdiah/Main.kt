@@ -15,11 +15,11 @@ import com.oberdiah.level.tickLevelController
 import com.oberdiah.level.updateLevelStorage
 import com.oberdiah.player.PlayerInputs
 import com.oberdiah.player.player
+import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.renderDiegeticMenuWorldSpace
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.tickDiegeticMenu
-import com.oberdiah.ui.tickPauseButton
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.renderUpgradeMenuWorldSpace2
 
@@ -76,6 +76,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         RenderLevel.init()
         UpgradeController.init()
         ScoreSystem.init()
+        PauseButton.init()
 
         worldSpaceRenderer = Renderer("World Space Renderer", camera)
         uiRenderer = Renderer("UI Renderer", screenCamera)
@@ -144,7 +145,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             if (GAME_STATE == GameState.InGame && !player.state.isDead) {
                 time("Tick level controller") { tickLevelController() }
             }
-            time("Tick pause button") { tickPauseButton() }
             time("Tick Collapse") { tickCollapse() }
             time("Tick Physics Objects") { tickPhysicsObjects() }
             time("Tick Point Orbs") { PointOrbs.tick() }
@@ -153,6 +153,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             time("Tick Diegetic Menu") { tickDiegeticMenu() }
             time("Tick Upgrade Controller") { UpgradeController.tick() }
         }
+        time("Tick pause button") { PauseButton.tick() }
         time("Tick Score System") { ScoreSystem.tick() }
 
         time("Update tile physics") { updateTilePhysics() }

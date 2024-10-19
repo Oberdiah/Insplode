@@ -30,6 +30,7 @@ import com.oberdiah.playMultiplierSound
 import com.oberdiah.player.player
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
+import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.ui.cameraYUnitsDeltaThisTick
@@ -47,7 +48,7 @@ import com.oberdiah.withAlpha
 object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
     private val allUpgradeTextures = mutableMapOf<Upgrade, Sprite>()
-    lateinit var finalUpgradeSprite: Sprite
+    private lateinit var finalUpgradeSprite: Sprite
 
     const val UPGRADE_ENTRY_HEIGHT = 4.0
 
@@ -324,19 +325,17 @@ object UpgradeController {
                 yPos + UPGRADE_ENTRY_HEIGHT / 2
             ) + iconShake
             // Draw the texture centered on the position, scaled as much as it can be without warping.
-            val textureSize = Size(sprite.width.f, sprite.height.f)
 
             val iconScale =
                 (upgradeStatus.getIconSize() - purchaseFract * 0.5) * (1.0 - selectedUpgradeFract) + 0.0001
 
-            val scale = iconScale / max(textureSize.w, textureSize.h).f
             val shadowDirection = Point(0.1, -0.1)
 
             // Shadow
             r.centeredSprite(
                 sprite,
                 p + shadowDirection,
-                Size(textureSize.w * scale, textureSize.h * scale),
+                iconScale,
                 color = Color.BLACK.withAlpha(0.5)
             )
 
@@ -345,7 +344,7 @@ object UpgradeController {
                 r.centeredSprite(
                     sprite,
                     p,
-                    Size(textureSize.w * scale, textureSize.h * scale),
+                    iconScale,
                 )
             }
         }
@@ -441,7 +440,7 @@ object UpgradeController {
             }
 
             TOUCHES_WENT_DOWN.forEach { touch ->
-                if (isInLaunchButton(touch)) {
+                if (isInLaunchButton(touch) || PauseButton.isEatingInputs()) {
                     return@forEach
                 }
 
@@ -469,6 +468,10 @@ object UpgradeController {
             }
 
             TOUCHES_WENT_UP.forEach { touch ->
+                if (isInLaunchButton(touch) || PauseButton.isEatingInputs()) {
+                    return@forEach
+                }
+
                 cancelUpgradePurchase()
                 if (isConsideringSwitchingPlayingUpgrade) {
                     val toSwitchTo = lastUpgradeTapped[UpgradeStatus.PURCHASED]!!

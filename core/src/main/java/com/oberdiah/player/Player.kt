@@ -19,12 +19,9 @@ import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.rectShape
+import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.goToDiegeticMenu
-import com.oberdiah.ui.pauseHovered
-import com.oberdiah.upgrades.Upgrade
-import com.oberdiah.upgrades.UpgradeController
 import kotlin.experimental.inv
-import kotlin.experimental.or
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     /** Narrower than the player */
@@ -167,7 +164,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
         body.gravityScale = PlayerInfoBoard.currentGravity
 
-        if (state.isAlive && !pauseHovered) {
+        if (state.isAlive && !PauseButton.isEatingInputs()) {
             PlayerInputs.tick()
         }
     }

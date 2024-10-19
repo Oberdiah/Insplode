@@ -123,7 +123,14 @@ class Renderer(val name: String, val camera: Camera) {
         }
 
     fun sprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE) {
-        spritesToDraw.add(SpriteDraw(sprite, p, s, color))
+        spritesToDraw.add(SpriteDraw(sprite, p, s, color.cpy()))
+    }
+
+    fun centeredSprite(sprite: Sprite, p: Point, scale: Double, color: Color = Color.WHITE) {
+        val textureSize = Size(sprite.width.f, sprite.height.f)
+        val scale = scale / max(textureSize.w, textureSize.h).f
+        val size = textureSize * scale
+        centeredSprite(sprite, p, size, color)
     }
 
     fun centeredSprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE) {

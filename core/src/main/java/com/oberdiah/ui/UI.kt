@@ -3,7 +3,6 @@ package com.oberdiah.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.DEBUG_STRING
 import com.oberdiah.DEPTH_UNITS
 import com.oberdiah.DO_PHYSICS_DEBUG_RENDER
@@ -13,7 +12,6 @@ import com.oberdiah.HEIGHT
 import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.Point
 import com.oberdiah.RAINBOW_PLAYER
-import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.Renderer
 import com.oberdiah.SHOW_FRAMERATE_DATA
 import com.oberdiah.ScoreSystem
@@ -35,14 +33,11 @@ import com.oberdiah.format
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playChordNote
-import com.oberdiah.saturate
-import com.oberdiah.statefulEasyMode
 import com.oberdiah.statefulPlayMusicSetting
 import com.oberdiah.statefulPlaySoundSetting
 import com.oberdiah.statefulRenderParticles
 import com.oberdiah.statefulScreenShakeSetting
 import com.oberdiah.statefulVibrationSetting
-import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
@@ -74,6 +69,8 @@ fun renderUIScreenSpace(r: Renderer) {
 
     renderDiegeticMenuScreenSpace(r)
 
+    PauseButton.render(r)
+
     when (GAME_STATE) {
         GameState.DiegeticMenu -> {}
         GameState.TransitioningToDiegeticMenu -> {}
@@ -93,7 +90,7 @@ fun renderUIScreenSpace(r: Renderer) {
 
             startButtonsAt(HEIGHT / 2)
             when (GAME_SCREEN) {
-                Screen.Paused -> pausedUI(r)
+                Screen.Paused -> PauseButton.pausedUI(r)
                 Screen.Settings -> settingsUI(r)
                 Screen.AdvancedSettings -> advancedSettingsUI(r)
                 Screen.Controls -> controlsUI(r)
@@ -102,8 +99,6 @@ fun renderUIScreenSpace(r: Renderer) {
         }
 
         GameState.InGame -> {
-            // The score itself is rendered by the score system in renderScores(r)
-            renderPauseButton(r)
         }
     }
 }
@@ -196,29 +191,11 @@ private fun advancedSettingsUI(r: Renderer) {
     }
 }
 
-private fun pausedUI(r: Renderer) {
-    button(r, "Continue") {
-        GAME_STATE = GameState.InGame
-    }
-    button(r, "Settings") {
-        switchScreen(Screen.Settings)
-    }
-    button(r, "Credits") {
-        switchScreen(Screen.Credits)
-    }
-    lineBreak()
-    lineBreak()
-    button(r, "Quit Run") {
-        goToDiegeticMenu()
-        ScoreSystem.registerGameEnd()
-    }
-}
-
 
 val DIST_BETWEEN_WORDS = fontMedium.lineHeight * 1.25
 var uiCurrentHeight = HEIGHT / 2
 
-private fun lineBreak() {
+fun lineBreak() {
     uiCurrentHeight -= DIST_BETWEEN_WORDS
 }
 

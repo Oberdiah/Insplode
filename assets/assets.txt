@@ -24,6 +24,7 @@ Icons/Multiplier.png
 Icons/Not Found.png
 Icons/RainbowPlayer.png
 Icons/RapidBombs.png
+Icons/Settings.png
 Icons/Slam.png
 Icons/SlamAssist.png
 Icons/SlamOrbs.png

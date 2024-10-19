@@ -16,7 +16,7 @@ import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.saturate
-import com.oberdiah.ui.pauseHovered
+import com.oberdiah.ui.PauseButton
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.TOUCHES_DOWN
@@ -62,7 +62,7 @@ object PlayerInputs {
 
     fun render(r: Renderer) {
         val pos = player.body.p
-        if (GAME_IS_RUNNING && !pauseHovered && UpgradeController.playerHas(Upgrade.Movement)) {
+        if (GAME_IS_RUNNING && !PauseButton.isEatingInputs() && UpgradeController.playerHas(Upgrade.Movement)) {
             TOUCHES_DOWN.firstOrNull()?.let { _ ->
                 val lineX = desiredXPos
 
