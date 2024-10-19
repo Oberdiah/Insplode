@@ -11,6 +11,7 @@ import com.oberdiah.PhysicsObject
 import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem
+import com.oberdiah.Tile
 import com.oberdiah.UNITS_WIDE
 import com.oberdiah.WORLD_PHYSICS_MASK
 import com.oberdiah.circleShape
@@ -66,6 +67,17 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         }
 
         reset()
+    }
+
+    override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
+        super.collided(yourFixture, otherFixture)
+
+        val userData = otherFixture.body.userData
+        if (userData is Tile && !yourFixture.isSensor) {
+            if (userData.getTileType().killsOnTouch) {
+                hasDied()
+            }
+        }
     }
 
     override fun hitByExplosion() {

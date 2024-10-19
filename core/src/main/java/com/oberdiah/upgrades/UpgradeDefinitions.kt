@@ -148,7 +148,7 @@ enum class Upgrade(
         "Lightning Fast",
         "Move ridiculously fast.",
         1000,
-        2000
+        2919
     ),
     FinalRun(
         "???",

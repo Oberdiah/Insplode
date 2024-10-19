@@ -151,6 +151,8 @@ open class ColorScheme(val name: String) {
     var textColor: Color = colorFrom(0x242423)
     var developerStarsColor: Color = colorFrom(0x51D0FF).add(0.1f, 0.05f, 0.2f, 0f)
     var starsColor: Color = Color.GOLD
+    var hotRock: Color = colorFrom(0xbc4648)
+    var lava: Color = colorFrom(0xFF802B)
     lateinit var player: Color
     lateinit var playerSlamming: Color
     lateinit var pointOrbColor: Color
@@ -179,12 +181,18 @@ open class ColorScheme(val name: String) {
 
 // https://coolors.co/6a994e-54793e-003e1f-f2e8cf-bc4648-404840-242423
 
-enum class TileType(var color: () -> Color, val collidable: Boolean = true) {
+enum class TileType(
+    var color: () -> Color,
+    val collidable: Boolean = true,
+    val killsOnTouch: Boolean = false
+) {
     Stone({ colorScheme.stone }),
     Dirt({ colorScheme.dirt }),
     Grass({ colorScheme.grass }),
     OrbTile({ colorScheme.pointOrbColor }),
     GoldenOrbTile({ colorScheme.goldenPointOrbColor }),
-    CaveWall({ colorScheme.caveWall }, false),
-    Air({ Colors.transparent }, false)
+    CaveWall({ colorScheme.caveWall }, collidable = false),
+    HotRock({ colorScheme.hotRock }, killsOnTouch = true),
+    Lava({ colorScheme.lava }, killsOnTouch = true),
+    Air({ Colors.transparent }, collidable = false)
 }

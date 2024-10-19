@@ -5,7 +5,6 @@ import com.oberdiah.DEBUG_VERIFY
 import com.oberdiah.EmptyTile
 import com.oberdiah.NUM_TILES_ACROSS
 import com.oberdiah.Point
-import com.oberdiah.PointOrbs
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.SIMULATED_REGION_NUM_TILES_HIGH
 import com.oberdiah.TILES_PER_UNIT
@@ -17,8 +16,8 @@ import com.oberdiah.d
 import com.oberdiah.floor
 import com.oberdiah.i
 import com.oberdiah.min
+import com.oberdiah.saturate
 import com.oberdiah.upgrades.Upgrade
-import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.playerHas
 import com.oberdiah.utils.Perlin
 import com.oberdiah.utils.TileType
@@ -234,6 +233,9 @@ fun generateTile(tile: Tile) {
         return
     }
 
+    val depthLavaStarts = 50.0 * TILES_PER_UNIT
+    val lavaTransitionPeriod = 40.0 * TILES_PER_UNIT
+
     val grassDepth = Perlin.noise(x, 0, 3) * 2.0 + 5.0
     if (grassDepth > depth) {
         tile.setTileType(TileType.Grass)
@@ -257,6 +259,23 @@ fun generateTile(tile: Tile) {
         } else {
             tile.setTileType(TileType.Dirt)
         }
+
+        if (depth > depthLavaStarts) {
+            val lavaNoise = Perlin.noise(x, y, 8.0)
+            val lavaNoise2 = Perlin.noise(x, y, 10.0)
+
+            val lavaFraction =
+                saturate((depth - depthLavaStarts) / lavaTransitionPeriod)
+
+            if ((lavaNoise / 2 + 0.4) < lavaFraction) {
+                tile.setTileType(TileType.HotRock)
+
+                if (lavaNoise2 > 0.5) {
+                    tile.setTileType(TileType.Lava)
+                }
+            }
+        }
+
         if (caveNoise < caveVal) {
             tile.setTileType(TileType.CaveWall)
         }
