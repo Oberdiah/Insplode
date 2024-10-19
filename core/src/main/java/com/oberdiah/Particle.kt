@@ -178,6 +178,7 @@ abstract class Particle(
     var bounciness = 0.6
     var stoppedMoving = false
     var index: Int? = null
+    private var hasBeenDestroyed = false
     abstract fun render(r: Renderer)
 
     fun registerWithSimulation() {
@@ -186,7 +187,10 @@ abstract class Particle(
     }
 
     fun destroy() {
-        particlesToDestroy.add(index!!)
+        if (!hasBeenDestroyed) {
+            particlesToDestroy.add(index!!)
+            hasBeenDestroyed = true
+        }
     }
 
     abstract fun applyForces();
