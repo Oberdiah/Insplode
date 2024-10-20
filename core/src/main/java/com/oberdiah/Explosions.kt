@@ -39,6 +39,14 @@ fun boom(
         vibrate((radius * 10).i)
     }
 
+    val expectedNumParticlesToSpawn = tileRadius * tileRadius * 4
+    val maxParticlesToSpawn = 500
+
+    var fractionOfParticlesToSpawn = 1.0
+    if (expectedNumParticlesToSpawn > maxParticlesToSpawn) {
+        fractionOfParticlesToSpawn = maxParticlesToSpawn.d / expectedNumParticlesToSpawn
+    }
+
     for (dx in -tileRadius..tileRadius) {
         for (dy in -tileRadius..tileRadius) {
             tempPoint.x = point.x + dx * TILE_SIZE_IN_UNITS
@@ -53,9 +61,13 @@ fun boom(
                     Velocity(vx * 0.5 * Random.nextDouble(), (vy * 2.5 + 8) * Random.nextDouble())
                 if (tile is Tile && tile.doesExist() && affectsTheLandscape) {
                     tile.dematerialize()
-                    spawnFragment(tempPoint.cpy, velocity, tile.getTileType())
+                    if (Random.nextDouble() < fractionOfParticlesToSpawn) {
+                        spawnFragment(tempPoint.cpy, velocity, tile.getTileType())
+                    }
                 }
-                spawnSmoke(tempPoint.cpy, velocity)
+                if (Random.nextDouble() < fractionOfParticlesToSpawn) {
+                    spawnSmoke(tempPoint.cpy, velocity)
+                }
             }
         }
     }
