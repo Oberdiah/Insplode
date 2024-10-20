@@ -68,7 +68,6 @@ private val LASER_HEIGHT_START_IN_GAME
 
 /** This only starts ticking up once the player hits the ground */
 var RUN_TIME_ELAPSED = 0.0
-var gameMessage = ""
 private var currentPhase = 0
 private var bombRandoms = mutableMapOf<BombType, Random>()
 
@@ -99,7 +98,6 @@ var APP_TIME_GAME_STARTED = 0.0
 fun resetLevelController() {
     currentPhase = 0
     RUN_TIME_ELAPSED = 0.0
-    gameMessage = ""
     maxDepthThisRun = 0.0
     currentDepthThisRun = 0.0
     laserInGameHeight = LASER_HEIGHT_START_IN_GAME
@@ -211,8 +209,14 @@ fun tickLevelController() {
     }
 
 
+    val playerHeight = player.body.p.y
     var goalTime = 0.0
     phases.forEachIndexed { index, phase ->
+        if (playerHeight.abs > (phase.expectedDepthUnits ?: 9999.0) && index > currentPhase) {
+            currentPhase = index
+            goalTime += phases[currentPhase].d.d
+            phases[currentPhase].callback()
+        }
         if (index == currentPhase) {
             if (RUN_TIME_ELAPSED > goalTime) {
                 phase.callback()

@@ -1,17 +1,17 @@
 package com.oberdiah.level
 
 import com.oberdiah.BombType
-import com.oberdiah.PointOrbs
 
+/**
+ * If we reach the expected depth, we flashforward to this phase if we're not there yet.
+ *
+ * Important note: The flashforward does not run any previous phases.
+ *
+ * We will also still wait until the appropriate time before moving on, it just runs
+ * a single phase early, rather than pushing the clock forward.
+ */
+class Phase(val d: Number, val expectedDepthUnits: Double? = null, val callback: () -> Unit)
 
-class Phase(val d: Number, val callback: () -> Unit) {
-    var bombType: BombType? = null
-
-    constructor(d: Number, bomb: BombType, callback: () -> Unit) : this(d, callback) {
-        bombType = bomb
-    }
-}
-//
 //val phases = arrayOf(
 //    Phase(5.0) {
 //        startRandomBombs(BombType.LineBomb, 3.0)
@@ -30,8 +30,6 @@ class Phase(val d: Number, val callback: () -> Unit) {
 //        startRandomBombs(BombType.LineBomb, 6.0)
 //    }
 //)
-
-// It's all going wrong in BombVille
 
 // The values in a phase are how long we wait on that phase before moving on.
 val phases = arrayOf(
@@ -53,13 +51,11 @@ val phases = arrayOf(
         spawnBomb(BombType.PointOrb, 0.4)
         startRandomBombs(BombType.PointOrb, 3.5)
     },
-    Phase(0.45, BombType.SpringBomb) {
+    Phase(0.45) {
         spawnBomb(BombType.SpringBomb, 0.25)
         spawnBomb(BombType.PointOrb, 0.49)
-        gameMessage = "Spring Bomb"
     },
     Phase(1.65) {
-        gameMessage = ""
         spawnBomb(BombType.SmallTimed)
         startRandomBombs(BombType.LineBomb, 7.0)
         startRandomBombs(BombType.SmallTimed, 6.0)
@@ -70,12 +66,10 @@ val phases = arrayOf(
         spawnBomb(BombType.SmallTimed, 0.25)
         spawnBomb(BombType.LineBomb, 0.4)
     },
-    Phase(1.5, BombType.LargeTimed) {
+    Phase(1.5) {
         spawnBomb(BombType.LargeTimed, 0.5)
-        gameMessage = "Large Bomb"
     },
     Phase(3.0) {
-        gameMessage = ""
         startRandomBombs(BombType.LineBomb, 7.0)
         startRandomBombs(BombType.SmallTimed, 6.0)
         startRandomBombs(BombType.MediumTimed, 6.0)
@@ -95,19 +89,16 @@ val phases = arrayOf(
         spawnBomb(BombType.MediumTimed, 0.25)
         spawnBomb(BombType.MediumTimed, 0.75)
 
-        gameMessage = ""
         startRandomBombs(BombType.LineBomb, 7.0)
         startRandomBombs(BombType.SmallTimed, 6.0)
         startRandomBombs(BombType.MediumTimed, 5.0)
         startRandomBombs(BombType.SpringBomb, 6.0)
         startRandomBombs(BombType.LargeTimed, 10.0)
     },
-    Phase(2.0, BombType.MegaTimed) {
+    Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Mega Bomb"
     },
     Phase(15.0) {
-        gameMessage = ""
         startRandomBombs(BombType.LineBomb, 7.0)
         startRandomBombs(BombType.SmallTimed, 6.0)
         startRandomBombs(BombType.MediumTimed, 7.0)
@@ -117,10 +108,8 @@ val phases = arrayOf(
     },
     Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Hard Phase"
     },
     Phase(15.0) {
-        gameMessage = ""
         startRandomBombs(BombType.LineBomb, 5.0)
         startRandomBombs(BombType.SmallTimed, 4.0)
         startRandomBombs(BombType.MediumTimed, 5.0)
@@ -130,10 +119,8 @@ val phases = arrayOf(
     },
     Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.75)
-        gameMessage = "Very Hard Phase"
     },
-    Phase(15.0) {
-        gameMessage = ""
+    Phase(15.0, 35.0) {
         startRandomBombs(BombType.LineBomb, 4.0)
         startRandomBombs(BombType.SmallTimed, 3.0)
         startRandomBombs(BombType.MediumTimed, 4.0)
@@ -143,10 +130,8 @@ val phases = arrayOf(
     },
     Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.25)
-        gameMessage = "Extreme Phase"
     },
-    Phase(15.0) {
-        gameMessage = ""
+    Phase(15.0, 45.0) {
         startRandomBombs(BombType.LineBomb, 3.0)
         startRandomBombs(BombType.SmallTimed, 2.0)
         startRandomBombs(BombType.MediumTimed, 3.0)
@@ -156,10 +141,8 @@ val phases = arrayOf(
     },
     Phase(2.0) {
         spawnBomb(BombType.MegaTimed, 0.25)
-        gameMessage = "Final Phase"
     },
-    Phase(15.0) {
-        gameMessage = ""
+    Phase(15.0, 85.0) {
         startRandomBombs(BombType.LineBomb, 2.0)
         startRandomBombs(BombType.SmallTimed, 1.3)
         startRandomBombs(BombType.MediumTimed, 2.0)
