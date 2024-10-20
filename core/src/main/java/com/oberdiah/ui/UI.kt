@@ -118,10 +118,10 @@ fun switchScreen(screen: Screen) {
 private fun creditsUI(r: Renderer) {
     val titleSpacing = DIST_BETWEEN_WORDS * 1.1
     val titleGap = DIST_BETWEEN_WORDS * 1.5
-    val textSpacing = DIST_BETWEEN_WORDS * 0.9
-    var creditsHeight = HEIGHT / 2 + DIST_BETWEEN_WORDS * 2
+    val textSpacing = DIST_BETWEEN_WORDS * 0.6
+    var creditsHeight = HEIGHT / 2 + DIST_BETWEEN_WORDS * 3
 
-    r.text(fontMedium, "Programming", WIDTH / 2, creditsHeight, Align.center)
+    r.text(fontMedium, "Code, Art & Design", WIDTH / 2, creditsHeight, Align.center)
     creditsHeight -= titleSpacing
     r.text(fontSmallish, "Richard Mullender", WIDTH / 2, creditsHeight, Align.center)
     creditsHeight -= titleGap
@@ -129,11 +129,16 @@ private fun creditsUI(r: Renderer) {
     creditsHeight -= titleSpacing
     r.text(fontSmallish, "David Mullender", WIDTH / 2, creditsHeight, Align.center)
     creditsHeight -= titleGap
-    r.text(fontMedium, "Testing", WIDTH / 2, creditsHeight, Align.center)
+    r.text(fontMedium, "Play Testers", WIDTH / 2, creditsHeight, Align.center)
     creditsHeight -= titleSpacing
-    r.text(fontSmallish, "Peter Nisbet", WIDTH / 2, creditsHeight, Align.center)
+    r.text(fontSmall, "Peter Nisbet", WIDTH / 8, creditsHeight, Align.left)
+    r.text(fontSmall, "Thomas Mullender", WIDTH / 2, creditsHeight, Align.left)
     creditsHeight -= textSpacing
-    r.text(fontSmallish, "Marion Nisbet", WIDTH / 2, creditsHeight, Align.center)
+    r.text(fontSmall, "Marion Nisbet", WIDTH / 8, creditsHeight, Align.left)
+    r.text(fontSmall, "Connor Hamilton-Smith", WIDTH / 2, creditsHeight, Align.left)
+    creditsHeight -= textSpacing
+    r.text(fontSmall, "Pedro Greaves", WIDTH / 8, creditsHeight, Align.left)
+    r.text(fontSmall, "Matthew Parkes", WIDTH / 2, creditsHeight, Align.left)
     creditsHeight -= titleGap
     uiCurrentHeight = creditsHeight
     button(r, "Back") {
