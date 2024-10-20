@@ -20,6 +20,6 @@ val statefulPlayMusicSetting = StatefulBoolean("playMusic", true)
 val statefulPlaySoundSetting = StatefulBoolean("playSound", true)
 val currentlyPlayingUpgrade =
     StatefulEnum<Upgrade>(
-        "currentlyPlayingUpgrade", Upgrade.StarterUpgrade,
+        "currentlyPlayingUpgrade", Upgrade.Movement,
         Upgrade.entries.toTypedArray()
     )

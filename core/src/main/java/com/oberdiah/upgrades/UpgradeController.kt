@@ -49,7 +49,7 @@ import com.oberdiah.withAlpha
 object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
 
-    const val UPGRADE_ENTRY_HEIGHT = 4.0
+    const val UPGRADE_ENTRY_HEIGHT = 6.0
 
     fun init() {
         playerUpgradeStates.clear()
@@ -57,14 +57,14 @@ object UpgradeController {
             playerUpgradeStates[it] = StatefulBoolean("${it.name} Unlocked", false)
         }
 
-        playerUpgradeStates[Upgrade.StarterUpgrade]?.value = true
+        playerUpgradeStates[Upgrade.Movement]?.value = true
     }
 
     fun resetUpgradeStates() {
         playerUpgradeStates.forEach { (_, state) ->
             state.value = false
         }
-        playerUpgradeStates[Upgrade.StarterUpgrade]?.value = true
+        playerUpgradeStates[Upgrade.Movement]?.value = true
     }
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
@@ -398,7 +398,7 @@ object UpgradeController {
         UpgradeStatus.HIDDEN to null,
         UpgradeStatus.TOO_EXPENSIVE to null,
         UpgradeStatus.PURCHASABLE to null,
-        UpgradeStatus.PURCHASED to Upgrade.StarterUpgrade,
+        UpgradeStatus.PURCHASED to Upgrade.Movement,
     )
     private var currentUpgradePurchaseSoundsPlayed = -1
     private val timeOfLastUpgradeTap = mutableMapOf(

@@ -10,12 +10,6 @@ enum class Upgrade(
     val twoStarsScore: Int = ceil(threeStarsScore * 0.65),
     val oneStarScore: Int = ceil(threeStarsScore * 0.25),
 ) {
-    StarterUpgrade(
-        "Begin",
-        "The start of your adventure.\nFall into the world.",
-        1,
-        2,
-    ),
     Movement(
         "Movement",
         "Touch and drag left and right\nto move. The white line is\nwhere you're heading.",
@@ -25,7 +19,7 @@ enum class Upgrade(
 
     // ################ EARLY-GAME UPGRADES ################
     SlowerVoid(
-        "Void Slowdown",
+        "Slower Void",
         "Slow down the void's\napproach.",
         7,
         9
