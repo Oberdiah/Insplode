@@ -78,19 +78,19 @@ enum class Upgrade(
         "Large Bombs",
         "Bigger can only mean better.",
         35,
-        50
+        72
     ),
     GoldenNuggets(
         "Gold Nuggets",
         "Occasional golden tiles\nfull of treasure.",
         50,
-        108
+        110
     ),
     WiderLineBombs(
-        "Wider Line",
+        "Longer Line",
         "Line bombs now stretch the\nentire way across the screen.",
         75,
-        151
+        214
     ),
     MegaTimedBomb(
         "Mega Bombs",
@@ -154,7 +154,7 @@ enum class Upgrade(
         "???",
         "Something's glowing way,\nway down there in the\ndepths.",
         2000,
-        2919,
+        1925,
         oneStarScore = 1,
         twoStarsScore = 1000,
     ),
