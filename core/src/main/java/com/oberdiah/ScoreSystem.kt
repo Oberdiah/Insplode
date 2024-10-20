@@ -223,6 +223,8 @@ object ScoreSystem {
             }
         }
 
+        playerHighScores[currentlyPlayingUpgrade.value]!!.value =
+            max(playerScore, playerHighScores[currentlyPlayingUpgrade.value]!!.value)
         lastScore = playerScore
         lastScoreGivenOn = APP_TIME
         scoreGivingSpeed = max(playerScore / TIME_TO_GIVE_SCORE, 4.0)
@@ -265,8 +267,6 @@ object ScoreSystem {
         }
         growingScore += score
         playerScore += score
-        playerHighScores[currentlyPlayingUpgrade.value]!!.value =
-            max(playerScore, playerHighScores[currentlyPlayingUpgrade.value]!!.value)
         lastScoreCollectionTime = RUN_TIME_ELAPSED
     }
 
