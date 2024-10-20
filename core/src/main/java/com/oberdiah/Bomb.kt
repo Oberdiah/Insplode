@@ -151,9 +151,10 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
     }
 
     private val lineLength = UpgradeController.getLineBombWidth() * GLOBAL_SCALE
+    private var angularVel = 0.0
     private val canLineExplode: Boolean
         get() {
-            if (body.angularVelocity.abs > 2.5) {
+            if (angularVel > 2.5) {
                 return false
             }
 
@@ -171,6 +172,11 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     override fun tick() {
         super.tick()
+
+        // We calculate this here so it's got a frame of delay on it
+        // This means if the player hits it hard we don't take that new angular velocity
+        // as a reason not to explode.
+        angularVel = body.angularVelocity.abs
         if (canLineExplode) {
             timeLeft -= GAMEPLAY_DELTA
             if (timeLeft <= 0.0) {
@@ -185,7 +191,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
             lineExplode(false)
             destroy()
         } else {
-            boom(body.p, power, affectsThePlayer = false)
+            lineExplode(false, angle = Math.PI / 2)
             destroy()
         }
     }
@@ -226,10 +232,10 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         lineExplode(true)
     }
 
-    private fun lineExplode(hurtsThePlayer: Boolean) {
+    private fun lineExplode(hurtsThePlayer: Boolean, angle: Double = body.angle - PI / 2) {
         val spacing = 0.5
         val numExplosionsInEachDir = floor(lineLength / spacing)
-        val motion = Point(body.angle - PI / 2) * 0.5
+        val motion = Point(angle) * 0.5
         val boomLoc = body.p - motion * numExplosionsInEachDir
         for (i in -numExplosionsInEachDir..numExplosionsInEachDir) {
             boomLoc.x += motion.x
