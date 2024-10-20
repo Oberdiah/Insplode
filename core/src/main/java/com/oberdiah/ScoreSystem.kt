@@ -362,7 +362,7 @@ object ScoreSystem {
 //            shouldCache = false
 //        )
 
-        if (RUN_TIME_ELAPSED > 0) {
+        if (RUN_TIME_ELAPSED > 0 && currentlyPlayingUpgrade.value != Upgrade.FinalRun) {
             val starSize = fontSmallish.capHeight * 1.25
 
             val transitionIfQuit = if (GAME_STATE == GameState.TransitioningToDiegeticMenu) {
