@@ -61,7 +61,10 @@ private var delayedPreviousFingerY = 0.0
 private var launchTextAlpha = 1.0f
 private var starsTextAlpha = 1.0f
 private var lastFingerY = 0.0
-private var isDragging = false
+private var draggingIndex: Int? = null
+private val isDragging
+    get() = draggingIndex != null
+
 private var cameraY = MENU_ZONE_BOTTOM_Y
 
 // The diegetic menu is always there and rendered using in-world coordinates.
@@ -204,13 +207,13 @@ fun tickDiegeticMenu() {
         TOUCHES_WENT_DOWN.forEach {
             if (!isInLaunchButton(it)) {
                 cameraVelocity = 0.0
-                isDragging = true
+                draggingIndex = it.index
                 lastFingerY = it.y
                 delayedPreviousFingerY = it.y
             }
         }
         TOUCHES_DOWN.forEach {
-            if (isDragging) {
+            if (draggingIndex == it.index) {
                 cameraVelocity = 0.0
 
                 val dragDelta = (lastFingerY - it.y) / UNIT_SIZE_IN_PIXELS
@@ -226,7 +229,7 @@ fun tickDiegeticMenu() {
                 vibrate(10)
                 startGame()
             }
-            if (isDragging) {
+            if (draggingIndex == it.index) {
                 val fingerDist = delayedPreviousFingerY - it.y
                 if (fingerDist.abs > 5.0) {
                     cameraVelocity =
@@ -237,7 +240,7 @@ fun tickDiegeticMenu() {
                         )
                 }
 
-                isDragging = false
+                draggingIndex = null
             }
         }
 
