@@ -153,6 +153,7 @@ open class ColorScheme(val name: String) {
     var starsColor: Color = Color.GOLD
     var hotRock: Color = colorFrom(0xbc4648)
     var lava: Color = colorFrom(0xFF802B)
+    var launchButtonColor: Color = colorFrom(0xFFED2C)
     lateinit var player: Color
     lateinit var playerSlamming: Color
     lateinit var pointOrbColor: Color

@@ -281,6 +281,18 @@ class Rect(var p: Point, var s: Size) {
     val h
         get() = s.h
 
+    fun center(): Point {
+        return p + s / 2
+    }
+
+    fun offsetBy(p: Point): Rect {
+        return Rect(this.p + p, s)
+    }
+
+    fun offsetBy(x: Number, y: Number): Rect {
+        return Rect(this.p + Point(x, y), s)
+    }
+
     fun enlargen(buffer: Number): Rect {
         return Rect(p - Point(buffer, buffer), s + Point(buffer, buffer) * 2)
     }

@@ -1,8 +1,6 @@
 package com.oberdiah.upgrades
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.CAMERA_POS_Y
@@ -22,11 +20,13 @@ import com.oberdiah.currentlyPlayingUpgrade
 import com.oberdiah.d
 import com.oberdiah.easeInOutSine
 import com.oberdiah.f
+import com.oberdiah.fontMedium
+import com.oberdiah.fontSmall
 import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
 import com.oberdiah.get2DShake
 import com.oberdiah.getOrZero
-import com.oberdiah.max
+import com.oberdiah.lerp
 import com.oberdiah.playMultiplierSound
 import com.oberdiah.player.player
 import com.oberdiah.saturate
@@ -49,7 +49,7 @@ import com.oberdiah.withAlpha
 object UpgradeController {
     private val playerUpgradeStates = mutableMapOf<Upgrade, StatefulBoolean>()
 
-    const val UPGRADE_ENTRY_HEIGHT = 6.0
+    const val UPGRADE_ENTRY_HEIGHT = 7.0
 
     fun init() {
         playerUpgradeStates.clear()
@@ -154,8 +154,21 @@ object UpgradeController {
             return
         }
 
-        val textXPos = 4.5
-        val iconXPos = 2.25
+        val eh = UPGRADE_ENTRY_HEIGHT
+
+        val topLeftOffset = Point(1.0, -0.5)
+        val levelPos = Point(.0, eh * 6.25 / 7.0) + topLeftOffset
+        val titlePos = Point(.0, eh * 5.5 / 7.0) + topLeftOffset
+        val separatorLinePos = Point(.0, eh * 5.0 / 7.0) + topLeftOffset
+        val descriptionPos = Point(.0, eh * 4.5 / 7.0) + topLeftOffset
+
+        val deselectedTextOffset = Point(0.0, -1.0)
+
+        val iconSelectedPos = Point(7.5, 5.0)
+        val deselectedIconOffset = Point(0.0, -1.5)
+
+        val selectedIconSize = 3.0
+        val deselectedIconSize = 4.0
 
         for ((upgrade, yPos) in upgradesIterator()) {
             if (yPos > JUST_UP_OFF_SCREEN_UNITS) {
@@ -164,6 +177,8 @@ object UpgradeController {
             if (yPos < CAMERA_POS_Y - UPGRADE_ENTRY_HEIGHT) {
                 continue
             }
+
+            val bottomLeft = Point(0.0, yPos)
 
             val upgradeStatus = getUpgradeStatus(upgrade)
 
@@ -199,38 +214,49 @@ object UpgradeController {
             r.color = backgroundColor
 
             r.rect(
-                Point(0.0, yPos),
+                bottomLeft,
                 Size(SCREEN_WIDTH_IN_UNITS, UPGRADE_ENTRY_HEIGHT),
             )
 
             r.color = backgroundColor.add(-0.3f, -0.3f, -0.3f, 0.0f)
 
             r.rect(
-                Point(0.0, yPos),
+                bottomLeft,
                 Size(SCREEN_WIDTH_IN_UNITS * purchaseFract, UPGRADE_ENTRY_HEIGHT),
             )
 
             r.color = backgroundColor.add(1f, 1f, 1f, lateT.f * 0.5f)
 
             r.rect(
-                Point(0.0, yPos),
+                bottomLeft,
                 Size(SCREEN_WIDTH_IN_UNITS * lateT, UPGRADE_ENTRY_HEIGHT),
             )
 
             // Separating line
             r.color = Color.BLACK.withAlpha(0.2)
             r.rect(
-                Point(0.0, yPos),
+                bottomLeft,
                 Size(SCREEN_WIDTH_IN_UNITS, 0.05),
             )
 
             r.color = colorScheme.textColor.withAlpha(upgradeStatus.getTextAlpha())
 
+            val levelShake = get2DShake(purchaseFract, 0)
             val titleShake = get2DShake(purchaseFract, 1)
             val descriptionShake = get2DShake(purchaseFract, 2)
             val priceShake = get2DShake(purchaseFract + noFundsWarningFract, 3)
             val lineShake = get2DShake(purchaseFract, 4)
             val iconShake = get2DShake(purchaseFract, 5)
+
+            val textOffset = deselectedTextOffset * (1.0 - selectedUpgradeFract)
+            val iconOffset = deselectedIconOffset * (1.0 - selectedUpgradeFract)
+
+            r.text(
+                fontSmall,
+                "Level ${upgrade.ordinal + 1}:",
+                bottomLeft + levelPos + textOffset + levelShake,
+                Align.left
+            )
 
             r.text(
                 fontSmallish,
@@ -239,8 +265,15 @@ object UpgradeController {
                 } else {
                     upgrade.obfuscatedTitle
                 },
-                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.7) + titleShake,
+                bottomLeft + titlePos + textOffset + titleShake,
                 Align.left
+            )
+
+            // Small line
+            r.color = Color.BLACK.withAlpha(0.5)
+            r.rect(
+                bottomLeft + separatorLinePos + textOffset + lineShake,
+                Size(4.0, 0.05),
             )
 
             r.text(
@@ -250,7 +283,10 @@ object UpgradeController {
                 } else {
                     upgrade.obfuscatedDescription
                 },
-                Point(textXPos, yPos + UPGRADE_ENTRY_HEIGHT * 0.375) + descriptionShake,
+                bottomLeft + descriptionPos + Point(
+                    -8.0 * (1 - selectedUpgradeFract),
+                    0.0
+                ) + descriptionShake,
                 Align.left
             )
 
@@ -278,44 +314,28 @@ object UpgradeController {
                     starSize
                 )
             } else if (upgradeStatus.arePlayerRatingStarsVisible()) {
-                r.text(
-                    fontSmallish,
-                    "${ScoreSystem.getPlayerScore(upgrade)}",
-                    Point(
-                        10.0 - starSize + (1.0 - selectedUpgradeFract) * 3.0,
-                        yPos + UPGRADE_ENTRY_HEIGHT * 0.7
-                    ) + priceShake,
-                    Align.right
-                )
-
                 renderAwardedStars(
                     r,
                     Point(
-                        10.0 - starSize + selectedUpgradeFract * 3.0,
-                        yPos + UPGRADE_ENTRY_HEIGHT * 0.7
+                        3.0 - selectedUpgradeFract * 8.0,
+                        yPos + 2.75
                     ) + priceShake,
-                    Align.right,
-                    starSize,
+                    Align.left,
+                    starSize * 1.5,
                     ScoreSystem.getNumStarsOnUpgrade(upgrade)
                 )
             }
 
-            // Small line
-            r.color = Color.BLACK.withAlpha(0.5)
-            r.rect(
-                Point(textXPos + 0.05, yPos + UPGRADE_ENTRY_HEIGHT * 0.5) + lineShake,
-                Size(4.0, 0.05),
-            )
-
             val sprite = getSpriteForUpgrade(upgrade)
-            val p = Point(
-                iconXPos - selectedUpgradeFract * 3.0,
-                yPos + UPGRADE_ENTRY_HEIGHT / 2
-            ) + iconShake
+            val p = bottomLeft + iconSelectedPos + iconOffset + iconShake
             // Draw the texture centered on the position, scaled as much as it can be without warping.
 
             val iconScale =
-                (upgradeStatus.getIconSize() - purchaseFract * 0.5) * (1.0 - selectedUpgradeFract) + 0.0001
+                (upgradeStatus.getIconScale() - purchaseFract * 0.5) * lerp(
+                    deselectedIconSize,
+                    selectedIconSize,
+                    selectedUpgradeFract
+                ) + 0.0001
 
             val shadowDirection = Point(0.1, -0.1)
 
@@ -346,25 +366,26 @@ object UpgradeController {
     }
 
     fun renderUpgradeMenuWorldSpace2(r: Renderer) {
-        val OVERLAY_WIDTH = 4.0
-
         for ((upgrade, yPos) in upgradesIterator()) {
+            val bottomLeft = Point(0.0, yPos)
+
             val selectedUpgradeFract = selectedUpgradeFract(upgrade)
 
             if (selectedUpgradeFract > 0.01) {
-                val xPosOfInfoOverlay = -OVERLAY_WIDTH + selectedUpgradeFract * OVERLAY_WIDTH
+                // Stars
+                val xPosOfInfoOverlay = -4.0 + selectedUpgradeFract * 4.0
 
                 // Three lines, one of each of the three stars and their requirements.
                 val starSize = fontSmallish.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS
 
                 val hasDevScore = ScoreSystem.getNumStarsOnUpgrade(upgrade).isDeveloperBest
 
-                val startPos = if (hasDevScore) 0.8 else 0.7
+                val startPos = if (hasDevScore) 2.75 else 2.35
 
                 for (i in 0..if (hasDevScore) 3 else 2) {
                     val starYPos =
-                        yPos + UPGRADE_ENTRY_HEIGHT * startPos - i * UPGRADE_ENTRY_HEIGHT * 0.2
-                    val starXPos = 1.0 + xPosOfInfoOverlay
+                        yPos + startPos - i * starSize * 1.2
+                    val starXPos = 0.75 + xPosOfInfoOverlay
 
                     val haveThisUpgrade =
                         ScoreSystem.getNumStarsOnUpgrade(upgrade).stars >= i + 1 || hasDevScore
@@ -385,10 +406,38 @@ object UpgradeController {
                     r.text(
                         fontSmallish,
                         "${upgrade.starsToScore(i + 1)}",
-                        Point(starXPos + 1.65, starYPos),
+                        Point(starXPos + 1.75, starYPos),
                         Align.left
                     )
                 }
+
+                // Launch button
+
+                val launchAreaRect = Rect(
+                    Point(5.5 + 8.0 * (1 - selectedUpgradeFract), 0.75) + bottomLeft,
+                    Size(4.0, 1.5),
+                )
+
+                r.color = Color.BLACK.withAlpha(0.5)
+                r.rect(launchAreaRect.offsetBy(0.1, -0.1))
+
+                r.color = colorScheme.launchButtonColor
+                r.rect(launchAreaRect)
+
+                r.color = Color.BLACK
+                r.hollowRect(launchAreaRect, 0.1)
+
+                val buttonText = if (upgrade == Upgrade.Slam) {
+                    "Launch!"
+                } else {
+                    "Play!"
+                }
+                r.text(
+                    fontMedium,
+                    buttonText,
+                    launchAreaRect.center(),
+                    Align.center
+                )
             }
         }
     }
@@ -644,10 +693,10 @@ object UpgradeController {
             return this != PURCHASED
         }
 
-        fun getIconSize(): Double {
+        fun getIconScale(): Double {
             return when (this) {
-                HIDDEN, TOO_EXPENSIVE, PURCHASABLE -> 2.0
-                PURCHASED -> 3.0
+                HIDDEN, TOO_EXPENSIVE, PURCHASABLE -> 2.0 / 3.0
+                PURCHASED -> 1.0
             }
         }
 

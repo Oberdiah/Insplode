@@ -28,7 +28,7 @@ enum class Upgrade(
         "Timed Bomb",
         "Occasionally spawns in\na bomb.\nMine for orbs!",
         7,
-        18,
+        21,
     ),
     Jump(
         "Jump",
@@ -58,7 +58,7 @@ enum class Upgrade(
     ),
     SpringBomb(
         "Spring Bomb",
-        "A bomb that jumps \n around before exploding.",
+        "A bomb that jumps\naround before exploding.",
         25,
         40
     ),

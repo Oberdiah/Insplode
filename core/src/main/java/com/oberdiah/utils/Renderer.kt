@@ -176,6 +176,10 @@ class Renderer(val name: String, val camera: Camera) {
         text(font, text, Point(x, y), align, shouldCache)
     }
 
+    fun hollowRect(rect: Rect, width: Number) {
+        centeredHollowRect(rect.p + rect.s / 2, rect.s, width)
+    }
+
     fun rect(rect: Rect) {
         shapeRenderer.rect(rect.p.x.f, rect.p.y.f, rect.s.w.f, rect.s.h.f)
     }

@@ -129,7 +129,7 @@ private fun creditsUI(r: Renderer) {
     creditsHeight -= titleSpacing
     r.text(fontSmallish, "David Mullender", WIDTH / 2, creditsHeight, Align.center)
     creditsHeight -= titleGap
-    r.text(fontMedium, "Play Testers", WIDTH / 2, creditsHeight, Align.center)
+    r.text(fontMedium, "Playtesters", WIDTH / 2, creditsHeight, Align.center)
     creditsHeight -= titleSpacing
     r.text(fontSmall, "Peter Nisbet", WIDTH / 8, creditsHeight, Align.left)
     r.text(fontSmall, "Thomas Mullender", WIDTH / 2, creditsHeight, Align.left)
@@ -137,7 +137,7 @@ private fun creditsUI(r: Renderer) {
     r.text(fontSmall, "Marion Nisbet", WIDTH / 8, creditsHeight, Align.left)
     r.text(fontSmall, "Connor Hamilton-Smith", WIDTH / 2, creditsHeight, Align.left)
     creditsHeight -= textSpacing
-    r.text(fontSmall, "Pedro Greaves", WIDTH / 8, creditsHeight, Align.left)
+    r.text(fontSmall, "Peter G", WIDTH / 8, creditsHeight, Align.left)
     r.text(fontSmall, "Matthew Parkes", WIDTH / 2, creditsHeight, Align.left)
     creditsHeight -= titleGap
     uiCurrentHeight = creditsHeight
