@@ -33,6 +33,7 @@ import com.oberdiah.playMultiplierSound
 import com.oberdiah.player.player
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
+import com.oberdiah.startGame
 import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
@@ -40,6 +41,7 @@ import com.oberdiah.ui.cameraYUnitsDeltaThisTick
 import com.oberdiah.ui.isInLaunchButton
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.StatefulBoolean
+import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
@@ -390,7 +392,7 @@ object UpgradeController {
             }
 
             if (selectedUpgradeFract > 0.01) {
-                val launchAreaRect = launchAreaRelativeRect.offsetBy(
+                val launchAreaRect = LAUNCH_AREA_RELATIVE_RECT.offsetBy(
                     bottomLeft + Point(
                         8.0 * (1 - selectedUpgradeFract),
                         0.0
@@ -407,11 +409,21 @@ object UpgradeController {
                 r.color = Color.BLACK.withAlpha(0.5)
                 r.rect(launchAreaRect.offsetBy(0.1, -0.1))
 
-                r.color = colorScheme.launchButtonColor
-                r.rect(launchAreaRect)
+                val areaRect = if (holdingDownPlayButton) {
+                    launchAreaRect.offsetBy(0.1, -0.1)
+                } else {
+                    launchAreaRect
+                }
+
+                r.color = if (holdingDownPlayButton) {
+                    Color.GRAY
+                } else {
+                    colorScheme.launchButtonColor
+                }
+                r.rect(areaRect)
 
                 r.color = Color.BLACK
-                r.hollowRect(launchAreaRect, 0.1)
+                r.hollowRect(areaRect, 0.1)
 
                 val buttonText = if (upgrade == Upgrade.Slam) {
                     "Launch!"
@@ -421,7 +433,7 @@ object UpgradeController {
                 r.text(
                     fontMedium,
                     buttonText,
-                    launchAreaRect.center(),
+                    areaRect.center(),
                     Align.center
                 )
             }
@@ -435,7 +447,7 @@ object UpgradeController {
         )
     }
 
-    val launchAreaRelativeRect = Rect(
+    val LAUNCH_AREA_RELATIVE_RECT = Rect(
         Point(5.5, 0.75),
         Size(4.0, 1.5),
     )
@@ -509,6 +521,7 @@ object UpgradeController {
     var isConsideringSwitchingPlayingUpgrade = false
     var lastPlayingUpgrade: Upgrade? = null
     var timeSwitchedPlayingUpgrade = Double.NEGATIVE_INFINITY
+    var holdingDownPlayButton = false
 
     fun tick() {
         if (cameraVelocity.abs < 0.1 && cameraYUnitsDeltaThisTick.abs < 0.05) {
@@ -521,8 +534,11 @@ object UpgradeController {
             }
 
             TOUCHES_WENT_DOWN.forEach { touch ->
-                if (isInLaunchButton(touch) || PauseButton.isEatingInputs()) {
+                if (PauseButton.isEatingInputs()) {
                     return@forEach
+                }
+                if (isInLaunchButton(touch)) {
+                    vibrate(10)
                 }
 
                 upgradesIterator().forEach { (upgrade, yPos) ->
@@ -542,6 +558,14 @@ object UpgradeController {
                 }
             }
 
+            TOUCHES_DOWN.forEach { touch ->
+                if (PauseButton.isEatingInputs()) {
+                    return@forEach
+                }
+
+                holdingDownPlayButton = isInLaunchButton(touch)
+            }
+
             if (purchasingFract >= 1.0) {
                 val upgradePurchased = currentlyPurchasingUpgrade!!
                 completeUpgradePurchase(upgradePurchased)
@@ -549,7 +573,14 @@ object UpgradeController {
             }
 
             TOUCHES_WENT_UP.forEach { touch ->
-                if (isInLaunchButton(touch) || PauseButton.isEatingInputs()) {
+                if (PauseButton.isEatingInputs()) {
+                    return@forEach
+                }
+
+                if (holdingDownPlayButton) {
+                    holdingDownPlayButton = false
+                    vibrate(10)
+                    startGame()
                     return@forEach
                 }
 

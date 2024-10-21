@@ -2,6 +2,7 @@ package com.oberdiah.utils
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.oberdiah.*
+import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import kotlin.math.pow
@@ -77,7 +78,11 @@ fun updateCamera() {
     when (CAMERA_FOLLOWING) {
         CameraFollowing.Player -> {
             val desiredCameraPos = getCameraYForPlayerFollow()
-            cameraY += (desiredCameraPos - camera.position.y) * 0.1
+            if (RUN_TIME_ELAPSED > 0.0) {
+                cameraY += (desiredCameraPos - camera.position.y) * 0.1
+            } else {
+                cameraY += (desiredCameraPos - camera.position.y) * 0.05
+            }
         }
 
         CameraFollowing.MenuStartPos -> {

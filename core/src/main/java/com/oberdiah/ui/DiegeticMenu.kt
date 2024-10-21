@@ -16,6 +16,7 @@ import com.oberdiah.WIDTH
 import com.oberdiah.abs
 import com.oberdiah.ceil
 import com.oberdiah.clamp
+import com.oberdiah.currentlyPlayingUpgrade
 import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.fontLarge
@@ -28,6 +29,8 @@ import com.oberdiah.sin
 import com.oberdiah.startGame
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
+import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
+import com.oberdiah.upgrades.UpgradeController.LAUNCH_AREA_RELATIVE_RECT
 import com.oberdiah.upgrades.UpgradeController.noFundsWarningFract
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TOUCHES_DOWN
@@ -84,24 +87,13 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
     )
 }
 
-private var isLaunchTapped = false
-private val launchButtonPos
-    get() = Point(WIDTH / 2, HEIGHT / 10)
-private val launchButtonSize
-    get() = Size(WIDTH / 3, HEIGHT / 20)
-
 /**
  * In ui/screen-space
  */
 fun isInLaunchButton(touch: Point): Boolean {
-    if (launchTextAlpha < 0.001) {
-        return false
-    }
-
-    return touch.x > launchButtonPos.x - launchButtonSize.w / 2 &&
-            touch.x < launchButtonPos.x + launchButtonSize.w / 2 &&
-            touch.y > launchButtonPos.y - launchButtonSize.h / 2 &&
-            touch.y < launchButtonPos.y + launchButtonSize.h / 2
+    val thisUpgradeYPos = getUpgradeYPos(currentlyPlayingUpgrade.value)
+    return LAUNCH_AREA_RELATIVE_RECT.offsetBy(Point(0.0, thisUpgradeYPos))
+        .contains(touch.wo)
 }
 
 private val coinAreaWidth
@@ -122,19 +114,6 @@ val starsAreaPosition
         Point(WIDTH / 4, HEIGHT + (1 - starsTextAlpha) * coinAreaHeight * 1.4)
 
 fun renderDiegeticMenuScreenSpace(r: Renderer) {
-    val launchTextColor = colorScheme.textColor.cpy()
-
-    if (isLaunchTapped || GAME_STATE == GameState.InGame) {
-        launchTextColor.add(Color(0.4f, 0.4f, 0.4f, 0.0f))
-    }
-
-    launchTextAlpha =
-        if (GAME_STATE == GameState.DiegeticMenu && ScoreSystem.canStartGame()) {
-            frameAccurateLerp(launchTextAlpha, 1.0f, 10.0).f
-        } else {
-            frameAccurateLerp(launchTextAlpha, 0.0f, 10.0).f
-        }
-
     starsTextAlpha =
         if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
             frameAccurateLerp(starsTextAlpha, 1.0f, 10.0).f
@@ -142,28 +121,10 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
             frameAccurateLerp(starsTextAlpha, 0.0f, 10.0).f
         }
 
-    launchTextColor.a = launchTextAlpha
-
     val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 10 - sin(GameTime.APP_TIME) * 0.15
     r.color = colorScheme.textColor
     drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
 
-    if (launchTextAlpha > 0.001) {
-        val diegeticBackColor = colorScheme.backgroundA.withAlpha(launchTextAlpha * 0.75)
-
-        r.color = diegeticBackColor
-        r.centeredRect(launchButtonPos, launchButtonSize, 0.0)
-
-        r.color = launchTextColor
-        r.centeredHollowRect(launchButtonPos, launchButtonSize, WIDTH / 150)
-
-        val dropText = if (UpgradeController.playerHas(Upgrade.Slam)) {
-            "Launch!"
-        } else {
-            "Drop!"
-        }
-        r.text(fontMedium, dropText, launchButtonPos, Align.center)
-    }
     if (starsTextAlpha > 0.001) {
         r.color = Color.DARK_GRAY.withAlpha(0.9)
         r.poly(starsAreaPoints, starsAreaPosition, 0.0)
@@ -202,8 +163,6 @@ fun tickDiegeticMenu() {
     if (GAME_STATE == GameState.DiegeticMenu) {
         var newCameraY = cameraY
 
-        isLaunchTapped = false
-
         TOUCHES_WENT_DOWN.forEach {
             if (!isInLaunchButton(it)) {
                 cameraVelocity = 0.0
@@ -220,15 +179,8 @@ fun tickDiegeticMenu() {
                 newCameraY += dragDelta
                 lastFingerY = it.y
             }
-            if (isInLaunchButton(it)) {
-                isLaunchTapped = true
-            }
         }
         TOUCHES_WENT_UP.forEach {
-            if (isInLaunchButton(it) && !isDragging) {
-                vibrate(10)
-                startGame()
-            }
             if (draggingIndex == it.index) {
                 val fingerDist = delayedPreviousFingerY - it.y
                 if (fingerDist.abs > 5.0) {

@@ -34,8 +34,7 @@ val PLAYER_UNCERTAINTY_WINDOW: Double
  */
 const val JUMP_PREVENTION_WINDOW = 0.3
 
-val player = Player(Point(5, PLAYER_SPAWN_Y))
+val player = Player(PLAYER_SPAWN_POINT.cpy)
 
-val PLAYER_SPAWN_Y
-    get() = getUpgradeYPos(currentlyPlayingUpgrade.value) +
-            UPGRADE_ENTRY_HEIGHT + 1.5
+val PLAYER_SPAWN_POINT
+    get() = Point(7.5, getUpgradeYPos(currentlyPlayingUpgrade.value) + 1.75)
