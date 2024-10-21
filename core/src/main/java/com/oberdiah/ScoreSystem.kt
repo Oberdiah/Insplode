@@ -179,6 +179,8 @@ object ScoreSystem {
         if (UpgradeController.playerHas(Upgrade.Multiplier)) {
             numConsecutiveBounces++
             playMultiplierSound(numConsecutiveBounces)
+        } else {
+            playMultiplierSound(1)
         }
 
         playerHasSlammed(getCurrentMultiplier())

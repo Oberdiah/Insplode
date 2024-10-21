@@ -34,7 +34,7 @@ enum class Upgrade(
         "Jump",
         "Swipe up to jump.",
         9,
-        27
+        29
     ),
 
     // ################ JUMP UPGRADES ################
@@ -66,7 +66,7 @@ enum class Upgrade(
         "Slam",
         "Swipe down to slam.\nSlamming bombs makes you\nbounce and repels the void.",
         30,
-        43
+        53
     ),
     LargeTimedBomb(
         "Large Bombs",
@@ -90,13 +90,13 @@ enum class Upgrade(
         "Mega Bombs",
         "Massive bombs that\nwreck the landscape.",
         100,
-        218
+        258
     ),
     Magnet(
         "Magnet",
         "Attract orbs to you.",
         150,
-        240
+        334
     ),
 
 
@@ -106,13 +106,13 @@ enum class Upgrade(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
         200,
-        497
+        679
     ),
     Multiplier(
         "Multiplier",
         "Gain multiplier for each\nbomb slam. Affects orb\nspawning and void pushback.",
         400,
-        926
+        930
     ),
     RapidBombs(
         "Insurgence",
