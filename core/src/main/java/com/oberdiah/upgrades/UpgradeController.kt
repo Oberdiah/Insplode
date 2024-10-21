@@ -482,7 +482,7 @@ object UpgradeController {
             r.color = Color.BLACK
             r.text(
                 fontSmallish,
-                "Touch and hold to purchase",
+                "Touch and hold to unlock",
                 WIDTH / 2,
                 tapWarningY,
                 Align.center
