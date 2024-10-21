@@ -17,12 +17,12 @@ fun renderAwardedStars(
     stars: StarsAwarded,
     backgroundColor: Color = Color.BLACK.withAlpha(0.5f),
     mainStarColor: Color = colorScheme.starsColor,
-    developerStarColor: Color = colorScheme.developerStarsColor
+    developerStarColor: Color = colorScheme.developerStarsColor,
+    spacing: Double = starSize * 1.05,
 ) {
     val numStars = stars.stars
     assert(numStars in 0..3)
-
-    val spacing = starSize * 1.05
+    
     val startXPos = when (align) {
         Align.center -> -0.5 * spacing
         Align.right -> -2 * spacing

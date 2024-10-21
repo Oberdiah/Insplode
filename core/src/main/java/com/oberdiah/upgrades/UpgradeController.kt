@@ -156,13 +156,13 @@ object UpgradeController {
 
         val eh = UPGRADE_ENTRY_HEIGHT
 
-        val topLeftOffset = Point(1.0, -0.5)
+        val topLeftOffset = Point(0.5, -0.5)
         val levelPos = Point(.0, eh * 6.25 / 7.0) + topLeftOffset
         val titlePos = Point(.0, eh * 5.5 / 7.0) + topLeftOffset
         val separatorLinePos = Point(.0, eh * 5.0 / 7.0) + topLeftOffset
         val descriptionPos = Point(.0, eh * 4.5 / 7.0) + topLeftOffset
 
-        val deselectedTextOffset = Point(0.0, -1.0)
+        val deselectedTextOffset = Point(0.5, -1.0)
 
         val iconSelectedPos = Point(7.5, 5.0)
         val deselectedIconOffset = Point(0.0, -1.5)
@@ -314,16 +314,47 @@ object UpgradeController {
                     starSize
                 )
             } else if (upgradeStatus.arePlayerRatingStarsVisible()) {
+                val size = starSize * lerp(1.5, 2.0, selectedUpgradeFract)
+                val xShift = -0.2
+                val yShift = 0.1
                 renderAwardedStars(
                     r,
                     Point(
-                        3.0 - selectedUpgradeFract * 8.0,
-                        yPos + 2.75
+                        lerp(3.0, 1.25 + xShift, selectedUpgradeFract),
+                        yPos + lerp(2.75, 1.75 + yShift, selectedUpgradeFract)
                     ) + priceShake,
                     Align.left,
-                    starSize * 1.5,
-                    ScoreSystem.getNumStarsOnUpgrade(upgrade)
+                    size * 0.9,
+                    ScoreSystem.getNumStarsOnUpgrade(upgrade),
+                    spacing = size * lerp(1.05, 1.2, selectedUpgradeFract)
                 )
+
+                r.color = Color.BLACK.withAlpha(0.4)
+                val lineX =
+                    2.4 + xShift + 2 * 1.2 + 8.0 * (1 - saturate(selectedUpgradeFract * 2 - 1.0))
+                r.line(
+                    Point(lineX, 1.0 - 0.2) + bottomLeft + priceShake,
+                    Point(lineX, 2.0 + 0.2) + bottomLeft + priceShake,
+                    0.065
+                )
+
+                for (i in 1..3) {
+                    if (i > ScoreSystem.getNumStarsOnUpgrade(upgrade).stars) {
+                        r.color = Color.BLACK.withAlpha(0.25)
+                    } else {
+                        r.color = colorScheme.textColor
+                    }
+
+                    r.text(
+                        if (upgrade.starsToScore(3) < 1000) fontSmallish else fontSmall,
+                        "${upgrade.starsToScore(i)}",
+                        Point(
+                            1.25 + xShift + (i - 1) * 1.2 + lerp(-6.0, 0.0, selectedUpgradeFract),
+                            0.85 + yShift + yPos
+                        ) + priceShake,
+                        Align.center
+                    )
+                }
             }
 
             val sprite = getSpriteForUpgrade(upgrade)
@@ -372,50 +403,16 @@ object UpgradeController {
             val selectedUpgradeFract = selectedUpgradeFract(upgrade)
 
             if (selectedUpgradeFract > 0.01) {
-                // Stars
-                val xPosOfInfoOverlay = -4.0 + selectedUpgradeFract * 4.0
-
-                // Three lines, one of each of the three stars and their requirements.
-                val starSize = fontSmallish.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS
-
-                val hasDevScore = ScoreSystem.getNumStarsOnUpgrade(upgrade).isDeveloperBest
-
-                val startPos = if (hasDevScore) 2.75 else 2.35
-
-                for (i in 0..if (hasDevScore) 3 else 2) {
-                    val starYPos =
-                        yPos + startPos - i * starSize * 1.2
-                    val starXPos = 0.75 + xPosOfInfoOverlay
-
-                    val haveThisUpgrade =
-                        ScoreSystem.getNumStarsOnUpgrade(upgrade).stars >= i + 1 || hasDevScore
-
-                    renderAwardedStars(
-                        r,
-                        Point(starXPos, starYPos),
-                        Align.left,
-                        starSize,
-                        ScoreSystem.StarsAwarded.fromNumber(i + 1),
-                        mainStarColor = if (haveThisUpgrade) colorScheme.starsColor else colorScheme.starsColor.cpy()
-                            .mul(0.35f),
-                    )
-
-                    r.color =
-                        if (haveThisUpgrade) colorScheme.textColor else colorScheme.textColor
-                            .withAlpha(0.35f)
-                    r.text(
-                        fontSmallish,
-                        "${upgrade.starsToScore(i + 1)}",
-                        Point(starXPos + 1.75, starYPos),
-                        Align.left
-                    )
-                }
-
-                // Launch button
-
                 val launchAreaRect = Rect(
                     Point(5.5 + 8.0 * (1 - selectedUpgradeFract), 0.75) + bottomLeft,
                     Size(4.0, 1.5),
+                )
+
+                r.color = colorScheme.textColor
+                r.text(
+                    fontSmall,
+                    "Best: ${ScoreSystem.getPlayerScore(upgrade)}",
+                    launchAreaRect.tl + Point(0.0, 0.25),
                 )
 
                 r.color = Color.BLACK.withAlpha(0.5)

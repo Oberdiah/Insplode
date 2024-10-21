@@ -281,6 +281,18 @@ class Rect(var p: Point, var s: Size) {
     val h
         get() = s.h
 
+    val bl
+        get() = p
+
+    val br
+        get() = p + Point(s.w, 0)
+
+    val tl
+        get() = p + Point(0, s.h)
+
+    val tr
+        get() = p + s
+
     fun center(): Point {
         return p + s / 2
     }
