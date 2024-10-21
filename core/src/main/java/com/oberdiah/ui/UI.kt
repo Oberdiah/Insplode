@@ -139,6 +139,8 @@ private fun creditsUI(r: Renderer) {
     creditsHeight -= textSpacing
     r.text(fontSmall, "Peter G", WIDTH / 8, creditsHeight, Align.left)
     r.text(fontSmall, "Matthew Parkes", WIDTH / 2, creditsHeight, Align.left)
+    creditsHeight -= textSpacing
+    r.text(fontSmall, "Ashley Seaton", WIDTH / 8, creditsHeight, Align.left)
     creditsHeight -= titleGap
     uiCurrentHeight = creditsHeight
     button(r, "Back") {
