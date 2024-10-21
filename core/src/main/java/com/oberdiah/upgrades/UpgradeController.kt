@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.CAMERA_POS_Y
+import com.oberdiah.HEIGHT
 import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.JUST_UP_OFF_SCREEN_UNITS
 import com.oberdiah.Point
@@ -14,6 +15,7 @@ import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
 import com.oberdiah.Sprites
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
+import com.oberdiah.WIDTH
 import com.oberdiah.abs
 import com.oberdiah.createRandomFacingPoint
 import com.oberdiah.currentlyPlayingUpgrade
@@ -386,26 +388,13 @@ object UpgradeController {
                     iconScale,
                 )
             }
-        }
-
-        // Separating line
-        r.color = Color.GOLD.withAlpha(0.8)
-        r.rect(
-            Point(0.0, getUpgradeYPos(currentlyPlayingUpgrade.value) + UPGRADE_ENTRY_HEIGHT),
-            Size(SCREEN_WIDTH_IN_UNITS, 0.1),
-        )
-    }
-
-    fun renderUpgradeMenuWorldSpace2(r: Renderer) {
-        for ((upgrade, yPos) in upgradesIterator()) {
-            val bottomLeft = Point(0.0, yPos)
-
-            val selectedUpgradeFract = selectedUpgradeFract(upgrade)
 
             if (selectedUpgradeFract > 0.01) {
-                val launchAreaRect = Rect(
-                    Point(5.5 + 8.0 * (1 - selectedUpgradeFract), 0.75) + bottomLeft,
-                    Size(4.0, 1.5),
+                val launchAreaRect = launchAreaRelativeRect.offsetBy(
+                    bottomLeft + Point(
+                        8.0 * (1 - selectedUpgradeFract),
+                        0.0
+                    )
                 )
 
                 r.color = colorScheme.textColor
@@ -437,6 +426,56 @@ object UpgradeController {
                 )
             }
         }
+
+        // Separating line
+        r.color = Color.GOLD.withAlpha(0.8)
+        r.rect(
+            Point(0.0, getUpgradeYPos(currentlyPlayingUpgrade.value) + UPGRADE_ENTRY_HEIGHT),
+            Size(SCREEN_WIDTH_IN_UNITS, 0.1),
+        )
+    }
+
+    val launchAreaRelativeRect = Rect(
+        Point(5.5, 0.75),
+        Size(4.0, 1.5),
+    )
+
+    const val TOTAL_TAP_WARNING_TIME = 5.0
+
+    fun renderUpgradeMenuScreenSpace(r: Renderer) {
+        val timeSinceTapWarning = GameTime.APP_TIME - lastTapWarningTime
+        val animationTime = 0.5
+
+        val heightOffOfTop = HEIGHT / 15
+
+        val heightToMove = heightOffOfTop * 2
+
+        val normalHeight = HEIGHT + heightOffOfTop
+
+        if (timeSinceTapWarning < TOTAL_TAP_WARNING_TIME) {
+            val tapWarningY = if (timeSinceTapWarning < animationTime) {
+                normalHeight - saturate(timeSinceTapWarning / animationTime) * heightToMove
+            } else if (timeSinceTapWarning < TOTAL_TAP_WARNING_TIME - animationTime) {
+                normalHeight - heightToMove
+            } else {
+                normalHeight - (1.0 - saturate((timeSinceTapWarning - (TOTAL_TAP_WARNING_TIME - animationTime)) / animationTime)) * heightToMove
+            }
+
+            r.color = Color.WHITE.withAlpha(0.75)
+            r.centeredRect(
+                Point(WIDTH / 2, tapWarningY),
+                Size(WIDTH, HEIGHT / 20),
+            )
+
+            r.color = Color.BLACK
+            r.text(
+                fontSmallish,
+                "Touch and hold to purchase",
+                WIDTH / 2,
+                tapWarningY,
+                Align.center
+            )
+        }
     }
 
     private var currentlyPurchasingUpgrade: Upgrade? = null
@@ -454,7 +493,15 @@ object UpgradeController {
         UpgradeStatus.PURCHASED to Double.NEGATIVE_INFINITY,
     )
 
+    private var lastTapWarningTime = -Double.MAX_VALUE
+
     private fun cancelUpgradePurchase() {
+        if (currentlyPurchasingUpgrade != null) {
+            if (purchasingFraction() < 0.1 && lastTapWarningTime < GameTime.APP_TIME - TOTAL_TAP_WARNING_TIME) {
+                lastTapWarningTime = GameTime.APP_TIME
+            }
+        }
+
         currentlyPurchasingUpgrade = null
         currentUpgradePurchaseSoundsPlayed = -1
     }

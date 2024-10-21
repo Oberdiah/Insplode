@@ -20,7 +20,7 @@ import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.tickDiegeticMenu
 import com.oberdiah.upgrades.UpgradeController
-import com.oberdiah.upgrades.UpgradeController.renderUpgradeMenuWorldSpace2
+import com.oberdiah.upgrades.UpgradeController.renderUpgradeMenuScreenSpace
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -176,7 +176,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         worldSpaceRenderer.begin()
         time("Render level sprites") { Jewel.renderJewelInLevel(worldSpaceRenderer) }
-        time("Render upgrade 2") { renderUpgradeMenuWorldSpace2(worldSpaceRenderer) }
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
         time("Render laser") { renderLaser(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
@@ -187,12 +186,12 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
             debugRenderWorld()
         }
 
-        time("Render UI") {
-            uiRenderer.begin()
-            renderUIScreenSpace(uiRenderer)
-            ScoreSystem.renderDiegeticText(uiRenderer)
-            uiRenderer.end()
-        }
+        uiRenderer.begin()
+        time("Render UI") { renderUIScreenSpace(uiRenderer) }
+        time("Render upgrade 2") { renderUpgradeMenuScreenSpace(uiRenderer) }
+        time("Score System Text") { ScoreSystem.renderDiegeticText(uiRenderer) }
+        uiRenderer.end()
+
 
         timerEnd()
     }
