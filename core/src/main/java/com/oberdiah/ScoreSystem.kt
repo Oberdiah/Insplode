@@ -405,22 +405,6 @@ object ScoreSystem {
                 shouldCache = false
             )
         }
-        if (lastScore != null) {
-            val lastScoreOpacity = if (GAME_STATE == GameState.DiegeticMenu) {
-                1.0 - saturate((LAST_APP_TIME_GAME_STATE_CHANGED - APP_TIME) * 3.0)
-            } else {
-                0.0
-            }
-
-            r.color = colorScheme.textColor.withAlpha(lastScoreOpacity)
-            r.text(
-                fontSmallish,
-                "Score: $lastScore",
-                Point(W / 2, MENU_ZONE_BOTTOM_Y + H * 3.0 / 4 - 3.0).ui,
-                Align.center,
-                shouldCache = false
-            )
-        }
     }
 
     private const val FADE_IN_TIME = 0.05

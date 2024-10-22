@@ -1,5 +1,6 @@
 package com.oberdiah.upgrades
 
+import com.oberdiah.ScoreSystem
 import com.oberdiah.ceil
 
 enum class Upgrade(
@@ -178,6 +179,12 @@ enum class Upgrade(
 
     val obfuscatedTitle = title.replace(Regex("\\S")) { "?" }
     val obfuscatedDescription = description.replace(Regex("\\S")) { "?" }
+    val levelText = "Level ${this.ordinal + 1}:"
+    val bestText: String
+        get() = "Best: ${ScoreSystem.getPlayerScore(this)}"
+
+    val bestTextEmptyIfZero: String
+        get() = if (ScoreSystem.getPlayerScore(this) == 0) "" else bestText
 
     fun starsToScore(stars: Int): Int {
         return when (stars) {

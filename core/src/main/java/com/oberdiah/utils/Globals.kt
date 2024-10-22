@@ -29,6 +29,8 @@ const val TILES_EXTRA_FRACTION_STORED = 1.3
 var SHOW_FRAMERATE_DATA = false
 var DO_PHYSICS_DEBUG_RENDER = false
 
+val SHADOW_DIRECTION_UNITS = Point(0.1, -0.1)
+
 enum class Screen(val title: String, val note: Char) {
     Paused("Paused", 'C'),
     Settings("Settings", 'G'),

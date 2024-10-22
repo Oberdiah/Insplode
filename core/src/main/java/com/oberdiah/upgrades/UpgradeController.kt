@@ -11,6 +11,7 @@ import com.oberdiah.Point
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
+import com.oberdiah.SHADOW_DIRECTION_UNITS
 import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
 import com.oberdiah.Sprites
@@ -143,7 +144,7 @@ object UpgradeController {
         return if (upgrade.ordinal % 2 == 0) Color.CYAN else Color.YELLOW
     }
 
-    private fun getSpriteForUpgrade(upgrade: Upgrade): Sprite {
+    fun getSpriteForUpgrade(upgrade: Upgrade): Sprite {
         if (upgrade == Upgrade.FinalRun) {
             if (ScoreSystem.playerHasFinishedTheGame()) {
                 return Sprites.getSprite("Victory")
@@ -257,7 +258,7 @@ object UpgradeController {
 
             r.text(
                 fontSmall,
-                "Level ${upgrade.ordinal + 1}:",
+                upgrade.levelText,
                 bottomLeft + levelPos + textOffset + levelShake,
                 Align.left
             )
@@ -372,12 +373,10 @@ object UpgradeController {
                     selectedUpgradeFract
                 ) + 0.0001
 
-            val shadowDirection = Point(0.1, -0.1)
-
             // Shadow
             r.centeredSprite(
                 sprite,
-                p + shadowDirection,
+                p + SHADOW_DIRECTION_UNITS,
                 iconScale,
                 color = Color.BLACK.withAlpha(0.5)
             )
@@ -402,15 +401,15 @@ object UpgradeController {
                 r.color = colorScheme.textColor
                 r.text(
                     fontSmall,
-                    "Best: ${ScoreSystem.getPlayerScore(upgrade)}",
+                    upgrade.bestText,
                     launchAreaRect.tl + Point(0.0, 0.25),
                 )
 
                 r.color = Color.BLACK.withAlpha(0.5)
-                r.rect(launchAreaRect.offsetBy(0.1, -0.1))
+                r.rect(launchAreaRect.offsetBy(SHADOW_DIRECTION_UNITS))
 
                 val areaRect = if (holdingDownPlayButton) {
-                    launchAreaRect.offsetBy(0.1, -0.1)
+                    launchAreaRect.offsetBy(SHADOW_DIRECTION_UNITS)
                 } else {
                     launchAreaRect
                 }

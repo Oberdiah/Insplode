@@ -9,6 +9,7 @@ import com.oberdiah.Point
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
+import com.oberdiah.SHADOW_DIRECTION_UNITS
 import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
@@ -21,6 +22,8 @@ import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
+import com.oberdiah.fontSmall
+import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
 import com.oberdiah.lerp
@@ -70,6 +73,31 @@ private val isDragging
 
 private var cameraY = MENU_ZONE_BOTTOM_Y
 
+val hintRotation = listOf(
+    "You can slam while ascending to reverse direction if you get too close to the void",
+    "Slamming a gray line bomb makes it explode perfectly horizontal.",
+    "Green orb patches only drop 50% if they disappear due to land collapse.",
+    "Orbs begin combining together after '${Upgrade.GoldenNuggets.title}'.",
+    "Push bombs over the orb patches on the ground to mine the orbs.",
+    "Multiplier affects the number of orbs you get from orb patches as well.",
+    "Delaying in the air before slamming can help keep a multiplier over a bomb drought.",
+    "The void's acceleration doubles after 100s.",
+)
+
+fun getMainMenuStarPosition(star: Int): Point {
+    val H = SCREEN_HEIGHT_IN_UNITS
+    val W = SCREEN_WIDTH_IN_UNITS.d
+
+    return Point(
+        W / 2 - W / 4 + W / 8 * (star - 1),
+        MENU_ZONE_BOTTOM_Y + H * 0.35
+    )
+}
+
+// Fractions between 0 and 1
+val currentStarFillAmount = mutableListOf(0.0, 0.0, 0.0)
+val currentStarBlueFillAmount = mutableListOf(0.0, 0.0, 0.0)
+
 // The diegetic menu is always there and rendered using in-world coordinates.
 fun renderDiegeticMenuWorldSpace(r: Renderer) {
     val H = SCREEN_HEIGHT_IN_UNITS
@@ -82,9 +110,77 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
     r.text(
         fontLarge,
         "BombVille",
-        W / 2, MENU_ZONE_BOTTOM_Y + H * 3 / 4,
+        W / 2, MENU_ZONE_BOTTOM_Y + H * 0.8,
         Align.center
     )
+
+    // Horizontal separator line
+
+    val separatorLineY = H * 0.74
+    r.color = Color.BLACK.withAlpha(0.5)
+    r.line(
+        Point(2.5, MENU_ZONE_BOTTOM_Y + separatorLineY),
+        Point(W - 2.5, MENU_ZONE_BOTTOM_Y + separatorLineY),
+        0.05
+    )
+
+    // Level information
+
+    val sidePadding = 1.5
+
+    r.color = colorScheme.textColor
+    r.text(
+        fontSmall,
+        currentlyPlayingUpgrade.value.levelText,
+        sidePadding,
+        MENU_ZONE_BOTTOM_Y + H * 0.685,
+        Align.left
+    )
+
+    r.text(
+        fontMedium,
+        currentlyPlayingUpgrade.value.title,
+        sidePadding,
+        MENU_ZONE_BOTTOM_Y + H * 0.645,
+        Align.left
+    )
+
+    r.text(
+        fontSmall,
+        currentlyPlayingUpgrade.value.bestTextEmptyIfZero,
+        sidePadding,
+        MENU_ZONE_BOTTOM_Y + H * 0.605,
+        Align.left
+    )
+
+    // Icon is right-aligned
+
+    val iconSize = H * 0.1
+    val iconP = Point(W - sidePadding - iconSize / 2, MENU_ZONE_BOTTOM_Y + H * 0.65)
+    r.centeredSprite(
+        UpgradeController.getSpriteForUpgrade(currentlyPlayingUpgrade.value),
+        iconP + SHADOW_DIRECTION_UNITS,
+        iconSize,
+        color = Color.BLACK.withAlpha(0.5)
+    )
+
+    r.centeredSprite(
+        UpgradeController.getSpriteForUpgrade(currentlyPlayingUpgrade.value),
+        iconP,
+        iconSize
+    )
+
+    // Horizontal separator line
+
+    val separatorLineY2 = H * 0.55
+    r.color = Color.BLACK.withAlpha(0.5)
+    r.line(
+        Point(2.5, MENU_ZONE_BOTTOM_Y + separatorLineY2),
+        Point(W - 2.5, MENU_ZONE_BOTTOM_Y + separatorLineY2),
+        0.05
+    )
+
+
 }
 
 /**
