@@ -202,9 +202,8 @@ object ScoreSystem {
                 if ((tile.getId().id + tile.y) % 2 == 0) {
                     return
                 }
-            } else {
-                numToSpawn /= 2
             }
+            // Specifically don't want to halve golden orbs.
         }
 
         PointOrbs.spawnOrbs(
