@@ -319,9 +319,16 @@ object UpgradeController {
                     starSize
                 )
             } else if (upgradeStatus.arePlayerRatingStarsVisible()) {
+                val starsAwarded = ScoreSystem.getNumStarsOnUpgrade(upgrade)
+                // We don't shift up if we've got three yellow stars and that's all.
+                // This is because we don't have any numbers to show at that stage.
+                val blueMode = starsAwarded.blueStars > 0
+                val isShowingStarScores =
+                    blueMode || starsAwarded.stars < 3
+
                 val size = starSize * lerp(1.5, 2.0, selectedUpgradeFract)
                 val xShift = -0.2
-                val yShift = 0.1
+                val yShift = if (isShowingStarScores) 0.1 else -0.3
                 renderAwardedStars(
                     r,
                     Point(
@@ -330,7 +337,7 @@ object UpgradeController {
                     ) + priceShake,
                     Align.left,
                     size * 0.9,
-                    ScoreSystem.getNumStarsOnUpgrade(upgrade),
+                    starsAwarded,
                     spacing = size * lerp(1.05, 1.2, selectedUpgradeFract)
                 )
 
@@ -343,23 +350,42 @@ object UpgradeController {
                     0.065
                 )
 
-                for (i in 1..3) {
-                    if (i > ScoreSystem.getNumStarsOnUpgrade(upgrade).stars) {
-                        r.color = Color.BLACK.withAlpha(0.25)
-                    } else {
-                        r.color = colorScheme.textColor
-                    }
+                if (isShowingStarScores) {
+                    for (i in 1..3) {
+                        if (i > starsAwarded.stars || (blueMode && i > starsAwarded.blueStars)) {
+                            r.color = Color.BLACK.withAlpha(0.25)
+                        } else {
+                            r.color = colorScheme.textColor
+                        }
 
-                    r.text(
-                        if (upgrade.starsToScore(3) < 1000) fontSmallish else fontSmall,
-                        "${upgrade.starsToScore(i)}",
-                        Point(
-                            1.25 + xShift + (i - 1) * 1.2 + lerp(-6.0, 0.0, selectedUpgradeFract),
-                            0.85 + yShift + yPos
-                        ) + priceShake,
-                        Align.center
-                    )
+                        val thisStarText = if (blueMode) {
+                            if (i <= starsAwarded.blueStars) "${upgrade.starsToScore(i + 3)}" else "?"
+                        } else {
+                            "${upgrade.starsToScore(i)}"
+                        }
+
+                        val maxValueExpected = if (blueMode) {
+                            upgrade.starsToScore(6)
+                        } else {
+                            upgrade.starsToScore(3)
+                        }
+
+                        r.text(
+                            if (maxValueExpected < 1000) fontSmallish else fontSmall,
+                            thisStarText,
+                            Point(
+                                1.25 + xShift + (i - 1) * 1.2 + lerp(
+                                    -6.0,
+                                    0.0,
+                                    selectedUpgradeFract
+                                ),
+                                0.85 + yShift + yPos
+                            ) + priceShake,
+                            Align.center
+                        )
+                    }
                 }
+
             }
 
             val sprite = getSpriteForUpgrade(upgrade)

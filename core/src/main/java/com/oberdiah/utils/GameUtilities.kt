@@ -17,12 +17,13 @@ fun renderAwardedStars(
     stars: StarsAwarded,
     backgroundColor: Color = Color.BLACK.withAlpha(0.5f),
     mainStarColor: Color = colorScheme.starsColor,
-    developerStarColor: Color = colorScheme.developerStarsColor,
+    blueStarColor: Color = colorScheme.developerStarsColor,
     spacing: Double = starSize * 1.05,
 ) {
     val numStars = stars.stars
+    val numBlueStars = stars.blueStars
     assert(numStars in 0..3)
-    
+
     val startXPos = when (align) {
         Align.center -> -0.5 * spacing
         Align.right -> -2 * spacing
@@ -38,8 +39,14 @@ fun renderAwardedStars(
         )
 
         r.color = if (starNum <= numStars) {
-            if (stars.isDeveloperBest) developerStarColor else mainStarColor
-        } else Color.BLACK.withAlpha(0.5f)
+            if (starNum <= numBlueStars) {
+                blueStarColor
+            } else {
+                mainStarColor
+            }
+        } else {
+            Color.BLACK.withAlpha(0.5f)
+        }
         r.star(
             // IMO it looks slightly better down just a touch.
             p + Point((starNum - 1) * spacing + startXPos, -starSize / 25),

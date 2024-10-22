@@ -28,7 +28,20 @@ object ScoreSystem {
         One,
         Two,
         Three,
-        DeveloperBest;
+        OneBlue,
+        TwoBlue,
+        ThreeBlue;
+
+        val blueStars: Int
+            get() = when (this) {
+                Zero -> 0
+                One -> 0
+                Two -> 0
+                Three -> 0
+                OneBlue -> 1
+                TwoBlue -> 2
+                ThreeBlue -> 3
+            }
 
         val stars: Int
             get() = when (this) {
@@ -36,11 +49,10 @@ object ScoreSystem {
                 One -> 1
                 Two -> 2
                 Three -> 3
-                DeveloperBest -> 3
+                OneBlue -> 3
+                TwoBlue -> 3
+                ThreeBlue -> 3
             }
-
-        val isDeveloperBest: Boolean
-            get() = this == DeveloperBest
 
         companion object {
             fun fromNumber(stars: Int): StarsAwarded {
@@ -49,7 +61,10 @@ object ScoreSystem {
                     1 -> One
                     2 -> Two
                     3 -> Three
-                    else -> DeveloperBest
+                    4 -> OneBlue
+                    5 -> TwoBlue
+                    6 -> ThreeBlue
+                    else -> throw IllegalArgumentException("Invalid number of stars: $stars")
                 }
             }
         }
@@ -109,30 +124,12 @@ object ScoreSystem {
         return totalNumStarsCache
     }
 
-    fun getPlayerTotalDeveloperBests(): Int {
-        return Upgrade.entries.count { getNumStarsOnUpgrade(it).isDeveloperBest }
-    }
-
     fun playerHasFinishedTheGame(): Boolean {
         return getPlayerScore(Upgrade.FinalRun) > 0
     }
 
-    fun getNumStarsOnUpgrade(
-        upgrade: Upgrade,
-        yourScore: Int = playerHighScores[upgrade]!!.value
-    ): StarsAwarded {
-        val developerScore = upgrade.developerBest
-        val threeStarsScore = upgrade.threeStarsScore
-        val twoStarsScore = upgrade.twoStarsScore
-        val oneStarScore = upgrade.oneStarScore
-
-        return when {
-            yourScore >= developerScore -> StarsAwarded.DeveloperBest
-            yourScore >= threeStarsScore -> StarsAwarded.Three
-            yourScore >= twoStarsScore -> StarsAwarded.Two
-            yourScore >= oneStarScore -> StarsAwarded.One
-            else -> StarsAwarded.Zero
-        }
+    fun getNumStarsOnUpgrade(upgrade: Upgrade): StarsAwarded {
+        return upgrade.getStarsFromScore(playerHighScores[upgrade]!!.value)
     }
 
     fun getCurrentMultiplier(): Double {
@@ -380,7 +377,7 @@ object ScoreSystem {
                 Point(WIDTH / 15, HEIGHT - WIDTH / 15 - offset),
                 Align.left,
                 starSize,
-                getNumStarsOnUpgrade(currentlyPlayingUpgrade.value, playerScore)
+                currentlyPlayingUpgrade.value.getStarsFromScore(playerScore)
             )
         }
 

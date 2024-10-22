@@ -1,15 +1,18 @@
 package com.oberdiah.upgrades
 
 import com.oberdiah.ScoreSystem
+import com.oberdiah.ScoreSystem.StarsAwarded
 import com.oberdiah.ceil
 
 enum class Upgrade(
     val title: String,
     val description: String,
     val threeStarsScore: Int = 5,
-    val developerBest: Int = 9999,
+    val threeBlueStarsScore: Int = 9999,
     val twoStarsScore: Int = ceil(threeStarsScore * 0.65),
     val oneStarScore: Int = ceil(threeStarsScore * 0.25),
+    val oneBlueStarScore: Int = ceil(threeStarsScore + (threeBlueStarsScore - threeStarsScore) * 0.33),
+    val twoBlueStarsScore: Int = ceil(threeStarsScore + (threeBlueStarsScore - threeStarsScore) * 0.66),
 ) {
     Movement(
         "Movement",
@@ -186,9 +189,23 @@ enum class Upgrade(
     val bestTextEmptyIfZero: String
         get() = if (ScoreSystem.getPlayerScore(this) == 0) "" else bestText
 
+    fun getStarsFromScore(yourScore: Int): StarsAwarded {
+        return when {
+            yourScore >= threeBlueStarsScore -> StarsAwarded.ThreeBlue
+            yourScore >= twoBlueStarsScore -> StarsAwarded.TwoBlue
+            yourScore >= oneBlueStarScore -> StarsAwarded.OneBlue
+            yourScore >= threeStarsScore -> StarsAwarded.Three
+            yourScore >= twoStarsScore -> StarsAwarded.Two
+            yourScore >= oneStarScore -> StarsAwarded.One
+            else -> StarsAwarded.Zero
+        }
+    }
+
     fun starsToScore(stars: Int): Int {
         return when (stars) {
-            4 -> developerBest
+            6 -> threeBlueStarsScore
+            5 -> twoBlueStarsScore
+            4 -> oneBlueStarScore
             3 -> threeStarsScore
             2 -> twoStarsScore
             1 -> oneStarScore
