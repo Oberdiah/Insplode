@@ -25,8 +25,8 @@ enum class Upgrade(
     SlowerVoid(
         "Slower Void",
         "Slow down the void's\napproach.",
-        7,
-        9
+        9,
+        10
     ),
     MediumTimedBomb(
         "Timed Bomb",
