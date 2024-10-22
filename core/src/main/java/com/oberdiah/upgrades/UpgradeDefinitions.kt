@@ -157,6 +157,8 @@ enum class Upgrade(
     GlobalMagnet(
         "Global Magnet",
         "The orbs simply cannot\nget away.",
+        1500,
+        2919,
     ),
     DeadlyTouch(
         "Deadly Touch",
@@ -169,7 +171,7 @@ enum class Upgrade(
 
     val starsToUnlock: Int
         get() {
-            if (this == BlackHole) return this.ordinal * 3
+            if (this == BlackHole) return this.ordinal * 3 - 3
 
             return this.ordinal * 2
         }
