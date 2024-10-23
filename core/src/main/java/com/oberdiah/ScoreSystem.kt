@@ -326,8 +326,6 @@ object ScoreSystem {
 
                 val scoreGivenOutSoFar = (lastScore ?: 0) - playerScore
 
-                delayedReceivedScores.add(APP_TIME to scoreGivenOutSoFar)
-
                 val upgrade = lastUpgrade!!
 
                 val starsAwarded = upgrade.getStarsFromScore(scoreGivenOutSoFar - 1)
@@ -347,6 +345,7 @@ object ScoreSystem {
                         gravityScaling = 0.0,
                         pulledTowards = headingTo
                     )
+                    delayedReceivedScores.add(APP_TIME to scoreGivenOutSoFar)
                 } else {
                     val velocity = createRandomFacingPoint() * 15.0
 
@@ -423,8 +422,8 @@ object ScoreSystem {
         }
     }
 
-    private val endOfGameCoinsHeight
-        get() = MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS * 0.5
+    val endOfGameCoinsHeight
+        get() = MENU_ZONE_BOTTOM_Y + SCREEN_HEIGHT_IN_UNITS * 0.47
 
     fun renderDiegeticText(r: Renderer) {
         val H = SCREEN_HEIGHT_IN_UNITS
@@ -486,8 +485,8 @@ object ScoreSystem {
             r.color = colorScheme.textColor
 
             val worldSpaceCoords = Point(
-                W / 2 + 0.05,
-                min(endOfGameCoinsHeight, scorePos.wo.y) - 0.05
+                W / 2,
+                min(endOfGameCoinsHeight, scorePos.wo.y)
             )
 
             if (worldSpaceCoords.y > LASER_HEIGHT) {

@@ -89,9 +89,11 @@ fun getMainMenuStarPosition(star: Int): Point {
     val H = SCREEN_HEIGHT_IN_UNITS
     val W = SCREEN_WIDTH_IN_UNITS.d
 
+    val spacing = W * 0.2
+
     return Point(
-        W / 2 - W / 4 + W / 4 * (star - 1),
-        MENU_ZONE_BOTTOM_Y + H * 0.35
+        W / 2 - spacing + spacing * (star - 1),
+        MENU_ZONE_BOTTOM_Y + H * if (star == 2) 0.35 else 0.34
     )
 }
 
@@ -175,9 +177,9 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
     )
 
     starsTextTransparency = if (ScoreSystem.isScoreGivingAnimationPlaying()) {
-        frameAccurateLerp(starsTextTransparency, 1.0, 10.0)
+        1.0
     } else {
-        frameAccurateLerp(starsTextTransparency, 0.0, 10.0)
+        frameAccurateLerp(starsTextTransparency, 0.0, 5.0)
     }
 
     // Horizontal separator line
@@ -200,23 +202,23 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         r.color = colorScheme.textColor.withAlpha(1.0 - starsTextTransparency)
         r.text(
             fontMedium,
-            "${ScoreSystem.lastScore}",
+            "Score: ${ScoreSystem.lastScore}",
             W / 2,
-            MENU_ZONE_BOTTOM_Y + H * 0.275,
+            ScoreSystem.endOfGameCoinsHeight,
             Align.center,
             shouldCache = false
         )
 
-        for (i in 1..3) {
+        for (i in listOf(1, 3, 2)) {
             val fillAmount = currentStarFillAmount[i - 1]
 
-            val starSize = if (fillAmount < 1.0) {
+            val starSize = (if (fillAmount < 1.0) {
                 1.5
             } else if (fillAmount < 2.0) {
                 2.0
             } else {
                 2.3
-            }
+            }) * (if (i == 2) 1.0 else 0.8)
 
             val starPos = getMainMenuStarPosition(i)
 
@@ -228,26 +230,20 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
                 phase = fillAmount
             )
 
-            val iToCheck = if (fillAmount > 1.0) i + 3 else i
-
-            val scoreNeeded = lastUpgrade.starsToScore(iToCheck)
-            val previousScoreNeeded =
-                if (iToCheck == 1) 0 else lastUpgrade.starsToScore(iToCheck - 1)
-
-            val text = if (fillAmount == 1.0) {
+            val text = if (fillAmount < 2.0) {
                 "${lastUpgrade.starsToScore(i)}"
             } else {
-                "${
-                    (lerp(
-                        previousScoreNeeded,
-                        scoreNeeded,
-                        if (fillAmount > 1.0) fillAmount - 1.0 else fillAmount
-                    )).i
-                }"
+                "${lastUpgrade.starsToScore(i + 3)}"
             }
 
 
-            r.color = colorScheme.textColor.withAlpha(starsTextTransparency)
+            r.color = colorScheme.textColor.withAlpha(
+                if (fillAmount < 1.0) {
+                    0.5
+                } else {
+                    1.0
+                }
+            )
             r.text(
                 fontMedium,
                 text,
