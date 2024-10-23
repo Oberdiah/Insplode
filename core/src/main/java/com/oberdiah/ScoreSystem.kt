@@ -389,7 +389,7 @@ object ScoreSystem {
                 if (delayedReceivedScores.isEmpty()) {
                     // Hacky bit of code to force all stars to blue if we're on one of the upgrades
                     // that have duplicate blue-star scores.
-                    if (lastUpgrade.threeBlueStarsScore >= lastScore) {
+                    if (lastUpgrade.threeBlueStarsScore <= lastScore) {
                         for (i in 0..2) {
                             currentStarFillAmount[i] = 2.0
                         }
