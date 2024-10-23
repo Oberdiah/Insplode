@@ -33,13 +33,13 @@ enum class Upgrade(
         "Timed Bomb",
         "Occasionally spawns in\na bomb.\nMine for orbs!",
         7,
-        21,
+        30,
     ),
     Jump(
         "Jump",
         "Swipe up to jump.",
         9,
-        29
+        32
     ),
 
     // ################ JUMP UPGRADES ################
@@ -47,49 +47,49 @@ enum class Upgrade(
         "Small Bomb",
         "Helping out with the mining\neffort.",
         12,
-        19
+        20
     ),
     LineBomb(
         "Line Bomb",
         "Explodes in a straight line.\nWon't explode if pointing\nup or spinning fast.",
         15,
-        37
+        43
     ),
     Mobility(
         "High Mobility",
         "Move quicker, jump higher.",
         20,
-        34
+        35
     ),
     SpringBomb(
         "Spring Bomb",
         "A bomb that jumps\naround before exploding.",
         25,
-        40
+        48
     ),
     Slam(
         "Slam",
         "Swipe down to slam.\nSlamming bombs makes you\nbounce and repels the void.",
         30,
-        53
+        65
     ),
     LargeTimedBomb(
         "Large Bombs",
         "Bigger can only mean better.",
         35,
-        72
+        77
     ),
     GoldenNuggets(
         "Gold Nuggets",
         "Occasional golden tiles\nfull of treasure.",
         50,
-        110
+        210
     ),
     WiderLineBombs(
         "Longer Line",
         "Line bombs now stretch the\nentire way across the screen.",
         75,
-        214
+        287
     ),
     MegaTimedBomb(
         "Mega Bombs",
