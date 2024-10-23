@@ -5,6 +5,7 @@ import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem
 import com.oberdiah.Sprites
 import com.oberdiah.Tile
+import com.oberdiah.player.Player
 import com.oberdiah.player.player
 import com.oberdiah.sin
 import com.oberdiah.utils.TileType
@@ -32,7 +33,7 @@ object Jewel {
 
     fun tick() {
         if (player.body.p.distTo(5.1, JEWEL_DEPTH) < 1.0 && ScoreSystem.isFinalRun()) {
-            endTheGame(grabbedJewel = true)
+            endTheGame(deathReason = Player.DeathReason.GrabbedJewel, grabbedJewel = true)
         }
     }
 

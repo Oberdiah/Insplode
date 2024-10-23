@@ -29,6 +29,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         Void,
         Bomb,
         Lava,
+        GrabbedJewel,
         QuitByChoice
     }
 
