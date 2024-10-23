@@ -15,6 +15,7 @@ import com.oberdiah.max
 import com.oberdiah.min
 import com.oberdiah.playPlayerLandSound
 import com.oberdiah.player.PLAYER_SIZE
+import com.oberdiah.player.Player
 import com.oberdiah.player.PlayerInfoBoard
 import com.oberdiah.player.PlayerRenderer
 import com.oberdiah.player.player
@@ -88,7 +89,9 @@ class PlayerStateImpl : PlayerStateAccessors() {
         }
     }
 
-    fun justDied() {
+    fun justDied(reason: Player.DeathReason) {
+        deathReason = reason
+
         s.setState(PlayerMode.DEAD)
 
         player.body.linearDamping = Float.MAX_VALUE

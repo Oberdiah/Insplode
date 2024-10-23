@@ -17,7 +17,9 @@ import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.isKeyJustPressed
 import com.oberdiah.WIDTH
 import com.oberdiah.max
+import com.oberdiah.player.Player
 import com.oberdiah.statefulPauseSide
+import com.oberdiah.utils.endTheGame
 import com.oberdiah.withAlpha
 
 object PauseButton {
@@ -108,8 +110,7 @@ object PauseButton {
         lineBreak()
         if (gameStateBeforePauseMenu == GameState.InGame) {
             button(r, "Quit Run") {
-                goToDiegeticMenu()
-                ScoreSystem.registerGameEnd()
+                endTheGame(deathReason = Player.DeathReason.QuitByChoice)
             }
         } else {
             button(r, "Back") {

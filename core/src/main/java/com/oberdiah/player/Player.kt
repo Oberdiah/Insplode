@@ -21,9 +21,17 @@ import com.oberdiah.player.player_state.PlayerStateImpl
 import com.oberdiah.rectShape
 import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.goToDiegeticMenu
+import com.oberdiah.utils.endTheGame
 import kotlin.experimental.inv
 
 class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
+    enum class DeathReason {
+        Void,
+        Bomb,
+        Lava,
+        QuitByChoice
+    }
+
     /** Narrower than the player */
     lateinit var narrowFeetBox: Fixture
     lateinit var wideFeetBox: Fixture
@@ -72,20 +80,20 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
         val userData = otherFixture.body.userData
         if (userData is Tile && !yourFixture.isSensor) {
             if (userData.getTileType().killsOnTouch) {
-                hasDied()
+                hasDied(DeathReason.Lava)
             }
         }
     }
 
     override fun hitByExplosion() {
         if (!state.isSlamming) {
-            hasDied()
+            hasDied(DeathReason.Bomb)
         }
     }
 
-    private fun hasDied() {
+    private fun hasDied(reason: DeathReason) {
         if (!state.isDead) {
-            state.justDied()
+            state.justDied(reason)
         }
     }
 
@@ -118,8 +126,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
 
     override fun tick() {
         if (state.timeSinceDied > DEAD_CONTEMPLATION_TIME && GAME_STATE == GameState.InGame) {
-            goToDiegeticMenu()
-            ScoreSystem.registerGameEnd()
+            endTheGame(deathReason = state.deathReason ?: DeathReason.Void)
             return
         }
         if (GAME_STATE == GameState.DiegeticMenu) {
@@ -138,7 +145,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
             }
 
         if (playerLaserCheckHeight > LASER_HEIGHT && RUN_TIME_ELAPSED > 0.0) {
-            hasDied()
+            hasDied(DeathReason.Void)
             return
         }
 

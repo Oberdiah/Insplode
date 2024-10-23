@@ -5,9 +5,13 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.Point
 import com.oberdiah.Renderer
+import com.oberdiah.ScoreSystem
 import com.oberdiah.ScoreSystem.StarsAwarded
+import com.oberdiah.player.Player
 import com.oberdiah.saturate
 import com.oberdiah.statefulVibrationSetting
+import com.oberdiah.ui.goToDiegeticMenu
+import com.oberdiah.ui.registerGameEndDiegeticMenu
 import com.oberdiah.withAlpha
 
 fun renderAwardedStars(
@@ -98,4 +102,10 @@ fun vibrate(milliseconds: Int) {
     if (statefulVibrationSetting.value) {
         Gdx.input.vibrate(milliseconds)
     }
+}
+
+fun endTheGame(grabbedJewel: Boolean = false, deathReason: Player.DeathReason) {
+    goToDiegeticMenu()
+    ScoreSystem.registerGameEnd(grabbedJewel)
+    registerGameEndDiegeticMenu(deathReason = deathReason)
 }

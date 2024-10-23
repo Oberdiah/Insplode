@@ -1,9 +1,13 @@
 package com.oberdiah.player.player_state
 
+import com.oberdiah.player.Player
+
 /**
  * Has all of the player state accessors. I didn't want these mixed up as there's loads.
  */
 open class PlayerStateAccessors : PlayerStateClasses() {
+    var deathReason: Player.DeathReason? = null
+
     fun reset() {
         s.reset()
     }

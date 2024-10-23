@@ -31,7 +31,8 @@ object ScoreSystem {
         Three,
         OneBlue,
         TwoBlue,
-        ThreeBlue;
+        ThreeBlue,
+        Beyond;
 
         val blueStars: Int
             get() = when (this) {
@@ -42,6 +43,7 @@ object ScoreSystem {
                 OneBlue -> 1
                 TwoBlue -> 2
                 ThreeBlue -> 3
+                Beyond -> 3
             }
 
         val stars: Int
@@ -53,6 +55,7 @@ object ScoreSystem {
                 OneBlue -> 3
                 TwoBlue -> 3
                 ThreeBlue -> 3
+                Beyond -> 3
             }
 
         val id: Int
@@ -64,22 +67,8 @@ object ScoreSystem {
                 OneBlue -> 4
                 TwoBlue -> 5
                 ThreeBlue -> 6
+                Beyond -> 6
             }
-
-        companion object {
-            fun fromNumber(stars: Int): StarsAwarded {
-                return when (stars) {
-                    0 -> Zero
-                    1 -> One
-                    2 -> Two
-                    3 -> Three
-                    4 -> OneBlue
-                    5 -> TwoBlue
-                    6 -> ThreeBlue
-                    else -> throw IllegalArgumentException("Invalid number of stars: $stars")
-                }
-            }
-        }
     }
 
     var lastScore: Int? = null

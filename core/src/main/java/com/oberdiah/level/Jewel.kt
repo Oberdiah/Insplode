@@ -7,8 +7,8 @@ import com.oberdiah.Sprites
 import com.oberdiah.Tile
 import com.oberdiah.player.player
 import com.oberdiah.sin
-import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.utils.TileType
+import com.oberdiah.utils.endTheGame
 
 object Jewel {
     private const val JEWEL_DEPTH = -100.0
@@ -32,8 +32,7 @@ object Jewel {
 
     fun tick() {
         if (player.body.p.distTo(5.1, JEWEL_DEPTH) < 1.0 && ScoreSystem.isFinalRun()) {
-            goToDiegeticMenu()
-            ScoreSystem.registerGameEnd(grabbedJewel = true)
+            endTheGame(grabbedJewel = true)
         }
     }
 

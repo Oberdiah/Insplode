@@ -1,6 +1,5 @@
 package com.oberdiah.ui
 
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.GAME_STATE
@@ -24,14 +23,13 @@ import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
+import com.oberdiah.fontTiny
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
-import com.oberdiah.i
 import com.oberdiah.lerp
 import com.oberdiah.level.LASER_HEIGHT_IN_MENU
-import com.oberdiah.saturate
+import com.oberdiah.player.Player
 import com.oberdiah.sin
-import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
 import com.oberdiah.upgrades.UpgradeController.LAUNCH_AREA_RELATIVE_RECT
@@ -74,16 +72,20 @@ private val isDragging
 
 private var cameraY = MENU_ZONE_BOTTOM_Y
 
-val hintRotation = listOf(
-    "You can slam while ascending to reverse direction if you get too close to the void",
-    "Slamming a gray line bomb makes it explode perfectly horizontal.",
-    "Green orb patches only drop 50% if they disappear due to land collapse.",
-    "Orbs begin combining together after '${Upgrade.GoldenNuggets.title}'.",
-    "Push bombs over the orb patches on the ground to mine the orbs.",
-    "Multiplier affects the number of orbs you get from orb patches as well.",
-    "Delaying in the air before slamming can help keep a multiplier over a bomb drought.",
-    "The void's acceleration doubles after 100s.",
-)
+var currentHintText = ""
+fun registerGameEndDiegeticMenu(deathReason: Player.DeathReason) {
+    if (deathReason == Player.DeathReason.QuitByChoice) {
+        currentHintText = ""
+        return
+    }
+
+    val lastUpgrade = ScoreSystem.lastUpgrade
+    val lastScore = ScoreSystem.lastScore
+    if (lastUpgrade != null && lastScore != null) {
+        val stars = lastUpgrade.getStarsFromScore(lastScore)
+        currentHintText = lastUpgrade.getHintText(stars, deathReason)
+    }
+}
 
 fun getMainMenuStarPosition(star: Int): Point {
     val H = SCREEN_HEIGHT_IN_UNITS
@@ -93,7 +95,7 @@ fun getMainMenuStarPosition(star: Int): Point {
 
     return Point(
         W / 2 - spacing + spacing * (star - 1),
-        MENU_ZONE_BOTTOM_Y + H * if (star == 2) 0.35 else 0.34
+        MENU_ZONE_BOTTOM_Y + H * (0.36 + if (star == 2) 0.01 else 0.0)
     )
 }
 
@@ -207,6 +209,15 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
             ScoreSystem.endOfGameCoinsHeight,
             Align.center,
             shouldCache = false
+        )
+
+        r.color = colorScheme.textColor.withAlpha(0.4)
+        r.text(
+            fontTiny,
+            currentHintText,
+            W / 2,
+            MENU_ZONE_BOTTOM_Y + H * 0.2,
+            Align.center,
         )
 
         for (i in listOf(1, 3, 2)) {
