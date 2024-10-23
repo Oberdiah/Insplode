@@ -429,6 +429,7 @@ object UpgradeController {
                     fontSmall,
                     upgrade.bestText,
                     launchAreaRect.tl + Point(0.0, 0.25),
+                    shouldCache = false
                 )
 
                 r.color = Color.BLACK.withAlpha(0.5)

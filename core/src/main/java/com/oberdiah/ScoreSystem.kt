@@ -8,7 +8,8 @@ import com.oberdiah.level.playerHasSlammed
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
-import com.oberdiah.ui.starsAreaPosition
+import com.oberdiah.ui.currentStarFillAmount
+import com.oberdiah.ui.getMainMenuStarPosition
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
@@ -52,6 +53,17 @@ object ScoreSystem {
                 OneBlue -> 3
                 TwoBlue -> 3
                 ThreeBlue -> 3
+            }
+
+        val id: Int
+            get() = when (this) {
+                Zero -> 0
+                One -> 1
+                Two -> 2
+                Three -> 3
+                OneBlue -> 4
+                TwoBlue -> 5
+                ThreeBlue -> 6
             }
 
         companion object {
@@ -98,8 +110,10 @@ object ScoreSystem {
 
     // In score per second
     private var scoreGivingSpeed = 0.0
+    var lastUpgrade: Upgrade? = null
+        private set
 
-    const val TIME_TO_GIVE_SCORE = 1.5
+    const val TIME_TO_GIVE_SCORE_PER_STAR = 1.0
 
     private val playerHighScores = mutableMapOf<Upgrade, StatefulInt>()
     fun init() {
@@ -224,8 +238,14 @@ object ScoreSystem {
         playerHighScores[currentlyPlayingUpgrade.value]!!.value =
             max(playerScore, playerHighScores[currentlyPlayingUpgrade.value]!!.value)
         lastScore = playerScore
+        lastUpgrade = currentlyPlayingUpgrade.value
         lastScoreGivenOn = APP_TIME
-        scoreGivingSpeed = max(playerScore / TIME_TO_GIVE_SCORE, 4.0)
+
+        val timeToGiveScore =
+            TIME_TO_GIVE_SCORE_PER_STAR * (currentlyPlayingUpgrade.value.getStarsFromScore(
+                playerScore
+            ).id + 1)
+        scoreGivingSpeed = max(playerScore / timeToGiveScore, 4.0)
         growingScore = 0
         totalNumStarsCache = 0 // Force a regeneration of the cache
         numConsecutiveBounces = 0
@@ -233,6 +253,10 @@ object ScoreSystem {
         growingScoreStartedOn = RUN_TIME_ELAPSED
         scoreLeftToSound = 0
         lastTimeScoreSounded = 0.0
+
+        for (i in 0..2) {
+            currentStarFillAmount[i] = 0.0
+        }
     }
 
     fun registerGameStart() {
@@ -268,6 +292,12 @@ object ScoreSystem {
         lastScoreCollectionTime = RUN_TIME_ELAPSED
     }
 
+    fun isScoreGivingAnimationPlaying(): Boolean {
+        return delayedReceivedScores.isNotEmpty() || playerScore > 0
+    }
+
+    private val delayedReceivedScores = mutableListOf<Pair<Double, Int>>()
+
     fun tick() {
         bounceDecayAccumulator += bounceDecayRate() * GAMEPLAY_DELTA
 
@@ -294,17 +324,87 @@ object ScoreSystem {
                     Size(SCREEN_HEIGHT_IN_UNITS / 30, SCREEN_HEIGHT_IN_UNITS / 30)
                 ).randomPointInside()
 
-                val velocity = starsAreaPosition.wo - smokeSpawnPoint
-                velocity.len = 15
+                val scoreGivenOutSoFar = (lastScore ?: 0) - playerScore
 
-                spawnSmoke(
-                    smokeSpawnPoint,
-                    velocity,
-                    color = colorScheme.pointOrbColor.cpy().mul(Random.nextDouble(0.8, 1.2).f),
-                    canCollide = false,
-                    radiusScaling = 1.7,
-                    gravityScaling = 0.0
-                )
+                delayedReceivedScores.add(APP_TIME to scoreGivenOutSoFar)
+
+                val upgrade = lastUpgrade!!
+
+                val starsAwarded = upgrade.getStarsFromScore(scoreGivenOutSoFar - 1)
+                if (starsAwarded.blueStars != 3) {
+                    val headingTo = getMainMenuStarPosition(starsAwarded.id % 3 + 1)
+                    val velocity = headingTo - smokeSpawnPoint
+                    velocity.len = 7.5
+
+                    val color =
+                        if (starsAwarded.stars == 3) colorScheme.developerStarsColor else colorScheme.starsColor
+                    spawnSmoke(
+                        smokeSpawnPoint,
+                        velocity,
+                        color = color.cpy().mul(Random.nextDouble(0.8, 1.2).f),
+                        canCollide = false,
+                        radiusScaling = 2.3,
+                        gravityScaling = 0.0,
+                        pulledTowards = headingTo
+                    )
+                } else {
+                    val velocity = createRandomFacingPoint() * 15.0
+
+                    spawnSmoke(
+                        smokeSpawnPoint,
+                        velocity,
+                        color = colorScheme.developerStarsColor.cpy()
+                            .mul(Random.nextDouble(0.8, 1.2).f),
+                        canCollide = false,
+                        radiusScaling = 2.3,
+                        gravityScaling = 0.0,
+                    )
+                }
+            }
+
+
+            val lastUpgrade = lastUpgrade
+            val lastScore = lastScore
+
+            if (lastUpgrade != null && lastScore != null) {
+                if (delayedReceivedScores.isNotEmpty() && delayedReceivedScores[0].first < APP_TIME - 0.5) {
+                    val (_, scoreGivenOutSoFar) = delayedReceivedScores.removeAt(0)
+
+                    val starsAwarded = lastUpgrade.getStarsFromScore(scoreGivenOutSoFar)
+                    val starFraction = lastUpgrade.getFractionToNextStar(scoreGivenOutSoFar)
+
+                    val previousStarId = max((starsAwarded.id - 1) % 3, 0)
+                    val thisStarId = starsAwarded.id % 3
+                    val previousStarFractionToAssign = if (starsAwarded.blueStars > 0) 2.0 else 1.0
+
+                    if (currentStarFillAmount[previousStarId] != previousStarFractionToAssign && previousStarId != thisStarId) {
+                        playMultiplierSound(starsAwarded.id + 1)
+                    }
+
+                    currentStarFillAmount[previousStarId] = previousStarFractionToAssign
+                    currentStarFillAmount[thisStarId] =
+                        if (starsAwarded.stars == 3) starFraction + 1.0 else starFraction
+                }
+
+                if (delayedReceivedScores.isEmpty()) {
+                    // Hacky bit of code to force all stars to blue if we're on one of the upgrades
+                    // that have duplicate blue-star scores.
+                    if (lastUpgrade.threeBlueStarsScore >= lastScore) {
+                        for (i in 0..2) {
+                            currentStarFillAmount[i] = 2.0
+                        }
+                    }
+                    for (i in 0..2) {
+                        if (currentStarFillAmount[i] % 1.0 != 0.0) {
+                            val goal = currentStarFillAmount[i].i.d
+                            currentStarFillAmount[i] = lerp(
+                                currentStarFillAmount[i],
+                                goal,
+                                0.1
+                            )
+                        }
+                    }
+                }
             }
         }
 

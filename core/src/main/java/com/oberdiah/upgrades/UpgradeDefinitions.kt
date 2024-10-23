@@ -3,6 +3,7 @@ package com.oberdiah.upgrades
 import com.oberdiah.ScoreSystem
 import com.oberdiah.ScoreSystem.StarsAwarded
 import com.oberdiah.ceil
+import com.oberdiah.d
 
 enum class Upgrade(
     val title: String,
@@ -188,6 +189,18 @@ enum class Upgrade(
 
     val bestTextEmptyIfZero: String
         get() = if (ScoreSystem.getPlayerScore(this) == 0) "" else bestText
+
+    fun getFractionToNextStar(yourScore: Int): Double {
+        return when {
+            yourScore >= threeBlueStarsScore -> 1.0
+            yourScore >= twoBlueStarsScore -> (yourScore - twoBlueStarsScore) / (threeBlueStarsScore - twoBlueStarsScore).d
+            yourScore >= oneBlueStarScore -> (yourScore - oneBlueStarScore) / (twoBlueStarsScore - oneBlueStarScore).d
+            yourScore >= threeStarsScore -> (yourScore - threeStarsScore) / (oneBlueStarScore - threeStarsScore).d
+            yourScore >= twoStarsScore -> (yourScore - twoStarsScore) / (threeStarsScore - twoStarsScore).d
+            yourScore >= oneStarScore -> (yourScore - oneStarScore) / (twoStarsScore - oneStarScore).d
+            else -> yourScore / oneStarScore.d
+        }
+    }
 
     fun getStarsFromScore(yourScore: Int): StarsAwarded {
         return when {

@@ -60,12 +60,21 @@ fun spawnSmoke(
     gravityScaling: Double = 1.0,
     canCollide: Boolean = true,
     radiusScaling: Double = 1.0,
+    pulledTowards: Point? = null,
 ) {
     if (!statefulRenderParticles.value) return
     // Don't spawn smoke on top of tiles
     if (Level.getTile(p).canCollide() && canCollide) return
     val radius = TILE_SIZE_IN_UNITS * (Random.nextDouble() * 0.3 + 0.2) * radiusScaling
-    Smoke(p, velocity, radius, color, gravityScaling, canCollide).registerWithSimulation()
+    Smoke(
+        p,
+        velocity,
+        radius,
+        color,
+        gravityScaling,
+        canCollide,
+        pulledTowards
+    ).registerWithSimulation()
 }
 
 fun spawnGlow(p: Point, radius: Number) {
@@ -95,7 +104,8 @@ class Smoke(
     val color: Color = Color.DARK_GRAY.withAlpha(0.5),
     val gravityScaling: Double = 1.0,
     canCollide: Boolean = true,
-) : Particle(startP, startV, canCollide, edgeLength = edgeLength) {
+    pulledTowards: Point? = null,
+) : Particle(startP, startV, canCollide, edgeLength = edgeLength, pulledTowards = pulledTowards) {
     var angle = Random.nextDouble() * 3.1415 * 2
     val angleRate = Random.nextDouble() - 0.5
 
@@ -173,6 +183,7 @@ abstract class Particle(
     val v: Velocity = Velocity(),
     val canCollide: Boolean = true,
     var edgeLength: Number,
+    val pulledTowards: Point? = null
 ) {
     var insideLevel = false
     var bounciness = 0.6
@@ -208,9 +219,20 @@ abstract class Particle(
             applyForces()
         }
 
-        if (UpgradeController.playerHas(Upgrade.BlackHole) && GAME_STATE == GameState.InGame) {
-            val playerP = player.body.p
-            val force = playerP - p
+        val pulledTo =
+            if (UpgradeController.playerHas(Upgrade.BlackHole) && GAME_STATE == GameState.InGame) {
+                player.body.p
+            } else {
+                pulledTowards
+            }
+
+        if (pulledTo != null) {
+            val force = pulledTo - p
+            if (force.len < 0.1) {
+                destroy()
+                return
+            }
+
             force.len = min(1.0, force.len)
             if (v.dot(force) < 0 || v.len < 5.0) {
                 v.x += force.x

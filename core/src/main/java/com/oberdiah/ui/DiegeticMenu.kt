@@ -1,5 +1,6 @@
 package com.oberdiah.ui
 
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.GAME_STATE
@@ -23,13 +24,13 @@ import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
-import com.oberdiah.fontSmallish
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
+import com.oberdiah.i
 import com.oberdiah.lerp
 import com.oberdiah.level.LASER_HEIGHT_IN_MENU
+import com.oberdiah.saturate
 import com.oberdiah.sin
-import com.oberdiah.startGame
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
@@ -40,10 +41,10 @@ import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
+import com.oberdiah.utils.renderColoredStar
 import com.oberdiah.utils.renderStar
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
-import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
 
 // So that when the game ends and the camera pans back up the chance of us seeing
@@ -89,14 +90,16 @@ fun getMainMenuStarPosition(star: Int): Point {
     val W = SCREEN_WIDTH_IN_UNITS.d
 
     return Point(
-        W / 2 - W / 4 + W / 8 * (star - 1),
+        W / 2 - W / 4 + W / 4 * (star - 1),
         MENU_ZONE_BOTTOM_Y + H * 0.35
     )
 }
 
-// Fractions between 0 and 1
+// Fractions between 0 and 2 (0-1 is regular fill, 1-2 is blue fill)
 val currentStarFillAmount = mutableListOf(0.0, 0.0, 0.0)
-val currentStarBlueFillAmount = mutableListOf(0.0, 0.0, 0.0)
+
+var starsTextTransparency = 0.0
+    private set
 
 // The diegetic menu is always there and rendered using in-world coordinates.
 fun renderDiegeticMenuWorldSpace(r: Renderer) {
@@ -150,7 +153,8 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         currentlyPlayingUpgrade.value.bestTextEmptyIfZero,
         sidePadding,
         MENU_ZONE_BOTTOM_Y + H * 0.605,
-        Align.left
+        Align.left,
+        shouldCache = false
     )
 
     // Icon is right-aligned
@@ -170,17 +174,90 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
         iconSize
     )
 
+    starsTextTransparency = if (ScoreSystem.isScoreGivingAnimationPlaying()) {
+        frameAccurateLerp(starsTextTransparency, 1.0, 10.0)
+    } else {
+        frameAccurateLerp(starsTextTransparency, 0.0, 10.0)
+    }
+
     // Horizontal separator line
 
-    val separatorLineY2 = H * 0.55
-    r.color = Color.BLACK.withAlpha(0.5)
-    r.line(
-        Point(2.5, MENU_ZONE_BOTTOM_Y + separatorLineY2),
-        Point(W - 2.5, MENU_ZONE_BOTTOM_Y + separatorLineY2),
-        0.05
-    )
+    val lastUpgrade = ScoreSystem.lastUpgrade
+    val lastScore = ScoreSystem.lastScore
+
+    val gameStateForStars =
+        GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu
+
+    if (lastUpgrade != null && lastScore != null && gameStateForStars) {
+        val separatorLineY2 = H * 0.55
+        r.color = Color.BLACK.withAlpha(0.5)
+        r.line(
+            Point(2.5, MENU_ZONE_BOTTOM_Y + separatorLineY2),
+            Point(W - 2.5, MENU_ZONE_BOTTOM_Y + separatorLineY2),
+            0.05
+        )
+
+        r.color = colorScheme.textColor.withAlpha(1.0 - starsTextTransparency)
+        r.text(
+            fontMedium,
+            "${ScoreSystem.lastScore}",
+            W / 2,
+            MENU_ZONE_BOTTOM_Y + H * 0.275,
+            Align.center,
+            shouldCache = false
+        )
+
+        for (i in 1..3) {
+            val fillAmount = currentStarFillAmount[i - 1]
+
+            val starSize = if (fillAmount < 1.0) {
+                1.5
+            } else if (fillAmount < 2.0) {
+                2.0
+            } else {
+                2.3
+            }
+
+            val starPos = getMainMenuStarPosition(i)
+
+            renderColoredStar(
+                r,
+                starPos,
+                starSize,
+                backgroundColor = Color.BLACK.withAlpha(0.65),
+                phase = fillAmount
+            )
+
+            val iToCheck = if (fillAmount > 1.0) i + 3 else i
+
+            val scoreNeeded = lastUpgrade.starsToScore(iToCheck)
+            val previousScoreNeeded =
+                if (iToCheck == 1) 0 else lastUpgrade.starsToScore(iToCheck - 1)
+
+            val text = if (fillAmount == 1.0) {
+                "${lastUpgrade.starsToScore(i)}"
+            } else {
+                "${
+                    (lerp(
+                        previousScoreNeeded,
+                        scoreNeeded,
+                        if (fillAmount > 1.0) fillAmount - 1.0 else fillAmount
+                    )).i
+                }"
+            }
 
 
+            r.color = colorScheme.textColor.withAlpha(starsTextTransparency)
+            r.text(
+                fontMedium,
+                text,
+                starPos.x,
+                starPos.y - H * 0.075,
+                Align.center,
+                shouldCache = false
+            )
+        }
+    }
 }
 
 /**

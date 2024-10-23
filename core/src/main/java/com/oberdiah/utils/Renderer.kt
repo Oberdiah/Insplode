@@ -37,7 +37,7 @@ class SpriteDraw(
         // So we need to do it manually
         val p = project(p, camera)
 
-        if (p.y > HEIGHT * 1.2 || p.y < -HEIGHT * 0.2) {
+        if (p.y > HEIGHT * 1.2 || p.y < -HEIGHT * 0.2 || color.a < 0.001f) {
             return
         }
 
@@ -63,7 +63,7 @@ class TextDraw(
         // So we need to compensate for that
         val pos = project(p, camera)
 
-        if (pos.y > HEIGHT * 1.2 || pos.y < -HEIGHT * 0.2) {
+        if (pos.y > HEIGHT * 1.2 || pos.y < -HEIGHT * 0.2 || color.a < 0.001f) {
             return
         }
 
