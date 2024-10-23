@@ -152,6 +152,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     private val lineLength = UpgradeController.getLineBombWidth() * GLOBAL_SCALE
     private var angularVel = 0.0
+    private var shouldHurtThePlayer = true
     private val canLineExplode: Boolean
         get() {
             if (angularVel > 2.5) {
@@ -181,6 +182,12 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
             timeLeft -= GAMEPLAY_DELTA
             if (timeLeft <= 0.0) {
                 explode()
+            }
+        } else {
+            // If line can't explode and our time left is not enough to fully play the animation,
+            // it's no longer fair to hurt the player.
+            if (timeLeft < maxFuseLength / 4) {
+                shouldHurtThePlayer = false
             }
         }
     }
@@ -229,7 +236,7 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
 
     override fun explode() {
         super.explode()
-        lineExplode(true)
+        lineExplode(shouldHurtThePlayer)
     }
 
     private fun lineExplode(hurtsThePlayer: Boolean, angle: Double = body.angle - PI / 2) {
