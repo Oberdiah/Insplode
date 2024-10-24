@@ -249,7 +249,7 @@ object ScoreSystem {
     }
 
     fun registerGameStart() {
-        // Nothing at the moment
+        playerScore = 0
     }
 
     fun registerCasuallyLanded() {
