@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.player.PLAYER_SIZE
+import com.oberdiah.player.PlayerInfoBoard
 import com.oberdiah.player.player
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
@@ -117,6 +119,7 @@ object PointOrbs {
 
         companion object {
             const val GOLDEN_THRESHOLD = 50
+            const val PICKED_UP_GRACE_PERIOD = 0.25
 
             fun calculateRadius(value: Int): Double {
                 var relativeValue = value.d
@@ -162,9 +165,13 @@ object PointOrbs {
 
             val magnetRadius = UpgradeController.getPlayerMagnetRadius()
 
-            val playerPos = player.body.p
+            val playerPos = PlayerInfoBoard.playerFeetPosition
             val distance = playerPos.distTo(body.p)
             isAttractedToPlayer = distance < magnetRadius && player.state.isAlive
+
+            if (timeAlive > PICKED_UP_GRACE_PERIOD && distance < radius + PLAYER_SIZE.w / 2) {
+                pickedUp()
+            }
 
             if (isAttractedToPlayer) {
                 val direction = (playerPos - body.p)
@@ -180,27 +187,30 @@ object PointOrbs {
         override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
             super.collided(yourFixture, otherFixture)
             val data = otherFixture.body.userData
-            if (timeAlive > 0.5 || isAttractedToPlayer) {
+            if (timeAlive > PICKED_UP_GRACE_PERIOD || isAttractedToPlayer) {
                 if (data == player && player.state.isAlive && otherFixture.userData == PLAYER_DETECTOR_IDENTIFIER) {
-                    destroy()
-
-                    val strength = value.d.pow(0.5)
-                    val radius = strength * TILE_SIZE_IN_UNITS
-
-                    if (value >= 5.0) {
-                        boom(
-                            body.p,
-                            radius * 0.5,
-                            affectsThePlayer = false,
-                            affectsTheLandscape = false,
-                            playSound = false
-                        )
-                    }
-
-                    ScoreSystem.givePlayerScore(value)
-                    spawnSmokeHere(15, body.p)
+                    pickedUp()
                 }
             }
+        }
+
+        private fun pickedUp() {
+            destroy()
+            val strength = value.d.pow(0.5)
+            val radius = strength * TILE_SIZE_IN_UNITS
+
+            if (value >= 5.0) {
+                boom(
+                    body.p,
+                    radius * 0.5,
+                    affectsThePlayer = false,
+                    affectsTheLandscape = false,
+                    playSound = false
+                )
+            }
+
+            ScoreSystem.givePlayerScore(value)
+            spawnSmokeHere(15, body.p)
         }
 
         override fun collided(obj: PhysicsObject) {
