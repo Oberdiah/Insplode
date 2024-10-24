@@ -378,8 +378,8 @@ enum class Upgrade(
     BlackHole(
         "Black Hole",
         "Everything must be consumed,\nand so it shall be.\nWhy would you want this?",
-        0,
-        0,
+        3,
+        999999,
         levelSpecificFailureHints = listOf(
             "Even black holes themselves can\nbe blown up, apparently?",
             "This is a bit of a joke level,\ndon't take it too seriously.",
@@ -437,10 +437,10 @@ enum class Upgrade(
 
         if (hintCollection.isEmpty()) return deathHintCollection.random()
 
-        if (Random.nextDouble() < 0.4) {
-            return deathHintCollection.random()
+        return if (Random.nextDouble() < 0.35) {
+            deathHintCollection.random()
         } else {
-            return hintCollection.random()
+            hintCollection.random()
         }
     }
 
