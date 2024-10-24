@@ -22,3 +22,5 @@ It was written over the course of a couple months, and during the end I was aimi
 All that said, it's still a functional game and I'm pleased it's finished.
 
 \- Oberdiah
+
+P.S. If anyone ever actually wants to add to this mess, pull requests are open.
