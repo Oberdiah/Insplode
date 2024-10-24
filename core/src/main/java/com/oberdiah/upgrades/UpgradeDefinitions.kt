@@ -68,7 +68,7 @@ private val genericSuccessPraises: List<String> = listOf(
 )
 
 enum class Upgrade(
-    val title: String,
+    val idealTitle: String,
     val description: String,
     val threeStarsScore: Int,
     val threeBlueStarsScore: Int,
@@ -386,6 +386,15 @@ enum class Upgrade(
             "I'm not sure this actually made the game any easier...",
         )
     );
+
+    val title: String
+        get() {
+            if (this == FinalRun && ScoreSystem.playerHasFinishedTheGame()) {
+                return "The final dive"
+            }
+
+            return idealTitle
+        }
 
     val starsToUnlock: Int
         get() {

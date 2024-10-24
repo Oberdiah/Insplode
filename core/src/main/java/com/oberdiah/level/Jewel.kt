@@ -12,7 +12,7 @@ import com.oberdiah.utils.TileType
 import com.oberdiah.utils.endTheGame
 
 object Jewel {
-    private const val JEWEL_DEPTH = -100.0
+    private const val JEWEL_DEPTH = -85.0
 
     fun renderJewelInLevel(r: Renderer) {
         if (ScoreSystem.isFinalRun()) {
