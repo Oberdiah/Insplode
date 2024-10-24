@@ -244,6 +244,7 @@ object ScoreSystem {
         growingScoreStartedOn = RUN_TIME_ELAPSED
         scoreLeftToSound = 0
         lastTimeScoreSounded = 0.0
+        delayedReceivedScores.clear()
 
         for (i in 0..2) {
             currentStarFillAmount[i] = 0.0
@@ -252,6 +253,10 @@ object ScoreSystem {
 
     fun registerGameStart() {
         playerScore = 0
+        for (i in 0..2) {
+            currentStarFillAmount[i] = 0.0
+        }
+        delayedReceivedScores.clear()
     }
 
     fun registerCasuallyLanded() {
