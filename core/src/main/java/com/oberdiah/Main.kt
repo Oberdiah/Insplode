@@ -14,6 +14,7 @@ import com.oberdiah.level.tickCollapse
 import com.oberdiah.level.tickLevelController
 import com.oberdiah.player.PlayerInputs
 import com.oberdiah.player.player
+import com.oberdiah.player.spawnPlayerAtUpgrades
 import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.renderDiegeticMenuWorldSpace
 import com.oberdiah.utils.*
@@ -44,7 +45,9 @@ fun endGame() {
     Level.updateStorage()
 }
 
-fun startGame() {
+fun startGame(upgradesSpawnPoint: Boolean) {
+    spawnPlayerAtUpgrades = upgradesSpawnPoint
+
     MusicCoordinator.stopPlayingMusic()
     GAME_STATE = GameState.InGame
 

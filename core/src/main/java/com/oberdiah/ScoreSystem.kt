@@ -99,7 +99,7 @@ object ScoreSystem {
 
     // In score per second
     private var scoreGivingSpeed = 0.0
-    var lastUpgrade: Upgrade? = null
+    var lastLevelPlayed: Upgrade? = null
         private set
 
     const val TIME_TO_GIVE_SCORE_PER_STAR = 1.0
@@ -229,7 +229,7 @@ object ScoreSystem {
         playerHighScores[currentlyPlayingUpgrade.value]!!.value =
             max(playerScore, playerHighScores[currentlyPlayingUpgrade.value]!!.value)
         lastScore = playerScore
-        lastUpgrade = currentlyPlayingUpgrade.value
+        lastLevelPlayed = currentlyPlayingUpgrade.value
         lastScoreGivenOn = APP_TIME
 
         val timeToGiveScore =
@@ -322,7 +322,7 @@ object ScoreSystem {
 
                 val scoreGivenOutSoFar = (lastScore ?: 0) - playerScore
 
-                val upgrade = lastUpgrade!!
+                val upgrade = lastLevelPlayed!!
 
                 val starsAwarded = upgrade.getStarsFromScore(scoreGivenOutSoFar - 1)
                 if (starsAwarded.blueStars != 3) {
@@ -358,7 +358,7 @@ object ScoreSystem {
             }
 
 
-            val lastUpgrade = lastUpgrade
+            val lastUpgrade = lastLevelPlayed
             val lastScore = lastScore
 
             if (lastUpgrade != null && lastScore != null) {

@@ -132,13 +132,16 @@ enum class GameState {
     InGame,
 }
 
-var LAST_APP_TIME_GAME_STATE_CHANGED = 0.0
+var LAST_APP_TIME_GAME_STATE_CHANGED = Double.NEGATIVE_INFINITY
     private set
+
+var LAST_GAME_STATE = GameState.TransitioningToDiegeticMenu
 
 var GAME_STATE = GameState.DiegeticMenu
     set(value) {
         if (field != value) {
             LAST_APP_TIME_GAME_STATE_CHANGED = GameTime.APP_TIME
+            LAST_GAME_STATE = field
         }
         field = value
     }

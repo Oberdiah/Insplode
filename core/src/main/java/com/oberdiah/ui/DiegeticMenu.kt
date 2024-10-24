@@ -5,12 +5,17 @@ import com.badlogic.gdx.utils.Align
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
+import com.oberdiah.LAST_APP_TIME_GAME_STATE_CHANGED
+import com.oberdiah.LAST_GAME_STATE
 import com.oberdiah.Point
+import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
 import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.SHADOW_DIRECTION_UNITS
 import com.oberdiah.ScoreSystem
+import com.oberdiah.ScoreSystem.lastLevelPlayed
+import com.oberdiah.ScoreSystem.lastScore
 import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
@@ -29,7 +34,10 @@ import com.oberdiah.get2DShake
 import com.oberdiah.lerp
 import com.oberdiah.level.LASER_HEIGHT_IN_MENU
 import com.oberdiah.player.Player
+import com.oberdiah.saturate
 import com.oberdiah.sin
+import com.oberdiah.startGame
+import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
 import com.oberdiah.upgrades.UpgradeController.LAUNCH_AREA_RELATIVE_RECT
@@ -39,10 +47,12 @@ import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
+import com.oberdiah.utils.renderButton
 import com.oberdiah.utils.renderColoredStar
 import com.oberdiah.utils.renderStar
 import com.oberdiah.utils.setCameraY
 import com.oberdiah.utils.startCameraToDiegeticMenuTransition
+import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
 
 // So that when the game ends and the camera pans back up the chance of us seeing
@@ -59,7 +69,6 @@ fun goToDiegeticMenu() {
     GAME_STATE = GameState.TransitioningToDiegeticMenu
     // On completion of the camera movement, we refresh the game.
     startCameraToDiegeticMenuTransition()
-    cameraY = MENU_ZONE_BOTTOM_Y
 }
 
 private var delayedPreviousFingerY = 0.0
@@ -70,7 +79,7 @@ private var draggingIndex: Int? = null
 private val isDragging
     get() = draggingIndex != null
 
-private var cameraY = MENU_ZONE_BOTTOM_Y
+var diegeticCameraY = MENU_ZONE_BOTTOM_Y
 
 var currentHintText = ""
 fun registerGameEndDiegeticMenu(deathReason: Player.DeathReason) {
@@ -79,7 +88,7 @@ fun registerGameEndDiegeticMenu(deathReason: Player.DeathReason) {
         return
     }
 
-    val lastUpgrade = ScoreSystem.lastUpgrade
+    val lastUpgrade = ScoreSystem.lastLevelPlayed
     val lastScore = ScoreSystem.lastScore
     if (lastUpgrade != null && lastScore != null) {
         val stars = lastUpgrade.getStarsFromScore(lastScore)
@@ -105,12 +114,120 @@ val currentStarFillAmount = mutableListOf(0.0, 0.0, 0.0)
 var starsTextTransparency = 0.0
     private set
 
+private val buttonOffset: Double
+    get() {
+        val offset =
+            if (GAME_STATE == GameState.InGame && LAST_GAME_STATE == GameState.DiegeticMenu) {
+                saturate((GameTime.APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED) * 4.0)
+            } else if (GAME_STATE == GameState.DiegeticMenu && LAST_GAME_STATE == GameState.TransitioningToDiegeticMenu) {
+                saturate((1.0 - (GameTime.APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED)) * 4.0)
+            } else {
+                1.0
+            }
+
+        return offset * SCREEN_WIDTH_IN_UNITS
+    }
+
+private val buttonDistFromMiddle: Double
+    get() = SCREEN_WIDTH_IN_UNITS / 4.4 + buttonOffset
+
+val showANextLevelButton: Boolean
+    get() {
+        val lastScore = lastScore
+        val lastUpgrade = lastLevelPlayed
+
+        if (lastScore == null || lastUpgrade == null) {
+            return false
+        }
+
+        val stars = lastUpgrade.getStarsFromScore(lastScore)
+        return stars.stars >= 2
+    }
+
+val playAgainButtonRect: Rect
+    get() {
+        val x = if (showANextLevelButton) {
+            SCREEN_WIDTH_IN_UNITS / 2.0 - buttonDistFromMiddle
+        } else {
+            SCREEN_WIDTH_IN_UNITS / 2.0 - buttonOffset
+        }
+
+        return Rect.centered(
+            Point(x, MENU_ZONE_BOTTOM_Y + 2.0),
+            Size(SCREEN_WIDTH_IN_UNITS / 2.5, 1.6)
+        )
+    }
+
+val nextLevelButtonRect: Rect
+    get() {
+        val x = if (showANextLevelButton) {
+            SCREEN_WIDTH_IN_UNITS / 2.0 + buttonDistFromMiddle
+        } else {
+            100.0
+        }
+
+        return Rect.centered(
+            Point(x, MENU_ZONE_BOTTOM_Y + 2.0),
+            Size(SCREEN_WIDTH_IN_UNITS / 2.5, 1.6)
+        )
+    }
+
+var isPlayAgainButtonHeldDown = false
+var isNextLevelButtonHeldDown = false
+
+private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
+    renderButton(
+        r,
+        playAgainButtonRect,
+        isPlayAgainButtonHeldDown,
+        if (lastLevelPlayed == null) "Play" else "Play Again",
+        buttonColor = colorScheme.playAgainColor
+    )
+    if (showANextLevelButton) {
+        renderButton(
+            r,
+            nextLevelButtonRect,
+            isNextLevelButtonHeldDown,
+            "Next Level",
+            buttonColor = colorScheme.nextLevelColor
+        )
+    }
+
+    TOUCHES_WENT_DOWN.forEach {
+        if (PauseButton.isEatingInputs()) {
+            return@forEach
+        }
+        isPlayAgainButtonHeldDown = playAgainButtonRect.contains(it.wo)
+        isNextLevelButtonHeldDown = nextLevelButtonRect.contains(it.wo)
+
+        if (isPlayAgainButtonHeldDown || isNextLevelButtonHeldDown) {
+            vibrate(10)
+        }
+    }
+
+    TOUCHES_WENT_UP.forEach {
+        if (isPlayAgainButtonHeldDown && playAgainButtonRect.contains(it.wo)) {
+            vibrate(10)
+            startGame(false)
+        }
+        if (isNextLevelButtonHeldDown && nextLevelButtonRect.contains(it.wo)) {
+            currentlyPlayingUpgrade.value =
+                Upgrade.entries[(currentlyPlayingUpgrade.value.ordinal + 1) % Upgrade.entries.size]
+            vibrate(10)
+        }
+        isPlayAgainButtonHeldDown = false
+        isNextLevelButtonHeldDown = false
+    }
+}
+
 // The diegetic menu is always there and rendered using in-world coordinates.
 fun renderDiegeticMenuWorldSpace(r: Renderer) {
     val H = SCREEN_HEIGHT_IN_UNITS
     val W = SCREEN_WIDTH_IN_UNITS.d
 
     UpgradeController.renderUpgradeMenuWorldSpace(r)
+
+    renderPlayAgainAndNextLevelButtons(r)
 
     r.color = colorScheme.textColor
 
@@ -186,7 +303,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
 
     // Horizontal separator line
 
-    val lastUpgrade = ScoreSystem.lastUpgrade
+    val lastUpgrade = ScoreSystem.lastLevelPlayed
     val lastScore = ScoreSystem.lastScore
 
     val gameStateForStars =
@@ -216,7 +333,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
             fontTiny,
             currentHintText,
             W / 2,
-            MENU_ZONE_BOTTOM_Y + H * 0.2,
+            MENU_ZONE_BOTTOM_Y + H * 0.22,
             Align.center,
         )
 
@@ -267,13 +384,20 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
     }
 }
 
-/**
- * In ui/screen-space
- */
 fun isInLaunchButton(touch: Point): Boolean {
     val thisUpgradeYPos = getUpgradeYPos(currentlyPlayingUpgrade.value)
     return LAUNCH_AREA_RELATIVE_RECT.offsetBy(Point(0.0, thisUpgradeYPos))
         .contains(touch.wo)
+}
+
+/**
+ * In ui/screen-space
+ */
+fun isInAnyButtons(touch: Point): Boolean {
+    val isInPlayAgainButton = playAgainButtonRect.contains(touch.wo)
+    val isInNextLevelButton = nextLevelButtonRect.contains(touch.wo)
+
+    return isInLaunchButton(touch) || isInPlayAgainButton || isInNextLevelButton
 }
 
 private val coinAreaWidth
@@ -341,11 +465,11 @@ var cameraYUnitsDeltaThisTick = 0.0
 
 fun tickDiegeticMenu() {
     if (GAME_STATE == GameState.DiegeticMenu) {
-        var newCameraY = cameraY
+        var newCameraY = diegeticCameraY
 
         TOUCHES_WENT_DOWN.forEach {
             cameraVelocity = 0.0
-            if (!isInLaunchButton(it)) {
+            if (!isInAnyButtons(it)) {
                 draggingIndex = it.index
                 lastFingerY = it.y
                 delayedPreviousFingerY = it.y
@@ -393,10 +517,10 @@ fun tickDiegeticMenu() {
             cameraVelocity = 0.0
         }
 
-        cameraYUnitsDeltaThisTick = newCameraY - cameraY
+        cameraYUnitsDeltaThisTick = newCameraY - diegeticCameraY
 
-        cameraY = newCameraY
-        setCameraY(cameraY)
+        diegeticCameraY = newCameraY
+        setCameraY(diegeticCameraY)
     }
 }
 

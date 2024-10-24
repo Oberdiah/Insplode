@@ -23,7 +23,6 @@ import com.oberdiah.currentlyPlayingUpgrade
 import com.oberdiah.d
 import com.oberdiah.easeInOutSine
 import com.oberdiah.f
-import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
 import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
@@ -39,6 +38,7 @@ import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.ui.cameraYUnitsDeltaThisTick
+import com.oberdiah.ui.isInAnyButtons
 import com.oberdiah.ui.isInLaunchButton
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.StatefulBoolean
@@ -47,6 +47,7 @@ import com.oberdiah.utils.TOUCHES_WENT_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.renderAwardedStars
+import com.oberdiah.utils.renderButton
 import com.oberdiah.utils.renderStar
 import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
@@ -432,35 +433,12 @@ object UpgradeController {
                     shouldCache = false
                 )
 
-                r.color = Color.BLACK.withAlpha(0.5)
-                r.rect(launchAreaRect.offsetBy(SHADOW_DIRECTION_UNITS))
-
-                val areaRect = if (holdingDownPlayButton) {
-                    launchAreaRect.offsetBy(SHADOW_DIRECTION_UNITS)
-                } else {
-                    launchAreaRect
-                }
-
-                r.color = if (holdingDownPlayButton) {
-                    Color.GRAY
-                } else {
-                    colorScheme.launchButtonColor
-                }
-                r.rect(areaRect)
-
-                r.color = Color.BLACK
-                r.hollowRect(areaRect, 0.1)
-
-                val buttonText = if (upgrade == Upgrade.Slam) {
-                    "Launch!"
-                } else {
-                    "Play!"
-                }
-                r.text(
-                    fontMedium,
-                    buttonText,
-                    areaRect.center(),
-                    Align.center
+                renderButton(
+                    r, launchAreaRect, holdingDownPlayButton, if (upgrade == Upgrade.Slam) {
+                        "Launch!"
+                    } else {
+                        "Play!"
+                    }
                 )
             }
         }
@@ -606,7 +584,7 @@ object UpgradeController {
                 if (holdingDownPlayButton) {
                     holdingDownPlayButton = false
                     vibrate(10)
-                    startGame()
+                    startGame(true)
                     return@forEach
                 }
 

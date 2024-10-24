@@ -154,6 +154,11 @@ open class ColorScheme(val name: String) {
     var hotRock: Color = colorFrom(0xbc4648)
     var lava: Color = colorFrom(0xFF802B)
     var launchButtonColor: Color = colorFrom(0xFFED2C)
+
+    //    var playAgainColor: Color = colorFrom(0x98FF93)
+    var playAgainColor: Color = colorFrom(0xFFE893)
+    var nextLevelColor: Color = colorFrom(0xFFE893)
+
     lateinit var player: Color
     lateinit var playerSlamming: Color
     lateinit var pointOrbColor: Color

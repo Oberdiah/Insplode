@@ -4,14 +4,20 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.oberdiah.Point
+import com.oberdiah.Rect
 import com.oberdiah.Renderer
+import com.oberdiah.SHADOW_DIRECTION_UNITS
 import com.oberdiah.ScoreSystem
 import com.oberdiah.ScoreSystem.StarsAwarded
+import com.oberdiah.fontMedium
+import com.oberdiah.fontSmall
 import com.oberdiah.player.Player
 import com.oberdiah.saturate
 import com.oberdiah.statefulVibrationSetting
 import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.ui.registerGameEndDiegeticMenu
+import com.oberdiah.upgrades.Upgrade
+import com.oberdiah.upgrades.UpgradeController.holdingDownPlayButton
 import com.oberdiah.withAlpha
 
 fun renderAwardedStars(
@@ -108,4 +114,38 @@ fun endTheGame(grabbedJewel: Boolean = false, deathReason: Player.DeathReason) {
     goToDiegeticMenu()
     ScoreSystem.registerGameEnd(grabbedJewel)
     registerGameEndDiegeticMenu(deathReason = deathReason)
+}
+
+fun renderButton(
+    r: Renderer,
+    rect: Rect,
+    isHeldDown: Boolean,
+    text: String,
+    buttonColor: Color = colorScheme.launchButtonColor
+) {
+    r.color = Color.BLACK.withAlpha(0.5)
+    r.rect(rect.offsetBy(SHADOW_DIRECTION_UNITS))
+
+    val areaRect = if (isHeldDown) {
+        rect.offsetBy(SHADOW_DIRECTION_UNITS)
+    } else {
+        rect
+    }
+
+    r.color = if (isHeldDown) {
+        Color.GRAY
+    } else {
+        buttonColor
+    }
+    r.rect(areaRect)
+
+    r.color = Color.BLACK
+    r.hollowRect(areaRect, 0.1)
+
+    r.text(
+        fontMedium,
+        text,
+        areaRect.center(),
+        Align.center
+    )
 }

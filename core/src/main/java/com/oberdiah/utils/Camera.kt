@@ -5,6 +5,8 @@ import com.oberdiah.*
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
+import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
+import com.oberdiah.ui.diegeticCameraY
 import kotlin.math.pow
 
 private var cameraY = 0.0
@@ -21,7 +23,12 @@ var CAMERA_FOLLOWING = CameraFollowing.Nothing
     private set
 
 fun startCameraToDiegeticMenuTransition() {
-    CAMERA_FOLLOWING = CameraFollowing.MenuStartPos
+    if (CAMERA_POS_Y > MENU_ZONE_BOTTOM_Y) {
+        diegeticCameraY = CAMERA_POS_Y
+        endGame()
+    } else {
+        CAMERA_FOLLOWING = CameraFollowing.MenuStartPos
+    }
 }
 
 fun resetCamera() {
@@ -78,11 +85,7 @@ fun updateCamera() {
     when (CAMERA_FOLLOWING) {
         CameraFollowing.Player -> {
             val desiredCameraPos = getCameraYForPlayerFollow()
-            if (RUN_TIME_ELAPSED > 0.0) {
-                cameraY += (desiredCameraPos - camera.position.y) * 0.1
-            } else {
-                cameraY += (desiredCameraPos - camera.position.y) * 0.05
-            }
+            cameraY += (desiredCameraPos - camera.position.y) * 0.1
         }
 
         CameraFollowing.MenuStartPos -> {
@@ -94,6 +97,7 @@ fun updateCamera() {
                 clamp(cameraDistToMove, -1.5, -0.05)
             }
             if (abs(camera.position.y - desiredCameraPos) < 0.05) {
+                diegeticCameraY = CAMERA_POS_Y
                 endGame()
             }
         }
