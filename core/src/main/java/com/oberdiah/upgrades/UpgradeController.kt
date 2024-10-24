@@ -729,6 +729,12 @@ object UpgradeController {
     }
 
     private fun getUpgradeStatus(upgrade: Upgrade): UpgradeStatus {
+        if (!ScoreSystem.playerHasFinishedTheGame()) {
+            if (upgrade.ordinal > Upgrade.FinalRun.ordinal) {
+                return UpgradeStatus.HIDDEN
+            }
+        }
+
         return if (playerHasTheAbilityToPlayWith(upgrade)) {
             UpgradeStatus.PURCHASED
         } else if (upgrade.ordinal <= highestIndexUnlockedSoFar() + 1) {
