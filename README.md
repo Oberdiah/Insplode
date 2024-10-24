@@ -1,0 +1,24 @@
+# Bomb Dropper
+Repository for the bomb dropper codebase.
+
+**This codebase is a mess.**
+
+It was written over the course of a couple months, and during the end I was aiming for feature-completion, rather than tidiness. I may go back and fix it up at some point, but I probably won't.
+
+- There are globals everywhere.
+- There is no style guide.
+- The folder structure is loose-to-non-existant, what goes where is best-effort.
+- Global constants can be in camelCase or SCREAMING_SNAKE_CASE depending on the mood or phase of the moon.
+- Sometimes assigning values to globals has consequences, sometimes it doesn't.
+- Sometimes initializing objects requires an extra init() call, sometimes it doesn't.
+- Comments are a luxury, and when they do exist they can't decide on their style - `//` or `/**`
+- UI animation is done in about three different ways
+- Rendering phases are ad-hoc and nonsensical.
+- Sometimes animation is framerate-dependant, it's a bit of a pot-luck.
+- Render thread? Tick thread? Here we only do the main thread.
+- Sometimes very tick-looking stuff gets into the render functions.
+- All buttons and touch interactions are written from scratch in each instance, hoping they're not stepping on each other. UI Libraries? What're those?
+
+All that said, it's still a functional game and I'm pleased it's finished.
+
+\- Oberdiah
