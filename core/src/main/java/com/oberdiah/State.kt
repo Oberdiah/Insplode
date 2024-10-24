@@ -23,3 +23,4 @@ val currentlyPlayingUpgrade =
         "currentlyPlayingUpgrade", Upgrade.Movement,
         Upgrade.entries.toTypedArray()
     )
+val rainbowPlayerEnabled = StatefulBoolean("rainbowPlayer", false)

@@ -11,7 +11,6 @@ import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
 import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.Point
-import com.oberdiah.RAINBOW_PLAYER
 import com.oberdiah.Renderer
 import com.oberdiah.SHOW_FRAMERATE_DATA
 import com.oberdiah.ScoreSystem
@@ -33,6 +32,7 @@ import com.oberdiah.format
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playChordNote
+import com.oberdiah.rainbowPlayerEnabled
 import com.oberdiah.statefulPlayMusicSetting
 import com.oberdiah.statefulPlaySoundSetting
 import com.oberdiah.statefulRenderParticles
@@ -162,14 +162,10 @@ private fun settingsUI(r: Renderer) {
         statefulScreenShakeSetting.value = statefulScreenShakeSetting.value.next()
     })
 
-    val rainbowUnlocked = ScoreSystem.playerHasFinishedTheGame()
 
-    toggleButton(
-        r,
-        if (rainbowUnlocked) "Rainbow Player" else "(Locked) ???",
-        ::RAINBOW_PLAYER,
-        enabled = rainbowUnlocked
-    )
+    if (ScoreSystem.playerHasFinishedTheGame()) {
+        toggleButton(r, "Rainbow Player", rainbowPlayerEnabled::value)
+    }
 
     button(r, "Controls") {
         switchScreen(Screen.Controls)

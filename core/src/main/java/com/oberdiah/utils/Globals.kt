@@ -45,8 +45,6 @@ var WIDTH = 0.0
 /// height of the screen in pixels
 var HEIGHT = 0.0
 
-var RAINBOW_PLAYER = false
-
 /**
  * The number of tiles tall our big tiles array is
  * somewhat larger than what's visible on screen

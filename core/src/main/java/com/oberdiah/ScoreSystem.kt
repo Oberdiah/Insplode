@@ -221,6 +221,8 @@ object ScoreSystem {
         if (isFinalRun()) {
             if (!grabbedJewel) {
                 playerScore = 0
+            } else {
+                rainbowPlayerEnabled.value = true
             }
         }
 

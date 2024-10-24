@@ -62,7 +62,7 @@ open class Point {
         set(value) {
             val le = len.d
             if (le < 0.01) {
-                x = le
+                x = value.d
                 y = 0.0
                 return
             }
@@ -326,6 +326,10 @@ class Rect(var p: Point, var s: Size) {
     }
 
     fun randomPointInside(): Point {
+        if (s.w == 0.0 && s.h == 0.0) {
+            return p
+        }
+
         return Point(Random.nextDouble(p.x, p.x + s.w), Random.nextDouble(p.y, p.y + s.h))
     }
 

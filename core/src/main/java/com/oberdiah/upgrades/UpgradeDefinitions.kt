@@ -404,6 +404,10 @@ enum class Upgrade(
         get() = if (ScoreSystem.getPlayerScore(this) == 0) "" else bestText
 
     fun getHintText(stars: StarsAwarded, deathReason: Player.DeathReason): String {
+        if (stars.stars > 0 && this == FinalRun) {
+            return "Thank you for playing!\nRainbow player is now unlocked"
+        }
+
         var hintCollection = when (stars) {
             StarsAwarded.Zero -> levelSpecificFailureHints
             StarsAwarded.One -> levelSpecificFailureHints

@@ -3,15 +3,16 @@ package com.oberdiah.player
 import com.badlogic.gdx.graphics.Color
 import com.oberdiah.GLOBAL_SCALE
 import com.oberdiah.Point
-import com.oberdiah.RAINBOW_PLAYER
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.ScoreSystem
 import com.oberdiah.Velocity
+import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.level.APP_TIME_GAME_STARTED
 import com.oberdiah.level.RUN_TIME_ELAPSED
+import com.oberdiah.rainbowPlayerEnabled
 import com.oberdiah.saturate
 import com.oberdiah.spawnFragment
 import com.oberdiah.spawnSmoke
@@ -46,7 +47,7 @@ object PlayerRenderer {
 
         val playerSize = PLAYER_SIZE * saturate((GameTime.APP_TIME - APP_TIME_GAME_STARTED) * 4.0)
 
-        if (RAINBOW_PLAYER && colorful) {
+        if (rainbowPlayerEnabled.value && colorful && player.body.velocity.len.d > 0.1) {
             val hsv = FloatArray(3)
             r.color.toHsv(hsv)
             hsv[0] = (hsv[0] + colorRotation * 100) % 360
