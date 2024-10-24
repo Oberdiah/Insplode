@@ -155,9 +155,9 @@ open class ColorScheme(val name: String) {
     var lava: Color = colorFrom(0xFF802B)
     var launchButtonColor: Color = colorFrom(0xFFED2C)
 
-    //    var playAgainColor: Color = colorFrom(0x98FF93)
     var playAgainColor: Color = colorFrom(0xFFE893)
     var nextLevelColor: Color = colorFrom(0xFFE893)
+    var warningTextColor: Color = colorFrom(0xF28B7D)
 
     lateinit var player: Color
     lateinit var playerSlamming: Color

@@ -169,7 +169,7 @@ object PointOrbs {
             val distance = playerPos.distTo(body.p)
             isAttractedToPlayer = distance < magnetRadius && player.state.isAlive
 
-            if (timeAlive > PICKED_UP_GRACE_PERIOD && distance < radius + PLAYER_SIZE.w / 2) {
+            if (distance < radius + PLAYER_SIZE.w / 2) {
                 pickedUp()
             }
 
@@ -187,14 +187,19 @@ object PointOrbs {
         override fun collided(yourFixture: Fixture, otherFixture: Fixture) {
             super.collided(yourFixture, otherFixture)
             val data = otherFixture.body.userData
-            if (timeAlive > PICKED_UP_GRACE_PERIOD || isAttractedToPlayer) {
-                if (data == player && player.state.isAlive && otherFixture.userData == PLAYER_DETECTOR_IDENTIFIER) {
-                    pickedUp()
-                }
+            if (data == player && otherFixture.userData == PLAYER_DETECTOR_IDENTIFIER) {
+                pickedUp()
             }
         }
 
         private fun pickedUp() {
+            if (timeAlive < PICKED_UP_GRACE_PERIOD && !isAttractedToPlayer) {
+                return
+            }
+            if (player.state.isDead) {
+                return
+            }
+
             destroy()
             val strength = value.d.pow(0.5)
             val radius = strength * TILE_SIZE_IN_UNITS

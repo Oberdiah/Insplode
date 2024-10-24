@@ -447,14 +447,6 @@ object ScoreSystem {
             shouldCache = false
         )
 
-//        r.text(
-//            fontSmallish,
-//            "${player.body.p.y.format(1)}m",
-//            secondsTimerPos - Point(0.0, HEIGHT * 0.1),
-//            Align.center,
-//            shouldCache = false
-//        )
-
         if (RUN_TIME_ELAPSED > 0 && currentlyPlayingUpgrade.value != Upgrade.FinalRun) {
             val starSize = fontSmallish.capHeight * 1.25
 

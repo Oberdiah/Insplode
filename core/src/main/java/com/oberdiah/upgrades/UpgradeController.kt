@@ -38,7 +38,6 @@ import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
 import com.oberdiah.ui.cameraYUnitsDeltaThisTick
-import com.oberdiah.ui.isInAnyButtons
 import com.oberdiah.ui.isInLaunchButton
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.StatefulBoolean
@@ -512,6 +511,10 @@ object UpgradeController {
     private var lastTapWarningTime = -Double.MAX_VALUE
 
     private fun cancelUpgradePurchase() {
+        if (!canCancelPurchase) {
+            return
+        }
+
         if (currentlyPurchasingUpgrade != null) {
             if (purchasingFraction() < 0.1 && lastTapWarningTime < GameTime.APP_TIME - TOTAL_TAP_WARNING_TIME) {
                 lastTapWarningTime = GameTime.APP_TIME
@@ -526,6 +529,38 @@ object UpgradeController {
     var lastPlayingUpgrade: Upgrade? = null
     var timeSwitchedPlayingUpgrade = Double.NEGATIVE_INFINITY
     var holdingDownPlayButton = false
+
+    var canCancelPurchase = true
+
+    fun boughtEveryUpgrade(): Boolean {
+        return getNextUpgradeToPurchase() == null
+    }
+
+    fun getNextUpgradeToPurchase(): Upgrade? {
+        return Upgrade.entries.firstOrNull {
+            getUpgradeStatus(it) == UpgradeStatus.PURCHASABLE || getUpgradeStatus(it) == UpgradeStatus.TOO_EXPENSIVE
+        }
+    }
+
+    fun goToNextUpgrade() {
+        val nextUpgrade = getNextUpgradeToPurchase()
+
+        if (nextUpgrade != null && getUpgradeStatus(nextUpgrade) == UpgradeStatus.PURCHASABLE) {
+            currentlyPurchasingUpgrade = nextUpgrade
+            canCancelPurchase = false
+            timeOfLastUpgradeTap[UpgradeStatus.PURCHASABLE] = GameTime.APP_TIME
+        }
+    }
+
+    fun selectUpgrade(toSwitchTo: Upgrade) {
+        if (currentlyPlayingUpgrade.value != toSwitchTo) {
+            vibrate(10)
+        }
+        lastPlayingUpgrade = currentlyPlayingUpgrade.value
+        currentlyPlayingUpgrade.value = toSwitchTo
+        isConsideringSwitchingPlayingUpgrade = false
+        timeSwitchedPlayingUpgrade = GameTime.APP_TIME
+    }
 
     fun tick() {
         if (cameraVelocity.abs < 0.1 && cameraYUnitsDeltaThisTick.abs < 0.05) {
@@ -590,14 +625,7 @@ object UpgradeController {
 
                 cancelUpgradePurchase()
                 if (isConsideringSwitchingPlayingUpgrade) {
-                    val toSwitchTo = lastUpgradeTapped[UpgradeStatus.PURCHASED]!!
-                    if (currentlyPlayingUpgrade.value != toSwitchTo) {
-                        vibrate(10)
-                    }
-                    lastPlayingUpgrade = currentlyPlayingUpgrade.value
-                    currentlyPlayingUpgrade.value = toSwitchTo
-                    isConsideringSwitchingPlayingUpgrade = false
-                    timeSwitchedPlayingUpgrade = GameTime.APP_TIME
+                    selectUpgrade(lastUpgradeTapped[UpgradeStatus.PURCHASED]!!)
                 }
             }
         } else {
@@ -625,6 +653,7 @@ object UpgradeController {
 
         currentlyPlayingUpgrade.value = upgrade
         playerUpgradeStates[upgrade]?.value = true
+        canCancelPurchase = true
         vibrate(10)
 
         // Make sure the player moves up if they need to
@@ -728,7 +757,7 @@ object UpgradeController {
         return Upgrade.entries.lastOrNull { playerHasTheAbilityToPlayWith(it) }
     }
 
-    private fun getUpgradeStatus(upgrade: Upgrade): UpgradeStatus {
+    fun getUpgradeStatus(upgrade: Upgrade): UpgradeStatus {
         if (!ScoreSystem.playerHasFinishedTheGame()) {
             if (upgrade.ordinal > Upgrade.FinalRun.ordinal) {
                 return UpgradeStatus.HIDDEN
@@ -748,7 +777,7 @@ object UpgradeController {
         }
     }
 
-    private enum class UpgradeStatus {
+    enum class UpgradeStatus {
         HIDDEN,
         TOO_EXPENSIVE,
         PURCHASABLE,

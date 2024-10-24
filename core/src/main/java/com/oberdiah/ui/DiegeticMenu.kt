@@ -5,8 +5,6 @@ import com.badlogic.gdx.utils.Align
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
-import com.oberdiah.LAST_APP_TIME_GAME_STATE_CHANGED
-import com.oberdiah.LAST_GAME_STATE
 import com.oberdiah.Point
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
@@ -28,19 +26,21 @@ import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
+import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
 import com.oberdiah.lerp
+import com.oberdiah.level.APP_TIME_GAME_STARTED
 import com.oberdiah.level.LASER_HEIGHT_IN_MENU
 import com.oberdiah.player.Player
 import com.oberdiah.saturate
 import com.oberdiah.sin
 import com.oberdiah.startGame
-import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
 import com.oberdiah.upgrades.UpgradeController.LAUNCH_AREA_RELATIVE_RECT
+import com.oberdiah.upgrades.UpgradeController.UPGRADE_ENTRY_HEIGHT
 import com.oberdiah.upgrades.UpgradeController.noFundsWarningFract
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TOUCHES_DOWN
@@ -80,14 +80,15 @@ private val isDragging
     get() = draggingIndex != null
 
 var diegeticCameraY = MENU_ZONE_BOTTOM_Y
+private var appTimeEnteredDiegeticMenu = Double.NEGATIVE_INFINITY
 
 var currentHintText = ""
 fun registerGameEndDiegeticMenu(deathReason: Player.DeathReason) {
+    appTimeEnteredDiegeticMenu = GameTime.APP_TIME
     if (deathReason == Player.DeathReason.QuitByChoice) {
         currentHintText = ""
         return
     }
-
     val lastUpgrade = ScoreSystem.lastLevelPlayed
     val lastScore = ScoreSystem.lastScore
     if (lastUpgrade != null && lastScore != null) {
@@ -117,12 +118,10 @@ var starsTextTransparency = 0.0
 private val buttonOffset: Double
     get() {
         val offset =
-            if (GAME_STATE == GameState.InGame && LAST_GAME_STATE == GameState.DiegeticMenu) {
-                saturate((GameTime.APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED) * 4.0)
-            } else if (GAME_STATE == GameState.DiegeticMenu && LAST_GAME_STATE == GameState.TransitioningToDiegeticMenu) {
-                saturate((1.0 - (GameTime.APP_TIME - LAST_APP_TIME_GAME_STATE_CHANGED)) * 4.0)
+            if (GAME_STATE == GameState.InGame || GAME_STATE == GameState.PausedPopup) {
+                saturate((GameTime.APP_TIME - APP_TIME_GAME_STARTED) * 4.0)
             } else {
-                1.0
+                saturate((1.0 - (GameTime.APP_TIME - appTimeEnteredDiegeticMenu)) * 4.0)
             }
 
         return offset * SCREEN_WIDTH_IN_UNITS
@@ -137,6 +136,10 @@ val showANextLevelButton: Boolean
         val lastUpgrade = lastLevelPlayed
 
         if (lastScore == null || lastUpgrade == null) {
+            return false
+        }
+
+        if (UpgradeController.boughtEveryUpgrade()) {
             return false
         }
 
@@ -175,6 +178,16 @@ val nextLevelButtonRect: Rect
 var isPlayAgainButtonHeldDown = false
 var isNextLevelButtonHeldDown = false
 
+
+private var desiredCameraY: Double? = null
+private var desiredCameraOnReached: (() -> Unit)? = null
+private fun sendCameraTo(menuY: Double, onReached: () -> Unit) {
+    desiredCameraY = menuY
+    desiredCameraOnReached = onReached
+}
+
+private var wobbleRemaining = 0.0
+
 private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
     renderButton(
         r,
@@ -183,14 +196,42 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
         if (lastLevelPlayed == null) "Play" else "Play Again",
         buttonColor = colorScheme.playAgainColor
     )
+
+    wobbleRemaining = maxOf(0.0, wobbleRemaining - GameTime.GRAPHICS_DELTA)
+
+    val nextUpgradeToPlay = UpgradeController.getNextUpgradeToPurchase()
+    val canDoNextLevel =
+        nextUpgradeToPlay != null && UpgradeController.getUpgradeStatus(nextUpgradeToPlay) ==
+                UpgradeController.UpgradeStatus.PURCHASABLE
+
     if (showANextLevelButton) {
         renderButton(
             r,
             nextLevelButtonRect,
             isNextLevelButtonHeldDown,
-            "Next Level",
-            buttonColor = colorScheme.nextLevelColor
+            if (canDoNextLevel) "Next Level" else "",
+            buttonColor = if (canDoNextLevel) colorScheme.nextLevelColor else colorScheme.warningTextColor
         )
+
+        if (nextUpgradeToPlay != null && !canDoNextLevel) {
+            r.color = colorScheme.textColor
+
+            val wobble = get2DShake(wobbleRemaining, 0)
+
+            val starSize = fontMedium.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS
+            r.text(
+                fontMedium,
+                "${ScoreSystem.getPlayerTotalNumStars()}/${nextUpgradeToPlay.starsToUnlock}",
+                nextLevelButtonRect.center() + Point(0.25, 0.0) + wobble,
+                Align.right
+            )
+
+            renderStar(
+                r,
+                nextLevelButtonRect.center() + Point(1.0, 0.0) + wobble,
+                starSize
+            )
+        }
     }
 
     TOUCHES_WENT_DOWN.forEach {
@@ -198,7 +239,14 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
             return@forEach
         }
         isPlayAgainButtonHeldDown = playAgainButtonRect.contains(it.wo)
-        isNextLevelButtonHeldDown = nextLevelButtonRect.contains(it.wo)
+        if (canDoNextLevel) {
+            isNextLevelButtonHeldDown = nextLevelButtonRect.contains(it.wo)
+        } else {
+            if (nextLevelButtonRect.contains(it.wo)) {
+                wobbleRemaining = 0.5
+                vibrate(10)
+            }
+        }
 
         if (isPlayAgainButtonHeldDown || isNextLevelButtonHeldDown) {
             vibrate(10)
@@ -211,8 +259,10 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
             startGame(false)
         }
         if (isNextLevelButtonHeldDown && nextLevelButtonRect.contains(it.wo)) {
-            currentlyPlayingUpgrade.value =
-                Upgrade.entries[(currentlyPlayingUpgrade.value.ordinal + 1) % Upgrade.entries.size]
+            val nextUpgrade = UpgradeController.getNextUpgradeToPurchase()
+            sendCameraTo(getUpgradeYPos(nextUpgrade) - SCREEN_HEIGHT_IN_UNITS / 2) {
+                UpgradeController.goToNextUpgrade()
+            }
             vibrate(10)
         }
         isPlayAgainButtonHeldDown = false
@@ -517,8 +567,18 @@ fun tickDiegeticMenu() {
             cameraVelocity = 0.0
         }
 
+        val desiredY = desiredCameraY
+        if (desiredY != null) {
+            // Completely overwrite newCameraY and lerp our own thing
+            newCameraY = lerp(diegeticCameraY, desiredY, 0.1)
+            // if we're close enough, call the onReached function
+            if ((newCameraY - desiredY).abs < 0.01) {
+                desiredCameraOnReached?.invoke()
+                desiredCameraY = null
+                desiredCameraOnReached = null
+            }
+        }
         cameraYUnitsDeltaThisTick = newCameraY - diegeticCameraY
-
         diegeticCameraY = newCameraY
         setCameraY(diegeticCameraY)
     }
