@@ -95,6 +95,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         ceiling = createWall(Rect(Point(), Size(SCREEN_WIDTH_IN_UNITS, 1)))
         floor = createWall(Rect(Point(), Size(SCREEN_WIDTH_IN_UNITS, 1)))
 
+        initCamera()
         endGame()
     }
 

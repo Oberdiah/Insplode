@@ -31,13 +31,16 @@ fun startCameraToDiegeticMenuTransition() {
     }
 }
 
-fun resetCamera() {
-    CAMERA_FOLLOWING = CameraFollowing.Nothing
+fun initCamera() {
     screenCamera.setToOrtho(false, WIDTH.f, HEIGHT.f)
     camera.setToOrtho(false, UNITS_WIDE.f, SCREEN_HEIGHT_IN_UNITS.f)
     camera.position.y = getCameraYForMenu()
     cameraY = camera.position.y.d
     camera.update()
+}
+
+fun resetCamera() {
+    CAMERA_FOLLOWING = CameraFollowing.Nothing
     LOWEST_CAMERA_Y_THIS_RUN = 0.0
 }
 
