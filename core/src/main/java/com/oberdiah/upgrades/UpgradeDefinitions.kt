@@ -77,7 +77,7 @@ enum class Upgrade(
     val successPraises: List<String> = genericSuccessPraises,
     val twoBlueStarPraises: List<String> = genericTwoBlueStarPraises,
     val threeBlueStarPraises: List<String> = genericThreeBlueStarPraises + genericTwoBlueStarPraises,
-    val beyondBlueStarPraises: List<String> = genericBeyondBlueStarPraises,
+    val beyondBlueStarPraises: List<String> = genericBeyondBlueStarPraises + genericThreeBlueStarPraises,
     val twoStarsScore: Int = ceil(threeStarsScore * 0.65),
     val oneStarScore: Int = ceil(threeStarsScore * 0.25),
     val oneBlueStarScore: Int = ceil(threeStarsScore + (threeBlueStarsScore - threeStarsScore) * 0.33),
@@ -353,7 +353,7 @@ enum class Upgrade(
     FinalRun(
         "???",
         "Something's glowing way,\nway down there in the\ndepths.",
-        1000,
+        1500,
         1925,
         oneStarScore = 1,
         twoStarsScore = 1000,
@@ -375,16 +375,6 @@ enum class Upgrade(
             "This is squarely in post-game content now.\nIt's bound to be a little challenging",
         )
     ),
-    DeadlyTouch(
-        "Deadly Touch",
-        "Simply touching a bomb\nwill cause it to self-destruct.\nPost-game fun!",
-        0,
-        0,
-        levelSpecificFailureHints = listOf(
-            "I'm not sure this actually made the game any easier...",
-            "This level is kinda of a double-edged sword.",
-        )
-    ),
     BlackHole(
         "Black Hole",
         "Everything must be consumed,\nand so it shall be.\nWhy would you want this?",
@@ -392,7 +382,8 @@ enum class Upgrade(
         0,
         levelSpecificFailureHints = listOf(
             "Even black holes themselves can\nbe blown up, apparently?",
-            "This is a bit of a joke level,\ndon't take it too seriously."
+            "This is a bit of a joke level,\ndon't take it too seriously.",
+            "I'm not sure this actually made the game any easier...",
         )
     );
 
@@ -419,9 +410,9 @@ enum class Upgrade(
             StarsAwarded.Two -> successPraises
             StarsAwarded.Three -> successPraises
             StarsAwarded.OneBlue -> successPraises
-            StarsAwarded.TwoBlue -> twoBlueStarPraises
-            StarsAwarded.ThreeBlue -> threeBlueStarPraises
-            StarsAwarded.Beyond -> beyondBlueStarPraises
+            StarsAwarded.TwoBlue -> return twoBlueStarPraises.random()
+            StarsAwarded.ThreeBlue -> return threeBlueStarPraises.random()
+            StarsAwarded.Beyond -> return beyondBlueStarPraises.random()
         }
 
         var deathHintCollection = when (deathReason) {
