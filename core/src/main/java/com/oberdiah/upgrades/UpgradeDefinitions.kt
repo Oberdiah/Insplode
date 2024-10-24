@@ -128,7 +128,7 @@ enum class Upgrade(
         "Jump",
         "Swipe up to jump.",
         9,
-        32,
+        30,
         levelSpecificFailureHints = listOf(
             "Push bombs over the orb patches on the\nground to mine the orbs.",
             "It can be good to wait until the bombs\nhave gone in and mined out a hole first.",
@@ -141,7 +141,7 @@ enum class Upgrade(
         "Small Bomb",
         "Helping out with the mining\neffort.",
         12,
-        20,
+        29,
         levelSpecificFailureHints = listOf(
             "Small bombs have a short fuse,\nso be quick to get out of the way.",
             "Push bigger bombs over the orb patches on the\nground to mine the orbs.",
@@ -153,7 +153,7 @@ enum class Upgrade(
         "Line Bomb",
         "Explodes in a straight line.\nWon't explode if pointing\nup or spinning fast.",
         15,
-        43,
+        37,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
@@ -166,7 +166,7 @@ enum class Upgrade(
         "High Mobility",
         "Move quicker, jump higher.",
         20,
-        35,
+        34,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
@@ -179,7 +179,7 @@ enum class Upgrade(
         "Spring Bomb",
         "A bomb that jumps\naround before exploding.",
         25,
-        48,
+        40,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
@@ -194,7 +194,7 @@ enum class Upgrade(
         "Slam",
         "Swipe down to slam.\nSlamming bombs makes you\nbounce and repels the void.",
         30,
-        65,
+        53,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Line bombs exploding underground\nis a fantastic way to get down quicker.",
@@ -207,7 +207,7 @@ enum class Upgrade(
         "Large Bombs",
         "Bigger can only mean better.",
         35,
-        77,
+        72,
         levelSpecificFailureHints = listOf(
             "Slamming repels the void,\nso it's critical for longer runs",
             "Slamming a gray line bomb makes it\nexplode perfectly horizontally.",
@@ -218,7 +218,7 @@ enum class Upgrade(
         "Gold Nuggets",
         "Occasional golden tiles\nfull of treasure.",
         50,
-        210,
+        110,
         levelSpecificFailureHints = listOf(
             "Slamming repels the void,\nso it's critical for longer runs",
             "Golden nuggets in the ground are worth\n50 points each.",
@@ -229,7 +229,7 @@ enum class Upgrade(
         "Longer Line",
         "Line bombs now stretch the\nentire way across the screen.",
         75,
-        287,
+        214,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs to angle them down\nfor maximum ground collapse.",
@@ -251,7 +251,7 @@ enum class Upgrade(
         "Magnet",
         "Attract orbs to you.",
         150,
-        334,
+        474,
         levelSpecificFailureHints = listOf(
             "Slamming bombs is super important at this point.\nDon't forget to use it.",
         )
@@ -264,7 +264,7 @@ enum class Upgrade(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
         200,
-        679,
+        828,
         levelSpecificFailureHints = listOf(
             "Larger bombs give far larger payouts on slam.",
             "Slamming bombs is super important at this point.\nDon't forget to use it.",
@@ -274,7 +274,7 @@ enum class Upgrade(
         "Multiplier",
         "Gain multiplier for each\nbomb slam. Affects orb\nspawning and void pushback.",
         400,
-        930,
+        993,
         levelSpecificFailureHints = listOf(
             "Multiplier affects the number of orbs you\nget from orb patches as well.",
             "Having a high multiplier is key\ngoing forward.",
