@@ -284,7 +284,7 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
 
     r.text(
         fontLarge,
-        "BombVille",
+        "Insplode",
         W / 2, MENU_ZONE_BOTTOM_Y + H * 0.8,
         Align.center
     )
