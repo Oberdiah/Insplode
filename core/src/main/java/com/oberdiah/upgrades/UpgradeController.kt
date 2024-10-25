@@ -71,6 +71,7 @@ object UpgradeController {
             state.value = false
         }
         playerUpgradeStates[Upgrade.Movement]?.value = true
+        currentlyPlayingUpgrade.value = Upgrade.Movement
     }
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
