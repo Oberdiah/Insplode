@@ -153,7 +153,7 @@ enum class Upgrade(
         "Line Bomb",
         "Explodes in a straight line.\nWon't explode if pointing\nup or spinning fast.",
         15,
-        37,
+        52,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
@@ -179,7 +179,7 @@ enum class Upgrade(
         "Spring Bomb",
         "A bomb that jumps\naround before exploding.",
         25,
-        40,
+        59,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
@@ -218,7 +218,7 @@ enum class Upgrade(
         "Gold Nuggets",
         "Occasional golden tiles\nfull of treasure.",
         50,
-        110,
+        182,
         levelSpecificFailureHints = listOf(
             "Slamming repels the void,\nso it's critical for longer runs",
             "Golden nuggets in the ground are worth\n50 points each.",
@@ -378,8 +378,8 @@ enum class Upgrade(
     BlackHole(
         "Black Hole",
         "Everything must be consumed,\nand so it shall be.\nWhy would you want this?",
-        3,
-        999999,
+        250,
+        858,
         levelSpecificFailureHints = listOf(
             "Even black holes themselves can\nbe blown up, apparently?",
             "This is a bit of a joke level,\ndon't take it too seriously.",
