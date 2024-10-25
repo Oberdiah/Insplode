@@ -13,7 +13,7 @@ private val genericTwoBlueStarPraises = listOf(
     "At this height, the air gets thin\nand the stars get bright.",
     "The universe holds its breath\nin silent awe.",
     "The child gazed into the sky in wonder.\n'Look at all those blue stars!', they said.",
-    "Breaking scores, one star at a time.",
+    "Breaking records, one star at a time.",
     "Time pauses to witness\nyour achievement.",
     "The void itself stares back in amazement.",
 )
