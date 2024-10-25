@@ -90,12 +90,14 @@ object PlayerRenderer {
 
         r.circle(topOfPlayersHeadPos, radius)
 
-        r.color = Color.WHITE.withAlpha(0.5)
-        if (ScoreSystem.timeWarp() > 1.0) {
-            r.color = Color.CORAL.withAlpha(0.5)
-        }
+        if (ScoreSystem.bounceDecayAccumulator > 0) {
+            r.color = Color.WHITE.withAlpha(0.5)
+            if (ScoreSystem.timeWarp() > 1.0) {
+                r.color = Color.CORAL.withAlpha(0.5)
+            }
 
-        r.arcFrom0(topOfPlayersHeadPos, radius * 0.8, ScoreSystem.bounceDecayAccumulator)
+            r.arcFrom0(topOfPlayersHeadPos, radius * 0.8, ScoreSystem.bounceDecayAccumulator)
+        }
 
         ScoreSystem.renderFloatingPlayerText(r)
     }

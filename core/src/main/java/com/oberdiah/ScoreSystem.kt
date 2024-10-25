@@ -158,6 +158,10 @@ object ScoreSystem {
 
     /** Per game-second. */
     fun bounceDecayRate(): Double {
+        if (!UpgradeController.playerHas(Upgrade.InfiniteMultiplier)) {
+            return 0.0
+        }
+
         return clamp((numConsecutiveBounces - 10) * 0.1, 0.0, 0.5)
     }
 
