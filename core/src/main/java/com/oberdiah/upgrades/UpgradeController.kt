@@ -562,6 +562,8 @@ object UpgradeController {
         timeSwitchedPlayingUpgrade = GameTime.APP_TIME
     }
 
+    var boughtUpgradeThisTap = false
+
     fun tick() {
         if (cameraVelocity.abs < 0.1 && cameraYUnitsDeltaThisTick.abs < 0.05) {
             val purchasingFract = purchasingFraction()
@@ -602,13 +604,16 @@ object UpgradeController {
                     return@forEach
                 }
 
-                holdingDownPlayButton = isInLaunchButton(touch)
+                if (!boughtUpgradeThisTap) {
+                    holdingDownPlayButton = isInLaunchButton(touch)
+                }
             }
 
             if (purchasingFract >= 1.0) {
                 val upgradePurchased = currentlyPurchasingUpgrade!!
                 completeUpgradePurchase(upgradePurchased)
                 cancelUpgradePurchase()
+                boughtUpgradeThisTap = true
             }
 
             TOUCHES_WENT_UP.forEach { touch ->
@@ -616,12 +621,14 @@ object UpgradeController {
                     return@forEach
                 }
 
-                if (holdingDownPlayButton) {
+                if (holdingDownPlayButton && !boughtUpgradeThisTap) {
                     holdingDownPlayButton = false
                     vibrate(10)
                     startGame(true)
                     return@forEach
                 }
+
+                boughtUpgradeThisTap = false
 
                 cancelUpgradePurchase()
                 if (isConsideringSwitchingPlayingUpgrade) {
@@ -630,6 +637,7 @@ object UpgradeController {
             }
         } else {
             cancelUpgradePurchase()
+            boughtUpgradeThisTap = false
             isConsideringSwitchingPlayingUpgrade = false
         }
     }
