@@ -14,6 +14,7 @@ import com.oberdiah.fontSmall
 import com.oberdiah.player.Player
 import com.oberdiah.saturate
 import com.oberdiah.statefulVibrationSetting
+import com.oberdiah.ui.Banner
 import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.ui.registerGameEndDiegeticMenu
 import com.oberdiah.upgrades.Upgrade
@@ -112,6 +113,7 @@ fun vibrate(milliseconds: Int) {
 
 fun endTheGame(grabbedJewel: Boolean = false, deathReason: Player.DeathReason) {
     goToDiegeticMenu()
+    Banner.dismissBanner()
     ScoreSystem.registerGameEnd(grabbedJewel)
     registerGameEndDiegeticMenu(deathReason = deathReason)
 }

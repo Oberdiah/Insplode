@@ -111,7 +111,7 @@ object PlayerInfoBoard {
         if (lastTickPos != null) {
             distanceMovedLeftRightThisRun += (player.body.p.x - lastTickPos.x).abs
         }
-        lastTickPosition = player.body.p
+        lastTickPosition = player.body.p.cpy
 
         tileBelowMe = whatTileIsBelowMe()
 

@@ -40,6 +40,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
             println("Player should be in the INTENTIONALLY_MOVING_UP state to start a slam, was in ${s.state}")
         }
         s.setState(PlayerMode.SLAMMING)
+        PlayerInfoBoard.numTimesSlammedThisRun++
     }
 
     fun justSlammedIntoABomb(bomb: Bomb) {
@@ -122,6 +123,8 @@ class PlayerStateImpl : PlayerStateAccessors() {
         player.body.applyImpulse(Point(0f, impulse) * GLOBAL_SCALE)
 
         PlayerRenderer.spawnParticlesAtMyFeet(number = 2)
+
+        PlayerInfoBoard.numTimesJumpedThisRun++
     }
 
     /**

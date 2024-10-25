@@ -33,6 +33,7 @@ import com.oberdiah.lerp
 import com.oberdiah.max
 import com.oberdiah.min
 import com.oberdiah.player.DEAD_CONTEMPLATION_TIME
+import com.oberdiah.player.PlayerInfoBoard
 import com.oberdiah.player.player
 import com.oberdiah.saturate
 import com.oberdiah.sin
