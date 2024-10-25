@@ -78,7 +78,7 @@ object PauseButton {
             }
         }
         TOUCHES_WENT_UP.forEach {
-            if (PAUSE_RECT.contains(it)) {
+            if (PAUSE_RECT.contains(it) && GAME_STATE != GameState.PausedPopup) {
                 pauseHovered = true
                 pauseUIFadeOff = 1.0
                 gameStateBeforePauseMenu = GAME_STATE
@@ -87,7 +87,7 @@ object PauseButton {
             }
         }
         // Escape key pauses the game.
-        if (isKeyJustPressed(Keys.ESCAPE)) {
+        if (isKeyJustPressed(Keys.ESCAPE) && GAME_STATE != GameState.PausedPopup) {
             gameStateBeforePauseMenu = GAME_STATE
             GAME_STATE = GameState.PausedPopup
             switchScreen(Screen.Paused)
