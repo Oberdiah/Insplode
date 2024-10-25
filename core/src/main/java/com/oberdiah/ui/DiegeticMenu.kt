@@ -222,7 +222,7 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
             r.text(
                 fontMedium,
                 "${ScoreSystem.getPlayerTotalNumStars()}/${nextUpgradeToPlay.starsToUnlock}",
-                nextLevelButtonRect.center() + Point(0.25, 0.0) + wobble,
+                nextLevelButtonRect.center() + Point(0.3, 0.0) + wobble,
                 Align.right,
                 shouldCache = false
             )
