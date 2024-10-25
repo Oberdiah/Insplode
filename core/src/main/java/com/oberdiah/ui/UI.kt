@@ -29,6 +29,8 @@ import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
 import com.oberdiah.fontSmallish
 import com.oberdiah.format
+import com.oberdiah.level.hasShownAnyTutorials
+import com.oberdiah.level.resetTutorialSettings
 import com.oberdiah.next
 import com.oberdiah.physicsDebugString
 import com.oberdiah.playChordNote
@@ -154,14 +156,11 @@ private fun settingsUI(r: Renderer) {
     toggleButton(r, "Music", statefulPlayMusicSetting::value)
     toggleButton(r, "Sounds", statefulPlaySoundSetting::value)
 
-//    toggleButton(r, "Easy Mode", statefulEasyMode::value)
-
     settingButton(r, "Screen Shake", {
         r.text(fontMedium, statefulScreenShakeSetting.value.text, it, Align.right)
     }, {
         statefulScreenShakeSetting.value = statefulScreenShakeSetting.value.next()
     })
-
 
     if (ScoreSystem.playerHasFinishedTheGame()) {
         toggleButton(r, "Rainbow Player", rainbowPlayerEnabled::value)
@@ -170,26 +169,44 @@ private fun settingsUI(r: Renderer) {
     button(r, "Controls") {
         switchScreen(Screen.Controls)
     }
-    if (IS_DEBUG_ENABLED) {
-        button(r, "Advanced Settings") {
-            switchScreen(Screen.AdvancedSettings)
-        }
+    button(r, "Advanced Settings") {
+        switchScreen(Screen.AdvancedSettings)
     }
     button(r, "Back") {
         backAScreen()
     }
 }
 
+const val NUM_RESET_TAPS = 5
+var numResetTaps = 0
 private fun advancedSettingsUI(r: Renderer) {
     toggleButton(r, "Profiling Data", ::SHOW_FRAMERATE_DATA)
     if (IS_DEBUG_ENABLED) {
         toggleButton(r, "Physics Render", ::DO_PHYSICS_DEBUG_RENDER)
     }
-    button(r, "Reset everything") {
-        ScoreSystem.resetScores()
-        UpgradeController.resetUpgradeStates()
+
+    if (hasShownAnyTutorials()) {
+        button(r, "Reset Tutorial") {
+            resetTutorialSettings()
+        }
     }
+
+    button(
+        r,
+        if (numResetTaps == 0) "Reset Everything" else if (numResetTaps >= NUM_RESET_TAPS + 1) "Done!" else "Tap ${NUM_RESET_TAPS + 1 - numResetTaps} times to reset"
+    ) {
+        if (numResetTaps == NUM_RESET_TAPS) {
+            ScoreSystem.resetScores()
+            UpgradeController.resetUpgradeStates()
+            resetTutorialSettings()
+            numResetTaps++
+        } else {
+            numResetTaps++
+        }
+    }
+
     button(r, "Back") {
+        numResetTaps = 0
         backAScreen()
     }
 }

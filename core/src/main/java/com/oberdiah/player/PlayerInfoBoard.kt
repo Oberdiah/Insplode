@@ -6,6 +6,7 @@ import com.oberdiah.Point
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
 import com.oberdiah.Velocity
+import com.oberdiah.abs
 import com.oberdiah.level.Level
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
@@ -80,12 +81,23 @@ object PlayerInfoBoard {
 
     val bombsStandingOnGenerous = mutableListOf<Bomb>()
 
+    var distanceMovedLeftRightThisRun = 0.0
+    var numTimesJumpedThisRun = 0
+    var numTimesSlammedThisRun = 0
+    private var lastTickPosition: Point? = null
+
     fun reset() {
         tileBelowMe = null
+        lastTickPosition = null
 
         isStandingOnStandableGenerous = false
         isStandingOnStandableExact = false
         isStandingOnNotBombExact = false
+
+        distanceMovedLeftRightThisRun = 0.0
+        numTimesJumpedThisRun = 0
+        numTimesSlammedThisRun = 0
+
         bombsStandingOnGenerous.clear()
     }
 
@@ -94,6 +106,12 @@ object PlayerInfoBoard {
         if (previousVelocities.size > 10) {
             previousVelocities.removeLastOrNull()
         }
+
+        val lastTickPos = lastTickPosition
+        if (lastTickPos != null) {
+            distanceMovedLeftRightThisRun += (player.body.p.x - lastTickPos.x).abs
+        }
+        lastTickPosition = player.body.p
 
         tileBelowMe = whatTileIsBelowMe()
 

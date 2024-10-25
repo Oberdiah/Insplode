@@ -26,6 +26,7 @@ import com.oberdiah.UNITS_WIDE
 import com.oberdiah.abs
 import com.oberdiah.compareTo
 import com.oberdiah.createRandomFacingPoint
+import com.oberdiah.currentlyPlayingUpgrade
 import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.lerp
@@ -38,9 +39,11 @@ import com.oberdiah.sin
 import com.oberdiah.spawnSmoke
 import com.oberdiah.statefulEasyMode
 import com.oberdiah.times
+import com.oberdiah.ui.Banner
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
+import com.oberdiah.utils.StatefulBoolean
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.withAlpha
@@ -151,6 +154,20 @@ fun renderLaser(r: Renderer) {
     }
 }
 
+val shownTutorialForMove = StatefulBoolean("shownTutorialForMove", false)
+val shownTutorialForJump = StatefulBoolean("shownTutorialForJump", false)
+val shownTutorialForSlam = StatefulBoolean("shownTutorialForSlam", false)
+
+fun hasShownAnyTutorials(): Boolean {
+    return shownTutorialForMove.value || shownTutorialForJump.value || shownTutorialForSlam.value
+}
+
+fun resetTutorialSettings() {
+    shownTutorialForMove.value = false
+    shownTutorialForJump.value = false
+    shownTutorialForSlam.value = false
+}
+
 private var lastTimeSlamHappened = 0.0
 fun playerHasSlammed(laserPushBackMultiplier: Double) {
     laserInGameHeight += 0.5 * laserPushBackMultiplier
@@ -163,7 +180,22 @@ var gameHasReallyStarted = false
 fun tickLevelController() {
     if (!gameHasReallyStarted) {
         if (player.state.isIdle) {
-            gameHasReallyStarted = true
+            if (currentlyPlayingUpgrade.value == Upgrade.Movement && !shownTutorialForMove.value) {
+                Banner.showBanner(
+                    "Touch and drag left and right to move",
+                    keepAliveUntilDismissed = true
+                )
+                return
+            } else if (currentlyPlayingUpgrade.value == Upgrade.Jump && !shownTutorialForJump.value) {
+                Banner.showBanner("Swipe up to jump", keepAliveUntilDismissed = true)
+                return
+            } else if (currentlyPlayingUpgrade.value == Upgrade.Slam && !shownTutorialForSlam.value) {
+                Banner.showBanner("Swipe down in the air to slam", keepAliveUntilDismissed = true)
+                return
+            } else {
+                gameHasReallyStarted = true
+                Banner.dismissBanner()
+            }
         } else {
             return
         }

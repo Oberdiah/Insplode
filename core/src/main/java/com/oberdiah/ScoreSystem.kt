@@ -117,6 +117,10 @@ object ScoreSystem {
 
     fun resetScores() {
         playerHighScores.values.forEach { it.value = 0 }
+
+        lastScore = null
+        lastLevelPlayed = null
+        totalNumStarsCache = 0
     }
 
     private var totalNumStarsCache = 0
@@ -438,7 +442,8 @@ object ScoreSystem {
 
 
         // Seconds counter
-        val alpha = saturate(-CAMERA_POS_Y * 0.5)
+        val alpha =
+            if (RUN_TIME_ELAPSED < 1.0) saturate(RUN_TIME_ELAPSED) else saturate(-CAMERA_POS_Y * 0.5)
         r.color = colorScheme.textColor.withAlpha(alpha)
         if (secondsTimerPos.wo.y > LASER_HEIGHT) {
             r.color = Color.WHITE.withAlpha(alpha)

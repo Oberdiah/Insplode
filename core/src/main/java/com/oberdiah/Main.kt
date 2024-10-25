@@ -15,13 +15,13 @@ import com.oberdiah.level.tickLevelController
 import com.oberdiah.player.PlayerInputs
 import com.oberdiah.player.player
 import com.oberdiah.player.spawnPlayerAtUpgrades
+import com.oberdiah.ui.Banner
 import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.renderDiegeticMenuWorldSpace
 import com.oberdiah.utils.*
 import com.oberdiah.ui.renderUIScreenSpace
 import com.oberdiah.ui.tickDiegeticMenu
 import com.oberdiah.upgrades.UpgradeController
-import com.oberdiah.upgrades.UpgradeController.renderUpgradeMenuScreenSpace
 
 
 lateinit var worldSpaceRenderer: Renderer
@@ -191,9 +191,9 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         }
 
         uiRenderer.begin()
-        time("Render UI") { renderUIScreenSpace(uiRenderer) }
-        time("Render upgrade 2") { renderUpgradeMenuScreenSpace(uiRenderer) }
         time("Score System Text") { ScoreSystem.renderDiegeticText(uiRenderer) }
+        time("Render banner") { Banner.renderBanners(uiRenderer) }
+        time("Render UI") { renderUIScreenSpace(uiRenderer) }
         uiRenderer.end()
 
 

@@ -34,6 +34,7 @@ import com.oberdiah.player.player
 import com.oberdiah.saturate
 import com.oberdiah.spawnSmoke
 import com.oberdiah.startGame
+import com.oberdiah.ui.Banner
 import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.ui.cameraVelocity
@@ -455,44 +456,6 @@ object UpgradeController {
         Size(4.0, 1.5),
     )
 
-    const val TOTAL_TAP_WARNING_TIME = 5.0
-
-    fun renderUpgradeMenuScreenSpace(r: Renderer) {
-        val timeSinceTapWarning = GameTime.APP_TIME - lastTapWarningTime
-        val animationTime = 0.5
-
-        val heightOffOfTop = HEIGHT / 15
-
-        val heightToMove = heightOffOfTop * 2
-
-        val normalHeight = HEIGHT + heightOffOfTop
-
-        if (timeSinceTapWarning < TOTAL_TAP_WARNING_TIME) {
-            val tapWarningY = if (timeSinceTapWarning < animationTime) {
-                normalHeight - saturate(timeSinceTapWarning / animationTime) * heightToMove
-            } else if (timeSinceTapWarning < TOTAL_TAP_WARNING_TIME - animationTime) {
-                normalHeight - heightToMove
-            } else {
-                normalHeight - (1.0 - saturate((timeSinceTapWarning - (TOTAL_TAP_WARNING_TIME - animationTime)) / animationTime)) * heightToMove
-            }
-
-            r.color = Color.WHITE.withAlpha(0.75)
-            r.centeredRect(
-                Point(WIDTH / 2, tapWarningY),
-                Size(WIDTH, HEIGHT / 20),
-            )
-
-            r.color = Color.BLACK
-            r.text(
-                fontSmallish,
-                "Touch and hold to unlock",
-                WIDTH / 2,
-                tapWarningY,
-                Align.center
-            )
-        }
-    }
-
     private var currentlyPurchasingUpgrade: Upgrade? = null
     private var lastUpgradeTapped: MutableMap<UpgradeStatus, Upgrade?> = mutableMapOf(
         UpgradeStatus.HIDDEN to null,
@@ -508,16 +471,14 @@ object UpgradeController {
         UpgradeStatus.PURCHASED to Double.NEGATIVE_INFINITY,
     )
 
-    private var lastTapWarningTime = -Double.MAX_VALUE
-
     private fun cancelUpgradePurchase() {
         if (!canCancelPurchase) {
             return
         }
 
         if (currentlyPurchasingUpgrade != null) {
-            if (purchasingFraction() < 0.1 && lastTapWarningTime < GameTime.APP_TIME - TOTAL_TAP_WARNING_TIME) {
-                lastTapWarningTime = GameTime.APP_TIME
+            if (purchasingFraction() < 0.1) {
+                Banner.showBanner("Touch and hold to unlock")
             }
         }
 
