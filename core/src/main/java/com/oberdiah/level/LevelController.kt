@@ -52,6 +52,7 @@ import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.renderButton
+import com.oberdiah.utils.vibrate
 import com.oberdiah.withAlpha
 import kotlin.random.Random
 
@@ -138,6 +139,7 @@ fun renderLevelController(r: Renderer) {
                     } else if (inSlamTutorial) {
                         shownTutorialForSlam.value = true
                     }
+                    vibrate(10)
                     gameHasReallyStarted = true
                     Banner.dismissBanner()
                 }
@@ -226,19 +228,16 @@ var gameHasReallyStarted = false
 
 private val inMovementTutorial
     get() = currentlyPlayingUpgrade.value == Upgrade.Movement &&
-            player.state.isIdle &&
             !shownTutorialForMove.value &&
             !gameHasReallyStarted
 
 private val inJumpTutorial
     get() = currentlyPlayingUpgrade.value == Upgrade.Jump &&
             !shownTutorialForJump.value &&
-            !shownTutorialForMove.value &&
             !gameHasReallyStarted
 
 private val inSlamTutorial
     get() = currentlyPlayingUpgrade.value == Upgrade.Slam &&
-            player.state.isIdle &&
             !shownTutorialForSlam.value &&
             !gameHasReallyStarted
 
@@ -257,19 +256,17 @@ fun tickLevelController() {
                 )
                 return
             } else if (inJumpTutorial) {
-                if (PlayerInfoBoard.numTimesJumpedThisRun > 3) {
+                if (PlayerInfoBoard.numTimesJumpedThisRun >= 3) {
                     tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
                 }
 
-                tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
                 Banner.showBanner("Swipe up to jump", keepAliveUntilDismissed = true)
                 return
             } else if (inSlamTutorial) {
-                if (PlayerInfoBoard.numTimesSlammedThisRun > 3) {
+                if (PlayerInfoBoard.numTimesSlammedThisRun >= 3) {
                     tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
                 }
 
-                tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
                 Banner.showBanner("Swipe down in the air to slam", keepAliveUntilDismissed = true)
                 return
             } else {
