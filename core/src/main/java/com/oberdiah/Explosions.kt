@@ -2,6 +2,7 @@ package com.oberdiah
 
 import com.oberdiah.level.Level
 import com.oberdiah.player.Player
+import com.oberdiah.player.player
 import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.vibrate
 import kotlin.math.pow
@@ -35,7 +36,7 @@ fun boom(
         playExplosionSound(radius.d)
     }
 
-    if (radius > 2.0) {
+    if (radius > 2.0 && player.state.isAlive) {
         vibrate((radius * 10).i)
     }
 
