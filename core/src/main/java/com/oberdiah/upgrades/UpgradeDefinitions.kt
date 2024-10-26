@@ -218,7 +218,7 @@ enum class Upgrade(
         "Gold Nuggets",
         "Occasional golden tiles\nfull of treasure.",
         50,
-        182,
+        193,
         levelSpecificFailureHints = listOf(
             "Slamming repels the void,\nso it's critical for longer runs",
             "Golden nuggets in the ground are worth\n50 points each.",
