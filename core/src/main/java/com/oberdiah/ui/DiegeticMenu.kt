@@ -572,11 +572,16 @@ fun tickDiegeticMenu() {
         if (desiredY != null) {
             // Completely overwrite newCameraY and lerp our own thing
             newCameraY = lerp(diegeticCameraY, desiredY, 0.1)
-            // if we're close enough, call the onReached function
-            if ((newCameraY - desiredY).abs < 0.01) {
+            // if we're close-sh, call the onReached function
+            if ((newCameraY - desiredY).abs < 2.0) {
                 desiredCameraOnReached?.invoke()
-                desiredCameraY = null
                 desiredCameraOnReached = null
+            }
+
+
+            // If we're really close, cancel the move.
+            if ((newCameraY - desiredY).abs < 0.01) {
+                desiredCameraY = null
             }
         }
         cameraYUnitsDeltaThisTick = newCameraY - diegeticCameraY
