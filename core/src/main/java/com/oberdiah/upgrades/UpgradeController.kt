@@ -472,12 +472,12 @@ object UpgradeController {
         UpgradeStatus.PURCHASED to Double.NEGATIVE_INFINITY,
     )
 
-    private fun cancelUpgradePurchase() {
+    private fun cancelUpgradePurchase(dueToScrolling: Boolean = false) {
         if (!canCancelPurchase) {
             return
         }
 
-        if (currentlyPurchasingUpgrade != null) {
+        if (currentlyPurchasingUpgrade != null && !dueToScrolling) {
             if (purchasingFraction() < 0.1) {
                 Banner.showBanner("Touch and hold to unlock")
             }
@@ -579,7 +579,7 @@ object UpgradeController {
                 }
 
                 completeUpgradePurchase(upgradePurchased)
-                cancelUpgradePurchase()
+                cancelUpgradePurchase(dueToScrolling = false)
             }
 
             TOUCHES_WENT_UP.forEach { touch ->
@@ -596,13 +596,13 @@ object UpgradeController {
 
                 boughtUpgradeThisTap = false
 
-                cancelUpgradePurchase()
+                cancelUpgradePurchase(dueToScrolling = false)
                 if (isConsideringSwitchingPlayingUpgrade) {
                     selectUpgrade(lastUpgradeTapped[UpgradeStatus.PURCHASED]!!)
                 }
             }
         } else {
-            cancelUpgradePurchase()
+            cancelUpgradePurchase(dueToScrolling = true)
             boughtUpgradeThisTap = false
             isConsideringSwitchingPlayingUpgrade = false
         }
