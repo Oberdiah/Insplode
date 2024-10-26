@@ -199,6 +199,7 @@ private fun advancedSettingsUI(r: Renderer) {
             ScoreSystem.resetScores()
             UpgradeController.resetUpgradeStates()
             resetTutorialSettings()
+            rainbowPlayerEnabled.value = false
             numResetTaps++
         } else {
             numResetTaps++
