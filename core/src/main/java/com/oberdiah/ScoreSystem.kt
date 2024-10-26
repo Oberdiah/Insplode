@@ -20,6 +20,8 @@ import com.oberdiah.utils.StatefulInt
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
 import com.oberdiah.utils.renderAwardedStars
+import com.oberdiah.utils.renderColoredStar
+import com.oberdiah.utils.renderStar
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -467,14 +469,56 @@ object ScoreSystem {
 
             val transition =
                 easeInOutSine(saturate(RUN_TIME_ELAPSED * 2.0) - saturate(player.state.timeSinceDied * 2.0) - transitionIfQuit)
-            val offset = (transition * 2.0 - 2.0) * starSize
-            renderAwardedStars(
-                r,
-                Point(WIDTH / 15, HEIGHT - WIDTH / 15 - offset),
-                Align.left,
-                starSize,
-                currentlyPlayingUpgrade.value.getStarsFromScore(playerScore)
+            val offset = (transition * 2.0 - 2.0) * starSize * 1.5
+
+            val topLeft = Point(
+                WIDTH / 15 + offset,
+                HEIGHT - WIDTH / 15
             )
+
+            r.centeredSprite(
+                UpgradeController.getSpriteForUpgrade(currentlyPlayingUpgrade.value),
+                topLeft + SHADOW_DIRECTION_UNITS * UNIT_SIZE_IN_PIXELS * 0.25,
+                starSize,
+                color = Color.BLACK.withAlpha(0.5)
+            )
+
+            r.centeredSprite(
+                UpgradeController.getSpriteForUpgrade(currentlyPlayingUpgrade.value),
+                topLeft,
+                starSize
+            )
+
+            val currentStars = currentlyPlayingUpgrade.value.getStarsFromScore(playerScore)
+
+            for (i in 1..3) {
+                val starPos =
+                    topLeft + Point(0.0, -i * starSize * 1.05 - UNIT_SIZE_IN_PIXELS * 0.2)
+
+                val phase =
+                    if (i + 3 <= currentStars.id) 2.0 else if (i <= currentStars.id) 1.0 else 0.0
+
+                renderColoredStar(
+                    r,
+                    starPos,
+                    starSize,
+                    phase = phase,
+                )
+
+                r.color = colorScheme.textColor
+                val worldSpaceCoords = starPos.wo + Point(0.35, 0.0)
+                if (worldSpaceCoords.y > LASER_HEIGHT) {
+                    r.color = Color.WHITE
+                }
+
+                r.text(
+                    fontSmall,
+                    "${currentlyPlayingUpgrade.value.starsToScore(i)}",
+                    worldSpaceCoords.ui,
+                    Align.left,
+                    shouldCache = false
+                )
+            }
         }
 
 
