@@ -4,6 +4,7 @@ import com.oberdiah.ScoreSystem
 import com.oberdiah.ScoreSystem.StarsAwarded
 import com.oberdiah.ceil
 import com.oberdiah.d
+import com.oberdiah.i
 import com.oberdiah.player.Player
 import kotlin.random.Random
 
@@ -62,11 +63,6 @@ private val deathByLavaMessages = listOf(
     "Lava: 1, Bean: 0",
 )
 
-private val genericSuccessPraises: List<String> = listOf(
-    "Nice job!",
-    "Well done!",
-)
-
 enum class Upgrade(
     val idealTitle: String,
     val description: String,
@@ -74,7 +70,6 @@ enum class Upgrade(
     val threeBlueStarsScore: Int,
     // These appear on zero and one-star scores.
     val levelSpecificFailureHints: List<String>,
-    val successPraises: List<String> = genericSuccessPraises,
     val twoBlueStarPraises: List<String> = genericTwoBlueStarPraises,
     val threeBlueStarPraises: List<String> = genericThreeBlueStarPraises + genericTwoBlueStarPraises,
     val beyondBlueStarPraises: List<String> = genericBeyondBlueStarPraises + genericThreeBlueStarPraises,
@@ -115,7 +110,7 @@ enum class Upgrade(
         )
     ),
     MediumTimedBomb(
-        "Timed Bomb",
+        "Medium Bomb",
         "Occasionally spawns in\na bomb.\nMine for orbs!",
         7,
         30,
@@ -229,7 +224,7 @@ enum class Upgrade(
         "Longer Line",
         "Line bombs now stretch the\nentire way across the screen.",
         75,
-        214,
+        299,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs to angle them down\nfor maximum ground collapse.",
@@ -241,7 +236,7 @@ enum class Upgrade(
         "Mega Bombs",
         "Massive bombs that\nwreck the landscape.",
         100,
-        258,
+        337,
         levelSpecificFailureHints = listOf(
             "You can slam while ascending to reverse\ndirection if you get too close to the void",
             "Slamming is absolutely vital at this point.\nDon't forget to use it."
@@ -264,7 +259,7 @@ enum class Upgrade(
         "Slam Orbs",
         "Orbs are spawned for each\nsuccessful bomb slam.",
         200,
-        828,
+        897,
         levelSpecificFailureHints = listOf(
             "Larger bombs give far larger payouts on slam.",
             "Slamming bombs is super important at this point.\nDon't forget to use it.",
@@ -400,7 +395,7 @@ enum class Upgrade(
         get() {
             if (this == BlackHole) return this.ordinal * 3 - 3
 
-            return this.ordinal * 2
+            return (this.ordinal * 2.5).i
         }
 
     val obfuscatedTitle = title.replace(Regex("\\S")) { "?" }
@@ -420,9 +415,9 @@ enum class Upgrade(
         var hintCollection = when (stars) {
             StarsAwarded.Zero -> levelSpecificFailureHints
             StarsAwarded.One -> levelSpecificFailureHints
-            StarsAwarded.Two -> successPraises
-            StarsAwarded.Three -> successPraises
-            StarsAwarded.OneBlue -> successPraises
+            StarsAwarded.Two -> return ""
+            StarsAwarded.Three -> return ""
+            StarsAwarded.OneBlue -> return ""
             StarsAwarded.TwoBlue -> return twoBlueStarPraises.random()
             StarsAwarded.ThreeBlue -> return threeBlueStarPraises.random()
             StarsAwarded.Beyond -> return beyondBlueStarPraises.random()

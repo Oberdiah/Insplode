@@ -738,6 +738,11 @@ object UpgradeController {
             }
         }
 
+        val previousUpgrade = Upgrade.entries.getOrNull(upgrade.ordinal - 1)
+        if (previousUpgrade != null && ScoreSystem.getNumStarsOnUpgrade(previousUpgrade).stars == 0) {
+            return UpgradeStatus.HIDDEN
+        }
+
         return if (playerHasTheAbilityToPlayWith(upgrade)) {
             UpgradeStatus.PURCHASED
         } else if (upgrade.ordinal <= highestIndexUnlockedSoFar() + 1) {

@@ -132,19 +132,11 @@ private val buttonDistFromMiddle: Double
 
 val showANextLevelButton: Boolean
     get() {
-        val lastScore = lastScore
-        val lastUpgrade = lastLevelPlayed
-
-        if (lastScore == null || lastUpgrade == null) {
-            return false
-        }
-
         if (UpgradeController.boughtEveryUpgrade()) {
             return false
         }
 
-        val stars = lastUpgrade.getStarsFromScore(lastScore)
-        return stars.stars >= 2
+        return UpgradeController.getNextUpgradeToPurchase() != null
     }
 
 val playAgainButtonRect: Rect
