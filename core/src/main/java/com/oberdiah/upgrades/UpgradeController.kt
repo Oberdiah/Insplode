@@ -573,9 +573,13 @@ object UpgradeController {
 
             if (purchasingFract >= 1.0) {
                 val upgradePurchased = currentlyPurchasingUpgrade!!
+
+                if (canCancelPurchase) {
+                    boughtUpgradeThisTap = true
+                }
+
                 completeUpgradePurchase(upgradePurchased)
                 cancelUpgradePurchase()
-                boughtUpgradeThisTap = true
             }
 
             TOUCHES_WENT_UP.forEach { touch ->

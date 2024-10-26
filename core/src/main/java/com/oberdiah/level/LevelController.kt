@@ -1,8 +1,8 @@
 package com.oberdiah.level
 
 import com.badlogic.gdx.graphics.Color
-import com.oberdiah.Bomb
 import com.oberdiah.BombType
+import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.ClusterBomb
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
@@ -12,9 +12,11 @@ import com.oberdiah.LineBomb
 import com.oberdiah.NUM_TILES_ACROSS
 import com.oberdiah.Point
 import com.oberdiah.PointOrbs
+import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.SAFE_BOMB_SPAWN_HEIGHT
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
+import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.ScoreSystem
 import com.oberdiah.Size
 import com.oberdiah.SpringBomb
@@ -45,8 +47,11 @@ import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.StatefulBoolean
+import com.oberdiah.utils.TOUCHES_DOWN
+import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
+import com.oberdiah.utils.renderButton
 import com.oberdiah.withAlpha
 import kotlin.random.Random
 
@@ -109,11 +114,45 @@ fun resetLevelController() {
     gameHasReallyStarted = false
     bombDropData.clear()
     APP_TIME_GAME_STARTED = GameTime.APP_TIME
+    tutorialButtonOffset = -5.0
 }
 
-fun renderLaser(r: Renderer) {
+fun renderLevelController(r: Renderer) {
     // We need a fairly good buffer because the particles take time to spawn
-    if (LASER_HEIGHT > JUST_UP_OFF_SCREEN_UNITS + 5) return
+    if (LASER_HEIGHT > JUST_UP_OFF_SCREEN_UNITS + 5) {
+        if (inMovementTutorial || inJumpTutorial || inSlamTutorial) {
+            var isButtonPressed = false
+
+            TOUCHES_DOWN.forEach {
+                if (getFinishTutorialRect().contains(it.wo)) {
+                    isButtonPressed = true
+                }
+            }
+
+            TOUCHES_WENT_UP.forEach {
+                if (getFinishTutorialRect().contains(it.wo)) {
+                    if (inMovementTutorial) {
+                        shownTutorialForMove.value = true
+                    } else if (inJumpTutorial) {
+                        shownTutorialForJump.value = true
+                    } else if (inSlamTutorial) {
+                        shownTutorialForSlam.value = true
+                    }
+                    gameHasReallyStarted = true
+                    Banner.dismissBanner()
+                }
+            }
+
+            renderButton(
+                r,
+                getFinishTutorialRect(),
+                isButtonPressed,
+                "Let's play!",
+            )
+        }
+
+        return
+    }
 
     val startPoint = Point(0, LASER_HEIGHT)
     val endPoint = Point(UNITS_WIDE, LASER_HEIGHT)
@@ -155,6 +194,13 @@ fun renderLaser(r: Renderer) {
     }
 }
 
+private fun getFinishTutorialRect(): Rect {
+    return Rect.centered(
+        Point(SCREEN_WIDTH_IN_UNITS / 2.0, min(CAMERA_POS_Y + 3.0 + tutorialButtonOffset, -1.0)),
+        Size(5.0, 1.5),
+    )
+}
+
 val shownTutorialForMove = StatefulBoolean("shownTutorialForMove", false)
 val shownTutorialForJump = StatefulBoolean("shownTutorialForJump", false)
 val shownTutorialForSlam = StatefulBoolean("shownTutorialForSlam", false)
@@ -178,19 +224,52 @@ fun playerHasSlammed(laserPushBackMultiplier: Double) {
 var gameHasReallyStarted = false
     private set
 
+private val inMovementTutorial
+    get() = currentlyPlayingUpgrade.value == Upgrade.Movement &&
+            player.state.isIdle &&
+            !shownTutorialForMove.value &&
+            !gameHasReallyStarted
+
+private val inJumpTutorial
+    get() = currentlyPlayingUpgrade.value == Upgrade.Jump &&
+            !shownTutorialForJump.value &&
+            !shownTutorialForMove.value &&
+            !gameHasReallyStarted
+
+private val inSlamTutorial
+    get() = currentlyPlayingUpgrade.value == Upgrade.Slam &&
+            player.state.isIdle &&
+            !shownTutorialForSlam.value &&
+            !gameHasReallyStarted
+
+private var tutorialButtonOffset = -5.0
+
 fun tickLevelController() {
     if (!gameHasReallyStarted) {
         if (player.state.isIdle) {
-            if (currentlyPlayingUpgrade.value == Upgrade.Movement && !shownTutorialForMove.value) {
+            if (inMovementTutorial) {
+                if (PlayerInfoBoard.distanceMovedLeftRightThisRun > 5.0) {
+                    tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
+                }
                 Banner.showBanner(
                     "Touch and drag left and right to move",
                     keepAliveUntilDismissed = true
                 )
                 return
-            } else if (currentlyPlayingUpgrade.value == Upgrade.Jump && !shownTutorialForJump.value) {
+            } else if (inJumpTutorial) {
+                if (PlayerInfoBoard.numTimesJumpedThisRun > 3) {
+                    tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
+                }
+
+                tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
                 Banner.showBanner("Swipe up to jump", keepAliveUntilDismissed = true)
                 return
-            } else if (currentlyPlayingUpgrade.value == Upgrade.Slam && !shownTutorialForSlam.value) {
+            } else if (inSlamTutorial) {
+                if (PlayerInfoBoard.numTimesSlammedThisRun > 3) {
+                    tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
+                }
+
+                tutorialButtonOffset = lerp(tutorialButtonOffset, 0.0, 0.05)
                 Banner.showBanner("Swipe down in the air to slam", keepAliveUntilDismissed = true)
                 return
             } else {

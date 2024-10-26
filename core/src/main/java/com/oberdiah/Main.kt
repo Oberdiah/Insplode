@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.*
 import com.oberdiah.level.Jewel
 import com.oberdiah.level.Level
 import com.oberdiah.level.RenderLevel
-import com.oberdiah.level.renderLaser
+import com.oberdiah.level.renderLevelController
 import com.oberdiah.level.resetLevelCollapse
 import com.oberdiah.level.resetLevelController
 import com.oberdiah.level.tickCollapse
@@ -181,7 +181,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         worldSpaceRenderer.begin()
         time("Render level sprites") { Jewel.renderJewelInLevel(worldSpaceRenderer) }
         time("Render physics objects") { renderPhysicsObjects(worldSpaceRenderer) }
-        time("Render laser") { renderLaser(worldSpaceRenderer) }
+        time("Render level controller") { renderLevelController(worldSpaceRenderer) }
         time("Render particles") { renderParticles(worldSpaceRenderer) }
         worldSpaceRenderer.end()
 
