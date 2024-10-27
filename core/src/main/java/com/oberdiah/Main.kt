@@ -29,7 +29,6 @@ lateinit var uiRenderer: Renderer
 lateinit var platformInterface: PlatformInterface
 
 fun endGame() {
-    MusicCoordinator.startPlayingMusic()
     GAME_STATE = GameState.DiegeticMenu
 //    Perlin.randomize()
     resetCamera()
@@ -97,6 +96,8 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         initCamera()
         endGame()
+
+        MusicCoordinator.startPlayingMusic()
     }
 
     override fun render() {

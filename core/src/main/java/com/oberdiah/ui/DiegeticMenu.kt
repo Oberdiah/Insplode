@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Align
 import com.oberdiah.GAME_STATE
 import com.oberdiah.GameState
 import com.oberdiah.HEIGHT
+import com.oberdiah.MusicCoordinator
 import com.oberdiah.Point
 import com.oberdiah.Rect
 import com.oberdiah.Renderer
@@ -370,6 +371,11 @@ fun renderDiegeticMenuWorldSpace(r: Renderer) {
             Align.center,
             shouldCache = false
         )
+
+        if (starsTextTransparency < 0.001 && !MusicCoordinator.isPlayingMusic()) {
+            // End of the game.
+            MusicCoordinator.startPlayingMusic()
+        }
 
         r.color = colorScheme.textColor.withAlpha(0.4)
         r.text(

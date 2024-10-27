@@ -9,9 +9,15 @@ object MusicCoordinator {
     private var chordLastPlayedAt = Double.NEGATIVE_INFINITY
     const val NUM_CHORDS = 5
 
+    fun isPlayingMusic(): Boolean {
+        return musicPlaying
+    }
+
     fun startPlayingMusic() {
+        if (!musicPlaying) {
+            chordLastPlayedAt = Double.NEGATIVE_INFINITY
+        }
         musicPlaying = true
-        chordLastPlayedAt = Double.NEGATIVE_INFINITY
     }
 
     fun stopPlayingMusic() {

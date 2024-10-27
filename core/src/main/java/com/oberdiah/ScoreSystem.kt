@@ -471,6 +471,8 @@ object ScoreSystem {
                 easeInOutSine(saturate(RUN_TIME_ELAPSED * 2.0) - saturate(player.state.timeSinceDied * 2.0) - transitionIfQuit)
             val offset = (transition * 2.0 - 2.0) * starSize * 1.5
 
+            val spriteSize = 1.5 * starSize
+
             val topLeft = Point(
                 WIDTH / 15 + offset,
                 HEIGHT - WIDTH / 15
@@ -479,14 +481,14 @@ object ScoreSystem {
             r.centeredSprite(
                 UpgradeController.getSpriteForUpgrade(currentlyPlayingUpgrade.value),
                 topLeft + SHADOW_DIRECTION_UNITS * UNIT_SIZE_IN_PIXELS * 0.25,
-                starSize,
+                spriteSize,
                 color = Color.BLACK.withAlpha(0.5)
             )
 
             r.centeredSprite(
                 UpgradeController.getSpriteForUpgrade(currentlyPlayingUpgrade.value),
                 topLeft,
-                starSize
+                spriteSize
             )
 
             val currentStars = currentlyPlayingUpgrade.value.getStarsFromScore(playerScore)
