@@ -161,7 +161,7 @@ enum class Upgrade(
         "High Mobility",
         "Move quicker, jump higher.",
         20,
-        34,
+        48,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
