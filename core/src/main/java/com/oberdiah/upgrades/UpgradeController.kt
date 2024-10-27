@@ -634,7 +634,7 @@ object UpgradeController {
         player.reset()
     }
 
-    private val FORCE_UPGRADES_UNTIL: Upgrade? = Upgrade.FinalRun
+    private val FORCE_UPGRADES_UNTIL: Upgrade? = null // Upgrade.FinalRun
 
     /**
      * Whether the player is playing with this upgrade this game.
