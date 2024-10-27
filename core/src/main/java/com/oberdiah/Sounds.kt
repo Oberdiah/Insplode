@@ -158,7 +158,7 @@ fun playExplosionSound(force: Double) {
             volume = 0.5
         )
         playSound(
-            "Orange hit soft ${Random.nextInt(4, 9)}",
+            "Orange hit soft ${Random.nextInt(1, 5)}",
             pitch * 0.5,
             volume = 0.5
         )
