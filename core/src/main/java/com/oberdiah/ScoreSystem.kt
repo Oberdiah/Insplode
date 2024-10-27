@@ -380,15 +380,23 @@ object ScoreSystem {
 
                     val previousStarId = max((starsAwarded.id - 1) % 3, 0)
                     val thisStarId = starsAwarded.id % 3
-                    val previousStarFractionToAssign = if (starsAwarded.blueStars > 0) 2.0 else 1.0
+                    val previousStarFractionToAssign =
+                        if (starsAwarded.blueStars > 0) 2.0 else 1.0
 
                     if (currentStarFillAmount[previousStarId] != previousStarFractionToAssign && previousStarId != thisStarId) {
                         playMultiplierSound(starsAwarded.id + 1)
+
+                        spawnStarParticles(
+                            (starsAwarded.id - 1) % 3 + 1,
+                            starsAwarded.blueStars > 0
+                        )
                     }
 
                     currentStarFillAmount[previousStarId] = previousStarFractionToAssign
-                    currentStarFillAmount[thisStarId] =
-                        if (starsAwarded.stars == 3) starFraction + 1.0 else starFraction
+                    if (starsAwarded.id != 6) {
+                        currentStarFillAmount[thisStarId] =
+                            if (starsAwarded.stars == 3) starFraction + 1.0 else starFraction
+                    }
                 }
 
                 if (delayedReceivedScores.isEmpty()) {
@@ -396,6 +404,10 @@ object ScoreSystem {
                     // that have duplicate blue-star scores.
                     if (lastUpgrade.threeBlueStarsScore <= lastScore) {
                         for (i in 0..2) {
+                            if (currentStarFillAmount[i] != 2.0) {
+                                spawnStarParticles(i + 1, true)
+                            }
+
                             currentStarFillAmount[i] = 2.0
                         }
                     }
@@ -425,6 +437,26 @@ object ScoreSystem {
 
         if (RUN_TIME_ELAPSED - lastScoreCollectionTime > GROWING_SCORE_REFRESH_COUNTDOWN) {
             growingScore = 0
+        }
+    }
+
+    fun spawnStarParticles(idx: Int, isBlue: Boolean) {
+        val starPos = getMainMenuStarPosition(idx)
+        // Spawn a pile of particles on the star
+
+        for (i in 0..25) {
+            val pos =
+                starPos + createRandomFacingPoint() * Random.nextDouble(0.0, 0.9)
+            val vel = createRandomFacingPoint() * Random.nextDouble(0.0, 2.0)
+            spawnSmoke(
+                pos,
+                vel,
+                color = (if (isBlue) colorScheme.developerStarsColor else colorScheme.starsColor).cpy()
+                    .mul(Random.nextDouble(0.8, 1.2).f),
+                canCollide = false,
+                radiusScaling = 1.3,
+                gravityScaling = 0.0,
+            )
         }
     }
 
