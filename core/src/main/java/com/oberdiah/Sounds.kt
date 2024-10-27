@@ -26,7 +26,7 @@ fun loadSounds() {
     platformInterface.injectAssetManager(miniAudio)
     caveSplitter = MASplitter(miniAudio)
     val lowPassFilter = MALowPassFilter(miniAudio, 550.0, 8)
-    val delayNode = MADelayNode(miniAudio, 0.15f, 0.3f)
+    val delayNode = MADelayNode(miniAudio, 0.1f, 0.1f)
 
     miniAudio.attachToEngineOutput(lowPassFilter, 0)
     miniAudio.attachToEngineOutput(delayNode, 0)
@@ -153,12 +153,12 @@ fun playExplosionSound(force: Double) {
 
     if (pitch > 0.4) {
         playSound(
-            "trim_orange hit hard ${Random.nextInt(1, 10)}",
+            "Orange hit hard ${Random.nextInt(1, 10)}",
             pitch,
             volume = 0.5
         )
         playSound(
-            "trim_orange hit soft ${Random.nextInt(4, 10)}",
+            "Orange hit soft ${Random.nextInt(4, 9)}",
             pitch * 0.5,
             volume = 0.5
         )
@@ -170,7 +170,7 @@ fun playExplosionSound(force: Double) {
         }
 
         playSound(
-            "trim_trim_bat hit 4",
+            "Bat hit 4",
             pitch,
             splitter = splitter,
         )
@@ -188,12 +188,12 @@ fun playBombBumpSound(velocity: Double, mass: Double, hitObject: Any?) {
 
     if (hitObject is Bomb) {
         playSound(
-            "trim_glass clink ${Random.nextInt(1, 6)}",
+            "Ding ${Random.nextInt(1, 6)}",
             pitch,
-            volume
+            volume * 0.5
         )
         playSound(
-            "trim_metal hit with hammer ${Random.nextInt(2, 7)}",
+            "Can hit ${Random.nextInt(1, 8)}",
             pitch,
             volume
         )
@@ -202,14 +202,9 @@ fun playBombBumpSound(velocity: Double, mass: Double, hitObject: Any?) {
     } else {
         // We've hit ground
         playSound(
-            "trim_trim_bat hit ${Random.nextInt(3, 10)}",
-            pitch,
+            "Can hit ${Random.nextInt(1, 8)}",
+            pitch * 1.5,
             volume
-        )
-        playSound(
-            "trim_glass clink ${Random.nextInt(1, 6)}",
-            pitch,
-            volume * 0.1
         )
     }
 }
@@ -224,8 +219,6 @@ fun playRockCrumbleSound() {
 }
 
 fun playParticleHitSound(velocity: Double, size: Double) {
-    // Randomly drop some sounds
-
     val impact = velocity * size * 25.0
     val volume = saturate((impact - 2.0) / 10).pow(1.5) * 0.25
     val pitch = Random.nextDouble(0.4, 0.7)
@@ -277,7 +270,7 @@ fun playMultiplierSound(multiplier: Int) {
     playSound(
         "Power up ${clamp(multiplier, 1, 10).i}",
         1.0,
-        0.5
+        0.85
     )
 }
 

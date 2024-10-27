@@ -634,7 +634,7 @@ object UpgradeController {
         player.reset()
     }
 
-    private val FORCE_UPGRADES_UNTIL: Upgrade? = null // Upgrade.FinalRun
+    private val FORCE_UPGRADES_UNTIL: Upgrade? = Upgrade.FinalRun
 
     /**
      * Whether the player is playing with this upgrade this game.
@@ -732,6 +732,16 @@ object UpgradeController {
     }
 
     fun getUpgradeStatus(upgrade: Upgrade): UpgradeStatus {
+        if (IS_DEBUG_ENABLED) {
+            FORCE_UPGRADES_UNTIL?.let {
+                return if (upgrade.ordinal > it.ordinal) {
+                    UpgradeStatus.HIDDEN
+                } else {
+                    UpgradeStatus.PURCHASED
+                }
+            }
+        }
+
         if (!ScoreSystem.playerHasFinishedTheGame()) {
             if (upgrade.ordinal > Upgrade.FinalRun.ordinal) {
                 return UpgradeStatus.HIDDEN
