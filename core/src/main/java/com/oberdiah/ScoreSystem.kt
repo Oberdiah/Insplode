@@ -501,7 +501,7 @@ object ScoreSystem {
 
             val transition =
                 easeInOutSine(saturate(RUN_TIME_ELAPSED * 2.0) - saturate(player.state.timeSinceDied * 2.0) - transitionIfQuit)
-            val offset = (transition * 2.0 - 2.0) * starSize * 1.5
+            val offset = (transition * 5.0 - 5.0) * starSize * 1.5
 
             val spriteSize = 1.5 * starSize
 

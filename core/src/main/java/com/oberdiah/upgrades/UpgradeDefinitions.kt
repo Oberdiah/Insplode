@@ -189,7 +189,7 @@ enum class Upgrade(
         "Slam",
         "Swipe down to slam.\nSlamming bombs makes you\nbounce and repels the void.",
         30,
-        53,
+        93,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Line bombs exploding underground\nis a fantastic way to get down quicker.",
@@ -224,7 +224,7 @@ enum class Upgrade(
         "Longer Line",
         "Line bombs now stretch the\nentire way across the screen.",
         75,
-        299,
+        365,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs to angle them down\nfor maximum ground collapse.",
@@ -320,7 +320,7 @@ enum class Upgrade(
         "Sky's the Limit",
         "Multiplier is no longer capped.\nAfter 2x it can decay.\nAfter 2.5x time accelerates.",
         800,
-        2000,
+        2401,
         levelSpecificFailureHints = listOf(
             "Multiplier affects the number of orbs you\nget from orb patches as well.",
             "Delaying in the air before slamming can help\nkeep a multiplier over a bomb drought.",
