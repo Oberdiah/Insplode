@@ -173,6 +173,7 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         worldSpaceRenderer.begin()
         time("Render background") { RenderLevel.renderBackground(worldSpaceRenderer) }
+        time("Render clouds") { RenderLevel.renderForeground(worldSpaceRenderer) }
         time("Render player inputs") { PlayerInputs.render(worldSpaceRenderer) }
         time("Render world space UI") { renderDiegeticMenuWorldSpace(worldSpaceRenderer) }
         worldSpaceRenderer.end()

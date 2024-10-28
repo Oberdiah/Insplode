@@ -13,8 +13,10 @@ import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.HEIGHT
 import com.oberdiah.NUM_TILES_ACROSS
 import com.oberdiah.Point
+import com.oberdiah.Rect
 import com.oberdiah.Renderer
 import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
+import com.oberdiah.Size
 import com.oberdiah.TILES_PER_UNIT
 import com.oberdiah.TILE_SIZE_IN_UNITS
 import com.oberdiah.Tile
@@ -22,20 +24,26 @@ import com.oberdiah.TileLike
 import com.oberdiah.UNITS_WIDE
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
+import com.oberdiah.abs
 import com.oberdiah.ceil
+import com.oberdiah.clamp
 import com.oberdiah.d
 import com.oberdiah.f
 import com.oberdiah.floor
 import com.oberdiah.getShake
 import com.oberdiah.i
 import com.oberdiah.marchingSquaresTriangles
+import com.oberdiah.max
 import com.oberdiah.min
 import com.oberdiah.tileIdsChangedLastFrameMarchingCubes
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
+import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.Colors
+import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
+import kotlin.random.Random
 
 object RenderLevel {
 
@@ -191,6 +199,81 @@ object RenderLevel {
         }
     }
 
+    data class Cloud(val rects: List<Rect>, val speed: Double, val color: Color)
+
+    private var clouds = mutableListOf<Cloud>()
+    private var timeLastCloudSpawned = 0.0
+    private var heightLastCloudSpawned = 0.0
+
+    fun renderForeground(r: Renderer) {
+        clouds.forEach {
+            val speed = GameTime.GRAPHICS_DELTA * it.speed
+            it.rects.forEach {
+                it.p.x += speed
+            }
+        }
+
+        if (GameTime.APP_TIME - timeLastCloudSpawned > 3.0) {
+            timeLastCloudSpawned = GameTime.APP_TIME
+            var pointY = Random.nextDouble(4.0, UPGRADES_SCREEN_BOTTOM_Y.d - 1.0)
+            while ((pointY - heightLastCloudSpawned).abs < 4.0) {
+                pointY = Random.nextDouble(4.0, UPGRADES_SCREEN_BOTTOM_Y.d - 1.0)
+            }
+            heightLastCloudSpawned = pointY
+
+            val cloudPieceHeight = Random.nextDouble(0.5, 1.0)
+            val overallCloudWidth = Random.nextDouble(2.0, 5.0)
+            val overallCloudHeight = Random.nextDouble(cloudPieceHeight, cloudPieceHeight * 2)
+            val cloudSpeed = Random.nextDouble(0.3, 0.9)
+            val cloudParts = mutableListOf<Rect>()
+            for (i in 0 until Random.nextInt(1, 3)) {
+                val thisPartX = Random.nextDouble(0.0, overallCloudWidth)
+
+                cloudParts.add(
+                    Rect(
+                        Point(
+                            -10.0 + thisPartX,
+                            pointY + Random.nextDouble(overallCloudHeight)
+                        ),
+                        Size(
+                            Random.nextDouble(0.8, max(overallCloudWidth - thisPartX, 1.0)),
+                            cloudPieceHeight
+                        )
+                    )
+                )
+            }
+
+            clouds.add(
+                Cloud(
+                    cloudParts,
+                    cloudSpeed,
+                    getBackgroundColorAtHeight(pointY).add(0.1f, 0.1f, 0.1f, 0f)
+                )
+            )
+        }
+
+        for (cloud in clouds) {
+            renderCloud(r, cloud)
+        }
+    }
+
+    private fun renderCloud(r: Renderer, cloud: Cloud) {
+        // A cloud is a rectangle with two circles on each end to make it rounded
+        r.color = cloud.color
+        for (rect in cloud.rects) {
+            r.rect(rect)
+            r.circle((rect.tl + rect.bl) / 2, rect.h / 2)
+            r.circle((rect.tr + rect.br) / 2, rect.h / 2)
+        }
+    }
+
+    private fun getBackgroundColorAtHeight(height: Double): Color {
+        val fromColor = colorScheme.backgroundA
+        val toColor = colorScheme.backgroundB
+
+        return fromColor.cpy().lerp(toColor, clamp(height / 10.0, 0.0, 2.0).f)
+    }
+
     fun renderBackground(r: Renderer) {
         val wobbleRange = UpgradeController.currentUpgradeYRange()
         val redMakerRange = UpgradeController.getRedBackgroundRange()
@@ -202,9 +285,10 @@ object RenderLevel {
             for (oy in 0 until numYSquares) {
                 val ty = oy + floor(CAMERA_POS_Y)
 
-                var thisColor = colorScheme.backgroundA
+                var thisColor = getBackgroundColorAtHeight(ty.d)
+
                 if ((ty + tx) % 2 == 0) {
-                    thisColor = colorScheme.backgroundB
+                    thisColor.add(0.02f, 0.02f, 0.02f, 0.0f)
                 }
 
                 val redMaker = if ((ty.d + 0.5) in redMakerRange) {
@@ -223,9 +307,9 @@ object RenderLevel {
 
                 // Make thisColor darker as we go up (ty increases)
                 thisColor = thisColor.cpy().add(
-                    min(0.05f * (ty / 50f), 0.05f).f,
-                    min(0.10f * (ty / 50f) + redMaker, 0.05f).f,
-                    min(0.15f * (ty / 50f) + redMaker, 0.05f).f,
+                    min(0.05f * (ty / 20f), 0.05f).f,
+                    min(0.10f * (ty / 20f) + redMaker, 0.05f).f,
+                    min(0.15f * (ty / 20f) + redMaker, 0.05f).f,
                     0.0f
                 )
 

@@ -8,7 +8,7 @@ import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.camera
 
 /** If this is true we add all the debug ui stuff, and also boot straight into the game. */
-const val IS_DEBUG_ENABLED = false
+const val IS_DEBUG_ENABLED = true
 
 /** If this is true, we do a bunch of extra debug checks to ensure things are behaving correctly. */
 const val DEBUG_VERIFY = IS_DEBUG_ENABLED
