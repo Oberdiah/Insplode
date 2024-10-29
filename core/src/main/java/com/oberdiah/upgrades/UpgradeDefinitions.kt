@@ -393,7 +393,7 @@ enum class Upgrade(
 
     val starsToUnlock: Int
         get() {
-            if (this == BlackHole) return this.ordinal * 3 - 3
+            if (this == BlackHole) return this.ordinal * 3 // No -3 needed because we start at 0
 
             return (this.ordinal * 2.5).i
         }
