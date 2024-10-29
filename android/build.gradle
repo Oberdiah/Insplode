@@ -25,7 +25,7 @@ android {
         minSdkVersion 28
         targetSdkVersion 34
         compileSdk 34
-        versionCode 1
+        versionCode 12
         versionName "1.0"
         multiDexEnabled true
     }
@@ -37,9 +37,8 @@ android {
     kotlinOptions.jvmTarget = "1.8"
     buildTypes {
         release {
-            shrinkResources true
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 

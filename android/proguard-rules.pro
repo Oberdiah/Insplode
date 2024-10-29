@@ -46,3 +46,17 @@
    boolean reportFixture(long);
    float   reportRayFixture(long, float, float, float, float, float);
 }
+
+# Keep all class members in games.rednblack.miniaudio.MiniAudio
+-keepclassmembers class games.rednblack.miniaudio.MiniAudio {
+	*;
+}
+
+-keep public class com.badlogic.gdx.graphics.g2d.BitmapFont { *; }
+-keep public class com.badlogic.gdx.graphics.g2d.GlyphLayout { *; }
+# You will probably need this line in most cases:
+-keep public class com.badlogic.gdx.graphics.Color { *; }
+
+# These two lines are used with mapping files; see https://developer.android.com/build/shrink-code#retracing
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile
