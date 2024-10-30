@@ -335,7 +335,7 @@ enum class Upgrade(
         "Lightning Fast",
         "Move ridiculously fast.",
         1000,
-        2919,
+        3184,
         levelSpecificFailureHints = listOf(
             "Delaying in the air before slamming can help\nkeep a multiplier over a bomb drought.",
             "Once you reach 2x or even higher\nyour score racks up quickly.",

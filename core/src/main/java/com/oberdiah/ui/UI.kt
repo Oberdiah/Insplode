@@ -165,10 +165,7 @@ private fun settingsUI(r: Renderer) {
     if (ScoreSystem.playerHasFinishedTheGame()) {
         toggleButton(r, "Rainbow Player", rainbowPlayerEnabled::value)
     }
-
-    button(r, "Controls") {
-        switchScreen(Screen.Controls)
-    }
+    
     button(r, "Advanced Settings") {
         switchScreen(Screen.AdvancedSettings)
     }
