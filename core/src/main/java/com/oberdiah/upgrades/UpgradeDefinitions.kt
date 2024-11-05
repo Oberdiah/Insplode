@@ -113,7 +113,7 @@ enum class Upgrade(
         "Medium Bomb",
         "Occasionally spawns in\na bomb.\nMine for orbs!",
         7,
-        30,
+        31,
         levelSpecificFailureHints = listOf(
             "You can push bombs over the orb patches\non the ground to mine the orbs.",
             "It can be good to wait until the bombs\nhave gone in and mined out a hole\nbefore diving in.",
@@ -123,7 +123,7 @@ enum class Upgrade(
         "Jump",
         "Swipe up to jump.",
         9,
-        30,
+        33,
         levelSpecificFailureHints = listOf(
             "Push bombs over the orb patches on the\nground to mine the orbs.",
             "It can be good to wait until the bombs\nhave gone in and mined out a hole first.",
@@ -136,7 +136,7 @@ enum class Upgrade(
         "Small Bomb",
         "Helping out with the mining\neffort.",
         12,
-        29,
+        38,
         levelSpecificFailureHints = listOf(
             "Small bombs have a short fuse,\nso be quick to get out of the way.",
             "Push bigger bombs over the orb patches on the\nground to mine the orbs.",
@@ -148,7 +148,7 @@ enum class Upgrade(
         "Line Bomb",
         "Explodes in a straight line.\nWon't explode if pointing\nup or spinning fast.",
         15,
-        52,
+        53,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
@@ -174,7 +174,7 @@ enum class Upgrade(
         "Spring Bomb",
         "A bomb that jumps\naround before exploding.",
         25,
-        59,
+        60,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Try nudging line bombs onto a slope\nto angle them into the ground.",
@@ -189,7 +189,7 @@ enum class Upgrade(
         "Slam",
         "Swipe down to slam.\nSlamming bombs makes you\nbounce and repels the void.",
         30,
-        93,
+        98,
         levelSpecificFailureHints = listOf(
             "Line bombs are your ally.\nAngle them right and they'll do wonders.",
             "Line bombs exploding underground\nis a fantastic way to get down quicker.",
@@ -202,7 +202,7 @@ enum class Upgrade(
         "Large Bombs",
         "Bigger can only mean better.",
         35,
-        72,
+        133,
         levelSpecificFailureHints = listOf(
             "Slamming repels the void,\nso it's critical for longer runs",
             "Slamming a gray line bomb makes it\nexplode perfectly horizontally.",
@@ -374,7 +374,7 @@ enum class Upgrade(
         "Black Hole",
         "Everything must be consumed,\nand so it shall be.\nWhy would you want this?",
         250,
-        858,
+        1566,
         levelSpecificFailureHints = listOf(
             "Even black holes themselves can\nbe blown up, apparently?",
             "This is a bit of a joke level,\ndon't take it too seriously.",
