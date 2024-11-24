@@ -495,7 +495,11 @@ object UpgradeController {
     var canCancelPurchase = true
 
     fun boughtEveryUpgrade(): Boolean {
-        return getNextUpgradeToPurchase() == null
+        return getNextUpgradeNotBought() == null
+    }
+
+    fun getNextUpgradeNotBought(): Upgrade? {
+        return Upgrade.entries.firstOrNull { getUpgradeStatus(it) != UpgradeStatus.PURCHASED }
     }
 
     fun getNextUpgradeToPurchase(): Upgrade? {
@@ -504,13 +508,24 @@ object UpgradeController {
         }
     }
 
-    fun goToNextUpgrade() {
-        val nextUpgrade = getNextUpgradeToPurchase()
+    /**
+     * Returns the upgrade we should move to when we press 'next level'
+     */
+    fun getNextLevel(): Upgrade? {
+        return getNextUpgradeToPurchase() ?: highestUpgradeUnlockedSoFar()
+    }
 
-        if (nextUpgrade != null && getUpgradeStatus(nextUpgrade) == UpgradeStatus.PURCHASABLE) {
+    fun goToNextUpgrade() {
+        val nextUpgrade = getNextLevel()
+
+        if (nextUpgrade == null) return
+
+        if (getUpgradeStatus(nextUpgrade) == UpgradeStatus.PURCHASABLE) {
             currentlyPurchasingUpgrade = nextUpgrade
             canCancelPurchase = false
             timeOfLastUpgradeTap[UpgradeStatus.PURCHASABLE] = GameTime.APP_TIME
+        } else {
+            selectUpgrade(nextUpgrade)
         }
     }
 
@@ -727,7 +742,7 @@ object UpgradeController {
         return getUpgradeYPos(highestUpgradeUnlockedSoFar()) + UPGRADE_ENTRY_HEIGHT
     }
 
-    private fun highestUpgradeUnlockedSoFar(): Upgrade? {
+    fun highestUpgradeUnlockedSoFar(): Upgrade? {
         return Upgrade.entries.lastOrNull { playerHasTheAbilityToPlayWith(it) }
     }
 

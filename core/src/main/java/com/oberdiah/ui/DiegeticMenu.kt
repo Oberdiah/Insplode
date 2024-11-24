@@ -14,7 +14,6 @@ import com.oberdiah.SCREEN_WIDTH_IN_UNITS
 import com.oberdiah.SHADOW_DIRECTION_UNITS
 import com.oberdiah.ScoreSystem
 import com.oberdiah.ScoreSystem.lastLevelPlayed
-import com.oberdiah.ScoreSystem.lastScore
 import com.oberdiah.Size
 import com.oberdiah.UNIT_SIZE_IN_PIXELS
 import com.oberdiah.WIDTH
@@ -27,7 +26,6 @@ import com.oberdiah.f
 import com.oberdiah.fontLarge
 import com.oberdiah.fontMedium
 import com.oberdiah.fontSmall
-import com.oberdiah.fontSmallish
 import com.oberdiah.fontTiny
 import com.oberdiah.frameAccurateLerp
 import com.oberdiah.get2DShake
@@ -41,7 +39,6 @@ import com.oberdiah.startGame
 import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
 import com.oberdiah.upgrades.UpgradeController.LAUNCH_AREA_RELATIVE_RECT
-import com.oberdiah.upgrades.UpgradeController.UPGRADE_ENTRY_HEIGHT
 import com.oberdiah.upgrades.UpgradeController.noFundsWarningFract
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TOUCHES_DOWN
@@ -137,7 +134,8 @@ val showANextLevelButton: Boolean
             return false
         }
 
-        return UpgradeController.getNextUpgradeToPurchase() != null
+        return UpgradeController.getNextUpgradeToPurchase() != null ||
+                currentlyPlayingUpgrade.value != UpgradeController.highestUpgradeUnlockedSoFar()
     }
 
 val playAgainButtonRect: Rect
@@ -192,10 +190,11 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
 
     wobbleRemaining = maxOf(0.0, wobbleRemaining - GameTime.GRAPHICS_DELTA)
 
-    val nextUpgradeToPlay = UpgradeController.getNextUpgradeToPurchase()
+    val upgradeToMoveToNextLevel = UpgradeController.getNextLevel()
     val canDoNextLevel =
-        nextUpgradeToPlay != null && UpgradeController.getUpgradeStatus(nextUpgradeToPlay) ==
-                UpgradeController.UpgradeStatus.PURCHASABLE
+        upgradeToMoveToNextLevel != null && UpgradeController.getUpgradeStatus(
+            upgradeToMoveToNextLevel
+        ) != UpgradeController.UpgradeStatus.TOO_EXPENSIVE
 
     if (showANextLevelButton) {
         renderButton(
@@ -206,7 +205,7 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
             buttonColor = if (canDoNextLevel) colorScheme.nextLevelColor else colorScheme.warningTextColor
         )
 
-        if (nextUpgradeToPlay != null && !canDoNextLevel) {
+        if (upgradeToMoveToNextLevel != null && !canDoNextLevel) {
             r.color = colorScheme.textColor
 
             val wobble = get2DShake(wobbleRemaining, 0)
@@ -214,8 +213,8 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
             val starSize = fontMedium.capHeight * 1.25 / UNIT_SIZE_IN_PIXELS
             r.text(
                 fontMedium,
-                "${ScoreSystem.getPlayerTotalNumStars()}/${nextUpgradeToPlay.starsToUnlock}",
-                nextLevelButtonRect.center() + Point(0.3, 0.0) + wobble,
+                "${ScoreSystem.getPlayerTotalNumStars()}/${upgradeToMoveToNextLevel.starsToUnlock}",
+                nextLevelButtonRect.center() + Point(0.35, 0.0) + wobble,
                 Align.right,
                 shouldCache = false
             )
@@ -253,8 +252,7 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
             startGame(false)
         }
         if (isNextLevelButtonHeldDown && nextLevelButtonRect.contains(it.wo)) {
-            val nextUpgrade = UpgradeController.getNextUpgradeToPurchase()
-            sendCameraTo(getUpgradeYPos(nextUpgrade) - SCREEN_HEIGHT_IN_UNITS / 2) {
+            sendCameraTo(getUpgradeYPos(upgradeToMoveToNextLevel) - SCREEN_HEIGHT_IN_UNITS / 2) {
                 UpgradeController.goToNextUpgrade()
             }
             vibrate(10)
