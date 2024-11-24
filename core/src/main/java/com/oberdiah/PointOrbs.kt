@@ -38,44 +38,55 @@ object PointOrbs {
     }
 
     fun tick() {
-        orbsToSpawn.removeIf { orbToSpawn ->
-            val (_, points, startVel) = orbToSpawn
-            var p = orbToSpawn.p + createRandomFacingPoint() * orbToSpawn.searchRadius
-
-            // Check if it's safe to spawn
-            if (orbToSpawn.ensureEmptySpaceOnSpawn) {
-                val radius = PointOrb.calculateRadius(points)
-                // This should technically be radius * 2, but we want to allow a little overlap.
-                if (!isRectEmptySpace(Rect.centered(p, Size(radius, radius)))) {
-                    orbToSpawn.searchRadius += 0.1
-                    return@removeIf false
-                }
+        var each = orbsToSpawn.iterator()
+        // Couldn't use removeIf here because of strange iOS stuff.
+        while (each.hasNext()) {
+            if (attemptToSpawnOrb(each.next())) {
+                each.remove()
             }
-
-            if (orbToSpawn.spawnSingleOrb) {
-                PointOrb(p, points, startVel)
-                return@removeIf true
-            }
-
-            // greedy algorithm to spawn point orbs
-            var pointsLeft = points
-            while (pointsLeft > 0) {
-                val orbScore = pointOrbValues.last { it <= pointsLeft }
-                var velocity = startVel
-
-                if (orbToSpawn.addRandomVelocity) {
-                    velocity += createRandomFacingPoint() * 5.0
-                }
-
-                val orb = PointOrb(p, orbScore, velocity)
-                if (orbToSpawn.canBePickedUpInstantly) {
-                    orb.timeAlive = 0.5
-                }
-                pointsLeft -= orbScore
-            }
-
-            return@removeIf true
         }
+    }
+
+    /**
+     * Returns true if the orb was successfully spawned and it should be removed from the list.
+     */
+    private fun attemptToSpawnOrb(orbToSpawn: OrbToBe): Boolean {
+        val (_, points, startVel) = orbToSpawn
+        var p = orbToSpawn.p + createRandomFacingPoint() * orbToSpawn.searchRadius
+
+        // Check if it's safe to spawn
+        if (orbToSpawn.ensureEmptySpaceOnSpawn) {
+            val radius = PointOrb.calculateRadius(points)
+            // This should technically be radius * 2, but we want to allow a little overlap.
+            if (!isRectEmptySpace(Rect.centered(p, Size(radius, radius)))) {
+                orbToSpawn.searchRadius += 0.1
+                return false
+            }
+        }
+
+        if (orbToSpawn.spawnSingleOrb) {
+            PointOrb(p, points, startVel)
+            return true
+        }
+
+        // greedy algorithm to spawn point orbs
+        var pointsLeft = points
+        while (pointsLeft > 0) {
+            val orbScore = pointOrbValues.last { it <= pointsLeft }
+            var velocity = startVel
+
+            if (orbToSpawn.addRandomVelocity) {
+                velocity += createRandomFacingPoint() * 5.0
+            }
+
+            val orb = PointOrb(p, orbScore, velocity)
+            if (orbToSpawn.canBePickedUpInstantly) {
+                orb.timeAlive = 0.5
+            }
+            pointsLeft -= orbScore
+        }
+
+        return true
     }
 
     /**

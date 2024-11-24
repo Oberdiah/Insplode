@@ -1,99 +1,99 @@
-Sounds/Orange hit hard 4.wav
-Sounds/Twang C 2.mp3
-Sounds/Power down.wav
-Sounds/Twang C 3.mp3
-Sounds/Orange hit hard 5.wav
-Sounds/Orange hit hard 7.wav
-Sounds/Twang C 1.mp3
-Sounds/Twang G 4.mp3
-Sounds/Orange hit hard 6.wav
-Sounds/Orange hit hard 2.wav
-Sounds/Twang C 4.mp3
-Sounds/Twang G 1.mp3
-Sounds/Orange hit hard 3.wav
-Sounds/Orange hit hard 1.wav
-Sounds/Twang G 3.mp3
-Sounds/Twang G 2.mp3
-Sounds/Chords 1.mp3
-Sounds/Chords 3.mp3
-Sounds/Power up 8.mp3
-Sounds/Power up 9.mp3
-Sounds/Chords 2.mp3
-Sounds/Power up 10.mp3
-Sounds/Chords 5.mp3
-Sounds/Crunch 3.wav
-Sounds/Crunch 2.wav
-Sounds/Chords 4.mp3
-Sounds/Tap 1.mp3
-Sounds/Power up 2.mp3
+Icons/BlackHole.png
+Icons/BombSlam.png
+Icons/BombWizard.png
+Icons/ComboOrbs.png
+Icons/DeadlyTouch.png
+Icons/EvenFasterMovement.png
+Icons/FasterMovement.png
+Icons/FinalRun.png
+Icons/GhostMode.png
+Icons/GlobalMagnet.png
+Icons/GoldenNuggets.png
+Icons/InfiniteMultiplier.png
+Icons/Jump.png
+Icons/LargeTimedBomb.png
+Icons/LineBomb.png
+Icons/Magnet.png
+Icons/MediumTimedBomb.png
+Icons/MegaMagnet.png
+Icons/MegaTimedBomb.png
+Icons/Mobility.png
+Icons/MoreSkyOrbs.png
+Icons/Movement.png
+Icons/Multiplier.png
+Icons/Not Found.png
+Icons/RainbowPlayer.png
+Icons/RapidBombs.png
+Icons/Settings.png
+Icons/Slam.png
+Icons/SlamAssist.png
+Icons/SlamOrbs.png
+Icons/SlowerVoid.png
+Icons/SmallTimedBomb.png
+Icons/SneakySlam.png
+Icons/SpringBomb.png
+Icons/StarterUpgrade.png
+Icons/UltraTimedBomb.png
+Icons/Victory.png
+Icons/WiderLineBombs.png
+Lato-Medium.ttf
+Sounds/Bat hit 4.wav
+Sounds/Can hit 1.wav
 Sounds/Can hit 2.wav
 Sounds/Can hit 3.wav
-Sounds/Power up 3.mp3
-Sounds/Bat hit 4.wav
-Sounds/Power up 1.mp3
-Sounds/Can hit 1.wav
-Sounds/Power up 4.mp3
 Sounds/Can hit 4.wav
 Sounds/Can hit 5.wav
-Sounds/Power up 5.mp3
-Sounds/Power up 7.mp3
-Sounds/Can hit 7.wav
 Sounds/Can hit 6.wav
-Sounds/Power up 6.mp3
-Sounds/Tap 4.wav
-Sounds/Ding 3.wav
-Sounds/Orange hit soft 2.wav
-Sounds/Orange hit soft 3.wav
-Sounds/Ding 2.wav
-Sounds/Tap 5.wav
-Sounds/Orange hit soft 1.wav
+Sounds/Can hit 7.wav
+Sounds/Chords 1.mp3
+Sounds/Chords 2.mp3
+Sounds/Chords 3.mp3
+Sounds/Chords 4.mp3
+Sounds/Chords 5.mp3
+Sounds/Crunch 1.mp3
+Sounds/Crunch 2.wav
+Sounds/Crunch 3.wav
 Sounds/Crunch 4.mp3
 Sounds/Crunch 5.mp3
 Sounds/Ding 1.wav
-Sounds/Ding 5.wav
-Sounds/Tap 2.wav
-Sounds/Orange hit soft 4.wav
-Sounds/Crunch 1.mp3
-Sounds/Tap 3.wav
+Sounds/Ding 2.wav
+Sounds/Ding 3.wav
 Sounds/Ding 4.wav
+Sounds/Ding 5.wav
+Sounds/Orange hit hard 1.wav
+Sounds/Orange hit hard 2.wav
+Sounds/Orange hit hard 3.wav
+Sounds/Orange hit hard 4.wav
+Sounds/Orange hit hard 5.wav
+Sounds/Orange hit hard 6.wav
+Sounds/Orange hit hard 7.wav
 Sounds/Orange hit hard 8.wav
 Sounds/Orange hit hard 9.wav
-Icons/MegaMagnet.png
-Icons/LineBomb.png
-Icons/Multiplier.png
-Icons/Jump.png
-Icons/UltraTimedBomb.png
-Icons/Magnet.png
-Icons/Settings.png
-Icons/BombWizard.png
-Icons/Victory.png
-Icons/MoreSkyOrbs.png
-Icons/GoldenNuggets.png
-Icons/SlowerVoid.png
-Icons/MegaTimedBomb.png
-Icons/SpringBomb.png
-Icons/Slam.png
-Icons/Movement.png
-Icons/FinalRun.png
-Icons/StarterUpgrade.png
-Icons/RapidBombs.png
-Icons/SneakySlam.png
-Icons/BlackHole.png
-Icons/ComboOrbs.png
-Icons/EvenFasterMovement.png
-Icons/WiderLineBombs.png
-Icons/LargeTimedBomb.png
-Icons/FasterMovement.png
-Icons/Not Found.png
-Icons/DeadlyTouch.png
-Icons/MediumTimedBomb.png
-Icons/InfiniteMultiplier.png
-Icons/GlobalMagnet.png
-Icons/BombSlam.png
-Icons/GhostMode.png
-Icons/SlamAssist.png
-Icons/SlamOrbs.png
-Icons/SmallTimedBomb.png
-Icons/Mobility.png
-Icons/RainbowPlayer.png
-Lato-Medium.ttf
+Sounds/Orange hit soft 1.wav
+Sounds/Orange hit soft 2.wav
+Sounds/Orange hit soft 3.wav
+Sounds/Orange hit soft 4.wav
+Sounds/Power down.wav
+Sounds/Power up 1.mp3
+Sounds/Power up 10.mp3
+Sounds/Power up 2.mp3
+Sounds/Power up 3.mp3
+Sounds/Power up 4.mp3
+Sounds/Power up 5.mp3
+Sounds/Power up 6.mp3
+Sounds/Power up 7.mp3
+Sounds/Power up 8.mp3
+Sounds/Power up 9.mp3
+Sounds/Tap 1.mp3
+Sounds/Tap 2.wav
+Sounds/Tap 3.wav
+Sounds/Tap 4.wav
+Sounds/Tap 5.wav
+Sounds/Twang C 1.mp3
+Sounds/Twang C 2.mp3
+Sounds/Twang C 3.mp3
+Sounds/Twang C 4.mp3
+Sounds/Twang G 1.mp3
+Sounds/Twang G 2.mp3
+Sounds/Twang G 3.mp3
+Sounds/Twang G 4.mp3
