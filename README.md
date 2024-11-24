@@ -29,3 +29,10 @@ All that said, it's still a functional game and I'm pleased it's finished.
 \- Oberdiah
 
 P.S. If anyone ever actually wants to add to this mess, pull requests are open.
+
+### Notes
+
+If building on iOS, XCode has changed where provision profiles are stored and RoboVM hasn't caught
+up,
+you'll need to symlink the folder for it to work:
+`ln -s ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles ~/Library/MobileDevice/`
