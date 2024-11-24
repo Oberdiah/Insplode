@@ -34,3 +34,7 @@ dependencies {
     implementation "games.rednblack.miniaudio:miniaudio:$miniaudioVersion:natives-ios"
     implementation project(':core')
 }
+
+robovm {
+    archs = "arm64"
+}
