@@ -6,6 +6,7 @@ import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
+import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.oberdiah.utils.PlatformInterface;
 
 import games.rednblack.miniaudio.MiniAudio;
@@ -31,7 +32,10 @@ public class IOSLauncher extends IOSApplication.Delegate {
     @Override
     protected IOSApplication createApplication() {
         IOSApplicationConfiguration configuration = new IOSApplicationConfiguration();
+        configuration.hideHomeIndicator = true;
         configuration.useHaptics = true;
+        configuration.hdpiMode = HdpiMode.Pixels;
+        configuration.useCompass = false;
         platformInterface = new IOSPlatformInterface();
         return new IOSApplication(new Main(platformInterface), configuration);
     }

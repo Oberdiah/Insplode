@@ -1,5 +1,6 @@
 package com.oberdiah.utils
 
+import com.oberdiah.IS_DEBUG_ENABLED
 import com.oberdiah.format
 import com.oberdiah.max
 
@@ -65,7 +66,7 @@ fun timerEnd() {
     }
 
     if (GameTime.APP_TIME > lastTimeReset + 1.0) {
-        if (GameTime.APP_TIME % 10.0 < 1.0) {
+        if (GameTime.APP_TIME % 10.0 < 1.0 && IS_DEBUG_ENABLED) {
             println(timerString)
         }
         lastTimeReset = GameTime.APP_TIME
