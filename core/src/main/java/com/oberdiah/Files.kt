@@ -15,7 +15,7 @@ fun listFolder(s: String): List<FileHandle> {
     return ALL_FILES.filter { it.path().startsWith(s) }.map {
         var path = it
         if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            val pathStr = "C:\\Users\\richa\\Documents\\MyCodeProjects\\WeeklyGame2\\assets\\$path"
+            val pathStr = System.getProperty("user.dir") + "\\assets\\$path"
             path = Gdx.files.absolute(pathStr)
         }
         path
