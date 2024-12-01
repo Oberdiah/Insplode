@@ -10,7 +10,7 @@ won't.
 
 - There are globals everywhere.
 - There is no style guide.
-- The folder structure is loose-to-non-existant, what goes where is best-effort.
+- The folder structure is loose-to-non-existent, what goes where is best-effort.
 - Global constants can be in camelCase or SCREAMING_SNAKE_CASE depending on the mood or phase of the
   moon.
 - Sometimes assigning values to globals has consequences, sometimes it doesn't.
@@ -36,3 +36,5 @@ If building on iOS, XCode has changed where provision profiles are stored and Ro
 up,
 you'll need to symlink the folder for it to work:
 `ln -s ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles ~/Library/MobileDevice/`
+To install onto a device running IOS 17+:
+`https://github.com/MobiVM/robovm/issues/755#issuecomment-2108521622`
