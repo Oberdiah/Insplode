@@ -246,6 +246,15 @@ private fun renderPlayAgainAndNextLevelButtons(r: Renderer) {
         }
     }
 
+    TOUCHES_DOWN.forEach {
+        if (isPlayAgainButtonHeldDown && !playAgainButtonRect.contains(it.wo)) {
+            isPlayAgainButtonHeldDown = false
+        }
+        if (isNextLevelButtonHeldDown && !nextLevelButtonRect.contains(it.wo)) {
+            isNextLevelButtonHeldDown = false
+        }
+    }
+
     TOUCHES_WENT_UP.forEach {
         if (isPlayAgainButtonHeldDown && playAgainButtonRect.contains(it.wo)) {
             vibrate(10)
