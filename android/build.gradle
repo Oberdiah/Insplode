@@ -30,11 +30,15 @@ android {
         multiDexEnabled true
     }
     compileOptions {
-        sourceCompatibility "17.0"
-        targetCompatibility "17.0"
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
         coreLibraryDesugaringEnabled true
     }
-    kotlinOptions.jvmTarget = "1.8"
+
+    kotlinOptions {
+        jvmTarget = '21'
+    }
+
     buildTypes {
         release {
 //            minifyEnabled true
