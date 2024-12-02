@@ -2,6 +2,8 @@ package com.oberdiah.level
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20.GL_FRAMEBUFFER
+import com.badlogic.gdx.graphics.GL20.GL_FRAMEBUFFER_BINDING
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
@@ -9,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.utils.BufferUtils
 import com.oberdiah.CAMERA_POS_Y
 import com.oberdiah.HEIGHT
 import com.oberdiah.NUM_TILES_ACROSS
@@ -43,6 +46,7 @@ import com.oberdiah.utils.Colors
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
+import java.nio.IntBuffer
 import kotlin.random.Random
 
 object RenderLevel {
@@ -89,10 +93,12 @@ object RenderLevel {
         }
 
         fboBaseLocation = -floor(CAMERA_POS_Y / fboLoopSizeInUnits)
-//    DEBUG_STRING = "${fboBaseLocation}"
         cam2.position.y = fboLoopSizeInUnits.f / 2
         cam2.update()
         levelShapeRenderer.projectionMatrix = cam2.combined
+
+        var oldFbo = BufferUtils.newIntBuffer(1)
+        Gdx.gl.glGetIntegerv(GL_FRAMEBUFFER_BINDING, oldFbo)
 
         fbo.begin()
         Gdx.gl.glDisable(GL30.GL_BLEND)
@@ -130,6 +136,8 @@ object RenderLevel {
         }
         levelShapeRenderer.end()
         fbo.end()
+        var fboIdx = oldFbo.get()
+        Gdx.gl.glBindFramebuffer(GL_FRAMEBUFFER, fboIdx)
 
         val yOffset = (-Point(0, 0).ui.y.f + HEIGHT.f - fbo.height.f).i
         val topTexY = (yOffset + ((fboBaseLocation - 1) * fbo.height)).f
