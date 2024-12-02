@@ -1,89 +1,47 @@
 package com.oberdiah
 
-import com.badlogic.gdx.Application
-import com.badlogic.gdx.Gdx
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.Player
-import games.rednblack.miniaudio.MASound
-import games.rednblack.miniaudio.MiniAudio
-import games.rednblack.miniaudio.effect.MADelayNode
-import games.rednblack.miniaudio.filter.MALowPassFilter
-import games.rednblack.miniaudio.mix.MASplitter
+import com.oberdiah.sounds.MiniAudioCore
+import com.oberdiah.sounds.SoundCore
 import kotlin.math.pow
 import kotlin.random.Random
 
-
-const val MAX_NUM_SOUNDS_PLAYING = 30
-private var SOUND_POOL: Map<String, List<MASound>> = mutableMapOf()
-lateinit var miniAudio: MiniAudio
-lateinit var caveSplitter: MASplitter
-
-// https://sonniss.com/gameaudiogdc
+private lateinit var soundEngine: SoundCore
 
 fun loadSounds() {
-    //Create only one MiniAudio object!
-    miniAudio = MiniAudio()
-    platformInterface.injectAssetManager(miniAudio)
-    caveSplitter = MASplitter(miniAudio)
-    val lowPassFilter = MALowPassFilter(miniAudio, 550.0, 8)
-    val delayNode = MADelayNode(miniAudio, 0.1f, 0.1f)
-
-    miniAudio.attachToEngineOutput(lowPassFilter, 0)
-    miniAudio.attachToEngineOutput(delayNode, 0)
-
-    lowPassFilter.attachToThisNode(caveSplitter, 0)
-    delayNode.attachToThisNode(caveSplitter, 1)
-
-    val numSoundsInPoolPerAsset = 10
-
-    listFolder("Sounds/").forEach {
-        val path = it.path()
-        val sounds = (0 until numSoundsInPoolPerAsset).map {
-            miniAudio.createSound(path)
-        }
-        SOUND_POOL += it.nameWithoutExtension() to sounds
-    }
+    soundEngine = MiniAudioCore()
+    soundEngine.initialize()
 }
 
-data class PlayingSound(
-    val sound: MASound,
-    val data: SoundData
-) : Comparable<PlayingSound> {
-    override fun compareTo(other: PlayingSound): Int {
-        return data.volume.compareTo(other.data.volume)
-    }
+fun disposeSounds() {
+    soundEngine.dispose()
+}
+
+fun pauseSounds() {
+    soundEngine.pause()
+}
+
+fun resumeSounds() {
+    soundEngine.resume()
 }
 
 /** Sorted from lowest to highest volume */
-val allSoundsPlaying = sortedSetOf<PlayingSound>()
 val scheduledSounds = mutableListOf<SoundData>()
 fun tickSounds() {
     scheduledSounds.forEach {
         if (it.scheduledAt!! < RUN_TIME_ELAPSED) {
-            playSound(it.name, it.pitch, it.volume, splitter = it.splitter)
+            playSound(it.name, it.pitch, it.volume, withReverb = it.withReverb)
         }
     }
     scheduledSounds.removeAll { it.scheduledAt!! < RUN_TIME_ELAPSED }
-    allSoundsPlaying.removeAll { !it.sound.isPlaying }
-}
-
-fun disposeSounds() {
-    // I trust Windows to just do the cleanup for us - I'd like to be more responsible
-    // on Android
-    if (Gdx.app.type != Application.ApplicationType.Desktop) {
-        SOUND_POOL.forEach { (_, sounds) ->
-            sounds.forEach { it.dispose() }
-        }
-
-        miniAudio.dispose()
-    }
 }
 
 data class SoundData(
     val name: String,
     val pitch: Double,
     val volume: Double,
-    val splitter: MASplitter?,
+    var withReverb: Boolean = false,
     val scheduledAt: Double?
 )
 
@@ -91,56 +49,21 @@ fun playSound(
     soundName: String,
     pitch: Double = 1.0,
     volume: Double = 1.0,
-    splitter: MASplitter? = null,
+    withReverb: Boolean = false,
     delay: Double? = null,
 ) {
     if (volume < 0.005) return
     if (statefulPlaySoundSetting.value == false) return
 
-    // Get the first sound that isn't playing (sound.isPlaying())
-    val soundPool = SOUND_POOL[soundName]
-    if (soundPool == null) {
-        println("Sound not found: $soundName")
-        return
-    }
-
-    val sound = soundPool.firstOrNull { !it.isPlaying }
-    if (sound == null) {
-        return
-    }
-
     val soundData =
-        SoundData(soundName, pitch, volume, splitter, RUN_TIME_ELAPSED + (delay ?: 0.0));
+        SoundData(soundName, pitch, volume, withReverb, RUN_TIME_ELAPSED + (delay ?: 0.0));
 
     if (delay != null) {
         scheduledSounds.add(soundData)
         return
     }
 
-    // We know we are more important than the quietest sound playing, so we can kick them out
-    if (allSoundsPlaying.size >= MAX_NUM_SOUNDS_PLAYING) {
-        if (volume < (allSoundsPlaying.firstOrNull()?.data?.volume ?: 0.0)) {
-            // We're too quiet to play this sound right now
-            return
-        }
-
-        allSoundsPlaying.first().sound.stop()
-        allSoundsPlaying.remove(allSoundsPlaying.first())
-    }
-
-    sound.setVolume(volume.f)
-    sound.setPitch(pitch.f)
-    // Random pan
-    sound.setPan(Random.nextDouble(-0.5, 0.5).f)
-    sound.play()
-
-    if (splitter != null) {
-        splitter.attachToThisNode(sound, 0)
-    } else {
-        miniAudio.attachToEngineOutput(sound, 0)
-    }
-
-    allSoundsPlaying.add(PlayingSound(sound, soundData))
+    soundEngine.playSound(soundData)
 }
 
 fun playExplosionSound(force: Double) {
@@ -163,16 +86,12 @@ fun playExplosionSound(force: Double) {
             volume = 0.5
         )
     } else {
-        val splitter = if (force > 1.8) {
-            caveSplitter
-        } else {
-            null
-        }
+        val withReverb = force > 1.8
 
         playSound(
             "Bat hit 4",
             pitch,
-            splitter = splitter,
+            withReverb = withReverb,
         )
     }
 }
@@ -262,7 +181,7 @@ private fun playPickupSoundInternal(loopId: Int) {
         "Ding ${Random.nextInt(1, 6)}",
         pitch,
         volume.pow(2) * 0.25,
-        splitter = caveSplitter,
+        withReverb = true,
     )
 }
 

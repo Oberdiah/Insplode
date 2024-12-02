@@ -206,14 +206,14 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         disposeSounds()
     }
 
-    override fun resume() {
-        miniAudio.startEngine();
-    }
-
     override fun resize(width: Int, height: Int) {
     }
 
     override fun pause() {
-        miniAudio.stopEngine();
+        pauseSounds()
+    }
+
+    override fun resume() {
+        resumeSounds()
     }
 }
