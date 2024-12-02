@@ -1,7 +1,10 @@
 package com.oberdiah
 
+import com.badlogic.gdx.Application.ApplicationType
+import com.badlogic.gdx.Gdx
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.Player
+import com.oberdiah.sounds.DefaultAudioCore
 import com.oberdiah.sounds.MiniAudioCore
 import com.oberdiah.sounds.SoundCore
 import kotlin.math.pow
@@ -10,7 +13,10 @@ import kotlin.random.Random
 private lateinit var soundEngine: SoundCore
 
 fun loadSounds() {
-    soundEngine = MiniAudioCore()
+    soundEngine = when (Gdx.app.type) {
+        ApplicationType.iOS -> DefaultAudioCore()
+        else -> MiniAudioCore()
+    }
     soundEngine.initialize()
 }
 
@@ -35,6 +41,7 @@ fun tickSounds() {
         }
     }
     scheduledSounds.removeAll { it.scheduledAt!! < RUN_TIME_ELAPSED }
+    soundEngine.tick()
 }
 
 data class SoundData(
