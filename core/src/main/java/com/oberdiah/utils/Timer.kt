@@ -1,6 +1,7 @@
 package com.oberdiah.utils
 
 import com.oberdiah.IS_DEBUG_ENABLED
+import com.oberdiah.SHOW_FRAMERATE_DATA
 import com.oberdiah.format
 import com.oberdiah.max
 
@@ -46,6 +47,10 @@ val frameTimes = mutableMapOf<String, TimedInstance>()
 private var lastTimeReset = 0.0
 
 fun timerEnd() {
+    if (!SHOW_FRAMERATE_DATA) {
+        return
+    }
+
     lastFrameTime = (System.nanoTime() - frameStart) / 1000000.0
     fpsQueue.add(lastFrameTime)
     if (fpsQueue.size > 100) {
