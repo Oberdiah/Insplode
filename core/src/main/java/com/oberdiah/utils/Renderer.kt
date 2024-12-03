@@ -308,25 +308,17 @@ class Renderer(val name: String, val camera: Camera) {
         }
     }
 
+    private val starFloatArr: FloatArray = FloatArray(20)
     fun star(center: Point, radius: Double, angle: Double = Math.PI / 10) {
-        val points = mutableListOf<Point>()
         for (i in 0 until 5) {
             val angle1 = angle + i * 2 * PI / 5
             val angle2 = angle + (i + 0.5) * 2 * PI / 5
-            points.add(
-                Point(
-                    center.x + cos(angle1) * radius,
-                    center.y + sin(angle1) * radius
-                )
-            )
-            points.add(
-                Point(
-                    center.x + cos(angle2) * radius / 2,
-                    center.y + sin(angle2) * radius / 2
-                )
-            )
+            starFloatArr[i * 4] = (center.x + cos(angle1) * radius).f
+            starFloatArr[i * 4 + 1] = (center.y + sin(angle1) * radius).f
+            starFloatArr[i * 4 + 2] = (center.x + cos(angle2) * radius / 2).f
+            starFloatArr[i * 4 + 3] = (center.y + sin(angle2) * radius / 2).f
         }
-        poly(points, Point(), 0.0)
+        poly(starFloatArr, 1.0, 0.0, 0.0)
     }
 
     fun circle(p: Point, rad: Number, segments: Int = 20) {
