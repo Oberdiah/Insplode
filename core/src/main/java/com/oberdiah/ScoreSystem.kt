@@ -159,7 +159,7 @@ object ScoreSystem {
             return 1.0
         }
 
-        return 1 + max((numConsecutiveBounces - 15) * 0.05, 0)
+        return 1 + max((numConsecutiveBounces - 15) * 0.05, 0.0)
     }
 
     /** Per game-second. */
@@ -476,19 +476,21 @@ object ScoreSystem {
 
 
         // Seconds counter
-        val alpha =
-            if (RUN_TIME_ELAPSED < 1.0) saturate(RUN_TIME_ELAPSED) else saturate(-CAMERA_POS_Y * 0.5)
-        r.color = colorScheme.textColor.withAlpha(alpha)
-        if (secondsTimerPos.wo.y > LASER_HEIGHT) {
-            r.color = Color.WHITE.withAlpha(alpha)
+        if (RUN_TIME_ELAPSED > 0) {
+            val alpha =
+                if (RUN_TIME_ELAPSED < 1.0) saturate(RUN_TIME_ELAPSED) else saturate(-CAMERA_POS_Y * 0.5)
+            r.color = colorScheme.textColor.withAlpha(alpha)
+            if (secondsTimerPos.wo.y > LASER_HEIGHT) {
+                r.color = Color.WHITE.withAlpha(alpha)
+            }
+            r.text(
+                fontSmallish,
+                "${RUN_TIME_ELAPSED.format(1)}s",
+                secondsTimerPos,
+                Align.center,
+                shouldCache = false
+            )
         }
-        r.text(
-            fontSmallish,
-            "${RUN_TIME_ELAPSED.format(1)}s",
-            secondsTimerPos,
-            Align.center,
-            shouldCache = false
-        )
 
         if (RUN_TIME_ELAPSED > 0 && currentlyPlayingUpgrade.value != Upgrade.FinalRun) {
             val starSize = fontSmallish.capHeight * 1.25

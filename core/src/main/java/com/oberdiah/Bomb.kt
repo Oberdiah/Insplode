@@ -509,7 +509,7 @@ class ImpactBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ImpactBomb
 
     override fun render(r: Renderer) {
         r.color = color
-        r.poly(triangle, body.p, 0)
+        r.poly(triangle, body.p, 0.0)
     }
 }
 

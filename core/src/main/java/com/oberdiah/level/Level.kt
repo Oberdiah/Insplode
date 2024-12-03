@@ -217,7 +217,7 @@ object Level {
         val spawnCache1 =
             tile.coord.distTo(6.8, -0.6) < 0.2
         val spawnCache2 =
-            tile.coord.distTo(2, -1.8) < 0.25
+            tile.coord.distTo(2.0, -1.8) < 0.25
 
         if (spawnCache1 || spawnCache2) {
             tile.setTileType(TileType.OrbTile)

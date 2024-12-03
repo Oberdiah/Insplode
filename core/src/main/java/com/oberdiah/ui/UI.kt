@@ -61,7 +61,7 @@ fun renderUIScreenSpace(r: Renderer) {
         r.text(
             fontSmall,
             "$firstLine\n$secondLine\n$thirdLine",
-            10,
+            10.0,
             HEIGHT * 0.6,
             shouldCache = false
         )
@@ -78,7 +78,7 @@ fun renderUIScreenSpace(r: Renderer) {
         GameState.TransitioningToDiegeticMenu -> {}
         GameState.PausedPopup -> {
             r.color = Color.BLACK.withAlpha(0.5)
-            r.rect(0, 0, WIDTH, HEIGHT)
+            r.rect(0.0, 0.0, WIDTH, HEIGHT)
 
 
             r.color = Color.WHITE
@@ -165,7 +165,7 @@ private fun settingsUI(r: Renderer) {
     if (ScoreSystem.playerHasFinishedTheGame()) {
         toggleButton(r, "Rainbow Player", rainbowPlayerEnabled::value)
     }
-    
+
     button(r, "Advanced Settings") {
         switchScreen(Screen.AdvancedSettings)
     }
@@ -278,8 +278,8 @@ fun settingButton(
     val buttonTop = uiCurrentHeight + DIST_BETWEEN_WORDS / 2
     val buttonBottom = uiCurrentHeight - DIST_BETWEEN_WORDS / 2
 
-    r.rect(0, buttonBottom, WIDTH, 4)
-    r.rect(0, buttonTop, WIDTH, 4)
+    r.rect(0.0, buttonBottom, WIDTH, 4.0)
+    r.rect(0.0, buttonTop, WIDTH, 4.0)
 
     renderOnRight(Point(WIDTH - TEXT_CHECKBOX_OFFSET_RIGHT, uiCurrentHeight))
 
@@ -289,7 +289,7 @@ fun settingButton(
         TOUCHES_DOWN.forEach {
             if (it.y > buttonBottom && it.y < buttonTop) {
                 r.color = colorScheme.overlay
-                r.rect(0, buttonBottom, WIDTH, DIST_BETWEEN_WORDS)
+                r.rect(0.0, buttonBottom, WIDTH, DIST_BETWEEN_WORDS)
             }
         }
         TOUCHES_WENT_UP.forEach {

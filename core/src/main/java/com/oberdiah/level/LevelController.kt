@@ -26,7 +26,6 @@ import com.oberdiah.Tile
 import com.oberdiah.TimedBomb
 import com.oberdiah.UNITS_WIDE
 import com.oberdiah.abs
-import com.oberdiah.compareTo
 import com.oberdiah.createRandomFacingPoint
 import com.oberdiah.currentlyPlayingUpgrade
 import com.oberdiah.d
@@ -59,7 +58,7 @@ import kotlin.random.Random
 val LASER_HEIGHT_IN_MENU: Double
     get() {
         val finalRunFogClamp = if (ScoreSystem.playerHasFinishedTheGame()) {
-            9999
+            9999.0
         } else {
             UpgradeController.getUpgradeYPos(Upgrade.FinalRun) + UpgradeController.UPGRADE_ENTRY_HEIGHT
         }
@@ -336,7 +335,7 @@ fun tickLevelController() {
     }
 }
 
-fun spawnBomb(type: BombType, fraction: Number = getBombRandom(type).nextDouble(0.05, 0.95)) {
+fun spawnBomb(type: BombType, fraction: Double = getBombRandom(type).nextDouble(0.05, 0.95)) {
     if ((LASER_HEIGHT - laserInGameHeight).abs > 0.2) {
         println("WARNING: Bomb spawned at wrong height $LASER_HEIGHT vs $laserInGameHeight")
     }
@@ -397,8 +396,8 @@ fun spawnBomb(type: BombType, fraction: Number = getBombRandom(type).nextDouble(
     }
 }
 
-data class BombData(var delay: Number, val type: BombType) {
-    var nextBombAt: Number = 0.0
+data class BombData(var delay: Double, val type: BombType) {
+    var nextBombAt: Double = 0.0
 
     init {
         randomiseNextBombAt()
@@ -413,7 +412,7 @@ data class BombData(var delay: Number, val type: BombType) {
 
 val bombDropData = mutableMapOf<BombType, BombData>()
 
-fun startRandomBombs(type: BombType, requestedDelay: Number) {
+fun startRandomBombs(type: BombType, requestedDelay: Double) {
     val actualDelay = if (UpgradeController.playerHas(Upgrade.RapidBombs)) {
         requestedDelay
     } else {

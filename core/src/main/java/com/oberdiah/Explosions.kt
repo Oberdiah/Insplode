@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 fun boom(
     point: Point,
-    radiusIn: Number,
+    radiusIn: Double,
     affectsThePlayer: Boolean = true,
     playSound: Boolean = true,
     affectsTheLandscape: Boolean = true

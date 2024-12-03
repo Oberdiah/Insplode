@@ -17,7 +17,7 @@ private val glowsToDestroy = mutableListOf<Glow>()
 private var particleDestroyThreshold = 0.0
 
 fun tickParticles() {
-    particleDestroyThreshold = max(0, (allParticles.size - 1000) / 20000.0)
+    particleDestroyThreshold = max(0.0, (allParticles.size - 1000) / 20000.0)
     allParticles.forEach { it.tick() }
     particlesToDestroy.sortDescending()
     for (i in particlesToDestroy) {
@@ -100,7 +100,7 @@ class Glow(val p: Point, var radius: Number) {
 class Smoke(
     startP: Point,
     startV: Velocity,
-    edgeLength: Number,
+    edgeLength: Double,
     val color: Color = Color.DARK_GRAY.withAlpha(0.5),
     val gravityScaling: Double = 1.0,
     canCollide: Boolean = true,
@@ -140,7 +140,7 @@ class Smoke(
 class Fragment(
     startP: Point,
     startV: Velocity,
-    edgeLength: Number,
+    edgeLength: Double,
     val tileType: TileType,
     var affectedByGravity: Boolean = true,
 ) : Particle(startP, startV, edgeLength = edgeLength) {
@@ -182,7 +182,7 @@ abstract class Particle(
     val p: Point,
     val v: Velocity = Velocity(),
     val canCollide: Boolean = true,
-    var edgeLength: Number,
+    var edgeLength: Double,
     val pulledTowards: Point? = null
 ) {
     var insideLevel = false

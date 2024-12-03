@@ -315,9 +315,9 @@ object RenderLevel {
 
                 // Make thisColor darker as we go up (ty increases)
                 thisColor = thisColor.cpy().add(
-                    min(0.05f * (ty / 20f), 0.05f).f,
-                    min(0.10f * (ty / 20f) + redMaker, 0.05f).f,
-                    min(0.15f * (ty / 20f) + redMaker, 0.05f).f,
+                    min(0.05f * (ty / 20f), 0.05f),
+                    min(0.10f * (ty / 20f) + redMaker, 0.05f),
+                    min(0.15f * (ty / 20f) + redMaker, 0.05f),
                     0.0f
                 )
 
@@ -330,7 +330,7 @@ object RenderLevel {
 
                 r.color = thisColor
 
-                r.rect(tx, ty, 1, 1)
+                r.rect(tx.d, ty.d, 1.0, 1.0)
             }
         }
     }

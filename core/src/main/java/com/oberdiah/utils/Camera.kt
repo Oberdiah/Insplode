@@ -73,7 +73,7 @@ fun updateCamera() {
     LOWEST_CAMERA_Y_THIS_RUN = min(LOWEST_CAMERA_Y_THIS_RUN, CAMERA_POS_Y)
 
     SCREEN_SHAKE -= 12 * GameTime.GAMEPLAY_DELTA
-    SCREEN_SHAKE = max(SCREEN_SHAKE, 0)
+    SCREEN_SHAKE = max(SCREEN_SHAKE, 0.0)
 
     val diff = player.body.p.y - TRANSITION_TO_LOWER_CAMERA_HEIGHT
     val transitionAmount = diff / LOWER_CAMERA_HEIGHT_TRANSITION_RANGE
@@ -120,7 +120,7 @@ fun updateCamera() {
     camera.update()
 }
 
-enum class ScreenShakeSettings(val text: String, val shakeAmount: Number) {
+enum class ScreenShakeSettings(val text: String, val shakeAmount: Double) {
     Off("Off", 0.0),
     Low("Low", 1.0),
     Normal("Normal", 2.0),

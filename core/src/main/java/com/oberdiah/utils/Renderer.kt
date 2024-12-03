@@ -15,7 +15,7 @@ import kotlin.math.PI
 import kotlin.math.atan2
 
 
-private val Number.toDegrees: Number
+private val Double.toDegrees: Double
     get() {
         return this * 180 / 3.1415
     }
@@ -168,8 +168,8 @@ class Renderer(val name: String, val camera: Camera) {
     fun text(
         font: BitmapFont,
         text: String,
-        x: Number,
-        y: Number,
+        x: Double,
+        y: Double,
         align: Int = Align.bottomLeft,
         shouldCache: Boolean = true
     ) {
@@ -184,11 +184,11 @@ class Renderer(val name: String, val camera: Camera) {
         shapeRenderer.rect(rect.p.x.f, rect.p.y.f, rect.s.w.f, rect.s.h.f)
     }
 
-    fun rect(x: Number, y: Number, w: Number, h: Number) {
+    fun rect(x: Double, y: Double, w: Double, h: Double) {
         shapeRenderer.rect(x.f, y.f, w.f, h.f)
     }
 
-    fun rect(x: Number, y: Number, w: Number, h: Number, a: Number) {
+    fun rect(x: Double, y: Double, w: Double, h: Double, a: Double) {
         shapeRenderer.rect(x.f, y.f, w.f / 2, h.f / 2, w.f, h.f, 1f, 1f, a.toDegrees.f)
     }
 
@@ -196,19 +196,19 @@ class Renderer(val name: String, val camera: Camera) {
         shapeRenderer.rect(p.x.f, p.y.f, s.w.f, s.h.f)
     }
 
-    fun rect(p: Point, w: Number, h: Number) {
+    fun rect(p: Point, w: Double, h: Double) {
         shapeRenderer.rect(p.x.f, p.y.f, w.f, h.f)
     }
 
-    fun rect(p: Point, w: Number, h: Number, a: Number) {
+    fun rect(p: Point, w: Double, h: Double, a: Double) {
         shapeRenderer.rect(p.x.f, p.y.f, w.f / 2, h.f / 2, w.f, h.f, 1f, 1f, a.toDegrees.f)
     }
 
-    fun rect(p: Point, s: Size, a: Number) {
+    fun rect(p: Point, s: Size, a: Double) {
         shapeRenderer.rect(p.x.f, p.y.f, s.w.f / 2, s.h.f / 2, s.w.f, s.h.f, 1f, 1f, a.toDegrees.f)
     }
 
-    fun centeredRect(mid: Point, w: Number, h: Number, a: Number) {
+    fun centeredRect(mid: Point, w: Double, h: Double, a: Double) {
         shapeRenderer.rect(
             mid.x.f - w.f / 2,
             mid.y.f - h.f / 2,
@@ -222,7 +222,7 @@ class Renderer(val name: String, val camera: Camera) {
         )
     }
 
-    fun centeredRect(mid: Point, s: Size, a: Number) {
+    fun centeredRect(mid: Point, s: Size, a: Double) {
         shapeRenderer.rect(
             mid.x.f - s.w.f / 2,
             mid.y.f - s.h.f / 2,
@@ -247,7 +247,7 @@ class Renderer(val name: String, val camera: Camera) {
         shapeRenderer.rect(mid.x.f + s.w.f / 2 - width.f, mid.y.f - s.h.f / 2, width.f, s.h.f)
     }
 
-    fun polyLine(ps: List<Point>, offset: Point = Point(), width: Number = 1.0) {
+    fun polyLine(ps: List<Point>, offset: Point = Point(), width: Double = 1.0) {
         for (i in 0 until ps.size - 1) {
             val x1 = ps[i].x + offset.x
             val y1 = ps[i].y + offset.y
@@ -269,15 +269,15 @@ class Renderer(val name: String, val camera: Camera) {
         }
     }
 
-    fun arcFrom0(p: Point, radius: Number, fraction: Number, segments: Int = 20) {
-        arc(p, radius, 0, clamp(fraction * Math.PI * 2, 0.0, Math.PI * 2), segments)
+    fun arcFrom0(p: Point, radius: Double, fraction: Double, segments: Int = 20) {
+        arc(p, radius, 0.0, clamp(fraction * Math.PI * 2, 0.0, Math.PI * 2), segments)
     }
 
-    fun arc(p: Point, radius: Number, start: Number, end: Number, segments: Int = 20) {
+    fun arc(p: Point, radius: Double, start: Double, end: Double, segments: Int = 20) {
         shapeRenderer.arc(p.x.f, p.y.f, radius.f, start.toDegrees.f, end.toDegrees.f, segments)
     }
 
-    fun poly(points: Collection<Point>, offset: Point, angle: Number) {
+    fun poly(points: Collection<Point>, offset: Point, angle: Double) {
         val arr = FloatArray(points.size * 2)
         val cos = cos(angle)
         val sin = sin(angle)
@@ -290,7 +290,7 @@ class Renderer(val name: String, val camera: Camera) {
         poly(arr, 1.0, offset.x, offset.y)
     }
 
-    fun poly(vertices: FloatArray, scale1: Number, offsetX1: Number, offsetY1: Number) {
+    fun poly(vertices: FloatArray, scale1: Double, offsetX1: Double, offsetY1: Double) {
         val scale = scale1.f
         val offsetX = offsetX1.f
         val offsetY = offsetY1.f
@@ -308,7 +308,7 @@ class Renderer(val name: String, val camera: Camera) {
         }
     }
 
-    fun star(center: Point, radius: Number, angle: Number = Math.PI / 10) {
+    fun star(center: Point, radius: Double, angle: Double = Math.PI / 10) {
         val points = mutableListOf<Point>()
         for (i in 0 until 5) {
             val angle1 = angle + i * 2 * PI / 5
@@ -345,15 +345,15 @@ class Renderer(val name: String, val camera: Camera) {
         lineCircle(x.d, y.d, radius.d, width.d, segments)
     }
 
-    fun line(a: Point, b: Point, width: Number) {
+    fun line(a: Point, b: Point, width: Double) {
         line(a.x, a.y, b.x, b.y, width)
     }
 
-    fun line(x1: Number, y1: Number, x2: Number, y2: Number, width: Number) {
+    fun line(x1: Double, y1: Double, x2: Double, y2: Double, width: Double) {
         shapeRenderer.rectLine(x1.f, y1.f, x2.f, y2.f, width.f)
     }
 
-    fun ngon(p: Point, radius: Number, angle: Number, sides: Int) {
+    fun ngon(p: Point, radius: Double, angle: Double, sides: Int) {
         var previousX = (cos(angle + 2 * 0 * PI / sides) * radius) + p.x
         var previousY = (sin(angle + 2 * 0 * PI / sides) * radius) + p.y
         for (i in 1..sides) {
@@ -365,7 +365,7 @@ class Renderer(val name: String, val camera: Camera) {
         }
     }
 
-    fun ngonLine(p: Point, radius: Number, angle: Number, width: Number, sides: Int) {
+    fun ngonLine(p: Point, radius: Double, angle: Double, width: Double, sides: Int) {
         var previousX = (cos(angle + 2 * 0 * PI / sides) * radius) + p.x
         var previousY = (sin(angle + 2 * 0 * PI / sides) * radius) + p.y
         for (i in 1..sides) {

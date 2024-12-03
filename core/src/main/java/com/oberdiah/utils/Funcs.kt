@@ -70,22 +70,34 @@ fun pointListToFloatArr(ps: List<Point>): FloatArray {
     return floatArr
 }
 
-fun Color.withAlpha(d: Number): Color {
+fun Color.withAlpha(d: Float): Color {
     val newCol = Color(this)
-    newCol.a = d.toFloat()
+    newCol.a = d
     return newCol
 }
 
-fun max(a: Number, b: Number): Double {
-    return a.toDouble().coerceAtLeast(b.toDouble())
+fun Color.withAlpha(d: Double): Color {
+    return withAlpha(d.f)
+}
+
+fun max(a: Double, b: Double): Double {
+    return a.coerceAtLeast(b)
+}
+
+fun max(a: Float, b: Float): Float {
+    return a.coerceAtLeast(b)
 }
 
 fun max(a: Int, b: Int): Int {
     return a.coerceAtLeast(b)
 }
 
-fun min(a: Number, b: Number): Double {
-    return a.toDouble().coerceAtMost(b.toDouble())
+fun min(a: Double, b: Double): Double {
+    return a.coerceAtMost(b)
+}
+
+fun min(a: Float, b: Float): Float {
+    return a.coerceAtMost(b)
 }
 
 fun min(a: Int, b: Int): Int {
@@ -114,89 +126,141 @@ val Number.abs: Double
         return kotlin.math.abs(this.d)
     }
 
-fun sqrt(n: Number): Double {
+fun sqrt(n: Double): Double {
+    return kotlin.math.sqrt(n)
+}
+
+fun sqrt(n: Int): Double {
     return kotlin.math.sqrt(n.d)
 }
 
-fun cbrt(n: Number): Double {
-    return Math.cbrt(n.d)
+fun sqrt(n: Float): Float {
+    return kotlin.math.sqrt(n)
+}
+
+fun cbrt(n: Double): Double {
+    return kotlin.math.cbrt(n)
+}
+
+fun cbrt(n: Int): Double {
+    return kotlin.math.cbrt(n.d)
+}
+
+fun cbrt(n: Float): Float {
+    return kotlin.math.cbrt(n)
 }
 
 fun abs(n: Int): Int {
     return kotlin.math.abs(n)
 }
 
-fun abs(n: Number): Double {
-    return kotlin.math.abs(n.d)
+fun abs(n: Double): Double {
+    return kotlin.math.abs(n)
 }
 
-fun sign(n: Number): Double {
+fun abs(n: Float): Float {
+    return kotlin.math.abs(n)
+}
+
+fun sign(n: Double): Double {
+    return kotlin.math.sign(n)
+}
+
+fun sign(n: Float): Float {
+    return kotlin.math.sign(n)
+}
+
+fun sign(n: Int): Double {
     return kotlin.math.sign(n.d)
 }
 
-fun sin(a: Number): Double {
-    return kotlin.math.sin(a.d)
+fun sin(a: Double): Double {
+    return kotlin.math.sin(a)
 }
 
-fun cos(a: Number): Double {
-    return kotlin.math.cos(a.d)
+fun sin(a: Float): Float {
+    return kotlin.math.sin(a)
 }
 
-fun clamp(t: Number, a: Number, b: Number): Double {
+fun cos(a: Double): Double {
+    return kotlin.math.cos(a)
+}
+
+fun cos(a: Float): Float {
+    return kotlin.math.cos(a)
+}
+
+fun clamp(t: Double, a: Double, b: Double): Double {
     return if (t < a) {
-        a.d
+        a
     } else if (t > b) {
-        b.d
+        b
     } else {
-        t.d
+        t
     }
 }
 
-fun saturate(t: Number): Double {
-    return clamp(t, 0, 1)
+fun clamp(t: Float, a: Float, b: Float): Float {
+    return if (t < a) {
+        a
+    } else if (t > b) {
+        b
+    } else {
+        t
+    }
 }
 
-fun floor(t: Number): Int {
-    return kotlin.math.floor(t.d).i
+fun clamp(t: Int, a: Int, b: Int): Int {
+    return if (t < a) {
+        a
+    } else if (t > b) {
+        b
+    } else {
+        t
+    }
 }
 
-fun ceil(t: Number): Int {
-    return kotlin.math.ceil(t.d).i
+fun saturate(t: Double): Double {
+    return clamp(t, 0.0, 1.0)
 }
 
-fun fract(x: Number): Number {
+fun saturate(t: Float): Float {
+    return clamp(t, 0f, 1f)
+}
+
+fun floor(t: Double): Int {
+    return kotlin.math.floor(t).i
+}
+
+fun floor(t: Float): Int {
+    return kotlin.math.floor(t).i
+}
+
+fun ceil(t: Double): Int {
+    return kotlin.math.ceil(t).i
+}
+
+fun ceil(t: Float): Int {
+    return kotlin.math.ceil(t).i
+}
+
+fun fract(x: Double): Double {
     return x - floor(x)
 }
 
-operator fun Number.compareTo(i: Number): Int {
-    return this.d.compareTo(i.d)
-}
-
-operator fun Number.plus(i: Number): Number {
-    return this.d + i.d
-}
-
-operator fun Number.minus(i: Number): Number {
-    return this.d - i.d
-}
-
-operator fun Number.div(i: Number): Number {
-    return this.d / i.d
-}
-
-operator fun Number.times(i: Number): Number {
-    return this.d * i.d
-}
-
-operator fun Number.unaryMinus(): Number {
-    return -this.d
+fun fract(x: Float): Float {
+    return x - floor(x)
 }
 
 fun Color.asInt(): Int {
     return (255 * r).toInt() shl 24 or ((255 * g).toInt() shl 16) or ((255 * b).toInt() shl 8) or (255 * a).toInt()
 }
 
-fun circleShape(radius: Number, callback: (Shape) -> Unit) {
+fun circleShape(radius: Double, callback: (Shape) -> Unit) {
+    circleShape(radius.f, Point(), callback)
+}
+
+fun circleShape(radius: Float, callback: (Shape) -> Unit) {
     circleShape(radius, Point(), callback)
 }
 
@@ -210,7 +274,7 @@ fun <T, R> T?.notNull(f: (T) -> R) {
 fun lineNormal(p0: Point, p1: Point, side: Point): Point {
     val z = (p1.x - p0.x) * (side.y - p1.y) - (p1.y - p0.y) * (side.x - p1.x)
     val vec = p1 - p0
-    vec.len = 1
+    vec.len = 1.0
     if (z > 0) {
         return Point(-vec.y, vec.x)
     } else {
@@ -241,7 +305,11 @@ fun lineIntersection(p0: Point, p1: Point, p2: Point, p3: Point, intersection: P
     return false
 }
 
-fun circleShape(radius: Number, middle: Point, callback: (Shape) -> Unit) {
+fun circleShape(radius: Double, middle: Point, callback: (Shape) -> Unit) {
+    circleShape(radius.f, middle, callback)
+}
+
+fun circleShape(radius: Float, middle: Point, callback: (Shape) -> Unit) {
     val circle = CircleShape()
     circle.radius = radius.f
     circle.position = middle.v2
@@ -251,7 +319,7 @@ fun circleShape(radius: Number, middle: Point, callback: (Shape) -> Unit) {
     circle.dispose()
 }
 
-fun ngonShape(radius: Number, sides: Int, callback: (Shape) -> Unit) {
+fun ngonShape(radius: Double, sides: Int, callback: (Shape) -> Unit) {
     val polygon = PolygonShape()
     val points = Array(8) { Vector2() }
     for (i in 0 until sides) {
@@ -274,25 +342,33 @@ fun rectShape(size: Size, middle: Point, callback: (Shape) -> Unit) {
     rect.dispose()
 }
 
-fun rectShape(size: Size, middle: Point, angle: Number, callback: (Shape) -> Unit) {
+fun rectShape(size: Size, middle: Point, angle: Double, callback: (Shape) -> Unit) {
     val rect = PolygonShape()
     rect.setAsBox(size.w.f / 2, size.h.f / 2, middle.v2, angle.f)
     callback(rect)
     rect.dispose()
 }
 
-fun lerp(a: Number, b: Number, t: Number): Double {
-    return a.d + (b.d - a.d) * t.d
+fun lerp(a: Double, b: Double, t: Double): Double {
+    return a + (b - a) * t
+}
+
+fun lerp(a: Float, b: Float, t: Float): Float {
+    return a + (b - a) * t
 }
 
 /**
  * If you don't know what you want for speed, for reference a
  * speed of 10.0 is approximately a regular frame-lerp of 0.1
  */
-fun frameAccurateLerp(a: Number, b: Number, speed: Number): Double {
+fun frameAccurateLerp(a: Double, b: Double, speed: Double): Double {
     // https://youtu.be/yGhfUcPjXuE?t=1155
-    val blend = 0.5.pow(GameTime.GRAPHICS_DELTA * speed.d)
+    val blend = 0.5.pow(GameTime.GRAPHICS_DELTA * speed)
     return lerp(b, a, blend)
+}
+
+fun frameAccurateLerp(a: Float, b: Float, speed: Double): Float {
+    return frameAccurateLerp(a.d, b.d, speed).f
 }
 
 fun easeInOutSine(x: Double): Double {
