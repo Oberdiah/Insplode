@@ -69,6 +69,7 @@ fun goToDiegeticMenu() {
     startCameraToDiegeticMenuTransition()
 }
 
+private var lastTimeUpdatedDelayedFingerY = 0.0
 private var delayedPreviousFingerY = 0.0
 private var launchTextAlpha = 1.0f
 private var starsTextAlpha = 1.0f
@@ -545,20 +546,22 @@ fun tickDiegeticMenu() {
                 val fingerDist = delayedPreviousFingerY - it.y
                 if (fingerDist.abs > 5.0) {
                     cameraVelocity =
-                        1.25 * (fingerDist / UNIT_SIZE_IN_PIXELS) / clamp(
-                            GameTime.GRAPHICS_DELTA,
-                            0.005,
-                            0.020
-                        )
+                        1.25 * (fingerDist / UNIT_SIZE_IN_PIXELS) * 60.0
                 }
 
                 draggingIndex = null
             }
         }
 
-        delayedPreviousFingerY = lerp(delayedPreviousFingerY, lastFingerY, 0.5)
+        // A fun little hack as I was happy with the dragging and only then I realised
+        // it wasn't framerate-independent.
+        if (lastTimeUpdatedDelayedFingerY < GameTime.APP_TIME - 1.0 / 60.0) {
+            lastTimeUpdatedDelayedFingerY = GameTime.APP_TIME
+            delayedPreviousFingerY = lerp(delayedPreviousFingerY, lastFingerY, 0.5)
+        }
+
         newCameraY += cameraVelocity * GameTime.GAMEPLAY_DELTA
-        cameraVelocity *= 0.95
+        cameraVelocity = frameAccurateLerp(cameraVelocity, 0.0, 10.0)
         val lowestCameraY = MENU_ZONE_BOTTOM_Y
         val highestCameraY =
             LASER_HEIGHT_IN_MENU + 1.0 - SCREEN_HEIGHT_IN_UNITS
@@ -566,17 +569,17 @@ fun tickDiegeticMenu() {
         // Soft clamp the camera y and make it bounce
 
         if (newCameraY < lowestCameraY) {
-            newCameraY = lerp(newCameraY, lowestCameraY, 0.1)
+            newCameraY = frameAccurateLerp(newCameraY, lowestCameraY, 10.0)
             cameraVelocity = 0.0
         } else if (newCameraY > highestCameraY) {
-            newCameraY = lerp(newCameraY, highestCameraY, 0.1)
+            newCameraY = frameAccurateLerp(newCameraY, highestCameraY, 10.0)
             cameraVelocity = 0.0
         }
 
         val desiredY = desiredCameraY
         if (desiredY != null) {
             // Completely overwrite newCameraY and lerp our own thing
-            newCameraY = lerp(diegeticCameraY, desiredY, 0.1)
+            newCameraY = frameAccurateLerp(diegeticCameraY, desiredY, 10.0)
             // if we're close-sh, call the onReached function
             if ((newCameraY - desiredY).abs < 2.0) {
                 desiredCameraOnReached?.invoke()

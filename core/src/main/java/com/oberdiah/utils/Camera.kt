@@ -88,17 +88,12 @@ fun updateCamera() {
     when (CAMERA_FOLLOWING) {
         CameraFollowing.Player -> {
             val desiredCameraPos = getCameraYForPlayerFollow()
-            cameraY += (desiredCameraPos - camera.position.y) * 0.1
+            cameraY = frameAccurateLerp(cameraY, desiredCameraPos.d, 10.0)
         }
 
         CameraFollowing.MenuStartPos -> {
             val desiredCameraPos = getCameraYForMenu()
-            val cameraDistToMove = (desiredCameraPos - camera.position.y) * 0.1
-            cameraY += if (cameraDistToMove > 0) {
-                clamp(cameraDistToMove, 0.05, 1.5)
-            } else {
-                clamp(cameraDistToMove, -1.5, -0.05)
-            }
+            cameraY = frameAccurateLerp(cameraY, desiredCameraPos.d, 10.0)
             if (abs(camera.position.y - desiredCameraPos) < 0.05) {
                 diegeticCameraY = CAMERA_POS_Y
                 endGame()
