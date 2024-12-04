@@ -457,7 +457,7 @@ fun isInAnyButtons(touch: Point): Boolean {
 }
 
 private val coinAreaWidth
-    get() = WIDTH / 4.0
+    get() = WIDTH / 4.5
 private val coinAreaHeight
     get() = HEIGHT / 25
 private val coinAreaTriangleWidth
@@ -471,7 +471,7 @@ private val starsAreaPoints
     )
 val starsAreaPosition
     get() =
-        Point(WIDTH / 4, HEIGHT + (1 - starsTextAlpha) * coinAreaHeight * 1.4)
+        Point(WIDTH / 6, HEIGHT + (1 - starsTextAlpha) * coinAreaHeight * 1.4)
 
 fun renderDiegeticMenuScreenSpace(r: Renderer) {
     starsTextAlpha =
@@ -509,7 +509,7 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
         )
         renderStar(
             r, Point(
-                starsAreaPosition.x + coinAreaWidth * 0.4 + coinTextWobble.x,
+                starsAreaPosition.x + coinAreaWidth * 0.375 + coinTextWobble.x,
                 textPos.y
             ), fontMedium.capHeight * 1.25
         )
