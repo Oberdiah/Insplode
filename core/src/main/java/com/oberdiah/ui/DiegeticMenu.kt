@@ -463,13 +463,16 @@ private val coinAreaHeight
     get() = HEIGHT / 25
 private val coinAreaTriangleWidth
     get() = WIDTH / 20
-private val starsAreaPoints
-    get() = listOf(
+
+private fun starsAreaPoints(): List<Point> {
+    return listOf(
         Point(-coinAreaWidth / 2 - coinAreaTriangleWidth, 0),
         Point(-coinAreaWidth / 2, -coinAreaHeight),
         Point(coinAreaWidth / 2, -coinAreaHeight),
         Point(coinAreaWidth / 2 + coinAreaTriangleWidth, 0)
     )
+}
+
 val starsAreaPosition
     get() =
         Point(WIDTH / 6, HEIGHT + (1 - starsTextAlpha) * coinAreaHeight * 1.4)
@@ -485,6 +488,8 @@ fun renderDiegeticMenuScreenSpace(r: Renderer) {
     val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 10 - sin(GameTime.APP_TIME) * 0.15
     r.color = colorScheme.textColor
     drawChevron(r, MENU_ZONE_TOP_Y - chevronDistanceBelow)
+
+    val starsAreaPoints = starsAreaPoints()
 
     if (starsTextAlpha > 0.001) {
         r.color = Color.DARK_GRAY.withAlpha(0.9)

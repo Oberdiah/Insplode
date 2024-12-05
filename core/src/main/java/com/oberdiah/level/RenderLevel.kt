@@ -229,7 +229,7 @@ object RenderLevel {
                 Cloud(
                     cloudParts,
                     cloudSpeed,
-                    getBackgroundColorAtHeight(pointY).add(0.1f, 0.1f, 0.1f, 0f)
+                    getBackgroundColorAtHeight(pointY).add(0.1f, 0.1f, 0.1f, 0f).cpy()
                 )
             )
         }
@@ -250,11 +250,14 @@ object RenderLevel {
         }
     }
 
+    private val backgroundColorAtHeightCache = Color()
+
     private fun getBackgroundColorAtHeight(height: Double): Color {
         val fromColor = colorScheme.backgroundA
         val toColor = colorScheme.backgroundB
 
-        return fromColor.cpy().lerp(toColor, clamp(height / 10.0, 0.0, 2.0).f)
+        backgroundColorAtHeightCache.set(fromColor)
+        return backgroundColorAtHeightCache.lerp(toColor, clamp(height / 10.0, 0.0, 2.0).f)
     }
 
     fun renderBackground(r: Renderer) {
@@ -268,7 +271,7 @@ object RenderLevel {
             for (oy in 0 until numYSquares) {
                 val ty = oy + floor(CAMERA_POS_Y)
 
-                var thisColor = getBackgroundColorAtHeight(ty.d)
+                val thisColor = getBackgroundColorAtHeight(ty.d)
 
                 if ((ty + tx) % 2 == 0) {
                     thisColor.add(0.02f, 0.02f, 0.02f, 0.0f)
@@ -289,7 +292,7 @@ object RenderLevel {
                 }
 
                 // Make thisColor darker as we go up (ty increases)
-                thisColor = thisColor.cpy().add(
+                thisColor.add(
                     min(0.05f * (ty / 20f), 0.05f),
                     min(0.10f * (ty / 20f) + redMaker, 0.05f),
                     min(0.15f * (ty / 20f) + redMaker, 0.05f),
@@ -304,7 +307,6 @@ object RenderLevel {
                 }
 
                 r.color = thisColor
-
                 r.rect(tx.d, ty.d, 1.0, 1.0)
             }
         }
