@@ -191,7 +191,7 @@ object RenderLevel {
         clouds.forEach {
             val speed = GameTime.GRAPHICS_DELTA * it.speed
             it.rects.forEach {
-                it.p.x += speed
+                it.p = it.p.plus(x = speed)
             }
         }
 

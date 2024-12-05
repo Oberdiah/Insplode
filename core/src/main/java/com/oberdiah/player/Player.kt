@@ -1,24 +1,11 @@
 package com.oberdiah.player
 
 import com.badlogic.gdx.physics.box2d.*
-import com.oberdiah.GAME_STATE
-import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.GameState
-import com.oberdiah.PICKUP_PHYSICS_MASK
-import com.oberdiah.PLAYER_DETECTOR_IDENTIFIER
-import com.oberdiah.PLAYER_PHYSICS_MASK
-import com.oberdiah.PhysicsObject
-import com.oberdiah.Point
-import com.oberdiah.Renderer
-import com.oberdiah.ScoreSystem
-import com.oberdiah.Tile
-import com.oberdiah.UNITS_WIDE
-import com.oberdiah.WORLD_PHYSICS_MASK
-import com.oberdiah.circleShape
+import com.oberdiah.*
+import com.oberdiah.Point.Companion.invoke
 import com.oberdiah.level.LASER_HEIGHT
 import com.oberdiah.level.RUN_TIME_ELAPSED
 import com.oberdiah.player.player_state.PlayerStateImpl
-import com.oberdiah.rectShape
 import com.oberdiah.ui.PauseButton
 import com.oberdiah.ui.goToDiegeticMenu
 import com.oberdiah.utils.endTheGame

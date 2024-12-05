@@ -311,8 +311,7 @@ fun <T, R> T?.notNull(f: (T) -> R) {
 // Finds the normal of the line, pointing towards the side specified by "side"
 fun lineNormal(p0: Point, p1: Point, side: Point): Point {
     val z = (p1.x - p0.x) * (side.y - p1.y) - (p1.y - p0.y) * (side.x - p1.x)
-    val vec = p1 - p0
-    vec.len = 1.0
+    val vec = (p1 - p0).normalize()
     if (z > 0) {
         return Point(-vec.y, vec.x)
     } else {
@@ -320,27 +319,29 @@ fun lineNormal(p0: Point, p1: Point, side: Point): Point {
     }
 }
 
-private val s1 = Point()
-private val s2 = Point()
-
 // Copied from https://stackoverflow.com/a/1968345
-fun lineIntersection(p0: Point, p1: Point, p2: Point, p3: Point, intersection: Point): Boolean {
-    s1.x = p1.x - p0.x
-    s1.y = p1.y - p0.y
-    s2.x = p3.x - p2.x
-    s2.y = p3.y - p2.y
+fun lineIntersection(p0: Point, p1: Point, p2: Point, p3: Point): Point? {
+    val s1 = Point(
+        p1.x - p0.x,
+        p1.y - p0.y
+    )
+    val s2 = Point(
+        p3.x - p2.x,
+        p3.y - p2.y
+    )
 
     val s = (-s1.y * (p0.x - p2.x) + s1.x * (p0.y - p2.y)) / (-s2.x * s1.y + s1.x * s2.y)
     val t = (s2.x * (p0.y - p2.y) - s2.y * (p0.x - p2.x)) / (-s2.x * s1.y + s1.x * s2.y)
 
     if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
         // Collision detected
-        intersection.x = p0.x + (t * s1.x)
-        intersection.y = p0.y + (t * s1.y)
-        return true
+        return Point(
+            p0.x + (t * s1.x),
+            p0.y + (t * s1.y)
+        )
     }
 
-    return false
+    return null
 }
 
 fun circleShape(radius: Double, middle: Point, callback: (Shape) -> Unit) {

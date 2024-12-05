@@ -83,8 +83,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
         if (UpgradeController.playerHas(Upgrade.BlackHole)) {
             val playerPos = player.body.p
             if (player.state.isAlive) {
-                val direction = (playerPos - body.p)
-                direction.len = clamp(direction.len, 0.5, 1.5)
+                val direction = (playerPos - body.p).clampLen(0.5, 1.5)
                 body.applyImpulse(direction * 0.5, body.p)
             }
         }
@@ -243,10 +242,9 @@ class LineBomb(startingPoint: Point) : Bomb(startingPoint, BombType.LineBomb) {
         val spacing = 0.5
         val numExplosionsInEachDir = floor(lineLength / spacing)
         val motion = Point(angle) * 0.5
-        val boomLoc = body.p - motion * numExplosionsInEachDir
+        var boomLoc = body.p - motion * numExplosionsInEachDir
         for (i in -numExplosionsInEachDir..numExplosionsInEachDir) {
-            boomLoc.x += motion.x
-            boomLoc.y += motion.y
+            boomLoc += motion
             boom(
                 boomLoc,
                 power / GLOBAL_SCALE,
@@ -321,8 +319,7 @@ class ClusterBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ClusterBo
         super.explode()
         for (i in 0 until 6) {
             val bomb = ClusterParticle(body.p, 0.3 * Random.nextDouble() + 0.05)
-            val velocity = Point(i * 2 * PI / 6)
-            velocity.len = 6.0
+            val velocity = Point(i * 2 * PI / 6).withLen(6.0)
             bomb.body.applyImpulse(velocity)
         }
     }
@@ -539,8 +536,7 @@ class SpringBomb(startingPoint: Point) : Bomb(startingPoint, BombType.SpringBomb
         if (timeTillSpring <= 0.0) {
             timeTillSpring += springFrequency * Random.nextDouble() * 0.5 + springFrequency * 0.5
             currentSpringDelay = timeTillSpring
-            val velocity = Point(Random.nextFloat() - 0.5, 1.5f)
-            velocity.len = 8.0 * body.mass
+            val velocity = Point(Random.nextFloat() - 0.5, 1.5f).withLen(8.0 * body.mass)
             body.applyImpulse(velocity * GLOBAL_SCALE)
         }
     }
