@@ -156,7 +156,10 @@ val GAME_IS_RUNNING get() = GAME_STATE == GameState.InGame || GAME_STATE == Game
 val CAMERA_POS_Y: Double
     get() = camera.position.y.d - SCREEN_HEIGHT_IN_UNITS / 2
 
+private val screenSize: Size = Size()
 val SCREEN_SIZE: Size
     get() {
-        return Size(WIDTH, HEIGHT)
+        screenSize.h = HEIGHT
+        screenSize.w = WIDTH
+        return screenSize
     }

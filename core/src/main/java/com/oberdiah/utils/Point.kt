@@ -16,61 +16,9 @@ operator fun Iterable<Point>.times(tileSize: Double): List<Point> {
 val Vector2.p: Point
     get() = Point(this.x.d, this.y.d)
 
-class Point private constructor(val x: Double, val y: Double) {
-    companion object {
-        private fun create(x: Double, y: Double): Point {
-            return Point(x, y)
-        }
-
-        operator fun invoke(angle: Double): Point {
-            val p = Point(0.0, 1.0)
-            return p.rotate(angle)
-        }
-
-        operator fun invoke(p: Point): Point {
-            return Point(p.x, p.y)
-        }
-
-        operator fun invoke(x: Double, y: Double): Point {
-            return create(x, y)
-        }
-
-        operator fun invoke(x: Float, y: Double): Point {
-            return create(x.d, y)
-        }
-
-        operator fun invoke(x: Double, y: Float): Point {
-            return create(x, y.d)
-        }
-
-        operator fun invoke(x: Float, y: Float): Point {
-            return create(x.d, y.d)
-        }
-
-        operator fun invoke(x: Int, y: Int): Point {
-            return create(x.d, y.d)
-        }
-
-        operator fun invoke(x: Int, y: Double): Point {
-            return create(x.d, y)
-        }
-
-        operator fun invoke(x: Double, y: Int): Point {
-            return create(x, y.d)
-        }
-
-        operator fun invoke(x: Float, y: Int): Point {
-            return create(x.d, y.d)
-        }
-
-        operator fun invoke(x: Int, y: Float): Point {
-            return create(x.d, y.d)
-        }
-
-        operator fun invoke(): Point {
-            return Point(0.0, 0.0)
-        }
-    }
+open class Point {
+    open var x: Double = 0.0
+    open var y: Double = 0.0
 
     override fun toString(): String {
         return "(${x.format(2)}, ${y.format(2)})"
@@ -82,20 +30,99 @@ class Point private constructor(val x: Double, val y: Double) {
     val wo: Point
         get() = toWorldSpace(this)
 
+    val cpy: Point
+        get() {
+            return Point(this)
+        }
+
     val v2: Vector2
         get() {
             return Vector2(x.f, y.f)
         }
 
-    val angle: Double
+    var angle: Double
         get() {
             return atan2(x, y)
         }
+        set(value) {
+            x = 0.0
+            y = len
+            rotate(value)
+        }
 
-    val len: Double
+    var len: Double
         get() {
             return sqrt(x * x + y * y)
         }
+        set(value) {
+            val le = len
+            if (le < 0.01) {
+                x = value
+                y = 0.0
+                return
+            }
+            val scale = value / le
+            x *= scale
+            y *= scale
+        }
+
+    constructor(angle: Double) {
+        x = 0.0
+        y = 1.0
+        rotate(angle)
+    }
+
+    constructor(p: Point) {
+        x = p.x
+        y = p.y
+    }
+
+    constructor(x: Double, y: Double) {
+        this.x = x
+        this.y = y
+    }
+
+    constructor(x: Float, y: Double) {
+        this.x = x.d
+        this.y = y
+    }
+
+    constructor(x: Double, y: Float) {
+        this.x = x
+        this.y = y.d
+    }
+
+    constructor(x: Float, y: Float) {
+        this.x = x.d
+        this.y = y.d
+    }
+
+    constructor(x: Int, y: Int) {
+        this.x = x.d
+        this.y = y.d
+    }
+
+    constructor(x: Int, y: Double) {
+        this.x = x.d
+        this.y = y
+    }
+
+    constructor(x: Double, y: Int) {
+        this.x = x
+        this.y = y.d
+    }
+
+    constructor(x: Int, y: Float) {
+        this.x = x.d
+        this.y = y.d
+    }
+
+    constructor(x: Float, y: Int) {
+        this.x = x.d
+        this.y = y.d
+    }
+
+    constructor() : this(0.0, 0.0)
 
     fun angleTo(p: Point): Double {
         return atan2(p.x - x, p.y - y)
@@ -113,49 +140,45 @@ class Point private constructor(val x: Double, val y: Double) {
         return sqrt(dx * dx + dy * dy)
     }
 
-    fun withLen(newLen: Double): Point {
-        val le = len
-        if (le < 0.01) {
-            return Point(newLen, 0.0)
-        }
-        val scale = newLen / le
-        return Point(x * scale, y * scale)
-    }
-
-    fun normalize(): Point {
-        return withLen(1.0)
-    }
-
-    fun withAngle(angle: Double): Point {
-        return Point(0.0, len).rotate(angle)
-    }
-
-    fun rotate(angle: Double): Point {
+    fun rotate(angle: Double) {
         val cos = cos(angle)
         val sin = sin(angle)
 
         val x1 = -(x * cos - y * sin)
         val y1 = -(x * sin + y * cos)
-        return Point(x1, y1)
+        x = x1
+        y = y1
+    }
+
+    fun normCpy(): Point {
+        val cpy = this.cpy
+        cpy.len = 1.0
+        return cpy
+    }
+
+    fun lenCpy(l: Double): Point {
+        val cpy = this.cpy
+        cpy.len = l
+        return cpy
     }
 
     operator fun times(p: Point): Point {
         return Point(x * p.x, y * p.y)
     }
 
-    operator fun times(i: Double): Point {
+    open operator fun times(i: Double): Point {
         return Point(x * i, y * i)
     }
 
-    operator fun times(i: Float): Point {
+    open operator fun times(i: Float): Point {
         return Point(x * i, y * i)
     }
 
-    operator fun times(i: Int): Point {
+    open operator fun times(i: Int): Point {
         return Point(x * i, y * i)
     }
 
-    operator fun plus(p: Point): Point {
+    open operator fun plus(p: Point): Point {
         return Point(x + p.x, y + p.y)
     }
 
@@ -187,19 +210,19 @@ class Point private constructor(val x: Double, val y: Double) {
         return Point(x - i, y - i)
     }
 
-    operator fun div(p: Point): Point {
+    open operator fun div(p: Point): Point {
         return Point(x / p.x, y / p.y)
     }
 
-    operator fun div(i: Double): Point {
+    open operator fun div(i: Double): Point {
         return Point(x / i, y / i)
     }
 
-    operator fun div(i: Float): Point {
+    open operator fun div(i: Float): Point {
         return Point(x / i, y / i)
     }
 
-    operator fun div(i: Int): Point {
+    open operator fun div(i: Int): Point {
         return Point(x / i, y / i)
     }
 
@@ -223,6 +246,15 @@ class Point private constructor(val x: Double, val y: Double) {
         return Point(x, max(y, m))
     }
 
+    fun zero() {
+        x = 0.0
+        y = 0.0
+    }
+
+    fun clampX(a: Double, b: Double) {
+        x = clamp(x, a, b)
+    }
+
     fun max(d: Double): Point {
         return Point(max(x, d), max(y, d))
     }
@@ -234,55 +266,76 @@ class Point private constructor(val x: Double, val y: Double) {
     fun clampLen(min: Double, max: Double): Point {
         val copy = Point(this)
         val l = len
-        return if (l > max) {
-            copy.withLen(max)
+        if (l > max) {
+            copy.len = max
         } else if (l < min) {
-            copy.withLen(min)
-        } else {
-            copy
+            copy.len = min
         }
+        return copy
     }
 
     fun amin(d: Double): Point {
         return Point(min(abs(x), d) * sign(x), min(abs(y), d) * sign(y))
     }
 
-    fun clamp(a: Point, b: Point): Point {
-        return Point(clamp(x, a.x, b.x), clamp(y, a.y, b.y))
+    fun clamp(a: Point, b: Point) {
+        x = clamp(x, a.x, b.x)
+        y = clamp(y, a.y, b.y)
     }
 
     fun dot(p: Point): Double {
         return x * p.x + y * p.y
     }
 
-    fun copy(x: Double = this.x, y: Double = this.y): Point {
-        return Point(x, y)
-    }
-
-    fun minus(x: Double = 0.0, y: Double = 0.0): Point {
-        return Point(this.x - x, this.y - y)
-    }
-
-    fun plus(x: Double = 0.0, y: Double = 0.0): Point {
-        return Point(this.x + x, this.y + y)
-    }
-
-    fun times(x: Double = 1.0, y: Double = 1.0): Point {
-        return Point(this.x * x, this.y * y)
-    }
-
-    fun div(x: Double = 1.0, y: Double = 1.0): Point {
-        return Point(this.x / x, this.y / y)
+    fun setTo(p: Point) {
+        x = p.x
+        y = p.y
     }
 }
 
 typealias Velocity = Point
-typealias Size = Point
 
-val Size.w: Double
-    get() = x
-val Size.h: Double
-    get() = y
+class Size(w: Double, h: Double) : Point(w, h) {
+    constructor() : this(0.0, 0.0)
+    constructor(s: Double) : this(s, s)
+    constructor(p: Point) : this(p.x, p.y)
+    constructor(w: Float, h: Float) : this(w.d, h.d)
+    constructor(w: Int, h: Int) : this(w.d, h.d)
+    constructor(w: Int, h: Double) : this(w.d, h)
+    constructor(w: Double, h: Int) : this(w, h.d)
+    constructor(w: Float, h: Double) : this(w.d, h)
+    constructor(w: Double, h: Float) : this(w, h.d)
+    constructor(w: Float, h: Int) : this(w.d, h.d)
+    constructor(w: Int, h: Float) : this(w.d, h)
+
+    override operator fun plus(p: Point): Size {
+        return Size(x + p.x, y + p.y)
+    }
+
+    override operator fun div(p: Point): Size {
+        return Size(x / p.x, y / p.y)
+    }
+
+    override operator fun div(i: Double): Size {
+        return Size(x / i, y / i)
+    }
+
+    override operator fun times(i: Double): Size {
+        return Size(x * i, y * i)
+    }
+
+    var w: Double
+        get() = x
+        set(value) {
+            x = value
+        }
+
+    var h: Double
+        get() = y
+        set(value) {
+            y = value
+        }
+}
 
 class Rect(var p: Point, var s: Size) {
     companion object {

@@ -14,7 +14,7 @@ import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.upgrades.UpgradeController.UPGRADE_ENTRY_HEIGHT
 import com.oberdiah.upgrades.UpgradeController.getUpgradeYPos
 
-val PLAYER_SIZE: Size = Size(0.375, 0.7) * GLOBAL_SCALE
+val PLAYER_SIZE = Size(0.375, 0.7) * GLOBAL_SCALE
 
 val DEAD_CONTEMPLATION_TIME
     get() = clamp(RUN_TIME_ELAPSED * 0.1, 1.5, 2.5)
@@ -35,7 +35,7 @@ val PLAYER_UNCERTAINTY_WINDOW: Double
  */
 const val JUMP_PREVENTION_WINDOW = 0.3
 
-val player = Player(PLAYER_SPAWN_POINT)
+val player = Player(PLAYER_SPAWN_POINT.cpy)
 
 var spawnPlayerAtUpgrades = true
 val PLAYER_SPAWN_POINT

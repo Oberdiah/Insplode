@@ -337,7 +337,8 @@ object ScoreSystem {
                 val starsAwarded = upgrade.getStarsFromScore(scoreGivenOutSoFar - 1)
                 if (starsAwarded.blueStars != 3) {
                     val headingTo = getMainMenuStarPosition(starsAwarded.id % 3 + 1)
-                    val velocity = (headingTo - smokeSpawnPoint).withLen(7.5)
+                    val velocity = headingTo - smokeSpawnPoint
+                    velocity.len = 7.5
 
                     val color =
                         if (starsAwarded.stars == 3) colorScheme.developerStarsColor else colorScheme.starsColor
