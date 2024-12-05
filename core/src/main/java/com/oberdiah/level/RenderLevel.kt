@@ -12,33 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.BufferUtils
-import com.oberdiah.CAMERA_POS_Y
-import com.oberdiah.HEIGHT
-import com.oberdiah.NUM_TILES_ACROSS
-import com.oberdiah.Point
-import com.oberdiah.Rect
-import com.oberdiah.Renderer
-import com.oberdiah.SCREEN_HEIGHT_IN_UNITS
-import com.oberdiah.Size
-import com.oberdiah.TILES_PER_UNIT
-import com.oberdiah.TILE_SIZE_IN_UNITS
-import com.oberdiah.Tile
-import com.oberdiah.TileLike
-import com.oberdiah.UNITS_WIDE
-import com.oberdiah.UNIT_SIZE_IN_PIXELS
-import com.oberdiah.WIDTH
-import com.oberdiah.abs
-import com.oberdiah.ceil
-import com.oberdiah.clamp
-import com.oberdiah.d
-import com.oberdiah.f
-import com.oberdiah.floor
-import com.oberdiah.getShake
-import com.oberdiah.i
-import com.oberdiah.marchingSquaresTriangles
-import com.oberdiah.max
-import com.oberdiah.min
-import com.oberdiah.tileIdsChangedLastFrameMarchingCubes
+import com.oberdiah.*
 import com.oberdiah.ui.MENU_ZONE_BOTTOM_Y
 import com.oberdiah.ui.UPGRADES_SCREEN_BOTTOM_Y
 import com.oberdiah.upgrades.UpgradeController
@@ -300,7 +274,7 @@ object RenderLevel {
                     thisColor.add(0.02f, 0.02f, 0.02f, 0.0f)
                 }
 
-                val redMaker = if ((ty.d + 0.5) in redMakerRange) {
+                val redMaker = if (redMakerRange.containsPrimitive(ty.d + 0.5)) {
                     -0.01f * tx
                 } else {
                     0.0f
@@ -309,7 +283,7 @@ object RenderLevel {
                 var x = tx.d
                 var y = ty.d
 
-                if (purchasingFract > 0.0 && (ty.d + 0.5) in wobbleRange) {
+                if (purchasingFract > 0.0 && wobbleRange.containsPrimitive(ty.d + 0.5)) {
                     x += getShake(purchasingFract, seed = tx * UNITS_WIDE + ty)
                     y += getShake(purchasingFract, seed = tx * UNITS_WIDE + ty + 4)
                 }
@@ -322,7 +296,7 @@ object RenderLevel {
                     0.0f
                 )
 
-                if ((ty.d + 0.5) in greyscaleRange) {
+                if (greyscaleRange.containsPrimitive(ty.d + 0.5)) {
                     val avg = (thisColor.r + thisColor.g + thisColor.b) / 3
                     thisColor.r = avg
                     thisColor.g = avg
