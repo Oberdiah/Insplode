@@ -100,7 +100,7 @@ object PlayerInputs {
 
         if (TOUCHES_DOWN.size == 1) {
             TOUCHES_WENT_DOWN.forEach {
-                val finger = it / UNIT_SIZE_IN_PIXELS
+                val finger = it.p / UNIT_SIZE_IN_PIXELS
                 desiredXPos = player.body.p.x
                 driftingPlayerSwipeStartY = finger.y
                 lastFingerPoint = finger
@@ -110,7 +110,7 @@ object PlayerInputs {
         var xPosToUse = player.body.p.x
 
         TOUCHES_DOWN.firstOrNull()?.let { touch ->
-            val finger = touch / UNIT_SIZE_IN_PIXELS
+            val finger = touch.p / UNIT_SIZE_IN_PIXELS
 
             val diff = finger - lastFingerPoint
             if (diff.x.abs > diff.y.abs) {

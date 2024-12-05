@@ -531,7 +531,7 @@ fun tickDiegeticMenu() {
 
         TOUCHES_WENT_DOWN.forEach {
             cameraVelocity = 0.0
-            if (!isInAnyButtons(it)) {
+            if (!isInAnyButtons(it.p)) {
                 draggingIndex = it.index
                 lastFingerY = it.y
                 delayedPreviousFingerY = it.y

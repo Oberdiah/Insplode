@@ -555,7 +555,7 @@ object UpgradeController {
                 if (PauseButton.isEatingInputs()) {
                     return@forEach
                 }
-                if (isInLaunchButton(touch)) {
+                if (isInLaunchButton(touch.p)) {
                     vibrate(10)
                 }
 
@@ -582,7 +582,7 @@ object UpgradeController {
                 }
 
                 if (!boughtUpgradeThisTap) {
-                    holdingDownPlayButton = isInLaunchButton(touch)
+                    holdingDownPlayButton = isInLaunchButton(touch.p)
                 }
             }
 

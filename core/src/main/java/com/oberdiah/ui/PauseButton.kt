@@ -58,7 +58,7 @@ object PauseButton {
 
         var isEaten = false
         TOUCHES_DOWN.forEach {
-            if (PAUSE_RECT.contains(it)) {
+            if (PAUSE_RECT.contains(it.p)) {
                 isEaten = true
             }
         }
@@ -73,12 +73,12 @@ object PauseButton {
     fun tick() {
         pauseHovered = false
         TOUCHES_DOWN.forEach {
-            if (PAUSE_RECT.contains(it)) {
+            if (PAUSE_RECT.contains(it.p)) {
                 pauseHovered = true
             }
         }
         TOUCHES_WENT_UP.forEach {
-            if (PAUSE_RECT.contains(it) && GAME_STATE != GameState.PausedPopup) {
+            if (PAUSE_RECT.contains(it.p) && GAME_STATE != GameState.PausedPopup) {
                 pauseHovered = true
                 pauseUIFadeOff = 1.0
                 gameStateBeforePauseMenu = GAME_STATE
