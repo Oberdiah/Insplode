@@ -1,16 +1,10 @@
 package com.oberdiah.player
 
-import com.oberdiah.Bomb
-import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.Point
-import com.oberdiah.TILE_SIZE_IN_UNITS
-import com.oberdiah.Tile
-import com.oberdiah.Velocity
-import com.oberdiah.abs
+import com.oberdiah.*
+import com.oberdiah.Point.Companion.invoke
 import com.oberdiah.level.Level
 import com.oberdiah.upgrades.Upgrade
 import com.oberdiah.upgrades.UpgradeController
-import com.oberdiah.whatAmITouching
 
 /**
  * Has lots of useful information about the player.
@@ -102,7 +96,7 @@ object PlayerInfoBoard {
     }
 
     fun tick() {
-        previousVelocities.add(0, player.body.velocity.cpy)
+        previousVelocities.add(0, player.body.velocity)
         if (previousVelocities.size > 10) {
             previousVelocities.removeLastOrNull()
         }
@@ -111,7 +105,7 @@ object PlayerInfoBoard {
         if (lastTickPos != null) {
             distanceMovedLeftRightThisRun += (player.body.p.x - lastTickPos.x).abs
         }
-        lastTickPosition = player.body.p.cpy
+        lastTickPosition = player.body.p
 
         tileBelowMe = whatTileIsBelowMe()
 

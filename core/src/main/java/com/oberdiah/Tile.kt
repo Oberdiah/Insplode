@@ -255,13 +255,10 @@ class Tile(private val id: TileId) : TileLike {
         isSafe = false
     }
 
-    private var _coord = Point()
     val coord: Point
         get() {
             require(isSafe)
-            _coord.x = x.d * TILE_SIZE_IN_UNITS
-            _coord.y = y.d * TILE_SIZE_IN_UNITS
-            return _coord
+            return Point(x.d * TILE_SIZE_IN_UNITS, y.d * TILE_SIZE_IN_UNITS)
         }
 
     val x: Int

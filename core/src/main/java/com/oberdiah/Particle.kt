@@ -114,7 +114,7 @@ class Smoke(
     }
 
     override fun applyForces() {
-        v.y += GRAVITY * GAMEPLAY_DELTA * 0.15 * gravityScaling
+        v = v.plus(y = GRAVITY * GAMEPLAY_DELTA * 0.15 * gravityScaling)
     }
 
     override fun tick() {
@@ -149,7 +149,7 @@ class Fragment(
 
     override fun applyForces() {
         if (affectedByGravity) {
-            v.y -= GRAVITY * GAMEPLAY_DELTA * 0.5
+            v = v.minus(y = GRAVITY * GAMEPLAY_DELTA * 0.5)
         }
     }
 
@@ -179,8 +179,8 @@ class Fragment(
 }
 
 abstract class Particle(
-    val p: Point,
-    val v: Velocity = Velocity(),
+    var p: Point,
+    var v: Velocity = Velocity(),
     val canCollide: Boolean = true,
     var edgeLength: Double,
     val pulledTowards: Point? = null
@@ -207,14 +207,14 @@ abstract class Particle(
     abstract fun applyForces();
 
     private var wasInsideLevel = false
-    private val previousP = Point()
+    private var previousP = Point()
     open fun tick() {
         if (p.x == 0.0 || p.x == UNITS_WIDE.d) {
             destroy()
         }
 
-        previousP.x = p.x
-        previousP.y = p.y
+        previousP = p
+
         if (!stoppedMoving) {
             applyForces()
         }
@@ -227,24 +227,22 @@ abstract class Particle(
             }
 
         if (pulledTo != null) {
-            val force = pulledTo - p
-            if (force.len < 0.1) {
+            val unnormalizedForce = pulledTo - p
+            if (unnormalizedForce.len < 0.1) {
                 destroy()
                 return
             }
 
-            force.len = min(1.0, force.len)
+            val force = unnormalizedForce.withLen(min(1.0, unnormalizedForce.len))
             if (v.dot(force) < 0 || v.len < 5.0) {
-                v.x += force.x
-                v.y += force.y
+                v += force
             }
         }
 
-        p.x += v.x * GAMEPLAY_DELTA
-        p.y += v.y * GAMEPLAY_DELTA
+        p += v * GAMEPLAY_DELTA
 
         if (p.x < 0 || p.x > UNITS_WIDE) {
-            v.x *= -1
+            v.times(x = -1.0)
         }
 
         bounce()
@@ -287,16 +285,15 @@ abstract class Particle(
                 // Iterate over lines in polygon
                 // intersect each with our wee line segment
 
-                val intersectionPoint = Point()
-                val winner = Point(-100, 0)
+                var winner = Point(-100, 0)
                 var normal: Point? = null
                 var previousL = polygon[0] + tile.coord
                 for (k in 1..polygon.size) {
                     val l = polygon[k % polygon.size] + tile.coord
-
-                    if (lineIntersection(previousL, l, previousP, p, intersectionPoint)) {
+                    val intersectionPoint = lineIntersection(previousL, l, previousP, p)
+                    if (intersectionPoint != null) {
                         if (intersectionPoint.distTo(previousP) < winner.distTo(previousP)) {
-                            winner.setTo(intersectionPoint)
+                            winner = intersectionPoint
                             normal = lineNormal(previousL, l, previousP)
                         }
                     }
@@ -306,15 +303,13 @@ abstract class Particle(
 
                 if (normal != null) {
                     val newV = v - normal * 2 * v.dot(normal)
-                    v.x = newV.x * bounciness
-                    v.y = newV.y * bounciness
+                    v = newV * bounciness
 
                     collided()
                 }
             }
             if (insideLevel && wasInsideLevel) {
-                v.x = 0.0
-                v.y = 0.0
+                v = Point()
                 stoppedMoving = true
             }
         }

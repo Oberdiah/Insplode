@@ -5,22 +5,12 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.Align
-import com.oberdiah.GAME_STATE
-import com.oberdiah.GameState
-import com.oberdiah.HEIGHT
-import com.oberdiah.Rect
-import com.oberdiah.Renderer
-import com.oberdiah.ScoreSystem
-import com.oberdiah.Screen
+import com.oberdiah.*
 import com.oberdiah.utils.TOUCHES_DOWN
 import com.oberdiah.utils.TOUCHES_WENT_UP
 import com.oberdiah.utils.isKeyJustPressed
-import com.oberdiah.WIDTH
-import com.oberdiah.max
 import com.oberdiah.player.Player
-import com.oberdiah.statefulPauseSide
 import com.oberdiah.utils.endTheGame
-import com.oberdiah.withAlpha
 
 object PauseButton {
     private val PAUSE_SIZE_FRACT = 0.12
@@ -36,11 +26,11 @@ object PauseButton {
     private val pauseRect = Rect()
     private val PAUSE_RECT: Rect
         get() {
-            pauseRect.p.x =
-                if (statefulPauseSide.value == Align.left) PAUSE_FROM_EDGE else WIDTH - PAUSE_SIZE - PAUSE_FROM_EDGE
-            pauseRect.p.y = HEIGHT - PAUSE_SIZE - PAUSE_FROM_TOP
-            pauseRect.s.w = PAUSE_SIZE
-            pauseRect.s.h = PAUSE_SIZE
+            pauseRect.p = Point(
+                if (statefulPauseSide.value == Align.left) PAUSE_FROM_EDGE else WIDTH - PAUSE_SIZE - PAUSE_FROM_EDGE,
+                HEIGHT - PAUSE_SIZE - PAUSE_FROM_TOP
+            )
+            pauseRect.s = Size(PAUSE_SIZE, PAUSE_SIZE)
             return pauseRect
         }
 

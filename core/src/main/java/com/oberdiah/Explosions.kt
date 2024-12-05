@@ -10,7 +10,7 @@ import kotlin.random.Random
 
 
 fun boom(
-    point: Point,
+    pointIn: Point,
     radiusIn: Double,
     affectsThePlayer: Boolean = true,
     playSound: Boolean = true,
@@ -19,11 +19,12 @@ fun boom(
     val radius = radiusIn * GLOBAL_SCALE
 
     // To prevent explosions on exact integer coords from behaving weirdly.
-    point.x += Random.nextDouble(-0.001, 0.001)
-    point.y += Random.nextDouble(-0.001, 0.001)
+    val point = pointIn.plus(
+        Random.nextDouble(-0.001, 0.001),
+        Random.nextDouble(-0.001, 0.001)
+    )
 
     val tileRadius = (radius * TILES_PER_UNIT).i
-    val tempPoint = Point()
 
     if (affectsTheLandscape) {
         // It looks weird rendered over the landscape
@@ -50,8 +51,10 @@ fun boom(
 
     for (dx in -tileRadius..tileRadius) {
         for (dy in -tileRadius..tileRadius) {
-            tempPoint.x = point.x + dx * TILE_SIZE_IN_UNITS
-            tempPoint.y = point.y + dy * TILE_SIZE_IN_UNITS
+            val tempPoint = Point(
+                point.x + dx * TILE_SIZE_IN_UNITS,
+                point.y + dy * TILE_SIZE_IN_UNITS
+            )
             val tile = Level.getTile(tempPoint)
             val dist = point.distTo(tempPoint)
 
@@ -63,11 +66,11 @@ fun boom(
                 if (tile is Tile && tile.doesExist() && affectsTheLandscape) {
                     tile.dematerialize()
                     if (Random.nextDouble() < fractionOfParticlesToSpawn) {
-                        spawnFragment(tempPoint.cpy, velocity, tile.getTileType())
+                        spawnFragment(tempPoint, velocity, tile.getTileType())
                     }
                 }
                 if (Random.nextDouble() < fractionOfParticlesToSpawn) {
-                    spawnSmoke(tempPoint.cpy, velocity)
+                    spawnSmoke(tempPoint, velocity)
                 }
             }
         }
@@ -76,8 +79,7 @@ fun boom(
     for (a in getAllPhysicsObjects) {
         if (a.body.p.distTo(point) < radius) {
             if (a !is Player || affectsThePlayer) {
-                val pushForce = (a.body.p - point)
-                pushForce.len = radius * 10
+                val pushForce = (a.body.p - point).withLen(radius * 10)
                 a.body.applyImpulse(pushForce)
                 a.hitByExplosion()
             }

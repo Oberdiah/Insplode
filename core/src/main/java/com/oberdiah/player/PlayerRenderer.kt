@@ -1,27 +1,12 @@
 package com.oberdiah.player
 
 import com.badlogic.gdx.graphics.Color
-import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.Point
-import com.oberdiah.Rect
-import com.oberdiah.Renderer
-import com.oberdiah.ScoreSystem
-import com.oberdiah.Velocity
-import com.oberdiah.d
-import com.oberdiah.f
-import com.oberdiah.frameAccurateLerp
+import com.oberdiah.*
+import com.oberdiah.Point.Companion.invoke
 import com.oberdiah.level.APP_TIME_GAME_STARTED
-import com.oberdiah.level.RUN_TIME_ELAPSED
-import com.oberdiah.rainbowPlayerEnabled
-import com.oberdiah.saturate
-import com.oberdiah.spawnFragment
-import com.oberdiah.spawnSmoke
-import com.oberdiah.upgrades.Upgrade
-import com.oberdiah.upgrades.UpgradeController
 import com.oberdiah.utils.GameTime
 import com.oberdiah.utils.TileType
 import com.oberdiah.utils.colorScheme
-import com.oberdiah.withAlpha
 import kotlin.random.Random
 
 object PlayerRenderer {
@@ -111,7 +96,7 @@ object PlayerRenderer {
 
         for (i in 0 until number) {
             spawnFragment(
-                posToSpawn.cpy,
+                posToSpawn,
                 addedVelocity + Velocity(
                     ferocity * (Random.nextDouble() - 0.5),
                     ferocity * Random.nextDouble()

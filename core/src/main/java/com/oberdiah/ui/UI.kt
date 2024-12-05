@@ -231,8 +231,7 @@ fun toggleButton(
     settingButton(r, text, {
         val boxSize = DIST_BETWEEN_WORDS * 0.8
         r.color = Color.WHITE.withAlpha(0.3)
-        val checkboxPoint = it
-        checkboxPoint.x -= boxSize / 2
+        val checkboxPoint = it.minus(x = boxSize / 2)
         r.centeredRect(checkboxPoint, Size(boxSize, boxSize))
         if (t.get()) {
             r.color = Color.WHITE.withAlpha(0.85)

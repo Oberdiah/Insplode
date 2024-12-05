@@ -185,8 +185,7 @@ object PointOrbs {
             }
 
             if (isAttractedToPlayer) {
-                val direction = (playerPos - body.p)
-                direction.len = clamp(direction.len, 0.5, 1.5)
+                val direction = (playerPos - body.p).clampLen(0.5, 1.5)
                 body.applyImpulse(direction * 0.5, body.p)
                 timeAttractedToPlayer += GAMEPLAY_DELTA
             } else {

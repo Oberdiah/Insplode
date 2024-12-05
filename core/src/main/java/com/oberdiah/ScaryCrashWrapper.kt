@@ -82,27 +82,20 @@ fun tickPhysicsWrapper() {
 }
 
 class PhysBody(private val body: Body, private val shouldUpdate: Boolean = true) {
-    val p = Point()
+    val p: Point
         get() {
             require(exists)
-            val pos = body.position
-            field.x = pos.x.d
-            field.y = pos.y.d
-            return field
+            return Point(body.position.x, body.position.y)
         }
 
-    var velocity: Point = Point()
+    var velocity: Point
         get() {
             require(exists)
-            val vel = body.linearVelocity
-            field.x = vel.x.d
-            field.y = vel.y.d
-            return field
+            return Point(body.linearVelocity.x, body.linearVelocity.y)
         }
         set(value) {
             require(exists)
             body.linearVelocity = value.v2
-            field = value.cpy
         }
 
     var angularVelocity: Double
