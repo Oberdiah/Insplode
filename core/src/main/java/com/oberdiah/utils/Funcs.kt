@@ -157,11 +157,11 @@ val Double.abs: Double
  * If you use the basic `in`/`contains` you end up having to box your doubles.
  */
 fun ClosedFloatingPointRange<Double>.containsPrimitive(value: Double): Boolean {
-    return value in start..endInclusive
+    return value >= start && value <= endInclusive
 }
 
 fun ClosedFloatingPointRange<Float>.containsPrimitive(value: Float): Boolean {
-    return value in start..endInclusive
+    return value >= start && value <= endInclusive
 }
 
 fun sqrt(n: Double): Double {

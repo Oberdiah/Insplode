@@ -57,6 +57,11 @@ object UpgradeController {
 
     const val UPGRADE_ENTRY_HEIGHT = 7.0
 
+    /**
+     * An iterator of upgrade and its Y-position in the upgrade menu.
+     */
+    private lateinit var upgradesIterator: List<Pair<Upgrade, Double>>
+
     fun init() {
         playerUpgradeStates.clear()
         Upgrade.entries.forEach {
@@ -64,6 +69,10 @@ object UpgradeController {
         }
 
         playerUpgradeStates[Upgrade.Movement]?.value = true
+
+        upgradesIterator = Upgrade.entries.mapIndexed { index, upgrade ->
+            upgrade to UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * index
+        }
     }
 
     fun resetUpgradeStates() {
@@ -76,15 +85,6 @@ object UpgradeController {
 
     val TOP_OF_UPGRADE_SCREEN_UNITS
         get() = UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * Upgrade.entries.size
-
-    /**
-     * An iterator of upgrade and its Y-position in the upgrade menu.
-     */
-    fun upgradesIterator(): Iterator<Pair<Upgrade, Double>> {
-        return Upgrade.entries.mapIndexed { index, upgrade ->
-            upgrade to UPGRADES_SCREEN_BOTTOM_Y + UPGRADE_ENTRY_HEIGHT * index
-        }.iterator()
-    }
 
     fun getUpgradeYPos(upgrade: Upgrade?): Double {
         return (upgrade?.ordinal ?: 0) * UPGRADE_ENTRY_HEIGHT + UPGRADES_SCREEN_BOTTOM_Y
@@ -177,7 +177,7 @@ object UpgradeController {
         val selectedIconSize = 3.0
         val deselectedIconSize = 4.0
 
-        for ((upgrade, yPos) in upgradesIterator()) {
+        for ((upgrade, yPos) in upgradesIterator) {
             if (yPos > JUST_UP_OFF_SCREEN_UNITS) {
                 break
             }
@@ -559,7 +559,7 @@ object UpgradeController {
                     vibrate(10)
                 }
 
-                upgradesIterator().forEach { (upgrade, yPos) ->
+                upgradesIterator.forEach { (upgrade, yPos) ->
                     if ((yPos + UPGRADE_ENTRY_HEIGHT / 2 - touch.wo.y).abs < UPGRADE_ENTRY_HEIGHT / 2) {
                         val upgradeStatus = getUpgradeStatus(upgrade)
                         timeOfLastUpgradeTap[upgradeStatus] = GameTime.APP_TIME
