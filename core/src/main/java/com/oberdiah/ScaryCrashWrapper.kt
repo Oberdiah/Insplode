@@ -105,7 +105,7 @@ class PhysBody(private val body: Body, private val shouldUpdate: Boolean = true)
             field = value.cpy
         }
 
-    var angularVelocity: Number
+    var angularVelocity: Double
         get() = body.angularVelocity.d
         set(value) {
             require(exists)
@@ -143,14 +143,14 @@ class PhysBody(private val body: Body, private val shouldUpdate: Boolean = true)
             body.type = value
         }
 
-    var gravityScale: Number
-        get() = body.gravityScale
+    var gravityScale: Double
+        get() = body.gravityScale.d
         set(value) {
             require(exists)
             body.gravityScale = value.f
         }
 
-    var linearDamping: Number
+    var linearDamping: Double
         get() = body.linearDamping.d
         set(value) {
             require(exists)
@@ -169,7 +169,7 @@ class PhysBody(private val body: Body, private val shouldUpdate: Boolean = true)
         body.applyLinearImpulse(velocity.v2, point.v2, true)
     }
 
-    fun setTransform(p: Point, angle: Number) {
+    fun setTransform(p: Point, angle: Double) {
         require(exists)
         require(p.x.f.isFinite())
         require(p.y.f.isFinite())
@@ -192,7 +192,7 @@ class PhysBody(private val body: Body, private val shouldUpdate: Boolean = true)
         return fixture
     }
 
-    fun addFixture(shape: Shape, density: Number) {
+    fun addFixture(shape: Shape, density: Double) {
         require(exists)
         fixtures.add(body.createFixture(shape, density.f))
     }

@@ -300,7 +300,7 @@ class Tile(private val id: TileId) : TileLike {
             val fa = marchingSquaresFAScaled(bl, br, tl, tr)
             val groundBox = PolygonShape()
             groundBox.set(fa)
-            body.addFixture(groundBox, 0.0f)
+            body.addFixture(groundBox, 0.0)
             groundBox.dispose()
         }
     }

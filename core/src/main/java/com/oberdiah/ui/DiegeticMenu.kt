@@ -477,9 +477,9 @@ val starsAreaPosition
 fun renderDiegeticMenuScreenSpace(r: Renderer) {
     starsTextAlpha =
         if (GAME_STATE == GameState.DiegeticMenu || GAME_STATE == GameState.TransitioningToDiegeticMenu) {
-            frameAccurateLerp(starsTextAlpha, 1.0f, 10.0).f
+            frameAccurateLerp(starsTextAlpha, 1.0f, 10.0)
         } else {
-            frameAccurateLerp(starsTextAlpha, 0.0f, 10.0).f
+            frameAccurateLerp(starsTextAlpha, 0.0f, 10.0)
         }
 
     val chevronDistanceBelow = SCREEN_HEIGHT_IN_UNITS / 10 - sin(GameTime.APP_TIME) * 0.15

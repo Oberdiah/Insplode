@@ -268,7 +268,8 @@ object RenderLevel {
     private fun renderCloud(r: Renderer, cloud: Cloud) {
         // A cloud is a rectangle with two circles on each end to make it rounded
         r.color = cloud.color
-        for (rect in cloud.rects) {
+        for (i in 0 until cloud.rects.size) {
+            val rect = cloud.rects[i]
             r.rect(rect)
             r.circle((rect.tl + rect.bl) / 2, rect.h / 2)
             r.circle((rect.tr + rect.br) / 2, rect.h / 2)

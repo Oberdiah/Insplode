@@ -99,7 +99,7 @@ class Player(startingPoint: Point) : PhysicsObject(startingPoint) {
     }
 
     override fun reset() {
-        body.setTransform(PLAYER_SPAWN_POINT, 0f)
+        body.setTransform(PLAYER_SPAWN_POINT, 0.0)
         body.isFixedRotation = true
         body.velocity = Point(0.0, 0.0)
         body.linearDamping = 0.0

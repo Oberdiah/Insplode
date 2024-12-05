@@ -10,7 +10,7 @@ import com.oberdiah.BombType
  * We will also still wait until the appropriate time before moving on, it just runs
  * a single phase early, rather than pushing the clock forward.
  */
-class Phase(val d: Number, val expectedDepthUnits: Double? = null, val callback: () -> Unit)
+class Phase(val d: Double, val expectedDepthUnits: Double? = null, val callback: () -> Unit)
 
 //val phases = arrayOf(
 //    Phase(5.0) {

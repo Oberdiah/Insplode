@@ -77,12 +77,12 @@ fun spawnSmoke(
     ).registerWithSimulation()
 }
 
-fun spawnGlow(p: Point, radius: Number) {
+fun spawnGlow(p: Point, radius: Double) {
     if (!statefulRenderParticles.value) return
     glowLocations.add(Glow(p, radius))
 }
 
-class Glow(val p: Point, var radius: Number) {
+class Glow(val p: Point, var radius: Double) {
     var life = 0.05
     fun tick() {
         life -= GAMEPLAY_DELTA
@@ -174,7 +174,7 @@ class Fragment(
 
     override fun collided() {
         super.collided()
-        playParticleHitSound(v.len.d, edgeLength.d)
+        playParticleHitSound(v.len, edgeLength)
     }
 }
 

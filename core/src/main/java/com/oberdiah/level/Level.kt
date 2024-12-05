@@ -211,7 +211,7 @@ object Level {
         val x = tile.x.d
         val y = tile.y.d
 
-        val worldHeight = -abs(Perlin.noise(x, 0, 16)) * 5
+        val worldHeight = -abs(Perlin.noise(x, 0.0, 16.0)) * 5
         val depth = worldHeight - y
 
         val spawnCache1 =
@@ -239,7 +239,7 @@ object Level {
         val depthLavaStarts = 50.0 * TILES_PER_UNIT
         val lavaTransitionPeriod = 40.0 * TILES_PER_UNIT
 
-        val grassDepth = Perlin.noise(x, 0, 3) * 2.0 + 5.0
+        val grassDepth = Perlin.noise(x, 0.0, 3.0) * 2.0 + 5.0
         if (grassDepth > depth) {
             tile.setTileType(TileType.Grass)
         } else {

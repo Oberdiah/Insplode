@@ -47,7 +47,7 @@ import java.util.*
 import kotlin.math.PI
 import kotlin.reflect.KMutableProperty0
 
-private fun formatDepth(depth: Number): String {
+private fun formatDepth(depth: Double): String {
     return "${depth.format(1)}$DEPTH_UNITS"
 }
 
@@ -218,8 +218,8 @@ fun lineBreak() {
 }
 
 
-private fun startButtonsAt(v: Number) {
-    uiCurrentHeight = v.d
+private fun startButtonsAt(v: Double) {
+    uiCurrentHeight = v
 }
 
 fun toggleButton(

@@ -48,7 +48,7 @@ fun createWall(rect: Rect): PhysBody {
     val groundBody = createBody(groundBodyDef)
 
     rectShape(rect.s) {
-        groundBody.addFixture(it, 0.0f)
+        groundBody.addFixture(it, 0.0)
     }
 
     return groundBody

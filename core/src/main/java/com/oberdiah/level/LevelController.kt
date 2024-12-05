@@ -322,7 +322,7 @@ fun tickLevelController() {
     phases.forEachIndexed { index, phase ->
         if (playerHeight.abs > (phase.expectedDepthUnits ?: 9999.0) && index > currentPhase) {
             currentPhase = index
-            goalTime += phases[currentPhase].d.d
+            goalTime += phases[currentPhase].d
             phases[currentPhase].callback()
         }
         if (index == currentPhase) {
@@ -331,7 +331,7 @@ fun tickLevelController() {
                 currentPhase++
             }
         }
-        goalTime += phase.d.d
+        goalTime += phase.d
     }
 }
 

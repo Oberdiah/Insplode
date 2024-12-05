@@ -104,26 +104,53 @@ fun min(a: Int, b: Int): Int {
     return a.coerceAtMost(b)
 }
 
-fun Number.format(digits: Int) = "%.${digits}f".format(this)
+fun Int.format(digits: Int) = "%.${digits}f".format(this)
+fun Double.format(digits: Int) = "%.${digits}f".format(this)
+fun Float.format(digits: Int) = "%.${digits}f".format(this)
 
-val Number.d: Double
+val Int.d: Double
     get() {
         return this.toDouble()
     }
 
-val Number.i: Int
+val Float.d: Double
+    get() {
+        return this.toDouble()
+    }
+
+val Double.i: Int
     get() {
         return this.toInt()
     }
 
-val Number.f: Float
+val Float.i: Int
+    get() {
+        return this.toInt()
+    }
+
+val Double.f: Float
     get() {
         return this.toFloat()
     }
 
-val Number.abs: Double
+val Int.f: Float
+    get() {
+        return this.toFloat()
+    }
+
+val Int.abs: Double
     get() {
         return kotlin.math.abs(this.d)
+    }
+
+val Float.abs: Double
+    get() {
+        return kotlin.math.abs(this.d)
+    }
+
+val Double.abs: Double
+    get() {
+        return kotlin.math.abs(this)
     }
 
 fun sqrt(n: Double): Double {
@@ -311,7 +338,7 @@ fun circleShape(radius: Double, middle: Point, callback: (Shape) -> Unit) {
 
 fun circleShape(radius: Float, middle: Point, callback: (Shape) -> Unit) {
     val circle = CircleShape()
-    circle.radius = radius.f
+    circle.radius = radius
     circle.position = middle.v2
 
     callback(circle)
@@ -395,7 +422,7 @@ fun getShake(power: Double, ferocity: Double = 200.0, seed: Int = 1): Double {
         return 0.0
     }
 
-    return (Perlin.fbm(GameTime.APP_TIME * ferocity + seed * 200.0, 0, 3, 2.0) * power * 0.2)
+    return (Perlin.fbm(GameTime.APP_TIME * ferocity + seed * 200.0, 0.0, 3, 2.0) * power * 0.2)
 }
 
 fun get2DShake(power: Double, seed: Int = 1, ferocity: Double = 200.0): Point {

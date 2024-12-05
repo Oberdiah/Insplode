@@ -30,10 +30,10 @@ fun boom(
         spawnGlow(point, radius)
     }
 
-    addScreenShake(radius.d.pow(0.5) * 0.5)
+    addScreenShake(radius.pow(0.5) * 0.5)
 
     if (playSound) {
-        playExplosionSound(radius.d)
+        playExplosionSound(radius)
     }
 
     if (radius > 2.0 && player.state.isAlive) {

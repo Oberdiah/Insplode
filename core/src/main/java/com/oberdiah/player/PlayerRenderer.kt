@@ -47,7 +47,7 @@ object PlayerRenderer {
 
         val playerSize = PLAYER_SIZE * saturate((GameTime.APP_TIME - APP_TIME_GAME_STARTED) * 4.0)
 
-        if (rainbowPlayerEnabled.value && colorful && player.body.velocity.len.d > 0.1) {
+        if (rainbowPlayerEnabled.value && colorful && player.body.velocity.len > 0.1) {
             val hsv = FloatArray(3)
             r.color.toHsv(hsv)
             hsv[0] = (hsv[0] + colorRotation * 100) % 360

@@ -130,23 +130,23 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
 
         if (GAME_IS_RUNNING) {
             // 'Coz Box2d stupid, these are the centres of the positions.
-            leftWall.setTransform(Point(-0.5, Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
-            rightWall.setTransform(Point(10.5, Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0f)
+            leftWall.setTransform(Point(-0.5, Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0.0)
+            rightWall.setTransform(Point(10.5, Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT / 2), 0.0)
 
             if (CAMERA_FOLLOWING == CameraFollowing.Player) {
                 ceiling.setTransform(
                     Point(
                         SCREEN_WIDTH_IN_UNITS / 2.0,
                         Level.LOWEST_TILE_Y_UNITS + WALL_HEIGHT
-                    ), 0f
+                    ), 0.0
                 )
                 floor.setTransform(
                     Point(SCREEN_WIDTH_IN_UNITS / 2.0, Level.LOWEST_TILE_Y_UNITS),
-                    0f
+                    0.0
                 )
             } else {
-                ceiling.setTransform(Point(-5, 0), 0f)
-                floor.setTransform(Point(-5, 0), 0f)
+                ceiling.setTransform(Point(-5, 0), 0.0)
+                floor.setTransform(Point(-5, 0), 0.0)
             }
 
 

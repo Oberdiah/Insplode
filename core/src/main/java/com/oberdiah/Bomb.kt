@@ -64,7 +64,7 @@ abstract class Bomb(startingPoint: Point, val bombType: BombType) : PhysicsObjec
     val size = Size(radius * 2, radius * 2)
 
     open fun getPointsWorth(): Int {
-        return ceil((power.d * 2.0).pow(2.0))
+        return ceil((power * 2.0).pow(2.0))
     }
 
     open fun gotSlammed() {
@@ -489,7 +489,7 @@ class ImpactBomb(startingPoint: Point) : Bomb(startingPoint, BombType.ImpactBomb
         rect.set(points)
         val fixtureDef = bombFixtureDef(rect)
         body.addFixture(fixtureDef)
-        body.linearDamping = 1
+        body.linearDamping = 1.0
         body.gravityScale = 0.2
         rect.dispose()
     }
@@ -548,9 +548,9 @@ class SpringBomb(startingPoint: Point) : Bomb(startingPoint, BombType.SpringBomb
     override fun render(r: Renderer) {
         val bodyPos = body.p
         val overallFract = (timeLeft / maxFuseLength)
-        var springFract = (timeTillSpring / currentSpringDelay)
+        var springFract = timeTillSpring / currentSpringDelay
         if (timeTillSpring > timeLeft) {
-            springFract = (timeLeft / currentSpringDelay).d
+            springFract = timeLeft / currentSpringDelay
         }
 
         r.color = color

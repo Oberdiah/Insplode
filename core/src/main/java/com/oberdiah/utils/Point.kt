@@ -51,7 +51,7 @@ open class Point {
         }
         set(value) {
             x = 0.0
-            y = len.d
+            y = len
             rotate(value)
         }
 
@@ -60,13 +60,13 @@ open class Point {
             return sqrt(x * x + y * y)
         }
         set(value) {
-            val le = len.d
+            val le = len
             if (le < 0.01) {
-                x = value.d
+                x = value
                 y = 0.0
                 return
             }
-            val scale = value.d / le
+            val scale = value / le
             x *= scale
             y *= scale
         }
@@ -83,17 +83,17 @@ open class Point {
     }
 
     constructor(x: Double, y: Double) {
-        this.x = x.d
-        this.y = y.d
+        this.x = x
+        this.y = y
     }
 
     constructor(x: Float, y: Double) {
         this.x = x.d
-        this.y = y.d
+        this.y = y
     }
 
     constructor(x: Double, y: Float) {
-        this.x = x.d
+        this.x = x
         this.y = y.d
     }
 
@@ -109,11 +109,11 @@ open class Point {
 
     constructor(x: Int, y: Double) {
         this.x = x.d
-        this.y = y.d
+        this.y = y
     }
 
     constructor(x: Double, y: Int) {
-        this.x = x.d
+        this.x = x
         this.y = y.d
     }
 
@@ -332,13 +332,13 @@ class Size(w: Double, h: Double) : Point(w, h) {
     var w: Double
         get() = x
         set(value) {
-            x = value.d
+            x = value
         }
 
     var h: Double
         get() = y
         set(value) {
-            y = value.d
+            y = value
         }
 }
 

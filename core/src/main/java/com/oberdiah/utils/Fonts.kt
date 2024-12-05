@@ -46,7 +46,7 @@ fun getFontCache(font: BitmapFont, align: Int, text: String): BitmapFontCache {
     return fontCache[cacheKey]!!
 }
 
-fun createFont(g: FreeTypeFontGenerator, size: Number): BitmapFont {
+fun createFont(g: FreeTypeFontGenerator, size: Double): BitmapFont {
     val parameter = FreeTypeFontParameter()
     parameter.size = size.i
     parameter.minFilter = Texture.TextureFilter.Linear

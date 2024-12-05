@@ -1,25 +1,12 @@
 package com.oberdiah.player.player_state
 
 import com.badlogic.gdx.audio.Music
-import com.oberdiah.Bomb
-import com.oberdiah.GLOBAL_SCALE
-import com.oberdiah.MusicCoordinator
-import com.oberdiah.Point
-import com.oberdiah.ScoreSystem
-import com.oberdiah.Velocity
-import com.oberdiah.abs
-import com.oberdiah.boom
-import com.oberdiah.clamp
-import com.oberdiah.i
-import com.oberdiah.max
-import com.oberdiah.min
-import com.oberdiah.playPlayerLandSound
+import com.oberdiah.*
 import com.oberdiah.player.PLAYER_SIZE
 import com.oberdiah.player.Player
 import com.oberdiah.player.PlayerInfoBoard
 import com.oberdiah.player.PlayerRenderer
 import com.oberdiah.player.player
-import com.oberdiah.spawnSmoke
 import com.oberdiah.utils.addScreenShake
 import com.oberdiah.utils.colorScheme
 import kotlin.math.pow
@@ -95,7 +82,7 @@ class PlayerStateImpl : PlayerStateAccessors() {
 
         s.setState(PlayerMode.DEAD)
 
-        player.body.linearDamping = Float.MAX_VALUE
+        player.body.linearDamping = Float.MAX_VALUE.d
         // Spawn a bunch of smoke in the shape of the player
         for (i in 0 until 100) {
             val pos = player.body.p + Point(

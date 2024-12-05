@@ -29,7 +29,7 @@ class SpriteDraw(
     val p: Point,
     val s: Size,
     val color: Color = Color.WHITE,
-    val angle: Number
+    val angle: Double
 ) :
     Drawable() {
     override fun draw(renderer: SpriteBatch, camera: Camera) {
@@ -133,11 +133,11 @@ class Renderer(val name: String, val camera: Camera) {
         p: Point,
         scale: Double,
         color: Color = Color.WHITE,
-        angle: Number = 0.0
+        angle: Double = 0.0
     ) {
-        val textureSize = Size(sprite.width.f, sprite.height.f)
-        val scale = scale / max(textureSize.w, textureSize.h).f
-        val size = textureSize * scale
+        val textureSize = Size(sprite.width, sprite.height)
+        val scaled = scale / max(textureSize.w, textureSize.h).f
+        val size = textureSize * scaled
         centeredSprite(sprite, p, size, color, angle)
     }
 
@@ -146,12 +146,12 @@ class Renderer(val name: String, val camera: Camera) {
         p: Point,
         s: Size,
         color: Color = Color.WHITE,
-        angle: Number = 0.0
+        angle: Double = 0.0
     ) {
         sprite(sprite, p - s / 2, s, color, angle)
     }
 
-    fun sprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE, angle: Number = 0.0) {
+    fun sprite(sprite: Sprite, p: Point, s: Size, color: Color = Color.WHITE, angle: Double = 0.0) {
         spritesToDraw.add(SpriteDraw(sprite, p, s, color.cpy(), angle))
     }
 
@@ -176,7 +176,7 @@ class Renderer(val name: String, val camera: Camera) {
         text(font, text, Point(x, y), align, shouldCache)
     }
 
-    fun hollowRect(rect: Rect, width: Number) {
+    fun hollowRect(rect: Rect, width: Double) {
         centeredHollowRect(rect.p + rect.s / 2, rect.s, width)
     }
 
@@ -240,7 +240,7 @@ class Renderer(val name: String, val camera: Camera) {
         shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, s.h.f)
     }
 
-    fun centeredHollowRect(mid: Point, s: Size, width: Number) {
+    fun centeredHollowRect(mid: Point, s: Size, width: Double) {
         shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, s.w.f, width.f)
         shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f + s.h.f / 2 - width.f, s.w.f, width.f)
         shapeRenderer.rect(mid.x.f - s.w.f / 2, mid.y.f - s.h.f / 2, width.f, s.h.f)
@@ -321,20 +321,16 @@ class Renderer(val name: String, val camera: Camera) {
         poly(starFloatArr, 1.0, 0.0, 0.0)
     }
 
-    fun circle(p: Point, rad: Number, segments: Int = 20) {
+    fun circle(p: Point, rad: Double, segments: Int = 20) {
         shapeRenderer.circle(p.x.f, p.y.f, rad.f, segments)
     }
 
-    fun circle(x: Number, y: Number, rad: Number, segments: Int = 20) {
+    fun circle(x: Double, y: Double, rad: Double, segments: Int = 20) {
         shapeRenderer.circle(x.f, y.f, rad.f, segments)
     }
 
-    fun lineCircle(p: Point, radius: Number, width: Number, segments: Int = 20) {
+    fun lineCircle(p: Point, radius: Double, width: Double, segments: Int = 20) {
         lineCircle(p.x, p.y, radius, width, segments)
-    }
-
-    fun lineCircle(x: Number, y: Number, radius: Number, width: Number, segments: Int = 20) {
-        lineCircle(x.d, y.d, radius.d, width.d, segments)
     }
 
     fun line(a: Point, b: Point, width: Double) {

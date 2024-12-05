@@ -191,7 +191,7 @@ private fun playPickupSoundInternal(loopId: Int) {
 
 fun playMultiplierSound(multiplier: Int) {
     playSound(
-        "Power up ${clamp(multiplier, 1, 10).i}",
+        "Power up ${clamp(multiplier, 1, 10)}",
         1.0,
         0.85
     )
