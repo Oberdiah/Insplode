@@ -16,10 +16,19 @@ operator fun Iterable<Point>.times(tileSize: Double): List<Point> {
 val Vector2.p: Point
     get() = Point(this.x.d, this.y.d)
 
-class Point private constructor(val x: Double, val y: Double) {
+@JvmInline
+value class Point(val v: Long) {
+    val x: Double
+        get() = Float.fromBits((v shr 32).toInt()).toDouble()
+    val y: Double
+        get() = Float.fromBits((v and 0xFFFFFFFFL).toInt()).toDouble()
+
     companion object {
         private fun create(x: Double, y: Double): Point {
-            return Point(x, y)
+            val bits1 = x.toFloat().toBits().toLong()
+            val bits2 = y.toFloat().toBits().toLong()
+
+            return Point((bits1 shl 32) or (bits2 and 0xFFFFFFFFL))
         }
 
         operator fun invoke(angle: Double): Point {
