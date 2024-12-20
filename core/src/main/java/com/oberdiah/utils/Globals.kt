@@ -37,6 +37,7 @@ enum class Screen(val title: String, val note: Char) {
     AdvancedSettings("Advanced\nSettings", 'C'),
     Controls("Controls", 'C'),
     Credits("Credits", 'G'),
+    About("About", 'G'),
 }
 
 /// Size of the screen in pixels

@@ -36,6 +36,7 @@ If building on iOS, XCode has changed where provision profiles are stored and Ro
 up,
 you'll need to symlink the folder for it to work:
 `ln -s ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles ~/Library/MobileDevice/`
+
 To install onto a device running IOS 17+:
 `https://github.com/MobiVM/robovm/issues/755#issuecomment-2108521622`
 (`"/Applications/Apple Configurator.app/Contents/MacOS/cfgutil" install-app ./IOSLauncher.app`)

@@ -77,7 +77,7 @@ fun renderUIScreenSpace(r: Renderer) {
         GameState.DiegeticMenu -> {}
         GameState.TransitioningToDiegeticMenu -> {}
         GameState.PausedPopup -> {
-            r.color = Color.BLACK.withAlpha(0.5)
+            r.color = Color.BLACK.withAlpha(0.65)
             r.rect(0.0, 0.0, WIDTH, HEIGHT)
 
 
@@ -97,6 +97,7 @@ fun renderUIScreenSpace(r: Renderer) {
                 Screen.AdvancedSettings -> advancedSettingsUI(r)
                 Screen.Controls -> controlsUI(r)
                 Screen.Credits -> creditsUI(r)
+                Screen.About -> aboutUI(r)
             }
         }
 
@@ -145,6 +146,33 @@ private fun creditsUI(r: Renderer) {
     r.text(fontSmall, "Ashley Seaton", WIDTH / 8, creditsHeight, Align.left)
     creditsHeight -= titleGap
     uiCurrentHeight = creditsHeight
+    button(r, "Back") {
+        backAScreen()
+    }
+}
+
+private fun aboutUI(r: Renderer) {
+    val titleGap = DIST_BETWEEN_WORDS * 1.5
+    var aboutHeight = HEIGHT / 2 + DIST_BETWEEN_WORDS * 1
+
+    r.text(
+        fontSmall,
+        "Made in a frenzy over the course\nof a couple months.",
+        WIDTH / 2,
+        aboutHeight,
+        Align.center
+    )
+    aboutHeight -= titleGap
+    r.text(
+        fontSmall,
+        "Feel like it needs something? Contribute!\nInsplode is open source on Github :)",
+        WIDTH / 2,
+        aboutHeight,
+        Align.center
+    )
+    aboutHeight -= titleGap
+    aboutHeight -= titleGap
+    uiCurrentHeight = aboutHeight
     button(r, "Back") {
         backAScreen()
     }

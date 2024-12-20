@@ -96,7 +96,9 @@ object PauseButton {
         button(r, "Credits") {
             switchScreen(Screen.Credits)
         }
-        lineBreak()
+        button(r, "About") {
+            switchScreen(Screen.About)
+        }
         lineBreak()
         if (gameStateBeforePauseMenu == GameState.InGame) {
             button(r, "Quit Run") {
