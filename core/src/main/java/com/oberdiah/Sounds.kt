@@ -13,7 +13,10 @@ import kotlin.random.Random
 private lateinit var soundEngine: SoundCore
 
 fun loadSounds() {
-    soundEngine = MiniAudioCore()
+    soundEngine = when (Gdx.app.type) {
+        ApplicationType.iOS -> DefaultAudioCore()
+        else -> MiniAudioCore()
+    }
     soundEngine.initialize()
 }
 

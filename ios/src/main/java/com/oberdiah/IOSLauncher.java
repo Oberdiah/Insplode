@@ -2,8 +2,11 @@ package com.oberdiah;
 
 import org.jetbrains.annotations.NotNull;
 import org.robovm.apple.foundation.NSAutoreleasePool;
+import org.robovm.apple.foundation.NSProcessInfo;
 import org.robovm.apple.uikit.UIApplication;
+import org.robovm.apple.uikit.UIScreen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
@@ -19,7 +22,7 @@ class IOSPlatformInterface implements PlatformInterface {
 
     @Override
     public void injectAssetManager(@NotNull MiniAudio miniAudio) {
-        miniAudio.setupAndroid(null);
+    
     }
 }
 
@@ -37,9 +40,10 @@ public class IOSLauncher extends IOSApplication.Delegate {
         configuration.hdpiMode = HdpiMode.Pixels;
         configuration.useCompass = false;
         platformInterface = new IOSPlatformInterface();
+        
         return new IOSApplication(new Main(platformInterface), configuration);
     }
-
+    
     public static void main(String[] argv) {
         NSAutoreleasePool pool = new NSAutoreleasePool();
         UIApplication.main(argv, null, IOSLauncher.class);

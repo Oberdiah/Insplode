@@ -198,7 +198,6 @@ class Main(print: PlatformInterface) : InputAdapter(), ApplicationListener {
         time("Render UI") { renderUIScreenSpace(uiRenderer) }
         uiRenderer.end()
 
-
         timerEnd()
     }
 

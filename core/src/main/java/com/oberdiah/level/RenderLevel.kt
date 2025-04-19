@@ -71,9 +71,6 @@ object RenderLevel {
         cam2.update()
         levelShapeRenderer.projectionMatrix = cam2.combined
 
-        var oldFbo = BufferUtils.newIntBuffer(1)
-        Gdx.gl.glGetIntegerv(GL_FRAMEBUFFER_BINDING, oldFbo)
-
         fbo.begin()
         Gdx.gl.glDisable(GL30.GL_BLEND)
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
@@ -110,8 +107,6 @@ object RenderLevel {
         }
         levelShapeRenderer.end()
         fbo.end()
-        var fboIdx = oldFbo.get()
-        Gdx.gl.glBindFramebuffer(GL_FRAMEBUFFER, fboIdx)
 
         val yOffset = (-Point(0, 0).ui.y.f + HEIGHT.f - fbo.height.f).i
         val topTexY = (yOffset + ((fboBaseLocation - 1) * fbo.height)).f
