@@ -23,10 +23,10 @@ android {
     defaultConfig {
         applicationId 'com.oberdiah'
         minSdkVersion 28
-        targetSdkVersion 34
-        compileSdk 34
-        versionCode 17
-        versionName "1.0.0"
+        targetSdkVersion 35
+        compileSdk 35
+        versionCode 20
+        versionName "1.0.2"
         multiDexEnabled true
     }
     compileOptions {
