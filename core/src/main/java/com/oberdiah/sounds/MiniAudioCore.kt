@@ -6,7 +6,6 @@ import com.oberdiah.SoundData
 import com.oberdiah.f
 import com.oberdiah.listFolder
 import com.oberdiah.platformInterface
-import games.rednblack.miniaudio.MAFormatType
 import games.rednblack.miniaudio.MASound
 import games.rednblack.miniaudio.MiniAudio
 import games.rednblack.miniaudio.effect.MADelayNode
@@ -14,7 +13,7 @@ import games.rednblack.miniaudio.filter.MALowPassFilter
 import games.rednblack.miniaudio.mix.MASplitter
 import kotlin.random.Random
 
-class MiniAudioCore: SoundCore {
+class MiniAudioCore : SoundCore {
     val MAX_NUM_SOUNDS_PLAYING = 30
 
     private var SOUND_POOL: Map<String, List<MASound>> = mutableMapOf()
@@ -50,13 +49,13 @@ class MiniAudioCore: SoundCore {
             allSoundsPlaying.remove(allSoundsPlaying.first())
         }
 
-        sound.setVolume(soundData.volume.f)
+        sound.volume = soundData.volume.f
         sound.setPitch(soundData.pitch.f)
         // Random pan
         sound.setPan(Random.nextDouble(-0.5, 0.5).f)
         sound.play()
 
-        var splitter = if (soundData.withReverb) caveSplitter else null
+        val splitter = if (soundData.withReverb) caveSplitter else null
 
         if (splitter != null) {
             splitter.attachToThisNode(sound, 0)
@@ -68,19 +67,17 @@ class MiniAudioCore: SoundCore {
     }
 
     override fun pause() {
-        miniAudio.stopEngine();
+        miniAudio.stopEngine()
     }
 
     override fun resume() {
-        miniAudio.startEngine();
+        miniAudio.startEngine()
     }
 
     override fun initialize() {
-        miniAudio = MiniAudio(null, false, true, false)
-        var latencyMillis = 0 // Default
-        miniAudio.initEngine(1, -1, -1, 0, latencyMillis, 0, 0, MAFormatType.F32, false, false, true)
-
+        miniAudio = MiniAudio()
         platformInterface.injectAssetManager(miniAudio)
+
         caveSplitter = MASplitter(miniAudio)
         val lowPassFilter = MALowPassFilter(miniAudio, 550.0, 8)
         val delayNode = MADelayNode(miniAudio, 0.1f, 0.1f)
